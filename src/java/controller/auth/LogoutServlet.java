@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.auth.register;
+package controller.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,20 +13,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import model.Users;
-import service.AuthService;
 import service.TokenService;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "LogoutServlet", urlPatterns = {"/logout"})
+public class LogoutServlet extends HttpServlet {
 
-    private final AuthService authService = new AuthService();
     private final TokenService tokenService = new TokenService();
 
     /**
@@ -46,10 +41,10 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
+            out.println("<title>Servlet LogoutServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet LogoutServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -67,36 +62,23 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession s = request.getSession(false);
-        if (s != null && s.getAttribute("user") != null) {
-            response.sendRedirect("home");
-            return;
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
         }
-        Cookie cookies[] = request.getCookies();
+        Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
-                if ("rememberToken".equalsIgnoreCase(c.getName())) {
-                    String rawToken = c.getValue();
-                    if (rawToken != null && !rawToken.isBlank()) {
-                        Users user = tokenService.getUserByToken(rawToken);
-                        if (user != null && "active".equalsIgnoreCase(user.getStatus())) {
-                            HttpSession session = request.getSession(true);
-                            session.setAttribute("user", user);
-                            response.sendRedirect("home");
-                            return;
-                        }else{
-                            //Wrong or expired token -> remove
-                            tokenService.deleteToken(rawToken);
-                            c.setValue("");
-                            c.setPath("/");
-                            c.setMaxAge(0);
-                            response.addCookie(c);
-                        }
-                    }
+                if ("rememberToken".equals(c.getName()) && c.getValue() != null && !c.getValue().isBlank()) {
+                    tokenService.deleteToken(c.getValue());
+                    c.setValue("");
+                    c.setPath("/");
+                    c.setMaxAge(0);
+                    response.addCookie(c);
                 }
             }
         }
-        request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+        response.sendRedirect("login");
     }
 
     /**
@@ -110,32 +92,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String rememberMe = request.getParameter("remember-me");
-
-        Users user = authService.login(username, password);
-        if (user != null) {
-           HttpSession session = request.getSession(true);
-            request.changeSessionId();                 
-            session.setAttribute("user", user);
-            session.setAttribute("role", user.getRole());
-
-            if (rememberMe != null) {
-                authService.createRememberMe(user, response); 
-            }
-
-            response.sendRedirect(request.getContextPath() + "/home");
-            return;
-        }
-        boolean isInactive = authService.isInactiveUser(username, password);
-        if (isInactive) {
-            request.setAttribute("inactive", "Tài khoản đã bị vô hiệu hóa");
-        } else {
-            request.setAttribute("errorLogin", "Tên đăng nhập hoặc mật khẩu sai");
-            request.setAttribute("username", username);
-        }
-        request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**

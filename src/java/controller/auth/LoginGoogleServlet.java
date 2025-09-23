@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.auth.register;
+package controller.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,17 +11,20 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Users;
 import service.AuthService;
+import service.TokenService;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
-public class RegisterServlet extends HttpServlet {
+@WebServlet(name = "LoginGoogleServlet", urlPatterns = {"/loginGoogle"})
+public class LoginGoogleServlet extends HttpServlet {
 
-    private AuthService authService = new AuthService();
+    private final AuthService authService = new AuthService();
+    private final TokenService tokenService = new TokenService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +43,10 @@ public class RegisterServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RegisterServlet</title>");
+            out.println("<title>Servlet LoginGoogleServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RegisterServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet LoginGoogleServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,7 +64,19 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
+        String code = request.getParameter("code");
+        try {
+            Users user = authService.loginWithGoogle(code);
+            HttpSession session = request.getSession(true);
+            session.setAttribute("user", user);
+            authService.createRememberMe(user, response);
+            response.sendRedirect("home.jsp");
+        } catch (IllegalStateException e) {
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorEmail=true");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorGoogle=true");
+        }
     }
 
     /**
@@ -75,32 +90,7 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String gender = request.getParameter("gender");
-        String role = request.getParameter("role");
-
-        Users newUser = new Users();
-        newUser.setUsername(username);
-        newUser.setEmail(email);
-        newUser.setPassword(password); //Hash in service
-        newUser.setGender(gender);
-        newUser.setRole(role);
-
-        String result = authService.register(newUser);
-        if ("success".equals(result)) {
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?success=true");
-            return;
-        }
-        request.setAttribute("error", result);
-        request.setAttribute("username", username);
-        request.setAttribute("email", email);
-        request.setAttribute("gender", gender);
-        request.setAttribute("role", role);
-
-        request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
-
+        processRequest(request, response);
     }
 
     /**
