@@ -8,21 +8,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import service.TokenService;
+import service.AuthService;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "LogoutServlet", urlPatterns = {"/logout"})
-public class LogoutServlet extends HttpServlet {
+@WebServlet(name = "ForgotPasswordServlet", urlPatterns = {"/forgot-password"})
+public class ForgotPasswordServlet extends HttpServlet {
 
-    private final TokenService tokenService = new TokenService();
+    private AuthService authService = new AuthService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +39,10 @@ public class LogoutServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LogoutServlet</title>");
+            out.println("<title>Servlet ForgotPasswordServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LogoutServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ForgotPasswordServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,23 +60,7 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                if ("rememberToken".equals(c.getName()) && c.getValue() != null && !c.getValue().isBlank()) {
-                    tokenService.deleteRememberToken(c.getValue());
-                    c.setValue("");
-                    c.setPath("/");
-                    c.setMaxAge(0);
-                    response.addCookie(c);
-                }
-            }
-        }
-        response.sendRedirect("login");
+        request.getRequestDispatcher("auth/forgot-password.jsp").forward(request, response);
     }
 
     /**
@@ -92,7 +74,14 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String email = request.getParameter("email");
+        try {
+            authService.handleForgotPassword(email);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        request.setAttribute("message", "Vui lòng kiểm tra email để đặt lại mật khẩu");
+        request.getRequestDispatcher("auth/forgot-password.jsp").forward(request, response);
     }
 
     /**

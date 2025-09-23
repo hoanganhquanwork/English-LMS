@@ -1,0 +1,43 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package util;
+
+import java.util.Properties;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+/**
+ *
+ * @author Admin
+ */
+public class EmailUtil {
+
+    public static void send(String to, String subject, String content) throws MessagingException {
+        final String fromEmail = "anhtuantrinhybmm27@gmail.com";
+        final String password = "mrft qqcz espz dkbh";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", true);
+        props.put("mail.smtp.starttls.enable", true);
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Authenticator auth = new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(fromEmail, password);
+            }
+        };
+        Session session = Session.getInstance(props, auth);
+
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(fromEmail));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+        message.setSubject(subject);
+        message.setContent(content, "text/html; charset=UTF-8");
+        Transport.send(message);
+    }
+
+}

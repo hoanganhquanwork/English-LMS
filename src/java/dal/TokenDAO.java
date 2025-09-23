@@ -32,7 +32,8 @@ public class TokenDAO extends DBContext {
         return u;
     }
 
-    public int saveToken(String token, int userId, LocalDateTime expiryDate) {
+    //remember-me token
+    public int saveRememberToken(String token, int userId, LocalDateTime expiryDate) {
         String sql = "INSERT INTO PersistentTokens(token, user_id, expiry_date) VALUES(?,?,?)";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -47,7 +48,8 @@ public class TokenDAO extends DBContext {
         }
     }
 
-    public Users getUserByToken(String token) {
+    //remember-me token
+    public Users getUserByRememberToken(String token) {
         String sql = "SELECT u.* FROM PersistentTokens p JOIN Users u \n"
                 + "on p.user_id =  u.user_id\n"
                 + "WHERE token = ? AND expiry_date > GETDATE() AND u.status = 'active'";
@@ -65,7 +67,8 @@ public class TokenDAO extends DBContext {
         return null;
     }
 
-    public int deleteToken(String token) {
+    //remember-me token
+    public int deleteRememberToken(String token) {
         String sql = "DELETE FROM PersistentTokens WHERE token = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -76,5 +79,50 @@ public class TokenDAO extends DBContext {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    public int saveResetPasswordToken(int userId, String token, Timestamp expiry) {
+        String sql = "INSERT INTO PasswordResetTokens(user_id, token, expires_at) VALUES(?,?,?)";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, userId);
+            st.setString(2, token);
+            st.setTimestamp(3, expiry);
+            int affected = st.executeUpdate();
+            return affected;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public Integer getUserIdByResetToken(String token) {
+        String sql = "SELECT user_id FROM PasswordResetTokens "
+                + "WHERE token = ? AND used_at IS NULL AND expires_at > GETDATE()";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, token);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("user_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public int markUsedToken(String token) {
+        String sql = "UPDATE PasswordResetTokens SET used_at = GETDATE() WHERE token = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, token);
+            int affected = st.executeUpdate();
+            return affected;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+
     }
 }

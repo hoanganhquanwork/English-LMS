@@ -14,7 +14,7 @@
     </head>
     <body>
         <h2>Họ và tên</h2>
-        <form action="register" method="post" onsubmit="return validateForm()">
+        <form action="${pageContext.request.contextPath}/register" method="post" onsubmit="return validateForm()">
             <label>Tên đăng nhập: </label>
             <input name="username" id ="username" value="${requestScope.username}" required/>
             <span id="errUsername" style="color: red;"></span>

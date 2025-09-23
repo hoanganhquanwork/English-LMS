@@ -8,21 +8,22 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import service.AuthService;
 import service.TokenService;
+import util.BCryptUtil;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "LogoutServlet", urlPatterns = {"/logout"})
-public class LogoutServlet extends HttpServlet {
+@WebServlet(name = "ResetPasswordServlet", urlPatterns = {"/reset-password"})
+public class ResetPasswordServlet extends HttpServlet {
 
-    private final TokenService tokenService = new TokenService();
+    AuthService authService = new AuthService();
+    TokenService tokenService = new TokenService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +42,10 @@ public class LogoutServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LogoutServlet</title>");
+            out.println("<title>Servlet ResetPasswordServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LogoutServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ResetPasswordServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,23 +63,19 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                if ("rememberToken".equals(c.getName()) && c.getValue() != null && !c.getValue().isBlank()) {
-                    tokenService.deleteRememberToken(c.getValue());
-                    c.setValue("");
-                    c.setPath("/");
-                    c.setMaxAge(0);
-                    response.addCookie(c);
-                }
+        String token = request.getParameter("token");
+        try {
+            Integer userId = tokenService.verifyResetToken(token);
+            if (userId != null) {
+                request.setAttribute("token", token);
+                request.getRequestDispatcher("auth/reset-password.jsp").forward(request, response);
+                return;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        response.sendRedirect("login");
+        request.setAttribute("invalidToken", "Link khôi phục không hợp lệ hoặc hết hạn");
+        request.getRequestDispatcher("auth/forgot-password.jsp").forward(request, response);
     }
 
     /**
@@ -92,7 +89,24 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String password = request.getParameter("password");
+        String token = request.getParameter("token");
+        try {
+            Integer userId = tokenService.verifyResetToken(token);
+            if (userId != null) {
+                String hashedPassword = BCryptUtil.hashPassword(password);
+                int rows = authService.updatePasswordByUserId(userId, hashedPassword);
+                if (rows > 0) {
+                    tokenService.markUsedResetToken(token);
+                    response.sendRedirect(request.getContextPath() + "/auth/login.jsp?resetSuccess=true");
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        request.setAttribute("invalidToken", "Link khôi phục không hợp lệ hoặc hết hạn");
+        request.getRequestDispatcher("auth/forgot-password.jsp").forward(request, response);
     }
 
     /**

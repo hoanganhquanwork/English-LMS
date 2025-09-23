@@ -31,9 +31,18 @@
                     Đăng nhập thất bại
                 </p>
             </c:if>
-
+            <c:if test="${param.success == true}" >
+                <p>
+                    Đăng ký thành công vui lòng đăng nhập lại để tiếp tục
+                </p>
+            </c:if>
+            <c:if test="${param.resetSuccess == true}" >
+                <p>
+                    Đổi mật khẩu thành công vui lòng đăng nhập lại để tiếp tục
+                </p>
+            </c:if>
         </h3>
-        <form action="login" method="post">
+        <form action="${pageContext.request.contextPath}/login" method="post">
             <label>Tên đăng nhập:</label>
             <input type="text" name="username" value="${requestScope.username}">
             <br>
@@ -42,7 +51,7 @@
             <br>
             <input type="checkbox" name="remember-me">
             <label>Ghi nhớ đăng nhập</label>
-            <a href="forgotpassword" >Quên mật khẩu</a>
+            <a href="${pageContext.request.contextPath}/forgot-password" >Quên mật khẩu</a>
             <br>
             <button type="submit">Đăng nhập</button>
         </form>
