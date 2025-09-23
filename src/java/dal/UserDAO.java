@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import model.Users;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -186,5 +185,20 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public int updatePasswordByID(int userId, String hashPassword) {
+        String sql = "UPDATE Users SET password = ? WHERE user_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, hashPassword);
+            st.setInt(2, userId);
+            int affected = st.executeUpdate();
+            return affected ;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+        
     }
 }
