@@ -4,10 +4,12 @@
  */
 package dal;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import model.Users;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -26,10 +28,39 @@ public class UserDAO extends DBContext {
         u.setGender(rs.getString("gender"));
         u.setRole(rs.getString("role"));
         u.setStatus(rs.getString("status"));
+        u.setFullName(rs.getString("full_name"));
+        u.setPhone(rs.getString("phone"));
+        Date dob = rs.getDate("date_of_birth");
+        if (dob != null) {
+            u.setDateOfBirth(dob.toLocalDate());
+        } else {
+            u.setDateOfBirth(null);
+        }
         Timestamp ts = rs.getTimestamp("created_at");
-        u.setCreatedAt(ts.toLocalDateTime());
+        if (ts != null) {
+            u.setCreatedAt(ts.toLocalDateTime());
+        }
+        String profilePicture = rs.getString("profile_picture");
+        if (profilePicture != null) {
+            u.setProfilePicture(profilePicture);
+        }
         return u;
+    }
 
+    public Users getUserById(int userId) {
+        String sql = "SELECT * FROM Users WHERE user_id = ? AND STATUS ='active'";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, userId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                Users user = mapRow(rs);
+                return user;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Users getUserByEmail(String email) {
@@ -194,11 +225,65 @@ public class UserDAO extends DBContext {
             st.setString(1, hashPassword);
             st.setInt(2, userId);
             int affected = st.executeUpdate();
-            return affected ;
+            return affected;
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
         }
-        
+    }
+
+    public int updateBasic(int userId, String fullName, String phone, LocalDate dob, String gender) {
+        String sql = "UPDATE Users "
+                + "SET full_name = ?, phone = ?, date_of_birth = ?, gender = ? "
+                + "WHERE user_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+
+            if (fullName != null && !fullName.isBlank()) {
+                st.setString(1, fullName);
+            } else {
+                st.setNull(1, java.sql.Types.NVARCHAR);
+            }
+
+            if (phone != null && !phone.isBlank()) {
+                st.setString(2, phone);
+            } else {
+                st.setNull(2, java.sql.Types.NVARCHAR);
+            }
+
+            if (dob != null) {
+                st.setDate(3, java.sql.Date.valueOf(dob));
+            } else {
+                st.setNull(3, java.sql.Types.DATE);
+            }
+
+            // gender
+            if (gender != null && !gender.isBlank()) {
+                st.setString(4, gender);
+            } else {
+                st.setNull(4, java.sql.Types.VARCHAR);
+            }
+
+            st.setInt(5, userId);
+
+            return st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean updateProfilePicture(Users user) {
+        String sql = "UPDATE users SET profile_picture = ? WHERE user_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, user.getProfilePicture());
+            st.setInt(2, user.getUserId());
+            int rowsUpdated = st.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

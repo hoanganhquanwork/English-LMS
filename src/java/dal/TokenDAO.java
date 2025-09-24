@@ -5,7 +5,7 @@
 package dal;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -27,8 +27,22 @@ public class TokenDAO extends DBContext {
         u.setGender(rs.getString("gender"));
         u.setRole(rs.getString("role"));
         u.setStatus(rs.getString("status"));
+        u.setFullName(rs.getString("full_name"));
+        u.setPhone(rs.getString("phone"));
+        Date dob = rs.getDate("date_of_birth");
+        if (dob != null) {
+            u.setDateOfBirth(dob.toLocalDate());
+        } else {
+            u.setDateOfBirth(null);
+        }
         Timestamp ts = rs.getTimestamp("created_at");
-        u.setCreatedAt(ts.toLocalDateTime());
+        if (ts != null) {
+            u.setCreatedAt(ts.toLocalDateTime());
+        }
+        String profilePicture = rs.getString("profile_picture");
+        if (profilePicture != null) {
+            u.setProfilePicture(profilePicture);
+        }
         return u;
     }
 
