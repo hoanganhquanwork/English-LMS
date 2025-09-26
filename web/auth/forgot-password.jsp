@@ -5,26 +5,57 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Quên mật khẩu</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .card {
+                max-width: 400px;
+                margin: 60px auto;
+                box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            }
+        </style>
     </head>
     <body>
-        <h2>Quên mật khẩu</h2>
-        <h3>${requestScope.message}</h3>
-        <h3>${requestScope.invalidToken}</h3>
-        <form action="${pageContext.request.contextPath}/forgot-password" method="post" onsubmit="return validateEmail()">
-            <label>Nhập địa chỉ email của bạn</label>
-            <span id="errEmail" style="color: red;"></span>
-            <br>
-            <input type="email" name="email" id="email">
-            <br>
-            <button type="submit">Đổi mật khẩu</button>
-        </form>
-        <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
-        <a href="${pageContext.request.contextPath}/register">Đăng ký</a>
+        <div class="container">
+            <div class="card p-4">
+                <h2 class="text-center mb-3">Quên mật khẩu</h2>
+
+                <c:if test="${not empty requestScope.message}">
+                    <div class="alert alert-success text-center">${message}</div>
+                </c:if>
+                <c:if test="${not empty requestScope.invalidToken}">
+                    <div class="alert alert-danger text-center">${invalidToken}</div>
+                </c:if>
+
+                <form action="${pageContext.request.contextPath}/forgot-password" 
+                      method="post" 
+                      onsubmit="return validateEmail()">
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Nhập địa chỉ email của bạn</label>
+                        <input type="email" 
+                               class="form-control" 
+                               id="email" 
+                               name="email" 
+                               placeholder="abc@gmail.com" 
+                               required>
+                        <div id="errEmail" class="text-danger small mt-1"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Gửi yêu cầu</button>
+                </form>
+
+            </div>
+        </div>
     </body>
     <script>
         function validateEmail() {

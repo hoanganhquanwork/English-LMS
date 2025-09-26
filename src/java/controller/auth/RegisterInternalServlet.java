@@ -13,18 +13,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Users;
 import service.AuthService;
-import service.TokenService;
-import util.BCryptUtil;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ResetPasswordServlet", urlPatterns = {"/reset-password"})
-public class ResetPasswordServlet extends HttpServlet {
+@WebServlet(name = "RegisterInternalServlet", urlPatterns = {"/registerInternal"})
+public class RegisterInternalServlet extends HttpServlet {
 
-    AuthService authService = new AuthService();
-    TokenService tokenService = new TokenService();
+    private AuthService authService = new AuthService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +40,10 @@ public class ResetPasswordServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ResetPasswordServlet</title>");
+            out.println("<title>Servlet RegisterInternalServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ResetPasswordServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RegisterInternalServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,19 +61,8 @@ public class ResetPasswordServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String token = request.getParameter("token");
-        try {
-            Integer userId = tokenService.verifyResetToken(token);
-            if (userId != null) {
-                request.setAttribute("token", token);
-                request.getRequestDispatcher("auth/reset-password.jsp").forward(request, response);
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        request.setAttribute("invalidToken", "Link khôi phục không hợp lệ hoặc hết hạn");
-        request.getRequestDispatcher("auth/forgot-password.jsp").forward(request, response);
+        request.getRequestDispatcher("/auth/register-internal.jsp").forward(request, response);
+
     }
 
     /**
@@ -90,31 +76,31 @@ public class ResetPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String username = request.getParameter("username");
+        String email = request.getParameter("email");
         String password = request.getParameter("password");
-        String token = request.getParameter("token");
-        try {
-            Integer userId = tokenService.verifyResetToken(token);
-            if (userId != null) {
-                int rows = authService.updatePasswordByUserId(userId, password);
-                if (rows > 0) {
-                    Users user = tokenService.getUserByResetToken(token);
-                    tokenService.markUsedResetToken(token);
-                    if (user != null) {
-                        if (user.getRole().equals("Student") || user.getRole().equals("Parent")) {
-                            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?resetSuccess=true");
-                            return;
-                        } else {
-                            response.sendRedirect(request.getContextPath() + "/auth/login-internal.jsp?resetSuccess=true");
-                            return;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String gender = request.getParameter("gender");
+        String role = request.getParameter("role");
+
+        Users newUser = new Users();
+        newUser.setUsername(username);
+        newUser.setEmail(email);
+        newUser.setPassword(password); //Hash in service
+        newUser.setGender(gender);
+        newUser.setRole(role);
+
+        String result = authService.register(newUser);
+        if ("success".equals(result)) {
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?success=true");
+            return;
         }
-        request.setAttribute("invalidToken", "Link khôi phục không hợp lệ hoặc hết hạn");
-        request.getRequestDispatcher("auth/forgot-password.jsp").forward(request, response);
+        request.setAttribute("error", result);
+        request.setAttribute("username", username);
+        request.setAttribute("email", email);
+        request.setAttribute("gender", gender);
+        request.setAttribute("role", role);
+
+        request.getRequestDispatcher("/auth/register-internal.jsp").forward(request, response);
     }
 
     /**

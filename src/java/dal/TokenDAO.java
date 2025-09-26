@@ -137,6 +137,28 @@ public class TokenDAO extends DBContext {
             e.printStackTrace();
             return 0;
         }
-
     }
+
+    public Users getUserByResetToken(String token) {
+        String sql = "SELECT u.* FROM PasswordResetTokens t "
+                + "JOIN Users u ON t.user_id = u.user_id "
+                + "WHERE t.token = ? "
+                + "AND t.used_at IS NULL "
+                + "AND t.expires_at > GETDATE() "
+                + "AND u.status = 'active'";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, token);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

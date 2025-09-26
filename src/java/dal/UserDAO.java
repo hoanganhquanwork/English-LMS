@@ -286,4 +286,34 @@ public class UserDAO extends DBContext {
             return false;
         }
     }
+
+    public boolean existsOAuthAccount(int userId) {
+        String sql = "SELECT COUNT(*) FROM OAuthAccounts WHERE user_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, userId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int deactivateAccount(int userId) {
+        String sql = "UPDATE Users SET status = 'deactivated' WHERE user_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, userId);
+            return st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

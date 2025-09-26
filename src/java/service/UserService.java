@@ -22,4 +22,8 @@ public class UserService {
     public boolean updateProfilePicture(Users user){
         return udao.updateProfilePicture(user);
     }
+    
+    public int deactivateAccount(int userId){
+        return udao.deactivateAccount(userId);
+    }
 }

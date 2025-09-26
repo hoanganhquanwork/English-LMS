@@ -13,8 +13,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import model.Users;
 import service.AuthService;
 import service.TokenService;
@@ -23,8 +21,8 @@ import service.TokenService;
  *
  * @author Admin
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "LoginInternalServlet", urlPatterns = {"/loginInternal"})
+public class LoginInternalServlet extends HttpServlet {
 
     private final AuthService authService = new AuthService();
     private final TokenService tokenService = new TokenService();
@@ -46,10 +44,10 @@ public class LoginServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
+            out.println("<title>Servlet LoginInternalServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet LoginInternalServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -72,31 +70,7 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect("home");
             return;
         }
-        Cookie cookies[] = request.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                if ("rememberToken".equalsIgnoreCase(c.getName())) {
-                    String rawToken = c.getValue();
-                    if (rawToken != null && !rawToken.isBlank()) {
-                        Users user = tokenService.getUserByRememberToken(rawToken);
-                        if (user != null && "active".equalsIgnoreCase(user.getStatus())) {
-                            HttpSession session = request.getSession(true);
-                            session.setAttribute("user", user);
-                            response.sendRedirect("home");
-                            return;
-                        } else {
-                            //Wrong or expired token -> remove
-                            tokenService.deleteRememberToken(rawToken);
-                            c.setValue("");
-                            c.setPath("/");
-                            c.setMaxAge(0);
-                            response.addCookie(c);
-                        }
-                    }
-                }
-            }
-        }
-        request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/auth/login-internal.jsp").forward(request, response);
     }
 
     /**
@@ -118,18 +92,26 @@ public class LoginServlet extends HttpServlet {
         if (user != null) {
             HttpSession session = request.getSession(true);
             String role = user.getRole();
-            if (!role.equalsIgnoreCase("Student") && !role.equalsIgnoreCase("Parent")) {
-                response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorRole=true");
+            if (!role.equalsIgnoreCase("Instructor") && !role.equalsIgnoreCase("Manager") && !role.equalsIgnoreCase("Admin")) {
+                response.sendRedirect(request.getContextPath() + "/auth/login-internal.jsp?errorRole=true");
                 return;
             }
             session.setAttribute("user", user);
             session.setAttribute("role", role);
 
-            if (rememberMe != null) {
-                authService.createRememberMe(user, response);
-            }
+            switch (role) {
+                case "Instructor":
 
-            response.sendRedirect(request.getContextPath() + "/home");
+                    break;
+                case "Manager":
+
+                    break;
+                case "Admin":
+
+                    break;
+                default:
+                    throw new AssertionError();
+            }
             return;
         }
         boolean isInactive = authService.isInactiveUser(username, password);
@@ -139,7 +121,7 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("errorLogin", "Tên đăng nhập hoặc mật khẩu sai");
             request.setAttribute("username", username);
         }
-        request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+        request.getRequestDispatcher("/auth/login-internal.jsp").forward(request, response);
     }
 
     /**

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.auth;
+package controller.student.profile;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,20 +11,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Users;
 import service.AuthService;
-import service.TokenService;
-import util.BCryptUtil;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ResetPasswordServlet", urlPatterns = {"/reset-password"})
-public class ResetPasswordServlet extends HttpServlet {
+@WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/changeStudentPassword"})
+public class ChangeStudentPasswordServlet extends HttpServlet {
 
     AuthService authService = new AuthService();
-    TokenService tokenService = new TokenService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +41,10 @@ public class ResetPasswordServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ResetPasswordServlet</title>");
+            out.println("<title>Servlet ChangePasswordServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ResetPasswordServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ChangePasswordServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,19 +62,8 @@ public class ResetPasswordServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String token = request.getParameter("token");
-        try {
-            Integer userId = tokenService.verifyResetToken(token);
-            if (userId != null) {
-                request.setAttribute("token", token);
-                request.getRequestDispatcher("auth/reset-password.jsp").forward(request, response);
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        request.setAttribute("invalidToken", "Link khôi phục không hợp lệ hoặc hết hạn");
-        request.getRequestDispatcher("auth/forgot-password.jsp").forward(request, response);
+        request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
+
     }
 
     /**
@@ -90,31 +77,42 @@ public class ResetPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String password = request.getParameter("password");
-        String token = request.getParameter("token");
-        try {
-            Integer userId = tokenService.verifyResetToken(token);
-            if (userId != null) {
-                int rows = authService.updatePasswordByUserId(userId, password);
-                if (rows > 0) {
-                    Users user = tokenService.getUserByResetToken(token);
-                    tokenService.markUsedResetToken(token);
-                    if (user != null) {
-                        if (user.getRole().equals("Student") || user.getRole().equals("Parent")) {
-                            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?resetSuccess=true");
-                            return;
-                        } else {
-                            response.sendRedirect(request.getContextPath() + "/auth/login-internal.jsp?resetSuccess=true");
-                            return;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String currentPassword = request.getParameter("currentPassword");
+        String newPassword = request.getParameter("newPassword");
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect("home");
+            return;
         }
-        request.setAttribute("invalidToken", "Link khôi phục không hợp lệ hoặc hết hạn");
-        request.getRequestDispatcher("auth/forgot-password.jsp").forward(request, response);
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("home");
+            return;
+        }
+
+        boolean isOAuthUser = authService.isOAuthUser(user.getUserId());
+        if (isOAuthUser) {
+            request.setAttribute("errorOAuth",
+                    "Tài khoản đăng nhập bằng OAuth (Google) không thể đổi mật khẩu trong hệ thống này.");
+            request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
+            return;
+        }
+        Users verify = authService.getUserByLogin(user.getUsername(), currentPassword);
+        if (verify == null) {
+            request.setAttribute("errorPassword", "Mật khẩu hiện tại sai");
+            request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
+            return;
+        }
+        int change = authService.updatePasswordByUserId(user.getUserId(), newPassword);
+        if (change > 0) {
+            session.invalidate();
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?resetSuccess=true");
+            return;
+        } else {
+            request.setAttribute("errorMessage", "Có lỗi xảy ra khi cập nhật mật khẩu. Vui lòng thử lại.");
+            request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
+        }
     }
 
     /**

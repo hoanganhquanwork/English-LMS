@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import model.OauthAccount;
 import model.Users;
+import util.BCryptUtil;
 import util.EmailUtil;
 import util.GoogleLogin;
 
@@ -47,7 +48,7 @@ public class AuthService {
     }
 
 //    return user when password correct and status = 'active'
-    public Users login(String login, String password) {
+    public Users getUserByLogin(String login, String password) {
         return udao.getUserByLogin(login, password, true);
     }
 
@@ -59,11 +60,8 @@ public class AuthService {
 
     public Users loginWithGoogle(String code) throws IOException {
         String accessToken = GoogleLogin.getToken(code);
-
         OauthAccount account = GoogleLogin.getUserInfo(accessToken);
-
         Users user = udao.getUserByProvider("google", account.getId());
-
         if (user == null) {
             if (udao.getUserByEmail(account.getEmail()) != null || udao.getUserByUserName(account.getEmail()) != null) {
                 throw new IllegalStateException("Email đã được sử dụng");
@@ -129,12 +127,12 @@ public class AuthService {
             tdao.saveResetPasswordToken(userId, token, expiry);
             String link = "http://localhost:9999/EnglishLMS/reset-password?token=" + token;
             String content = "<p>Xin chào <b>" + user.getUsername() + "</b>,"
-                           + " nhấn vào link sau để khôi phục mật khẩu:<br>"
-                           + "<a href=\"" + link + "\">Khôi phục mật khẩu</a></p>";
+                    + " nhấn vào link sau để khôi phục mật khẩu:<br>"
+                    + "<a href=\"" + link + "\">Khôi phục mật khẩu</a></p>";
             EmailUtil.send(email, "ELMS: Reset your password", content);
         }
     }
-    
+
     public Integer verifyToken(String token) throws Exception {
         return tdao.getUserIdByResetToken(token);
     }
@@ -142,9 +140,14 @@ public class AuthService {
     public void markTokenUsed(String token) throws Exception {
         tdao.markUsedToken(token);
     }
-    
-    public int updatePasswordByUserId(int userId, String hashPassword){
-        return udao.updatePasswordByID(userId, hashPassword);
+
+    public int updatePasswordByUserId(int userId, String password) {
+        String hashedPassword = BCryptUtil.hashPassword(password);
+        return udao.updatePasswordByID(userId, hashedPassword);
+    }
+
+    public boolean isOAuthUser(int userId) {
+        return udao.existsOAuthAccount(userId);
     }
 
 }

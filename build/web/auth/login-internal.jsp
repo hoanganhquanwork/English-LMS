@@ -1,11 +1,12 @@
 <%-- 
-    Document   : login
-    Created on : Sep 21, 2025, 11:01:17 PM
+    Document   : login-internal
+    Created on : Sep 27, 2025, 12:05:13 AM
     Author     : Admin
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -46,11 +47,11 @@
             <c:if test="${param.errorEmail == true}">
                 <div class="alert alert-danger py-2">Email này đã được sử dụng</div>
             </c:if>
-            <c:if test="${param.errorGoogle == true}">
-                <div class="alert alert-danger py-2">Đăng nhập Google thất bại</div>
-            </c:if>
             <c:if test="${param.errorRole == true}">
                 <div class="alert alert-danger py-2">Bạn không có quyền truy cập</div>
+            </c:if>
+            <c:if test="${param.errorGoogle == true}">
+                <div class="alert alert-danger py-2">Đăng nhập Google thất bại</div>
             </c:if>
             <c:if test="${param.success == true}">
                 <div class="alert alert-success py-2">Đăng ký thành công. Vui lòng đăng nhập lại.</div>
@@ -58,13 +59,11 @@
             <c:if test="${param.resetSuccess == true}">
                 <div class="alert alert-success py-2">Đổi mật khẩu thành công. Vui lòng đăng nhập lại.</div>
             </c:if>
-            <c:if test="${param.deactiveSuccess == true}">
-                <div class="alert alert-success py-2">Tài khoản bị vô hiệu hóa thành công</div>
-            </c:if>
-            <div class="card p-4">
-                <h4 class="text-center mb-3">Đăng nhập</h4>
 
-                <form action="${pageContext.request.contextPath}/login" method="post">
+            <div class="card p-4">
+                <h4 class="text-center mb-3">Đăng nhập (nội bộ)</h4>
+
+                <form action="${pageContext.request.contextPath}/loginInternal" method="post">
                     <div class="mb-3">
                         <label for="username" class="form-label">Tên đăng nhập</label>
                         <input type="text" class="form-control" id="username" name="username" 
@@ -78,10 +77,6 @@
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe" name="remember-me">
-                            <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
-                        </div>
                         <a class="text-decoration-none" href="${pageContext.request.contextPath}/forgot-password">
                             Quên mật khẩu?
                         </a>
@@ -92,15 +87,10 @@
 
                 <div class="text-center text-muted my-3">— hoặc —</div>
 
-                <a class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center oauth-btn"
-                   href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=http://localhost:9999/EnglishLMS/loginGoogle&response_type=code&client_id=580057518228-m468d3eaav982ok87db2lg5k0vp9b352.apps.googleusercontent.com&approval_prompt=force">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
-                    Đăng nhập bằng Google
-                </a>
 
                 <p class="text-center mt-3 mb-0">
                     Chưa có tài khoản?
-                    <a href="${pageContext.request.contextPath}/register" class="text-decoration-none">Đăng ký ngay</a>
+                    <a href="${pageContext.request.contextPath}/registerInternal" class="text-decoration-none">Đăng ký ngay</a>
                 </p>
             </div>
         </div>

@@ -35,4 +35,8 @@ public class TokenService {
     public int markUsedResetToken(String token){
         return tdao.markUsedToken(token);
     }
+    
+    public Users getUserByResetToken(String token){
+        return tdao.getUserByResetToken(token);
+    }
 }
