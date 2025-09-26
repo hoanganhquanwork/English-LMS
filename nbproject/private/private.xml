@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/D:/FPT/Semester5_2025_Fall/4_SWP391/LMS_Project/EnglishLMS/src/java/service/AuthService.java</file>
+            <file>file:/D:/FPT/Semester5_2025_Fall/4_SWP391/LMS_Project/EnglishLMS/src/java/controller/auth/LogoutServlet.java</file>
+            <file>file:/D:/FPT/Semester5_2025_Fall/4_SWP391/LMS_Project/EnglishLMS/src/java/dal/UserDAO.java</file>
+            <file>file:/D:/FPT/Semester5_2025_Fall/4_SWP391/LMS_Project/EnglishLMS/src/java/controller/auth/LoginServlet.java</file>
+        </group>
+    </open-files>
 </project-private>

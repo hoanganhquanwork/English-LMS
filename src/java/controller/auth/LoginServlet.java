@@ -84,7 +84,7 @@ public class LoginServlet extends HttpServlet {
                             session.setAttribute("user", user);
                             response.sendRedirect("home");
                             return;
-                        }else{
+                        } else {
                             //Wrong or expired token -> remove
                             tokenService.deleteRememberToken(rawToken);
                             c.setValue("");
@@ -116,13 +116,13 @@ public class LoginServlet extends HttpServlet {
 
         Users user = authService.login(username, password);
         if (user != null) {
-           HttpSession session = request.getSession(true);
-            request.changeSessionId();                 
+            HttpSession session = request.getSession(true);
+            request.changeSessionId();
             session.setAttribute("user", user);
             session.setAttribute("role", user.getRole());
 
             if (rememberMe != null) {
-                authService.createRememberMe(user, response); 
+                authService.createRememberMe(user, response);
             }
 
             response.sendRedirect(request.getContextPath() + "/home");

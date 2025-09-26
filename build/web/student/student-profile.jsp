@@ -13,6 +13,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/student-profile.css"/>
+        
     </head>
     <body>
         <div class="profile-main">
@@ -112,7 +113,7 @@
     <script>
         function edit() {
             let inputs = document.querySelectorAll(".profile-form-group input, .profile-form-group select");
-            let unchange = ['username', 'role', 'email', 'gender'];
+            let unchange = ['username', 'role', 'email'];
 
             for (let i = 0; i < inputs.length; i++) {
                 let input = inputs[i];
