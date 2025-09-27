@@ -54,7 +54,7 @@ public class DeleteCourse extends HttpServlet {
           boolean success = courseService.removeCourse(courseId);
 
         if (success) {
-            response.sendRedirect("manage?id=3"); 
+            response.sendRedirect("manage"); 
         } else {
             response.getWriter().println("Xóa khóa học thất bại!");
         }

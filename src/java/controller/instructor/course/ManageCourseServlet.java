@@ -11,9 +11,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Category;
 import model.Course;
+import model.Users;
 import service.CategoryService;
 import service.CourseService;
 
@@ -47,15 +49,26 @@ public class ManageCourseServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        int instructorId = Integer.parseInt(request.getParameter("id"));
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
 
-        int instructorId = 3;
+        Users user = (Users) session.getAttribute("user");
+
+        
+        if (!"Instructor".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect("home");
+            return;
+        }
+
+        int instructorId = user.getUserId();
         String keyword = request.getParameter("keyword");
         String status = request.getParameter("status");
-        
+
         List<Category> cateList = categoryService.getAllCategories();
         List<Course> courseList = courseService.searchAndFilterCourses(instructorId, keyword, status);
-        
 
         request.setAttribute("courseList", courseList);
         request.setAttribute("cateList", cateList);

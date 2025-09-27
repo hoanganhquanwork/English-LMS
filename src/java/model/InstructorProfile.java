@@ -55,6 +55,11 @@ public class InstructorProfile {
     public void setQualifications(String qualifications) {
         this.qualifications = qualifications;
     }
+
+    @Override
+    public String toString() {
+        return "InstructorProfile{" + "userId=" + userId + ", bio=" + bio + ", expertise=" + expertise + ", qualifications=" + qualifications + '}';
+    }
     
     
 }

@@ -109,35 +109,16 @@ public class CourseDAO extends DBContext {
 
         return c;
     }
-
-//    public void addCourse(Course course) {
-//        String sql = "INSERT INTO Course (title, description, language, level, thumbnail, price, created_by, category_id) "
-//                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-//            ps.setString(1, course.getTitle());
-//            ps.setString(2, course.getDescription());
-//            ps.setString(3, course.getLanguage());
-//            ps.setString(4, course.getLevel());
-//            ps.setString(5, course.getThumbnail());
-//            ps.setBigDecimal(6, course.getPrice());
-//            ps.setInt(7, course.getCreatedBy().getUserId());
-//            ps.setInt(8, course.getCategory().getCategoryId());
-//            ps.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
     public  boolean  addCourse(Course course) {
-        String sql = "INSERT INTO Course (title, description, language, level, thumbnail, created_by, category_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Course (title, description, language, level, created_by, category_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, course.getTitle());
             ps.setString(2, course.getDescription());
             ps.setString(3, course.getLanguage());
             ps.setString(4, course.getLevel());
-            ps.setString(5, course.getThumbnail());
-            ps.setInt(6, 3);
-            ps.setInt(7, course.getCategory().getCategoryId());
+            ps.setInt(5, course.getCreatedBy().getUserId());
+            ps.setInt(6, course.getCategory().getCategoryId());
            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

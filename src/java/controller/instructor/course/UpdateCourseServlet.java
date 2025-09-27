@@ -96,7 +96,7 @@ public class UpdateCourseServlet extends HttpServlet {
             boolean updated = courseService.updateCourse(course);
 
             if (updated) {
-                response.sendRedirect("manage?id=3");
+                response.sendRedirect("manage");
             } else {
               
             }

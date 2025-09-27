@@ -13,5 +13,6 @@
     </head>
     <body>
         <h1>Hello ${sessionScope.user.username}</h1>
+         <a href="instructorDashboard" title="Admin Dashboard">Click here</a>
     </body>
 </html>
