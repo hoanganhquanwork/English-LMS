@@ -79,26 +79,11 @@
                                 <i class="fas fa-play-circle"></i>
                                 Nội dung khóa học
                             </a>
-                            <a href="course-students.html" class="sidebar-link">
+                            <a href="courseStudents?courseId=${course.courseId}" class="sidebar-link">
                                 <i class="fas fa-users"></i>
                                 Học sinh
                             </a>
-                            <a href="assignments.html" class="sidebar-link">
-                                <i class="fas fa-tasks"></i>
-                                Bài tập
-                            </a>
-                            <a href="#" class="sidebar-link">
-                                <i class="fas fa-chart-bar"></i>
-                                Báo cáo tiến độ
-                            </a>
-                            <a href="#" class="sidebar-link">
-                                <i class="fas fa-comments"></i>
-                                Thảo luận
-                            </a>
-                            <a href="#" class="sidebar-link">
-                                <i class="fas fa-cog"></i>
-                                Cài đặt khóa học
-                            </a>
+                          
                         </nav>
                     </div>
 

@@ -4,10 +4,14 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/english-lms/src/java/model/Course.java</file>
-            <file>file:/D:/english-lms/src/java/model/InstructorProfile.java</file>
-            <file>file:/D:/english-lms/src/java/dal/CourseDAO.java</file>
-            <file>file:/D:/english-lms/src/java/model/Category.java</file>
-            <file>file:/D:/english-lms/src/java/controller/instructor/course/AddCourseServlet.java</file>
+            <file>file:/D:/english-lms/src/java/model/Users.java</file>
+            <file>file:/D:/english-lms/src/java/model/Enrollment.java</file>
+            <file>file:/D:/english-lms/src/java/model/StudentProfile.java</file>
+            <file>file:/D:/english-lms/src/java/controller/instructor/course/CourseStudentsServlet.java</file>
+            <file>file:/D:/english-lms/src/java/dal/EnrollmentDAO.java</file>
+            <file>file:/D:/english-lms/src/java/service/EnrollmentService.java</file>
+            <file>file:/D:/english-lms/web/teacher1/Module.jsp</file>
+            <file>file:/D:/english-lms/web/teacher1/student.jsp</file>
         </group>
     </open-files>
 </project-private>
