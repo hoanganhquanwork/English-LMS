@@ -1,1 +1,18 @@
+# Build output
 /build/
+/dist/
+/target/
+*.class
+*.log
+*.war
+*.ear
+
+# IDE files
+/.idea/
+/.vscode/
+/nbproject/private/
+/out/
+
+# OS-specific
+.DS_Store
+Thumbs.db

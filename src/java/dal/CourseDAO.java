@@ -1,13 +1,13 @@
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import java.util.List;
 import model.Course;
 
+/**
+ *
+ * @author Admin
+ */
 import model.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -277,7 +277,7 @@ public class CourseDAO extends DBContext {
         }
         return list;
     }
-     private CategoryDAO cdao = new CategoryDAO();
+    private CategoryDAO cdao = new CategoryDAO();
 
     public int countLessonsByCourse(int courseId) {
         String sql = "SELECT COUNT(*) FROM Lessons WHERE course_id = ?";
@@ -421,5 +421,5 @@ public class CourseDAO extends DBContext {
         }
         return false;
     }
-     
+
 }
