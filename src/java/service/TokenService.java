@@ -16,15 +16,27 @@ public class TokenService {
 
     private TokenDAO tdao = new TokenDAO();
 
-    public int saveToken(String token, int userId, LocalDateTime expiryDate) {
-        return tdao.saveToken(token, userId, expiryDate);
+    public int saveRememberToken(String token, int userId, LocalDateTime expiryDate) {
+        return tdao.saveRememberToken(token, userId, expiryDate);
     }
 
-    public Users getUserByToken(String token) {
-        return tdao.getUserByToken(token);
+    public Users getUserByRememberToken(String token) {
+        return tdao.getUserByRememberToken(token);
     }
 
-    public int deleteToken(String token) {
-        return tdao.deleteToken(token);
+    public int deleteRememberToken(String token) {
+        return tdao.deleteRememberToken(token);
+    }  
+    
+    public Integer verifyResetToken(String token){
+        return tdao.getUserIdByResetToken(token);
+    }
+    
+    public int markUsedResetToken(String token){
+        return tdao.markUsedToken(token);
+    }
+    
+    public Users getUserByResetToken(String token){
+        return tdao.getUserByResetToken(token);
     }
 }

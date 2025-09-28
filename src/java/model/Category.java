@@ -13,14 +13,16 @@ public class Category {
     private int categoryId;
     private String name;
     private String description;
+    private String picture;
 
     public Category() {
     }
 
-    public Category(int categoryId, String name, String description) {
+    public Category(int categoryId, String name, String description, String picture) {
         this.categoryId = categoryId;
         this.name = name;
         this.description = description;
+        this.picture = picture;
     }
 
     public int getCategoryId() {
@@ -47,4 +49,11 @@ public class Category {
         this.description = description;
     }
 
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 }

@@ -135,12 +135,12 @@
                                                         <i class="fas fa-user"></i>
                                                     </div>
                                                     <div>
-                                                        <div class="student-name">${h.student.user.fullName}</div>
-                                                        <div class="student-id">ID: ST${h.student.user.userId}</div>
+                                                        <div class="student-name">${h.user.fullName}</div>
+                                                        <div class="student-id">ID: ST${h.user.userId}</div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>${h.student.user.email}</td>
+                                            <td>${h.user.email}</td>
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${h.status eq 'active'}">

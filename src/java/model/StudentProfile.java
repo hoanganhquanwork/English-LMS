@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -6,31 +7,32 @@ package model;
 
 /**
  *
- * @author Lenovo
+ * @author Admin
  */
 public class StudentProfile {
-
-    private Users user;
-    private String gradeLevel;
-    private String institution;
-    private String address;
+    private int userId;
+    private String gradeLevel;   
+    private String institution;  
+    private Integer parentId;     //Interger do co the null     
+    private String address;     
 
     public StudentProfile() {
     }
 
-    public StudentProfile(Users user, String gradeLevel, String institution, String address) {
-        this.user = user;
+    public StudentProfile(int userId, String gradeLevel, String institution, Integer parentId, String address) {
+        this.userId = userId;
         this.gradeLevel = gradeLevel;
         this.institution = institution;
+        this.parentId = parentId;
         this.address = address;
     }
 
-    public Users getUser() {
-        return user;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser(Users user) {
-        this.user = user;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getGradeLevel() {
@@ -49,6 +51,14 @@ public class StudentProfile {
         this.institution = institution;
     }
 
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
     public String getAddress() {
         return address;
     }
@@ -58,3 +68,4 @@ public class StudentProfile {
     }
 
 }
+

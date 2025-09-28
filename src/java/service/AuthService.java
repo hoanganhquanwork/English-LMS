@@ -9,10 +9,13 @@ import dal.UserDAO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import model.OauthAccount;
 import model.Users;
+import util.BCryptUtil;
+import util.EmailUtil;
 import util.GoogleLogin;
 
 /**
@@ -21,8 +24,8 @@ import util.GoogleLogin;
  */
 public class AuthService {
 
-    private UserDAO udao = new UserDAO();
-    private TokenDAO tdao = new TokenDAO();
+    private final UserDAO udao = new UserDAO();
+    private final TokenDAO tdao = new TokenDAO();
 
     public String register(Users user) {
         String email = user.getEmail();
@@ -45,7 +48,7 @@ public class AuthService {
     }
 
 //    return user when password correct and status = 'active'
-    public Users login(String login, String password) {
+    public Users getUserByLogin(String login, String password) {
         return udao.getUserByLogin(login, password, true);
     }
 
@@ -57,11 +60,8 @@ public class AuthService {
 
     public Users loginWithGoogle(String code) throws IOException {
         String accessToken = GoogleLogin.getToken(code);
-
         OauthAccount account = GoogleLogin.getUserInfo(accessToken);
-
         Users user = udao.getUserByProvider("google", account.getId());
-
         if (user == null) {
             if (udao.getUserByEmail(account.getEmail()) != null || udao.getUserByUserName(account.getEmail()) != null) {
                 throw new IllegalStateException("Email đã được sử dụng");
@@ -89,7 +89,7 @@ public class AuthService {
     public void createRememberMe(Users user, HttpServletResponse resp) {
         String token = UUID.randomUUID().toString();
         LocalDateTime expiry = LocalDateTime.now().plusDays(14);
-        tdao.saveToken(token, user.getUserId(), expiry);
+        tdao.saveRememberToken(token, user.getUserId(), expiry);
 
         Cookie ck = new Cookie("rememberToken", token);
         ck.setHttpOnly(true);
@@ -102,7 +102,7 @@ public class AuthService {
         if (rawToken == null || rawToken.isBlank()) {
             return null;
         }
-        Users u = tdao.getUserByToken(rawToken);
+        Users u = tdao.getUserByRememberToken(rawToken);
         if (u == null) {
             return null;
         }
@@ -114,7 +114,40 @@ public class AuthService {
 
     public void revokeRememberToken(String rawToken) {
         if (rawToken != null && !rawToken.isBlank()) {
-            tdao.deleteToken(rawToken);
+            tdao.deleteRememberToken(rawToken);
         }
     }
+
+    public void handleForgotPassword(String email) throws Exception {
+        Users user = udao.getUserByEmail(email);
+        if (user != null) {
+            int userId = user.getUserId();
+            String token = UUID.randomUUID().toString();
+            Timestamp expiry = new Timestamp(System.currentTimeMillis() + 15 * 60 * 1000);
+            tdao.saveResetPasswordToken(userId, token, expiry);
+            String link = "http://localhost:9999/EnglishLMS/reset-password?token=" + token;
+            String content = "<p>Xin chào <b>" + user.getUsername() + "</b>,"
+                    + " nhấn vào link sau để khôi phục mật khẩu:<br>"
+                    + "<a href=\"" + link + "\">Khôi phục mật khẩu</a></p>";
+            EmailUtil.send(email, "ELMS: Reset your password", content);
+        }
+    }
+
+    public Integer verifyToken(String token) throws Exception {
+        return tdao.getUserIdByResetToken(token);
+    }
+
+    public void markTokenUsed(String token) throws Exception {
+        tdao.markUsedToken(token);
+    }
+
+    public int updatePasswordByUserId(int userId, String password) {
+        String hashedPassword = BCryptUtil.hashPassword(password);
+        return udao.updatePasswordByID(userId, hashedPassword);
+    }
+
+    public boolean isOAuthUser(int userId) {
+        return udao.existsOAuthAccount(userId);
+    }
+
 }

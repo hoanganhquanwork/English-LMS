@@ -1,0 +1,119 @@
+body {
+    background: #fff;
+}
+.profile-main {
+    display: flex;
+    gap: 2.5rem;
+    max-width: 1200px;
+    margin: 100px auto 40px auto;
+    align-items: flex-start;
+}
+.profile-left {
+    flex: 0 0 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+.profile-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.avatar-wrapper {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #e74c3c;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.profile-upload {
+    color: #1565c0;
+    font-size: 0.98rem;
+    margin-bottom: 0.5rem;
+}
+.profile-upload input[type="file"] {
+    display: none;
+}
+
+.profile-upload-desc {
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.profile-right {
+    flex: 1;
+}
+.profile-form-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    padding: 2rem 2.5rem 2rem 2.5rem;
+}
+.profile-form-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+.profile-form-row {
+    display: flex;
+    gap: 1.2rem;
+    margin-bottom: 1.1rem;
+}
+.profile-form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.profile-form-group label {
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 0.2rem;
+}
+.profile-form-group input,
+.profile-form-group select {
+    background: #f8f9fa;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    color: #222;
+    height: 42px;
+    box-sizing: border-box;
+}
+.profile-form-group input[readonly] {
+    color: #888;
+}
+.profile-form-actions {
+    text-align: right;
+    margin-top: 1.5rem;
+}
+.profile-edit-btn, .profile-save-btn {
+    background: #1565c0;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+    margin-top: 10px
+}
+.profile-edit-btn:hover, .profile-save-btn:hover {
+    background: #0d47a1;
+}

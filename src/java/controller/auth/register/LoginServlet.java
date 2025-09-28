@@ -78,7 +78,7 @@ public class LoginServlet extends HttpServlet {
                 if ("rememberToken".equalsIgnoreCase(c.getName())) {
                     String rawToken = c.getValue();
                     if (rawToken != null && !rawToken.isBlank()) {
-                        Users user = tokenService.getUserByToken(rawToken);
+                        Users user = tokenService.getUserByRememberToken(rawToken);
                         if (user != null && "active".equalsIgnoreCase(user.getStatus())) {
                             HttpSession session = request.getSession(true);
                             session.setAttribute("user", user);
@@ -86,7 +86,7 @@ public class LoginServlet extends HttpServlet {
                             return;
                         }else{
                             //Wrong or expired token -> remove
-                            tokenService.deleteToken(rawToken);
+                            tokenService.deleteRememberToken(rawToken);
                             c.setValue("");
                             c.setPath("/");
                             c.setMaxAge(0);
@@ -114,7 +114,7 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("remember-me");
 
-        Users user = authService.login(username, password);
+        Users user = authService.getUserByLogin(username, password);
         if (user != null) {
            HttpSession session = request.getSession(true);
             request.changeSessionId();                 

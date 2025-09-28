@@ -6,6 +6,8 @@ package model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.swing.text.DateFormatter;
 
 /**
  *
@@ -121,6 +123,12 @@ public class Course {
 
     public void setPublishAt(LocalDateTime publishAt) {
         this.publishAt = publishAt;
+    }
+    
+    public String getPublishAtStr(){
+        if (publishAt == null) return "";
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return publishAt.format(fmt);
     }
 
     public InstructorProfile getCreatedBy() {

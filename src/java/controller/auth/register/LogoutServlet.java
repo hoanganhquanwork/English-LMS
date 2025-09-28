@@ -70,7 +70,7 @@ public class LogoutServlet extends HttpServlet {
         if (cookies != null) {
             for (Cookie c : cookies) {
                 if ("rememberToken".equals(c.getName()) && c.getValue() != null && !c.getValue().isBlank()) {
-                    tokenService.deleteToken(c.getValue());
+                    tokenService.deleteRememberToken(c.getValue());
                     c.setValue("");
                     c.setPath("/");
                     c.setMaxAge(0);

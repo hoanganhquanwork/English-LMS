@@ -19,69 +19,61 @@ import model.Users;
  */
 public class EnrollmentDAO extends DBContext {
     public List<Enrollment> searchAndFilterEnrollments(int courseId, String keyword, String status) {
-        List<Enrollment> list = new ArrayList<>();
+    List<Enrollment> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder(
-                "SELECT e.enrollment_id, e.status, e.enrolled_at, "
-                + "u.user_id, u.username, u.full_name, u.email, u.status AS user_status, "
-                + "sp.grade_level, sp.institution, sp.address "
-                + "FROM Enrollments e "
-                + "JOIN StudentProfile sp ON e.student_id = sp.user_id "
-                + "JOIN Users u ON sp.user_id = u.user_id "
-                + "WHERE e.course_id = ? "
-        );
+    StringBuilder sql = new StringBuilder(
+        "SELECT e.enrollment_id, e.status, e.enrolled_at, "
+      + "u.user_id, u.username, u.full_name, u.email, u.status AS user_status "
+      + "FROM Enrollments e "
+      + "JOIN Users u ON e.student_id = u.user_id "
+      + "WHERE e.course_id = ? "
+    );
+
+    if (keyword != null && !keyword.trim().isEmpty()) {
+        sql.append("AND (u.full_name LIKE ? OR u.email LIKE ?) ");
+    }
+    if (status != null && !status.equals("all") && !status.isEmpty()) {
+        sql.append("AND e.status = ? ");
+    }
+
+    try (PreparedStatement st = connection.prepareStatement(sql.toString())) {
+        int idx = 1;
+        st.setInt(idx++, courseId);
 
         if (keyword != null && !keyword.trim().isEmpty()) {
-            sql.append("AND (u.full_name LIKE ? OR u.email LIKE ?) ");
+            st.setString(idx++, "%" + keyword + "%");
+            st.setString(idx++, "%" + keyword + "%");
         }
         if (status != null && !status.equals("all") && !status.isEmpty()) {
-            sql.append("AND e.status = ? ");
+            st.setString(idx++, status);
         }
 
-        try (PreparedStatement st = connection.prepareStatement(sql.toString())) {
-            int idx = 1;
-            st.setInt(idx++, courseId);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            // Users
+            Users user = new Users();
+            user.setUserId(rs.getInt("user_id"));
+            user.setUsername(rs.getString("username"));
+            user.setFullName(rs.getString("full_name"));
+            user.setEmail(rs.getString("email"));
+            user.setStatus(rs.getString("user_status"));
 
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                st.setString(idx++, "%" + keyword + "%");
-                st.setString(idx++, "%" + keyword + "%");
-            }
-            if (status != null && !status.equals("all") && !status.isEmpty()) {
-                st.setString(idx++, status);
-            }
+            // Enrollment
+            Enrollment e = new Enrollment();
+            e.setEnrollmentId(rs.getInt("enrollment_id"));
+            e.setStatus(rs.getString("status"));
+            e.setEnrolledAt(rs.getDate("enrolled_at"));
+            e.setUser(user);
 
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                // Users
-                Users user = new Users();
-                user.setUserId(rs.getInt("user_id"));
-                user.setUsername(rs.getString("username"));
-                user.setFullName(rs.getString("full_name"));
-                user.setEmail(rs.getString("email"));
-                user.setStatus(rs.getString("user_status"));
-
-                // StudentProfile
-                StudentProfile sp = new StudentProfile();
-                sp.setUser(user);
-                sp.setGradeLevel(rs.getString("grade_level"));
-                sp.setInstitution(rs.getString("institution"));
-                sp.setAddress(rs.getString("address"));
-
-                // Enrollment
-                Enrollment e = new Enrollment();
-                e.setEnrollmentId(rs.getInt("enrollment_id"));
-                e.setStatus(rs.getString("status"));
-                e.setEnrolledAt(rs.getDate("enrolled_at"));
-                e.setStudent(sp);
-
-                list.add(e);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            list.add(e);
         }
-
-        return list;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return list;
+}
+
 
 
 }

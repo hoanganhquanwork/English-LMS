@@ -4,6 +4,7 @@
  */
 package controller.instructor.module;
 
+import dal.InstructorProfileDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,8 +12,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.Course;
+import model.InstructorProfile;
 import model.Module;
+import model.Users;
 import service.CourseService;
 import service.ModuleService;
 
@@ -56,12 +60,25 @@ public class AddModule extends HttpServlet {
         String title = request.getParameter("moduleName");
         String description = request.getParameter("moduleDescription");
 
+        HttpSession session = request.getSession(false);
+        Users user = (Users) session.getAttribute("user");
+
+        if (user == null || !"Instructor".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+        InstructorProfileDAO instructorDAO = new InstructorProfileDAO();
+        InstructorProfile instructor = instructorDAO.getByUserId(user.getUserId());
+        if (instructor == null) {
+            response.sendRedirect("manage");
+        }
+        
         Course course = courseService.getCourseById(courseId);
         Module module = new Module();
         module.setCourse(course);
         module.setTitle(title);
         module.setDescription(description);
-
+         module.setCreatedBy(instructor);
         boolean success = moduleService.createModule(module);
 
         if (success) {
