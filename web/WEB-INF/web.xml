@@ -1,13 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-         version="3.1">
+<web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+    <servlet>
+        <servlet-name>AddCourseServlet</servlet-name>
+        <servlet-class>controller.instructor.course.AddCourseServlet</servlet-class>
+    </servlet>
+     <servlet>
+        <servlet-name>FlashcardDashboardController</servlet-name>
+        <servlet-class>controller.Flashcard.CRUD.FlashcardDashboardController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FlashcardDashboardController</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>FlashcardSetController</servlet-name>
+        <servlet-class>controller.Flashcard.CRUD.FlashcardSetController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FlashcardSetController</servlet-name>
+        <url-pattern>/set</url-pattern>
+    </servlet-mapping>
 
-    <display-name>EnglishLMS</display-name>
-    <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
-
+<servlet>
+        <servlet-name>ParentProfileController</servlet-name>
+        <servlet-class>controller.Parent.Profile.ParentProfileController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ParentProfileController</servlet-name>
+        <url-pattern>/parent/profile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ParentProfileController</servlet-name>
+        <url-pattern>/parent/settings</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ParentProfileController</servlet-name>
+        <url-pattern>/parent/delete</url-pattern>
+    </servlet-mapping>
 </web-app>

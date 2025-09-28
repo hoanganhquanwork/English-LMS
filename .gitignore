@@ -1,11 +1,21 @@
+# Build output
 /build/
 /dist/
-/out/
 /target/
-/nbproject/private/
 *.class
 *.log
+*.war
+*.ear
+
+# IDE files
+/.idea/
+/.vscode/
+/nbproject/private/
+/out/
+
+# OS-specific
 .DS_Store
 Thumbs.db
-/.idea/
-*.iml
+/dist/
+nbproject/build-impl.xml~
+nbproject/project.xml.xml
