@@ -63,10 +63,19 @@
                                  style="width:36px; height:36px; object-fit:cover;">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
-                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
+                            <c:if test="${sessionScope.user.role == 'Student'}">
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
+                                </c:if>
+
+                            <c:if test="${sessionScope.user.role == 'Parent'}">
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/parent/profile">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/parent/settings">Cài đặt tài khoản</a></li>
+                                </c:if>
+
                             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
                         </ul>
+
                     </div>
                 </c:if>
             </div>
