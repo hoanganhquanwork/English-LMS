@@ -18,7 +18,7 @@
 
         <style>
             :root{
-                --hero-img: url('../image/home/welcome.jpg');
+                --hero-img: url('image/home/welcome.jpg');
             }
         </style>
     </head>
@@ -185,5 +185,6 @@
         <header>
             <jsp:include page="footer.jsp"/>
         </header>
+
     </body>
 </html>
