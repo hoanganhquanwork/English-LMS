@@ -19,84 +19,92 @@
         </style>
     </head>
     <body>
-        <div class="wrap">
-            <div class="left">
-                <h2>Tạo tài khoản nội bộ</h2>
-                <form action="${pageContext.request.contextPath}/registerInternal" method="post" onsubmit="return validateForm()">
+        <header>
+            <jsp:include page="../header.jsp"/>
+        </header>
+        <main>
+            <div class="wrap">
+                <div class="left">
+                    <h2>Tạo tài khoản nội bộ</h2>
+                    <form action="${pageContext.request.contextPath}/registerInternal" method="post" onsubmit="return validateForm()">
 
-                    <label class="form-label">Tên đăng nhập:</label>
-                    <input class="form-control" name="username" id="username" value="${requestScope.username}" required/>
-                    <span id="errUsername" class="err"></span>
-                    <c:if test="${requestScope.error == 'Tên đăng nhập tồn tại'}">
-                        <div class="err mt-1">Tên đăng nhập tồn tại</div>
-                    </c:if>
-                    <br>
-
-
-                    <label class="form-label">Email:</label>
-                    <input class="form-control" type="email" name="email" id="email" value="${requestScope.email}" required>
-                    <span id="errEmail" class="err"></span>
-                    <c:if test="${requestScope.error == 'Email đã được sử dụng!'}">
-                        <div class="err mt-1">Email đã được sử dụng</div>
-                    </c:if>
-                    <br>
+                        <label class="form-label">Tên đăng nhập:</label>
+                        <input class="form-control" name="username" id="username" value="${requestScope.username}" required/>
+                        <span id="errUsername" class="err"></span>
+                        <c:if test="${requestScope.error == 'Tên đăng nhập tồn tại'}">
+                            <div class="err mt-1">Tên đăng nhập tồn tại</div>
+                        </c:if>
+                        <br>
 
 
-                    <label class="form-label">Mật khẩu:</label>
-                    <input class="form-control" type="password" name="password" id="password" required>
-                    <span id="errPassword" class="err"></span>
-                    <br>
+                        <label class="form-label">Email:</label>
+                        <input class="form-control" type="email" name="email" id="email" value="${requestScope.email}" required>
+                        <span id="errEmail" class="err"></span>
+                        <c:if test="${requestScope.error == 'Email đã được sử dụng!'}">
+                            <div class="err mt-1">Email đã được sử dụng</div>
+                        </c:if>
+                        <br>
 
 
-                    <label class="form-label">Nhập lại mật khẩu:</label>
-                    <input class="form-control" type="password" name="repassword" id="repassword" required>
-                    <span id="errRepassword" class="err"></span>
-                    <br>
+                        <label class="form-label">Mật khẩu:</label>
+                        <input class="form-control" type="password" name="password" id="password" required>
+                        <span id="errPassword" class="err"></span>
+                        <br>
 
 
-                    <label class="form-label">Giới tính:</label>
-                    <div class="d-flex gap-4">
-                        <label class="form-check">
-                            <input class="form-check-input" type="radio" name="gender" value="male"
-                                   ${empty requestScope.gender || requestScope.gender == 'male' ? 'checked' : ''}> Nam
-                        </label>
-                        <label class="form-check">
-                            <input class="form-check-input" type="radio" name="gender" value="female"
-                                   ${requestScope.gender == 'female' ? 'checked' : ''}> Nữ
-                        </label>
-                        <label class="form-check">
-                            <input class="form-check-input" type="radio" name="gender" value="other"
-                                   ${requestScope.gender == 'other' ? 'checked' : ''}> Khác
-                        </label>
-                    </div>
-                    <br>
+                        <label class="form-label">Nhập lại mật khẩu:</label>
+                        <input class="form-control" type="password" name="repassword" id="repassword" required>
+                        <span id="errRepassword" class="err"></span>
+                        <br>
 
 
-                    <label class="form-label">Vai trò:</label>
-                    <div class="d-flex gap-4">
-                        <label class="form-check">
-                            <input class="form-check-input" type="radio" name="role" value="Instructor"
-                                   ${empty requestScope.role || requestScope.role == 'Instructor' ? 'checked' : ''} required> Giáo viên
-                        </label>
-                        <label class="form-check">
-                            <input class="form-check-input" type="radio" name="role" value="Manager"
-                                   ${requestScope.role == 'Manager' ? 'checked' : ''} required> Quản lý
-                        </label>
-                    </div>
-                    <br>
+                        <label class="form-label">Giới tính:</label>
+                        <div class="d-flex gap-4">
+                            <label class="form-check">
+                                <input class="form-check-input" type="radio" name="gender" value="male"
+                                       ${empty requestScope.gender || requestScope.gender == 'male' ? 'checked' : ''}> Nam
+                            </label>
+                            <label class="form-check">
+                                <input class="form-check-input" type="radio" name="gender" value="female"
+                                       ${requestScope.gender == 'female' ? 'checked' : ''}> Nữ
+                            </label>
+                            <label class="form-check">
+                                <input class="form-check-input" type="radio" name="gender" value="other"
+                                       ${requestScope.gender == 'other' ? 'checked' : ''}> Khác
+                            </label>
+                        </div>
+                        <br>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
-                    </div>
-                </form>
 
-                <p class="mt-3">Đã có tài khoản? <a href="loginInternal">Đăng nhập</a></p>
+                        <label class="form-label">Vai trò:</label>
+                        <div class="d-flex gap-4">
+                            <label class="form-check">
+                                <input class="form-check-input" type="radio" name="role" value="Instructor"
+                                       ${empty requestScope.role || requestScope.role == 'Instructor' ? 'checked' : ''} required> Giáo viên
+                            </label>
+                            <label class="form-check">
+                                <input class="form-check-input" type="radio" name="role" value="Manager"
+                                       ${requestScope.role == 'Manager' ? 'checked' : ''} required> Quản lý
+                            </label>
+                        </div>
+                        <br>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
+                        </div>
+                    </form>
+
+                    <p class="mt-3">Đã có tài khoản? <a href="loginInternal">Đăng nhập</a></p>
+                </div>
+
+                <div class="right">
+                    <div class="inset"></div>
+                </div>
             </div>
-
-            <div class="right">
-                <div class="inset"></div>
-            </div>
-        </div>
+        </main>
+        <footer>
+            <jsp:include page="../footer.jsp"/>
+        </footer>
     </body>
     <script>
         function validateForm() {

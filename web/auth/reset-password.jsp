@@ -24,6 +24,9 @@
     </head>
 
     <body>
+        <header>
+            <jsp:include page="../header.jsp"/>
+        </header>
         <div class="container">
             <div class="card p-4">
                 <h2 class="text-center mb-3">Đặt lại mật khẩu</h2>
@@ -60,6 +63,9 @@
                 </form>
             </div>
         </div>
+        <footer>
+            <jsp:include page="../footer.jsp"/>
+        </footer>
     </body>
     <script>
         function validatePassword() {
@@ -84,5 +90,6 @@
 
             return valid;
         }
+
     </script>
 </html>

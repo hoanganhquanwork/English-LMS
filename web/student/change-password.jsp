@@ -14,6 +14,9 @@
 
     </head>
     <body>
+        <header>
+            <jsp:include page="../header.jsp"/>
+        </header>
         <div class="container py-4">
             <div class="row g-4">
                 <div class="col-lg-8">
@@ -77,7 +80,11 @@
 
             </div>
         </div>
+        <footer>
+            <jsp:include page="../footer.jsp"/>
+        </footer>
     </body>
+
     <script>
         function validatePassword() {
             document.getElementById("errPassword").innerText = "";

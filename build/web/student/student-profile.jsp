@@ -13,9 +13,12 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/student-profile.css"/>
-        
+
     </head>
     <body>
+        <header>
+            <jsp:include page="../header.jsp"/>
+        </header>
         <div class="profile-main">
             <!-- LEFT: Avatar -->
             <div class="profile-left">
@@ -109,7 +112,11 @@
                 </div>
             </form>
         </div>
+        <footer>
+            <jsp:include page="../footer.jsp"/>
+        </footer>
     </body>
+
     <script>
         function edit() {
             let inputs = document.querySelectorAll(".profile-form-group input, .profile-form-group select");

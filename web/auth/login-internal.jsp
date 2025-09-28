@@ -16,13 +16,18 @@
         <style>
             body {
                 background-color: #f5f7fb;
+                display: flex;
+                flex-direction: column;
+            }
+            main {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-top: 50px;
             }
             .login-container {
                 width: 380px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
             }
             .card {
                 border-radius: 12px;
@@ -36,63 +41,72 @@
         </style>
     </head>
     <body>
-        <div class="login-container">
+        <header>
+            <jsp:include page="../header.jsp"/>
+        </header>
+        <main>
+            <div class="login-container">
 
-            <c:if test="${not empty requestScope.errorLogin}">
-                <div class="alert alert-danger py-2">${requestScope.errorLogin}</div>
-            </c:if>
-            <c:if test="${not empty requestScope.inactive}">
-                <div class="alert alert-danger py-2">${requestScope.inactive}</div>
-            </c:if>
-            <c:if test="${param.errorEmail == true}">
-                <div class="alert alert-danger py-2">Email này đã được sử dụng</div>
-            </c:if>
-            <c:if test="${param.errorRole == true}">
-                <div class="alert alert-danger py-2">Bạn không có quyền truy cập</div>
-            </c:if>
-            <c:if test="${param.errorGoogle == true}">
-                <div class="alert alert-danger py-2">Đăng nhập Google thất bại</div>
-            </c:if>
-            <c:if test="${param.success == true}">
-                <div class="alert alert-success py-2">Đăng ký thành công. Vui lòng đăng nhập lại.</div>
-            </c:if>
-            <c:if test="${param.resetSuccess == true}">
-                <div class="alert alert-success py-2">Đổi mật khẩu thành công. Vui lòng đăng nhập lại.</div>
-            </c:if>
+                <c:if test="${not empty requestScope.errorLogin}">
+                    <div class="alert alert-danger py-2">${requestScope.errorLogin}</div>
+                </c:if>
+                <c:if test="${not empty requestScope.inactive}">
+                    <div class="alert alert-danger py-2">${requestScope.inactive}</div>
+                </c:if>
+                <c:if test="${param.errorEmail == true}">
+                    <div class="alert alert-danger py-2">Email này đã được sử dụng</div>
+                </c:if>
+                <c:if test="${param.errorRole == true}">
+                    <div class="alert alert-danger py-2">Bạn không có quyền truy cập</div>
+                </c:if>
+                <c:if test="${param.errorGoogle == true}">
+                    <div class="alert alert-danger py-2">Đăng nhập Google thất bại</div>
+                </c:if>
+                <c:if test="${param.success == true}">
+                    <div class="alert alert-success py-2">Đăng ký thành công. Vui lòng đăng nhập lại.</div>
+                </c:if>
+                <c:if test="${param.resetSuccess == true}">
+                    <div class="alert alert-success py-2">Đổi mật khẩu thành công. Vui lòng đăng nhập lại.</div>
+                </c:if>
 
-            <div class="card p-4">
-                <h4 class="text-center mb-3">Đăng nhập (nội bộ)</h4>
+                <div class="card p-4">
+                    <h4 class="text-center mb-3">Đăng nhập (nội bộ)</h4>
 
-                <form action="${pageContext.request.contextPath}/loginInternal" method="post">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Tên đăng nhập</label>
-                        <input type="text" class="form-control" id="username" name="username" 
-                               value="${requestScope.username}" placeholder="Nhập tên đăng nhập" required>
-                    </div>
+                    <form action="${pageContext.request.contextPath}/loginInternal" method="post">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   value="${requestScope.username}" placeholder="Nhập tên đăng nhập" required>
+                        </div>
 
-                    <div class="mb-2">
-                        <label for="password" class="form-label">Mật khẩu</label>
-                        <input type="password" class="form-control" id="password" name="password" 
-                               placeholder="Nhập mật khẩu" required>
-                    </div>
+                        <div class="mb-2">
+                            <label for="password" class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Nhập mật khẩu" required>
+                        </div>
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <a class="text-decoration-none" href="${pageContext.request.contextPath}/forgot-password">
-                            Quên mật khẩu?
-                        </a>
-                    </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <a class="text-decoration-none" href="${pageContext.request.contextPath}/forgot-password">
+                                Quên mật khẩu?
+                            </a>
+                        </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
-                </form>
+                        <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                    </form>
 
-                <div class="text-center text-muted my-3">— hoặc —</div>
+                    <div class="text-center text-muted my-3">— hoặc —</div>
 
 
-                <p class="text-center mt-3 mb-0">
-                    Chưa có tài khoản?
-                    <a href="${pageContext.request.contextPath}/registerInternal" class="text-decoration-none">Đăng ký ngay</a>
-                </p>
+                    <p class="text-center mt-3 mb-0">
+                        Chưa có tài khoản?
+                        <a href="${pageContext.request.contextPath}/registerInternal" class="text-decoration-none">Đăng ký ngay</a>
+                    </p>
+                </div>
             </div>
-        </div>
+        </main>
+        <footer>
+            <jsp:include page="../footer.jsp"/>
+        </footer>
     </body>
+
 </html>

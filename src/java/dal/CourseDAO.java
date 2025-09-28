@@ -115,7 +115,7 @@ public class CourseDAO extends DBContext {
     }
 
     public List<Category> getAllCategories() {
-        String sql = "SELECT category_id, name FROM Categories ORDER BY name";
+        String sql = "SELECT category_id, name, picture FROM Categories ORDER BY name";
         List<Category> list = new ArrayList<>();
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -124,6 +124,7 @@ public class CourseDAO extends DBContext {
                 Category c = new Category();
                 c.setCategoryId(rs.getInt("category_id"));
                 c.setName(rs.getString("name"));
+                c.setPicture(rs.getString("picture"));
                 list.add(c);
             }
         } catch (SQLException e) {
@@ -234,4 +235,50 @@ public class CourseDAO extends DBContext {
         sql.append(" AND ").append(col).append(" IN (").append(makePlaceholders(vals.length)).append(")");
         Collections.addAll(params, vals);
     }
+
+    public List<Course> getTopPopularCourse() {
+        String sql = "SELECT TOP 4 c.course_id, c.title, c.description, c.thumbnail, c.language, c.level, c.price, c.publish_at,  c.created_at, \n"
+                + "    ISNULL(enr.enroll_count, 0) AS enroll_count\n"
+                + "FROM Course c\n"
+                + "LEFT JOIN (\n"
+                + "    SELECT e.course_id, COUNT(*) AS enroll_count\n"
+                + "    FROM Enrollments e\n"
+                + "    GROUP BY e.course_id\n"
+                + ") enr ON enr.course_id = c.course_id\n"
+                + "WHERE c.status = 'approved'\n"
+                + "  AND c.publish_at IS NOT NULL\n"
+                + "ORDER BY ISNULL(enr.enroll_count, 0) DESC, c.publish_at DESC;";
+
+        List<Course> listCourse = new ArrayList<>();
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                listCourse.add(mapCourse(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listCourse;
+    }
+
+    public List<Course> getTopNewestCourses() {
+        String sql = "SELECT TOP 4 c.course_id, c.title, c.description, c.thumbnail, \n"
+                + "c.language, c.level, c.price, c.publish_at, c.created_at\n"
+                + "FROM Course c\n"
+                + "WHERE c.status = 'approved'\n"
+                + "ORDER BY c.publish_at DESC";
+        List<Course> list = new ArrayList<>();
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                list.add(mapCourse(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }

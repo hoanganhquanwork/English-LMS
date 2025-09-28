@@ -18,9 +18,8 @@
         <!-- Bootstrap & Icons -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
-        <!-- App CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/search-courses.css">
+
     </head>
     <body>
         <header>
@@ -35,7 +34,6 @@
                     <div class="col-lg-3">
                         <div class="filter-box">
                             <h5 class="mb-3">Bộ lọc</h5>
-
 
                             <h6>Category</h6>
                             <c:forEach var="cat" items="${listCategories}">
@@ -116,7 +114,7 @@
                                                 </div>
                                                 <button type="button" class="btn btn-sm btn-outline-primary"
                                                         >
-                                                    <i class="bi bi-cart-plus"></i> Add to cart
+                                                    <i class="bi bi-heart"></i> Lưu yêu thích
                                                 </button>
                                             </div>
                                         </div>
@@ -150,7 +148,9 @@
 
             </form>
         </div>
-
+        <footer>
+            <jsp:include page="../footer.jsp"/>
+        </footer>
     </body>
     <script>
         function resetPageAndSubmit(f) {
