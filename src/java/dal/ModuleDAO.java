@@ -49,7 +49,7 @@ public class ModuleDAO extends DBContext {
             st.setInt(1, module.getCourse().getCourseId());
             st.setString(2, module.getTitle());
             st.setString(3, module.getDescription());
-            st.setInt(4, module.getCreatedBy().getUserId());
+            st.setInt(4, module.getCreatedBy().getUser().getUserId());
             st.setInt(5, module.getCourse().getCourseId());
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
