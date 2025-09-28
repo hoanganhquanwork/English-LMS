@@ -9,7 +9,8 @@ package model;
  * @author Admin
  */
 public class InstructorProfile {
-    private int userId;       
+
+    private Users user;
     private String bio;
     private String expertise;
     private String qualifications;
@@ -17,19 +18,19 @@ public class InstructorProfile {
     public InstructorProfile() {
     }
 
-    public InstructorProfile(int userId, String bio, String expertise, String qualifications) {
-        this.userId = userId;
+    public InstructorProfile(Users user, String bio, String expertise, String qualifications) {
+        this.user = user;
         this.bio = bio;
         this.expertise = expertise;
         this.qualifications = qualifications;
     }
 
-    public int getUserId() {
-        return userId;
+    public Users getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(Users user) {
+        this.user = user;
     }
 
     public String getBio() {
@@ -56,10 +57,6 @@ public class InstructorProfile {
         this.qualifications = qualifications;
     }
 
-    @Override
-    public String toString() {
-        return "InstructorProfile{" + "userId=" + userId + ", bio=" + bio + ", expertise=" + expertise + ", qualifications=" + qualifications + '}';
-    }
-    
-    
+
+
 }
