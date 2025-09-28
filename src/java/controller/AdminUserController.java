@@ -13,7 +13,7 @@ import java.util.List;
 @WebServlet("/AdminUserController")
 public class AdminUserController extends HttpServlet {
 
-    private final UserService userService = new UserService();
+    private     final UserService userService = new UserService();
     private final CourseService courseService = new CourseService();
 
     @Override
