@@ -75,7 +75,7 @@ public class InstructorDashboardController extends HttpServlet {
         request.setAttribute("courseCount", courseCount);
         request.setAttribute("studentCount", studentCount);
 
-        request.getRequestDispatcher("teacher1/dashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("teacher/dashboard.jsp").forward(request, response);
     }
 
     @Override
