@@ -7,7 +7,7 @@
     <div class="container">
         <div class="top-header">
             <a href="/manager/dashboard" class="logo">
-                <img src="${pageContext.request.contextPath}/assets/icon/logo.png" alt="Logo">
+                <img src="${pageContext.request.contextPath}/views-manager/icon/logo.png" alt="Logo">
             </a>
 
             <div class="header-actions">
