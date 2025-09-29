@@ -104,7 +104,7 @@ public class LoginInternalServlet extends HttpServlet {
 
                     break;
                 case "Manager":
-
+                    response.sendRedirect(request.getContextPath()+"/manager-profile");
                     break;
                 case "Admin":
 

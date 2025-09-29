@@ -28,17 +28,16 @@ public class CourseManagerController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if ("detail".equals(action)) {
-            String idStr = request.getParameter("courseId");
-            if (idStr != null) {
-                int courseId = Integer.parseInt(idStr);
-                Course course = courseService.getCourseById(courseId);
-                request.setAttribute("course", course);
-            }
-            request.getRequestDispatcher("/views.manager/course-detail.jsp").forward(request, response);
-            return;
-        }
-
+//        if ("detail".equals(action)) {
+//            String idStr = request.getParameter("courseId");
+//            if (idStr != null) {
+//                int courseId = Integer.parseInt(idStr);
+//                Course course = courseService.getCourseById(courseId);
+//                request.setAttribute("course", course);
+//            }
+//            request.getRequestDispatcher("/views.manager/course-detail.jsp").forward(request, response);
+//            return;
+//        }
         String status = request.getParameter("status");
         String keyword = request.getParameter("keyword");
         String sort = request.getParameter("sort");
@@ -49,7 +48,7 @@ public class CourseManagerController extends HttpServlet {
         if (sort == null) {
             sort = "newest";
         }
-
+        
         List<Course> courseList = courseService.getFilteredCourses(status, keyword, sort);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
