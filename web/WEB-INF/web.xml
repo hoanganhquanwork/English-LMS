@@ -21,4 +21,20 @@
         <url-pattern>/set</url-pattern>
     </servlet-mapping>
 
+<servlet>
+        <servlet-name>ParentProfileController</servlet-name>
+        <servlet-class>controller.Parent.Profile.ParentProfileController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ParentProfileController</servlet-name>
+        <url-pattern>/parent/profile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ParentProfileController</servlet-name>
+        <url-pattern>/parent/settings</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ParentProfileController</servlet-name>
+        <url-pattern>/parent/delete</url-pattern>
+    </servlet-mapping>
 </web-app>

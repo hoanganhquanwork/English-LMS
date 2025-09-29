@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import model.InstructorProfile;
 
 public class InstructorProfileDAO extends DBContext {
-
+    private UserDAO dao = new UserDAO();
     public InstructorProfile getByUserId(int userId) {
         String sql = "SELECT user_id, bio, expertise, qualifications "
                    + "FROM InstructorProfile WHERE user_id = ?";
@@ -16,7 +16,7 @@ public class InstructorProfileDAO extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     InstructorProfile instructor = new InstructorProfile();
-                    instructor.setUserId(rs.getInt("user_id"));
+                    instructor.setUser(dao.getUserById(rs.getInt("user_id")));
                     instructor.setBio(rs.getString("bio"));
                     instructor.setExpertise(rs.getString("expertise"));
                     instructor.setQualifications(rs.getString("qualifications"));
@@ -26,7 +26,7 @@ public class InstructorProfileDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // không tìm thấy
+        return null; 
     }
     
     public static void main(String[] args) {

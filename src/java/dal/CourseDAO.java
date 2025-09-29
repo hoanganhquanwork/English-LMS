@@ -379,7 +379,7 @@ public class CourseDAO extends DBContext {
             ps.setString(2, course.getDescription());
             ps.setString(3, course.getLanguage());
             ps.setString(4, course.getLevel());
-            ps.setInt(5, course.getCreatedBy().getUserId());
+            ps.setInt(5, course.getCreatedBy().getUser().getUserId());
             ps.setInt(6, course.getCategory().getCategoryId());
            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
