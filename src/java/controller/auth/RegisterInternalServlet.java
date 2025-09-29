@@ -91,7 +91,7 @@ public class RegisterInternalServlet extends HttpServlet {
 
         String result = authService.register(newUser);
         if ("success".equals(result)) {
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?success=true");
+            response.sendRedirect(request.getContextPath() + "/auth/login-internal.jsp?success=true");
             return;
         }
         request.setAttribute("error", result);

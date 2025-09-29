@@ -7,13 +7,13 @@
         <title>Flashcard Library</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard-home-styles.css">
     </head>
-    <body>
+    <body class="dashboard">
         <jsp:include page="/header.jsp" />
 
         <div class="add-set-btn">
             <a href="set?action=createForm">+</a>
         </div>
-
+            <div class="function-header">Flashcard Library</div>
         <!-- Search Library -->
         <form action="dashboard" method="get" class="search-bar">
             <input type="hidden" name="action" value="searchLibrary"/>
@@ -29,7 +29,6 @@
 
         <div class="recents-container">
             <div class="recents-header-row">
-                <div class="recents-header">Flashcard Library</div>
                 <!-- Sort dropdown -->
                 <c:if test="${empty keyword}">
                     <form action="dashboard" method="get" class="sort-bar">

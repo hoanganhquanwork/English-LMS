@@ -26,7 +26,9 @@
                     <div class="profile-card">
                         <c:set var="user" value="${sessionScope.user}" />
                         <c:if test="${user.profilePicture == null}">
+                            <!--<img src="${pageContext.request.contextPath}/image/avatar/avatar_0.png" alt="avatar" class="profile-avatar">-->
                             <img src="${pageContext.request.contextPath}/image/avatar/avatar_0.png" alt="avatar" class="profile-avatar">
+
                         </c:if>
                         <c:if test="${user.profilePicture != null}">
                             <img src="${pageContext.request.contextPath}/${user.profilePicture}" alt="avatar" class="profile-avatar">
