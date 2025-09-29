@@ -24,7 +24,7 @@
                                 <label for="status">Trạng thái</label>
                                 <select name="status" id="status">
                                     <option value="all" ${status == 'all' ? 'selected' : ''}>Tất cả</option>
-                                    <option value="pending" ${status == 'pending' ? 'selected' : ''}>Chờ duyệt</option>
+                                    <option value="submitted" ${status == 'submitted' ? 'selected' : ''}>Chờ duyệt</option>
                                     <option value="approved" ${status == 'approved' ? 'selected' : ''}>Đã duyệt</option>
                                     <option value="rejected" ${status == 'rejected' ? 'selected' : ''}>Từ chối</option>
                                 </select>
