@@ -6,12 +6,13 @@
         <title>My Flashcard Sets</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard-home-styles.css">
     </head>
-    <body>
+    <body class="dashboard">
         <jsp:include page="/header.jsp" />
 
         <div class="add-set-btn">
             <a href="set?action=createForm">+</a>
         </div>
+        <div class="function-header">My Flashcard Sets</div>
 
         <!-- Search (My Sets) -->
         <form action="dashboard" method="get" class="search-bar">
@@ -28,7 +29,6 @@
 
         <div class="recents-container">
             <div class="recents-header-row">
-                <div class="recents-header">My Flashcard Sets</div>
                 <!-- Sort dropdown -->
                 <c:if test="${empty keyword}">
                     <form action="dashboard" method="get" class="sort-bar">
