@@ -19,7 +19,7 @@
         <header class="py-2">
             <div class="container d-flex align-items-center justify-content-between">      
                 <div class="d-flex align-items-center flex-shrink-0">
-                    <a href="home"><img src="" 
+                    <a href="home"><img src="${pageContext.request.contextPath}/image/logo/logo.png" 
                                         alt="hi" height="28" class="me-3"></a>
                     <a href="${pageContext.request.contextPath}/courseSearching" class="nav-link me-3">Khám phá</a>
                     <c:if test="${sessionScope.user != null}">
