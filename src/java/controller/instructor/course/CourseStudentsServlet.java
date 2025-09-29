@@ -62,7 +62,7 @@ public class CourseStudentsServlet extends HttpServlet {
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
 
-        request.getRequestDispatcher("teacher1/student.jsp").forward(request, response);
+        request.getRequestDispatcher("teacher/student.jsp").forward(request, response);
     }
 
 
