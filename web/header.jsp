@@ -57,7 +57,7 @@
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" 
                            id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="${pageContext.request.contextPath}/${sessionScope.user.profilePicture == null ? '/image/avatar/avatar_0.png' :sessionScope.user.profilePicture}" 
+                            <img src="${pageContext.request.contextPath}/${sessionScope.user.profilePicture == null ? 'image/avatar/avatar_0.png' :sessionScope.user.profilePicture}" 
                                  alt="User Avatar" 
                                  class="rounded-circle me-2" 
                                  style="width:36px; height:36px; object-fit:cover;">
