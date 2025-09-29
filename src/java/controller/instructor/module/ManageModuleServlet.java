@@ -53,7 +53,7 @@ public class ManageModuleServlet extends HttpServlet {
         List<Module> list = service.getModulesByCourse(courseId);
         request.setAttribute("course", course);
          request.setAttribute("moduleList", list);
-        request.getRequestDispatcher("teacher/Module.jsp").forward(request, response);
+        request.getRequestDispatcher("teacher/module.jsp").forward(request, response);
     } 
 
     /** 
