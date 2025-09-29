@@ -67,7 +67,9 @@ public class CourseManagerController extends HttpServlet {
                 createdTimeList.add("");
             }
         }
-
+        if (keyword != null && !keyword.isEmpty() && courseList.isEmpty()) {
+            request.setAttribute("errorMessage", "No courses found for keyword: " + keyword);
+        }
         request.setAttribute("courseList", courseList);
         request.setAttribute("createdDateList", createdDateList);
         request.setAttribute("createdTimeList", createdTimeList);
