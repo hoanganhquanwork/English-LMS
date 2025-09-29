@@ -21,7 +21,6 @@
         <url-pattern>/set</url-pattern>
     </servlet-mapping>
 
-<<<<<<< HEAD
 <servlet>
         <servlet-name>ParentProfileController</servlet-name>
         <servlet-class>controller.Parent.Profile.ParentProfileController</servlet-class>
@@ -38,6 +37,4 @@
         <servlet-name>ParentProfileController</servlet-name>
         <url-pattern>/parent/delete</url-pattern>
     </servlet-mapping>
-=======
->>>>>>> 4a28538 (feat: Add course-management and manager-profile)
 </web-app>
