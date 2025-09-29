@@ -49,6 +49,11 @@
                         </div>
                     </form>
                 </div>
+                <c:if test="${not empty errorMessage}">
+                    <div class="alert alert-warning" style="margin: 10px 0; padding: 10px; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 4px;">
+                        ${errorMessage}
+                    </div>
+                </c:if>
                 <form method="post" action="coursemanager" id="bulkForm">
                     <input type="hidden" name="action" id="bulkAction">
                     <div class="table-header">
@@ -118,7 +123,7 @@
                                 <td>
                                     <form method="post" action="coursemanager" style="display:flex; gap:8px;">
                                         <input type="hidden" name="action" value="setPrice">
-                                         <input type="hidden" name="source" value="list">
+                                        <input type="hidden" name="source" value="list">
                                         <input type="hidden" name="courseId" value="${course.courseId}">
                                         <input type="number" name="price" step="1000" min="0"
                                                value="${course.price}"
