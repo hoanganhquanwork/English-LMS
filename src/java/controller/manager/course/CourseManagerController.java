@@ -27,7 +27,7 @@ public class CourseManagerController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String action = request.getParameter("action");
+//        String action = request.getParameter("action");
 //        if ("detail".equals(action)) {
 //            String idStr = request.getParameter("courseId");
 //            if (idStr != null) {
@@ -48,7 +48,7 @@ public class CourseManagerController extends HttpServlet {
         if (sort == null) {
             sort = "newest";
         }
-        
+
         List<Course> courseList = courseService.getFilteredCourses(status, keyword, sort);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -74,8 +74,6 @@ public class CourseManagerController extends HttpServlet {
         request.setAttribute("createdTimeList", createdTimeList);
         request.setAttribute("status", status);
         request.setAttribute("keyword", keyword);
-        request.setAttribute("sort", sort);
-
         request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
     }
 
@@ -107,29 +105,12 @@ public class CourseManagerController extends HttpServlet {
             case "setPrice":
                 String idStr = request.getParameter("courseId");
                 String priceStr = request.getParameter("price");
-                String source = request.getParameter("source");
 
-                if (idStr != null && priceStr != null && !priceStr.isEmpty()) {
+                if (idStr != null && priceStr != null && !priceStr.trim().isEmpty()) {
                     int courseId = Integer.parseInt(idStr);
                     BigDecimal price = new BigDecimal(priceStr);
                     courseService.updateCoursePrice(courseId, price);
-
-                    if ("detail".equals(source)) {
-                        response.sendRedirect(request.getContextPath()
-                                + "/coursemanager?action=detail&courseId=" + courseId);
-                    } else {
-                        String status = request.getParameter("status");
-                        String keyword = request.getParameter("keyword");
-                        String sort = request.getParameter("sort");
-
-                        response.sendRedirect(request.getContextPath() + "/coursemanager"
-                                + "?status=" + (status != null ? status : "all")
-                                + "&keyword=" + (keyword != null ? keyword : "")
-                                + "&sort=" + (sort != null ? sort : "newest"));
-                    }
-                    return;
                 }
-                break;
         }
         response.sendRedirect(request.getContextPath() + "/coursemanager");
     }
