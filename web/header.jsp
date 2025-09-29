@@ -63,6 +63,7 @@
                                  style="width:36px; height:36px; object-fit:cover;">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+<<<<<<< HEAD
                             <c:if test="${sessionScope.user.role == 'Student'}">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
@@ -76,6 +77,12 @@
                             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
                         </ul>
 
+=======
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
+                        </ul>
+>>>>>>> 4a28538 (feat: Add course-management and manager-profile)
                     </div>
                 </c:if>
             </div>
