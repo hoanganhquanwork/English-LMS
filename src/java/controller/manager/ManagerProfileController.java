@@ -31,7 +31,7 @@ public class ManagerProfileController extends HttpServlet {
         Users currentUser = (Users) session.getAttribute("user");
 
         if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/loginInternal");
             return;
         }
 
@@ -46,55 +46,55 @@ public class ManagerProfileController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
+    HttpSession session = request.getSession(false);
+    Users currentUser = (Users) session.getAttribute("user");
 
-        HttpSession session = request.getSession(false);
-        Users currentUser = (Users) session.getAttribute("user");
-
-        if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-
-        int userId = currentUser.getUserId();
-
-        String fullName = request.getParameter("fullName");
-        String email = request.getParameter("email");
-        String dobStr = request.getParameter("dateOfBirth");
-        LocalDate dob = (dobStr != null && !dobStr.isEmpty()) ? LocalDate.parse(dobStr) : null;
-
-        String position = request.getParameter("position");
-        String specialization = request.getParameter("specialization");
-
-        Users u = managerService.getUser(userId);
-        u.setFullName(fullName);
-        u.setEmail(email);
-        u.setDateOfBirth(dob);
-        boolean updatedUser = managerService.updateUser(u);
-
-        ManagerProfile mp = new ManagerProfile();
-        mp.setUserId(userId);
-        mp.setPosition(position);
-        mp.setSpecialization(specialization);
-        boolean updatedProfile = managerService.updateProfile(mp);
-
-        Users newUser = managerService.getUser(userId);
-        ManagerProfile newProfile = managerService.getManagerProfile(userId);
-
-        request.setAttribute("user", newUser);
-        request.setAttribute("profile", newProfile);
-        request.setAttribute("message", "Cập nhật thành công!");
-
-        if (updatedUser || updatedProfile) {
-            request.setAttribute("message", "Cập nhật thành công!");
-        } else {
-            request.setAttribute("error", "Không có thay đổi nào được lưu!");
-        }
-        request.getSession().setAttribute("user", newUser);
-
-        request.getRequestDispatcher("/views-manager/manager-profile.jsp").forward(request, response);
+    if (currentUser == null) {
+        response.sendRedirect(request.getContextPath() + "/loginInternal");
+        return;
     }
+
+    int userId = currentUser.getUserId();
+
+    String fullName = request.getParameter("fullName");
+    String email = request.getParameter("email");
+    String dateOfBirth = request.getParameter("dateOfBirth");
+    String position = request.getParameter("position");
+    String specialization = request.getParameter("specialization");
+
+    Users oldUser = managerService.getUser(userId);
+    ManagerProfile oldProfile = managerService.getManagerProfile(userId);
+
+    boolean changed = false;
+
+    if (!oldUser.getFullName().equals(fullName)) changed = true;
+    if (!oldUser.getEmail().equals(email)) changed = true;
+    if (!oldUser.getDateOfBirth().toString().equals(dateOfBirth)) changed = true;
+    if (!oldProfile.getPosition().equals(position)) changed = true;
+    if (!oldProfile.getSpecialization().equals(specialization)) changed = true;
+
+    if (!changed) {
+        request.setAttribute("message", "No changes saved");
+    } else {
+        oldUser.setFullName(fullName);
+        oldUser.setEmail(email);
+        oldUser.setDateOfBirth(LocalDate.parse(dateOfBirth));
+        oldProfile.setPosition(position);
+        oldProfile.setSpecialization(specialization);
+
+        managerService.updateUser(oldUser);
+        managerService.updateProfile(oldProfile);
+
+        request.setAttribute("message", "Update successful!");
+    }
+
+    request.setAttribute("user", oldUser);
+    request.setAttribute("profile", oldProfile);
+
+    request.getRequestDispatcher("/views-manager/manager-profile.jsp")
+           .forward(request, response);
+}
 }

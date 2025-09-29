@@ -26,7 +26,7 @@
 
         <div class="settings-card">
             <section class="profile-card">
-                <div class="avatar">M</div>
+                <div class="avatar"></div>
                 <h3>${user.fullName}</h3>
                 <p class="role">Manager</p>
                 <button class="btn btn-outline">Đổi mật khẩu</button>
