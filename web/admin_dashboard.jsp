@@ -40,9 +40,9 @@
             <main class="main">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h2 class="fw-bold m-0">Dashboard Quản trị</h2>
-                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                        <i class="bi bi-plus-lg me-1"></i> Thêm user
-                    </a>
+                    <!--                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                            <i class="bi bi-plus-lg me-1"></i> Thêm user
+                                        </a>-->
 
                 </div>
 
@@ -229,6 +229,23 @@
                                     <input type="email" class="form-control" id="editEmail" name="email" required/>
                                 </div>
                                 <div class="col-md-6">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="editPhone" name="phone"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Ngày sinh</label>
+                                    <input type="date" class="form-control" id="editDob" name="date_of_birth"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Giới tính</label>
+                                    <select class="form-select" id="editGender" name="gender">
+                                        <option value="">--Chọn--</option>
+                                        <option value="male">Nam</option>
+                                        <option value="female">Nữ</option>
+                                        <option value="other">Khác</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
                                     <label class="form-label">Vai trò</label>
                                     <select class="form-select" id="editRole" name="role">
                                         <option>Student</option><option>Instructor</option>
@@ -253,34 +270,40 @@
             </div>
         </div>
 
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                       document.addEventListener('DOMContentLoaded', function () {
-                                                           var ctx = '<%=ctx%>';
+document.addEventListener('DOMContentLoaded', function () {
+    var ctx = '<%=ctx%>';
 
-                                                           document.querySelectorAll('.editBtn').forEach(function (btn) {
-                                                               btn.addEventListener('click', async function () {
-                                                                   var id = btn.getAttribute('data-id');
-                                                                   try {
-                                                                       var url = ctx + '/AdminUserController?action=getUserJson&id=' + encodeURIComponent(id);
-                                                                       var res = await fetch(url, {headers: {'Accept': 'application/json'}});
-                                                                       if (!res.ok)
-                                                                           throw new Error('HTTP ' + res.status);
+    document.querySelectorAll('.editBtn').forEach(function (btn) {
+        btn.addEventListener('click', async function () {
+            var id = btn.getAttribute('data-id');
+            try {
+                var url = ctx + '/AdminUserController?action=getUserJson&id=' + encodeURIComponent(id);
+                var res = await fetch(url, {headers: {'Accept': 'application/json'}});
+                if (!res.ok)
+                    throw new Error('HTTP ' + res.status);
 
-                                                                       var u = await res.json();
-                                                                       document.getElementById('editUserId').value = u.userId || '';
-                                                                       document.getElementById('editUsername').value = u.username || '';
-                                                                       document.getElementById('editEmail').value = u.email || '';
-                                                                       document.getElementById('editRole').value = u.role || 'Student';
-                                                                       document.getElementById('editStatus').value = u.status || 'active';
+                var u = await res.json();
+                document.getElementById('editUserId').value = u.userId || '';
+                document.getElementById('editUsername').value = u.username || '';
+                document.getElementById('editEmail').value = u.email || '';
+                document.getElementById('editRole').value = u.role || 'Student';
+                document.getElementById('editStatus').value = u.status || 'active';
 
-                                                                       new bootstrap.Modal(document.getElementById('editUserModal')).show();
-                                                                   } catch (e) {
-                                                                       alert('Không tải được dữ liệu user: ' + e.message);
-                                                                   }
-                                                               });
-                                                           });
-                                                       });
+                document.getElementById('editPhone').value = u.phone || '';
+                document.getElementById('editDob').value = u.dateOfBirth || '';
+                document.getElementById('editGender').value = u.gender || '';
+
+                new bootstrap.Modal(document.getElementById('editUserModal')).show();
+            } catch (e) {
+                alert('Không tải được dữ liệu user: ' + e.message);
+            }
+        });
+    });
+});
+
         </script>   
     </body>
 </html>

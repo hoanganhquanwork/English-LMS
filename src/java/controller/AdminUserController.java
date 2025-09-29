@@ -1,7 +1,7 @@
 package controller;
 
-import service.UserService;
-import service.CourseService;
+import service.AdminUserService;
+import service.AdminCourseService;
 import model.Users;
 
 import jakarta.servlet.ServletException;
@@ -13,8 +13,8 @@ import java.util.List;
 @WebServlet("/AdminUserController")
 public class AdminUserController extends HttpServlet {
 
-    private     final UserService userService = new UserService();
-    private final CourseService courseService = new CourseService();
+    private final AdminUserService userService = new AdminUserService();
+    private final AdminCourseService courseService = new AdminCourseService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -22,7 +22,9 @@ public class AdminUserController extends HttpServlet {
 
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+            action = "list";
+        }
 
         switch (action) {
             case "getUserJson": {
@@ -42,8 +44,12 @@ public class AdminUserController extends HttpServlet {
                         + "\"username\":\"" + safe(u.getUsername()) + "\","
                         + "\"email\":\"" + safe(u.getEmail()) + "\","
                         + "\"role\":\"" + safe(u.getRole()) + "\","
-                        + "\"status\":\"" + safe(u.getStatus()) + "\""
+                        + "\"status\":\"" + safe(u.getStatus()) + "\","
+                        + "\"phone\":\"" + safe(u.getPhone()) + "\","
+                        + "\"gender\":\"" + safe(u.getGender()) + "\","
+                        + "\"dateOfBirth\":\"" + (u.getDateOfBirth() != null ? u.getDateOfBirth().toString() : "") + "\""
                         + "}";
+
                 resp.getWriter().write(json);
                 return;
             }
@@ -57,20 +63,23 @@ public class AdminUserController extends HttpServlet {
                 return;
             }
 
-            // Mặc định: danh sách + thống kê + phân trang
             case "list":
             default: {
                 String role = req.getParameter("role");
                 String status = req.getParameter("status");
                 String keyword = req.getParameter("keyword");
 
-                int size = parseIntOrDefault(req.getParameter("size"), 4);  // 4 user/trang
+                int size = parseIntOrDefault(req.getParameter("size"), 4);
                 int page = Math.max(parseIntOrDefault(req.getParameter("page"), 1), 1);
 
                 int totalRows = userService.countSearchUsers(keyword, role, status);
                 int totalPages = (int) Math.ceil(totalRows / (double) size);
-                if (totalPages == 0) totalPages = 1;
-                if (page > totalPages) page = totalPages;
+                if (totalPages == 0) {
+                    totalPages = 1;
+                }
+                if (page > totalPages) {
+                    page = totalPages;
+                }
 
                 List<Users> users = userService.searchUsersPaged(keyword, role, status, page, size);
 
@@ -79,7 +88,6 @@ public class AdminUserController extends HttpServlet {
                 req.setAttribute("size", size);
                 req.setAttribute("totalPages", totalPages);
 
-                // số liệu header
                 req.setAttribute("totalUsers", userService.countAllUsers());
                 req.setAttribute("totalTeachers", userService.countInstructors());
                 req.setAttribute("totalActiveCourses", courseService.countActiveCourses());
@@ -97,38 +105,47 @@ public class AdminUserController extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
 
-        if ("add".equals(action)) {
-            Users u = new Users();
-            u.setUsername(req.getParameter("username"));
-            u.setEmail(req.getParameter("email"));
-            u.setPassword(req.getParameter("password"));
-            u.setRole(req.getParameter("role"));
-            u.setStatus(req.getParameter("status"));
-            u.setCreatedAt(java.time.LocalDateTime.now());
-
-            userService.addUser(u);
-            resp.sendRedirect(req.getContextPath() + "/AdminUserController?action=list");
-            return;
-        }
-
+//        if ("add".equals(action)) {
+//            Users u = new Users();
+//            u.setUsername(req.getParameter("username"));
+//            u.setEmail(req.getParameter("email"));
+//            u.setPassword(req.getParameter("password"));
+//            u.setRole(req.getParameter("role"));
+//            u.setStatus(req.getParameter("status"));
+//            u.setCreatedAt(java.time.LocalDateTime.now());
+//
+//            userService.addUser(u);
+//            resp.sendRedirect(req.getContextPath() + "/AdminUserController?action=list");
+//            return;
+//        }
         if ("update".equals(action)) {
-            String idStr = req.getParameter("id");
-            if (idStr != null && idStr.matches("\\d+")) {
-                int id = Integer.parseInt(idStr);
-                userService.updateUser(
-                        id,
-                        req.getParameter("username"),
-                        req.getParameter("email"),
-                        req.getParameter("role"),
-                        req.getParameter("status")
-                );
+            int id = Integer.parseInt(req.getParameter("id"));
+
+            java.sql.Date dob = null;
+            try {
+                String dobStr = req.getParameter("date_of_birth");
+                if (dobStr != null && !dobStr.isBlank()) {
+                    // đảm bảo input type="date" sẽ gửi đúng yyyy-MM-dd
+                    dob = java.sql.Date.valueOf(dobStr.trim());
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
+
+            userService.updateUser(
+                    id,
+                    req.getParameter("username"),
+                    req.getParameter("email"),
+                    req.getParameter("role"),
+                    req.getParameter("status"),
+                    req.getParameter("phone"),
+                    dob,
+                    req.getParameter("gender")
+            );
             resp.sendRedirect(req.getContextPath() + "/AdminUserController?action=list");
             return;
         }
 
-        // Không khớp action nào -> quay về list
-        resp.sendRedirect(req.getContextPath() + "/AdminUserController?action=list");
     }
 
     private static String safe(String s) {
@@ -136,6 +153,10 @@ public class AdminUserController extends HttpServlet {
     }
 
     private static int parseIntOrDefault(String s, int d) {
-        try { return Integer.parseInt(s); } catch (Exception e) { return d; }
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+            return d;
+        }
     }
 }
