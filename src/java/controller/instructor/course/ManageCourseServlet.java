@@ -74,7 +74,7 @@ public class ManageCourseServlet extends HttpServlet {
         request.setAttribute("cateList", cateList);
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
-        request.getRequestDispatcher("teacher1/courses.jsp").forward(request, response);
+        request.getRequestDispatcher("teacher/courses.jsp").forward(request, response);
     }
 
     @Override
