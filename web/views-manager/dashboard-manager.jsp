@@ -22,7 +22,5 @@
             </ul>
         </div>
     </main>
-
-    <%@ include file="includes-manager/footer.jsp" %>
 </body>
 </html>

@@ -19,7 +19,7 @@ import model.Users;
  *
  * @author LENOVO
  */
-@WebServlet(name="ManagerDashboardServlet", urlPatterns={"/dashborad-manager"})
+@WebServlet(name="ManagerDashboardServlet", urlPatterns={"/dashboard-manager"})
 public class ManagerDashboardServlet extends HttpServlet {
    
     /** 
