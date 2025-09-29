@@ -123,7 +123,6 @@
                                 <td>
                                     <form method="post" action="coursemanager" style="display:flex; gap:8px;">
                                         <input type="hidden" name="action" value="setPrice">
-                                        <input type="hidden" name="source" value="list">
                                         <input type="hidden" name="courseId" value="${course.courseId}">
                                         <input type="number" name="price" step="1000" min="0"
                                                value="${course.price}"

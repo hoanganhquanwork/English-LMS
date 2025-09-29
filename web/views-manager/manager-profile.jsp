@@ -28,7 +28,7 @@
             <section class="profile-card">
                 <div class="avatar"></div>
                 <h3>${user.fullName}</h3>
-                <p class="role">Manager</p>
+                <p class="role">${user.role}</p>
                 <button class="btn btn-outline">Đổi mật khẩu</button>
             </section>
 
@@ -42,7 +42,7 @@
                     <input type="email" name="email" value="${user.email}" readonly>
 
                     <label>Ngày sinh</label>
-                    <input type="date" name="dateOfBirth" value="${user.dateOfBirth}" readonly>
+                    <input type="date" name="dateOfBirth" value="${user.dateOfBirth}" readonly max="${today}">
 
                     <label>Chức vụ</label>
                     <input type="text" name="position" value="${profile.position}" readonly>
@@ -72,9 +72,7 @@
         }
 
         function cancelEdit() {
-            document.querySelectorAll('.form-card input').forEach(el => el.setAttribute('readonly', true));
-            document.getElementById("saveCancelGroup").style.display = "none";
-            document.getElementById("editBtn").style.display = "inline-block";
+            window.location.reload();
         }
     </script>
 </body>
