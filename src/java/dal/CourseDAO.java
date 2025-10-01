@@ -332,7 +332,7 @@ public class CourseDAO extends DBContext {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(extractCourse(rs)); // hàm convert ResultSet → Course
+                list.add(extractCourse(rs)); 
             }
         } catch (SQLException e) {
             e.printStackTrace();
