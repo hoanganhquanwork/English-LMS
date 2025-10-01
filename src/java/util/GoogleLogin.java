@@ -30,9 +30,9 @@ public class GoogleLogin {
                                 .build()
                 ).execute().returnContent().asString();
         JsonObject jobj = new Gson().fromJson(response, JsonObject.class);
-                return jobj.get("access_token").getAsString();
+        return jobj.get("access_token").getAsString();
     }
-    
+
     public static OauthAccount getUserInfo(final String accessToken) throws ClientProtocolException, IOException {
         String link = OaccountConstant.GOOGLE_LINK_GET_USER_INFO + accessToken;
 

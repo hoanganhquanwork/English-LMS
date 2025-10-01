@@ -47,7 +47,7 @@ public class StudentDAO extends DBContext {
             st.setString(2, sp.getInstitution());
             st.setString(3, sp.getAddress());
             st.setInt(4, sp.getUserId());
-            st.executeUpdate();
+            return st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
