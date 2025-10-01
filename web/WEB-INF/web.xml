@@ -4,9 +4,9 @@
         <servlet-name>AddCourseServlet</servlet-name>
         <servlet-class>controller.instructor.course.AddCourseServlet</servlet-class>
     </servlet>
-     <servlet>
+    <servlet>
         <servlet-name>FlashcardDashboardController</servlet-name>
-        <servlet-class>controller.Flashcard.CRUD.FlashcardDashboardController</servlet-class>
+        <servlet-class>controller.flashcard.crud.FlashcardDashboardController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FlashcardDashboardController</servlet-name>
@@ -14,16 +14,15 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>FlashcardSetController</servlet-name>
-        <servlet-class>controller.Flashcard.CRUD.FlashcardSetController</servlet-class>
+        <servlet-class>controller.flashcard.crud.FlashcardSetController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>FlashcardSetController</servlet-name>
         <url-pattern>/set</url-pattern>
     </servlet-mapping>
-
-<servlet>
+    <servlet>
         <servlet-name>ParentProfileController</servlet-name>
-        <servlet-class>controller.Parent.Profile.ParentProfileController</servlet-class>
+        <servlet-class>controller.parent.profile.ParentProfileController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ParentProfileController</servlet-name>
