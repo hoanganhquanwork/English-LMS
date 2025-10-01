@@ -7,12 +7,15 @@ import java.time.LocalDate;
 
 import model.Users;
 import model.ParentProfile;
+import service.AuthService;
 import service.ParentProfileService;
+import service.UserService;
 
 public class ParentProfileController extends HttpServlet {
-
+      AuthService authService = new AuthService();
+    UserService userService = new UserService();
     private final ParentProfileService service = new ParentProfileService();
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -118,13 +121,29 @@ public class ParentProfileController extends HttpServlet {
             throws Exception {
 
         String password = request.getParameter("password");
-        boolean success = service.deleteAccount(parentId, password);
-
-        if (success) {
-            request.getSession().invalidate();
-            response.sendRedirect(request.getContextPath() + "/parent/goodbye.jsp");
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect("home");
+            return;
+        }
+        Users user = (Users) session.getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("home");
+            return;
+        }
+        Users verify = authService.getUserByLogin(user.getUsername(), password);
+        if (verify == null) {
+            request.setAttribute("error", "Mật khẩu hiện tại sai");
+            request.getRequestDispatcher("/parent/delete.jsp").forward(request, response);
+            return;
+        }
+        int change = userService.deactivateAccount(user.getUserId());
+        if (change > 0) {
+            session.invalidate();
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?deactiveSuccess=true");
+            return;
         } else {
-            request.setAttribute("error", "Mật khẩu không đúng, vui lòng thử lại.");
+            request.setAttribute("error", "Có lỗi xảy ra khi vô hiệu hóa tài khoản. Vui lòng thử lại.");
             request.getRequestDispatcher("/parent/delete.jsp").forward(request, response);
         }
     }
