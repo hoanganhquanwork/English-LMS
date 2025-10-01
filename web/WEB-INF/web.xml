@@ -30,10 +30,10 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/settings</url-pattern>
+        <url-pattern>/parent/updateProfile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/delete</url-pattern>
+        <url-pattern>/parent/deactiveAccount</url-pattern>
     </servlet-mapping>
 </web-app>

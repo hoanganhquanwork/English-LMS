@@ -25,12 +25,5 @@ public class ParentProfileService {
         dao.updateUser(u);
         dao.updateParentProfile(p);
     }
-    public boolean deleteAccount(int userId, String password) {
-        if (!dao.checkPassword(userId, password)) {
-            return false;
-        }
-        dao.deleteParentProfile(userId);
-        dao.deleteUser(userId);
-        return true;
-    }
+    
 }
