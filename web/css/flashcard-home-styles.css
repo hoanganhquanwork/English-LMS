@@ -217,7 +217,7 @@ textarea.description-input {
 }
 
 .recents-header {
-    font-size: 20px;
+    font-size: 50px;
     font-weight: bold;
 }
 
@@ -311,14 +311,14 @@ textarea.description-input {
 }
 
 .recents-header {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: bold;
     margin-top: 40px;
     margin-bottom: 5px;
 }
 
 .recents-subtitle {
-    font-size: 14px;
+    font-size: 15px;
     color: #666;
     margin-bottom: 25px;
 }
@@ -422,3 +422,15 @@ textarea.description-input {
 .footer-column a:hover {
     text-decoration: underline;
 }
+
+body.dashboard header .container {
+    padding: 0 !important;
+}
+.function-header {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 40px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
