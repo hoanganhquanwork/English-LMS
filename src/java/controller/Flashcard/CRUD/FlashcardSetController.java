@@ -152,7 +152,10 @@ public class FlashcardSetController extends HttpServlet {
 
                 if (cardIds != null && i < cardIds.length && !cardIds[i].isEmpty()) {
                     int cardId = Integer.parseInt(cardIds[i]);
-                    service.updateCard(cardId, term, def);
+                    Flashcard old = service.getCardById(cardId);
+                    if (!old.getFrontText().equals(term) || !old.getBackText().equals(def)) {
+                        service.updateCard(cardId, term, def);
+                    }
                 } else {
                     if (!term.isEmpty() && !def.isEmpty()) {
                         newCards.add(new Flashcard(0, setId, term, def));
