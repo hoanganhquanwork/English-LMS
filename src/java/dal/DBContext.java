@@ -13,11 +13,11 @@ import java.sql.SQLException;
  * @author Admin
  */
 public class DBContext {
-
     protected Connection connection;
-
-    public DBContext() {
+    public DBContext()
+    {
         try {
+            // Edit URL , username, password to authenticate with your MS SQL Server
             String url = "jdbc:sqlserver://localhost:1433;databaseName= ELMS_PROJECT";
             String username = "sa";
             String password = "123";
