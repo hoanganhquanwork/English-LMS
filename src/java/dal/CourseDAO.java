@@ -28,7 +28,7 @@ public class CourseDAO extends DBContext {
                 + "LEFT JOIN (SELECT e.course_id, COUNT(*) AS enroll_count "
                 + "           FROM Enrollments e GROUP BY e.course_id) enr "
                 + "  ON enr.course_id = c.course_id "
-                + "WHERE c.status = 'approved' AND c.publish_at IS NOT NULL "
+                + "WHERE c.status = 'publish' AND c.publish_at IS NOT NULL "
         );
 
         List<Object> params = new ArrayList();
@@ -83,7 +83,7 @@ public class CourseDAO extends DBContext {
     public int countCourse(
             int[] categoryIDs, String[] languages, String[] levels,
             String keyword) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Course c WHERE c.status='approved' AND c.publish_at IS NOT NULL ");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Course c WHERE c.status='publish' AND c.publish_at IS NOT NULL ");
         List<Object> params = new ArrayList<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -242,7 +242,7 @@ public class CourseDAO extends DBContext {
                 + "    FROM Enrollments e\n"
                 + "    GROUP BY e.course_id\n"
                 + ") enr ON enr.course_id = c.course_id\n"
-                + "WHERE c.status = 'approved'\n"
+                + "WHERE c.status = 'publish'\n"
                 + "  AND c.publish_at IS NOT NULL\n"
                 + "ORDER BY ISNULL(enr.enroll_count, 0) DESC, c.publish_at DESC;";
 
@@ -263,7 +263,7 @@ public class CourseDAO extends DBContext {
         String sql = "SELECT TOP 4 c.course_id, c.title, c.description, c.thumbnail, \n"
                 + "c.language, c.level, c.price, c.publish_at, c.created_at\n"
                 + "FROM Course c\n"
-                + "WHERE c.status = 'approved'\n"
+                + "WHERE c.status = 'publish'\n"
                 + "ORDER BY c.publish_at DESC";
         List<Course> list = new ArrayList<>();
         try {
