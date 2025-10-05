@@ -37,7 +37,6 @@
                         </c:if>
                         <br>
 
-
                         <label class="form-label">Email:</label>
                         <input class="form-control" type="email" name="email" id="email" value="${requestScope.email}" required>
                         <span id="errEmail" class="err"></span>

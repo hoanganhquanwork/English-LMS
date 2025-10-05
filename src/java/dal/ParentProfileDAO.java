@@ -112,4 +112,30 @@ public class ParentProfileDAO extends DBContext {
 }
 
   
+    //For parent link     
+    public Integer getParentIdByEmail(String email) {
+        String sql = "SELECT * from Users WHERE email = ? and role = 'Parent' AND status = 'active' ";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setString(1, email);
+            ResultSet rs = st.executeQuery();
+            return rs.next() ? rs.getInt("user_id") : null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public Integer getParentIdByStudentId(int studentId) {
+        String sql = "SELECT * from StudentProfile WHERE user_id = ? ";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            ResultSet rs = st.executeQuery();
+            return rs.next() ? rs.getInt("parent_id") : null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
