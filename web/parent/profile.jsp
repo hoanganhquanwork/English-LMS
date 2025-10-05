@@ -38,7 +38,7 @@
                         </c:choose>
                         <div><strong><c:out value="${user.fullName}" /></strong></div>
                         <div class="muted">Phụ huynh</div>
-                        <a class="btn-save secondary" href="${pageContext.request.contextPath}/parent/settings">Chỉnh sửa hồ sơ</a>
+                        <a class="btn-save secondary" href="${pageContext.request.contextPath}/parent/updateProfile">Chỉnh sửa hồ sơ</a>
                     </div>
                 </aside>
 

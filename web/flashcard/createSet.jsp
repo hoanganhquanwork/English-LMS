@@ -87,11 +87,11 @@
         <div class="card-inputs">
             <div class="input-group">
                 <label class="input-label">TERM</label>
-                <input name="frontText[]" type="text" class="term-input" placeholder="Enter term" required />
+                <input name="frontText" type="text" class="term-input" placeholder="Enter term" required />
             </div>
             <div class="input-group">
                 <label class="input-label">DEFINITION</label>
-                <input name="backText[]" type="text" class="definition-input" placeholder="Enter definition" required />
+                <input name="backText" type="text" class="definition-input" placeholder="Enter definition" required />
             </div>
         </div>
         <div class="card-actions">

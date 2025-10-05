@@ -1,4 +1,4 @@
-package controller.Parent.Profile;
+package controller.parent.profile;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -12,7 +12,7 @@ import service.ParentProfileService;
 import service.UserService;
 
 public class ParentProfileController extends HttpServlet {
-      AuthService authService = new AuthService();
+    AuthService authService = new AuthService();
     UserService userService = new UserService();
     private final ParentProfileService service = new ParentProfileService();
     
@@ -44,10 +44,10 @@ public class ParentProfileController extends HttpServlet {
 
             if (path.endsWith("/profile")) {
                 request.getRequestDispatcher("/parent/profile.jsp").forward(request, response);
-            } else if (path.endsWith("/settings")) {
-                request.getRequestDispatcher("/parent/settings.jsp").forward(request, response);
-            } else if (path.endsWith("/delete")) {
-                request.getRequestDispatcher("/parent/delete.jsp").forward(request, response);
+            } else if (path.endsWith("/updateProfile")) {
+                request.getRequestDispatcher("/parent/updateProfile.jsp").forward(request, response);
+            } else if (path.endsWith("/deactiveAccount")) {
+                request.getRequestDispatcher("/parent/deactiveAccount.jsp").forward(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
@@ -76,10 +76,10 @@ public class ParentProfileController extends HttpServlet {
         String path = request.getServletPath();
 
         try {
-            if (path.endsWith("/settings")) {
+            if (path.endsWith("/updateProfile")) {
                 updateProfile(request, response, parentId);
-            } else if (path.endsWith("/delete")) {
-                deleteAccount(request, response, parentId);
+            } else if (path.endsWith("/deactiveAccount")) {
+                deactiveAccount(request, response, parentId);
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
@@ -113,11 +113,11 @@ public class ParentProfileController extends HttpServlet {
             request.setAttribute("error", ex.getMessage());
             request.setAttribute("user", u);
             request.setAttribute("parent", p);
-            request.getRequestDispatcher("/parent/settings.jsp").forward(request, response);
+            request.getRequestDispatcher("/parent/updateProfile.jsp").forward(request, response);
         }
     }
 
-    private void deleteAccount(HttpServletRequest request, HttpServletResponse response, Integer parentId)
+    private void deactiveAccount(HttpServletRequest request, HttpServletResponse response, Integer parentId)
             throws Exception {
 
         String password = request.getParameter("password");
@@ -134,7 +134,7 @@ public class ParentProfileController extends HttpServlet {
         Users verify = authService.getUserByLogin(user.getUsername(), password);
         if (verify == null) {
             request.setAttribute("error", "Mật khẩu hiện tại sai");
-            request.getRequestDispatcher("/parent/delete.jsp").forward(request, response);
+            request.getRequestDispatcher("/parent/deactiveAccount.jsp").forward(request, response);
             return;
         }
         int change = userService.deactivateAccount(user.getUserId());
@@ -144,7 +144,7 @@ public class ParentProfileController extends HttpServlet {
             return;
         } else {
             request.setAttribute("error", "Có lỗi xảy ra khi vô hiệu hóa tài khoản. Vui lòng thử lại.");
-            request.getRequestDispatcher("/parent/delete.jsp").forward(request, response);
+            request.getRequestDispatcher("/parent/deactiveAccount.jsp").forward(request, response);
         }
     }
 }

@@ -18,14 +18,14 @@
             </c:if>
 
             <section class="card panel">
-                <form class="form" method="post" action="${pageContext.request.contextPath}/parent/delete">
+                <form class="form" method="post" action="${pageContext.request.contextPath}/parent/deactiveAccount">
                     <div class="field">
                         <label>Mật khẩu</label>
                         <input class="input" type="password" name="password" required />
                     </div>
                     <div class="actions">
                         <button class="btn-save" type="submit">Xác nhận vô hiệu hóa tài khoản</button>
-                        <a class="btn-save secondary" href="${pageContext.request.contextPath}/parent/settings">Hủy</a>
+                        <a class="btn-save secondary" href="${pageContext.request.contextPath}/parent/updateProfile">Hủy</a>
                     </div>
                 </form>
             </section>

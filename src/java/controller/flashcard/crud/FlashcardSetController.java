@@ -1,4 +1,4 @@
-package controller.Flashcard.CRUD;
+package controller.flashcard.crud;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;

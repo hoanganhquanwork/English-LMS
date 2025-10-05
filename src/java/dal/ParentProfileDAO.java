@@ -101,41 +101,5 @@ public class ParentProfileDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    public boolean checkPassword(int userId, String password) {
-        String sql = "SELECT 1 FROM Users WHERE user_id=? AND password=?";
-        try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setInt(1, userId);
-            stm.setString(2, password);
-            ResultSet rs = stm.executeQuery();
-            return rs.next();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /** Xóa ParentProfile (do không có ON DELETE CASCADE) */
-    public void deleteParentProfile(int userId) {
-        String sql = "DELETE FROM ParentProfile WHERE user_id=?";
-        try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setInt(1, userId);
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /** Xóa user */
-    public void deleteUser(int userId) {
-        String sql = "DELETE FROM Users WHERE user_id=?";
-        try {
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setInt(1, userId);
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+  
 }

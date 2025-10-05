@@ -22,7 +22,7 @@
     <!-- Form cập nhật thông tin -->
     <section class="card panel">
       <h3>Thông tin cá nhân</h3>
-      <form class="form" method="post" action="${pageContext.request.contextPath}/parent/settings">
+      <form class="form" method="post" action="${pageContext.request.contextPath}/parent/updateProfile">
         <div class="field">
           <label>Họ và tên</label>
           <input class="input" type="text" name="full_name" value="${user.fullName}" required />
@@ -74,7 +74,7 @@
       <a class="btn-save"
          style="background: linear-gradient(135deg, var(--danger), #f87171);
                 box-shadow: 0 8px 24px rgba(239,68,68,.25);"
-         href="${pageContext.request.contextPath}/parent/delete"
+         href="${pageContext.request.contextPath}/parent/deactiveAccount"
          onclick="return confirm('Bạn có chắc chắn muốn xóa tài khoản này? Hành động này không thể hoàn tác!');">
          Xóa tài khoản
       </a>
