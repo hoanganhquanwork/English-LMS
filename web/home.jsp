@@ -18,7 +18,7 @@
 
         <style>
             :root{
-                --hero-img: url('image/home/welcome.jpg');
+                --hero-img: url('../image/home/welcome.jpg');
             }
         </style>
     </head>

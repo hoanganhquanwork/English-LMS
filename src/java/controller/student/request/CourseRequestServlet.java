@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.auth;
+package controller.student.request;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,17 +11,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Users;
-import service.AuthService;
+import jakarta.servlet.http.HttpSession;
+import model.StudentProfile;
+import service.StudentRequestService;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "RegisterInternalServlet", urlPatterns = {"/registerInternal"})
-public class RegisterInternalServlet extends HttpServlet {
+@WebServlet(name = "CourseRequestServlet", urlPatterns = {"/courseRequest"})
+public class CourseRequestServlet extends HttpServlet {
 
-    private AuthService authService = new AuthService();
+    private final StudentRequestService linkService = new StudentRequestService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +41,10 @@ public class RegisterInternalServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RegisterInternalServlet</title>");
+            out.println("<title>Servlet CourseRequestServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RegisterInternalServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CourseRequestServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,8 +62,22 @@ public class RegisterInternalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/auth/register-internal.jsp").forward(request, response);
-
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        StudentProfile student = (StudentProfile) session.getAttribute("student");
+        if (student == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        int studentId = student.getUserId();
+        String status = linkService.getLatestStatus(studentId);
+        request.setAttribute("requestStatus", status);
+        String email = linkService.getLatestParentEmail(studentId);
+        request.setAttribute("requestEmail", email);
+        request.getRequestDispatcher("student/course-request.jsp").forward(request, response);
     }
 
     /**
@@ -76,31 +91,7 @@ public class RegisterInternalServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String gender = request.getParameter("gender");
-        String role = request.getParameter("role");
-
-        Users newUser = new Users();
-        newUser.setUsername(username);
-        newUser.setEmail(email);
-        newUser.setPassword(password); //Hash in service
-        newUser.setGender(gender);
-        newUser.setRole(role);
-
-        String result = authService.register(newUser);
-        if ("success".equals(result)) {
-            response.sendRedirect(request.getContextPath() + "/auth/login-internal.jsp?success=true");
-            return;
-        }
-        request.setAttribute("error", result);
-        request.setAttribute("username", username);
-        request.setAttribute("email", email);
-        request.setAttribute("gender", gender);
-        request.setAttribute("role", role);
-
-        request.getRequestDispatcher("/auth/register-internal.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**

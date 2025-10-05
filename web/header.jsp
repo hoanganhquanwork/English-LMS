@@ -44,7 +44,7 @@
 
                 <c:if test="${sessionScope.user != null}">
                     <c:if test="${sessionScope.user.role == 'Student'}">
-                        <a href="#" class="text-dark fs-5 me-3">
+                        <a href="${pageContext.request.contextPath}/courseRequest" class="text-dark fs-5 me-3">
                             <i class="bi bi-heart"></i>
                         </a>
                     </c:if>
