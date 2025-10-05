@@ -83,23 +83,33 @@ public class ParentProfileDAO extends DBContext {
 
     public void updateParentProfile(ParentProfile p) {
         String update = "UPDATE ParentProfile SET address=?, occupation=? WHERE user_id=?";
-        String insert = "INSERT INTO ParentProfile(user_id, address, occupation) VALUES (?,?,?)";
         try {
             PreparedStatement stm = connection.prepareStatement(update);
             stm.setString(1, p.getAddress());
             stm.setString(2, p.getOccupation());
             stm.setInt(3, p.getUserId());
-            int rows = stm.executeUpdate();
-            if (rows == 0) { // nếu chưa có thì insert
-                PreparedStatement ins = connection.prepareStatement(insert);
-                ins.setInt(1, p.getUserId());
-                ins.setString(2, p.getAddress());
-                ins.setString(3, p.getOccupation());
-                ins.executeUpdate();
-            }
+            stm.executeUpdate();
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public boolean isPhoneExists(String phone, int excludeUserId) {
+    String sql = "SELECT COUNT(*) FROM Users WHERE phone = ? AND user_id <> ?";
+    try {
+        PreparedStatement stm = connection.prepareStatement(sql);
+        stm.setString(1, phone);
+        stm.setInt(2, excludeUserId);
+        ResultSet rs = stm.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0; 
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
   
 }
