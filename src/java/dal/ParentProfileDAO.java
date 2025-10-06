@@ -125,14 +125,21 @@ public class ParentProfileDAO extends DBContext {
         }
         return null;
     }
-    
+
     public Integer getParentIdByStudentId(int studentId) {
         String sql = "SELECT * from StudentProfile WHERE user_id = ? ";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);
             ResultSet rs = st.executeQuery();
-            return rs.next() ? rs.getInt("parent_id") : null;
+            if (rs.next()) {
+                int pid = rs.getInt("parent_id");
+                if (rs.wasNull()) {
+                    return null;
+                }
+                return pid;
+            }
+            return null;
         } catch (SQLException e) {
             e.printStackTrace();
         }
