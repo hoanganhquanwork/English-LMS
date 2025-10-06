@@ -22,7 +22,7 @@ import service.StudentRequestService;
 @WebServlet(name = "ParentLinkRequestServlet", urlPatterns = {"/parentLinkRequest"})
 public class ParentLinkRequestServlet extends HttpServlet {
 
-    private final StudentRequestService service = new StudentRequestService();
+    private final StudentRequestService studentLinkService = new StudentRequestService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -62,23 +62,7 @@ public class ParentLinkRequestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        StudentProfile student = (StudentProfile) session.getAttribute("student");
-        if (student == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        int studentId = student.getUserId();
-        String status = service.getLatestStatus(studentId);
-        request.setAttribute("requestStatus", status);
-        String email = service.getLatestParentEmail(studentId);
-        request.setAttribute("requestEmail", email);
-        request.getRequestDispatcher("student/course-request.jsp").forward(request, response);
-        request.getRequestDispatcher("student/course-request.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/courseRequest");
     }
 
     /**
@@ -105,29 +89,30 @@ public class ParentLinkRequestServlet extends HttpServlet {
         int studentId = student.getUserId();
         String parentEmail = request.getParameter("parentEmail");
         String requestType = request.getParameter("requestType");
-        String message;
         try {
             if ("link".equals(requestType)) {
-                service.createLinkRequest(studentId, parentEmail);
+                studentLinkService.createLinkRequest(studentId, parentEmail);
             } else if ("unlink".equals(requestType)) {
-                if (service.unlinkParentAccount(studentId)){
+                if (studentLinkService.unlinkParentAccount(studentId)) {
                     student.setParentId(null);
                     session.setAttribute("student", student);
+                } else {
+                    session.setAttribute("flash_error", "Không thể hủy liên kết.");
                 }
-            } else {
-                service.cancelPendingRequest(studentId);
+            } else if ("cancel".equals(requestType)) {
+                studentLinkService.cancelPendingRequest(studentId);
             }
         } catch (IllegalArgumentException e) {
-            message = e.getMessage();
-            request.setAttribute("messageRequest", message);
+            session.setAttribute("flash_error", e.getMessage());
+        } catch (IllegalStateException e) {
+            session.setAttribute("flash_error", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
+            session.setAttribute("flash_error", "Có lỗi xảy ra. Vui lòng thử lại.");
         }
-        String status = service.getLatestStatus(studentId);
-        request.setAttribute("requestStatus", status);
-        String email = service.getLatestParentEmail(studentId);
-        request.setAttribute("requestEmail", email);
-        request.getRequestDispatcher("student/course-request.jsp").forward(request, response);
+
+        response.sendRedirect(request.getContextPath() + "/courseRequest");
+        
     }
 
     /**
