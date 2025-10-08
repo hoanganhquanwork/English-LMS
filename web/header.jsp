@@ -71,7 +71,7 @@
 
                             <c:if test="${sessionScope.user.role == 'Parent'}">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/parent/profile">Thông tin cá nhân</a></li>
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/parent/settings">Cài đặt tài khoản</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
                                 </c:if>
 
                             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>

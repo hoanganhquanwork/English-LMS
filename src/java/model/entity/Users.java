@@ -25,7 +25,8 @@ public class Users {
     private String role;    // "Guest","Student","Instructor","Manager","Admin","Parent"
     private String status;  // "active","deactivated"
     private LocalDateTime createdAt;
-
+    private String formattedDateOfBirth;
+    
     public Users() {
     }
 
@@ -138,6 +139,14 @@ public class Users {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getFormattedDateOfBirth() {
+        return formattedDateOfBirth;
+    }
+
+    public void setFormattedDateOfBirth(String formattedDateOfBirth) {
+        this.formattedDateOfBirth = formattedDateOfBirth;
     }
 
 }

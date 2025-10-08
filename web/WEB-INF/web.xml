@@ -28,12 +28,5 @@
         <servlet-name>ParentProfileController</servlet-name>
         <url-pattern>/parent/profile</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/updateProfile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/deactiveAccount</url-pattern>
-    </servlet-mapping>
+   
 </web-app>
