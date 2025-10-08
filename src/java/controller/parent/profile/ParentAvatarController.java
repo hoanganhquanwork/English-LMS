@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import model.Users;
+import model.entity.Users;
 import service.StudentService;
 import service.UserService;
 
