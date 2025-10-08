@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDate;
-import model.ParentProfile;
-import model.Users;
+import model.entity.ParentProfile;
+import model.entity.Users;
 import service.ParentProfileService;
 import service.UserService;
 
