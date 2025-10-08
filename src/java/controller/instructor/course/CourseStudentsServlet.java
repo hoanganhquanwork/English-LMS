@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Course;
-import model.Enrollment;
+import model.entity.Course;
+import model.entity.Enrollment;
 import service.CourseService;
 import service.EnrollmentService;
 

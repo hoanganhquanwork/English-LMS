@@ -6,10 +6,10 @@ package service;
 
 import dal.CourseManagerDAO;
 import java.math.BigDecimal;
-import model.Course;
+import model.entity.Course;
 import java.util.List;
 import java.util.stream.Collectors;
-import model.CourseManagers;
+import model.entity.CourseManagers;
 
 public class CourseManagerService {
 

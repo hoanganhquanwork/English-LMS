@@ -9,9 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import model.Enrollment;
-import model.StudentProfile;
-import model.Users;
+import model.entity.Enrollment;
+import model.entity.StudentProfile;
+import model.entity.Users;
 
 /**
  *

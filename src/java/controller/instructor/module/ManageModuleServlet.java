@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Course;
+import model.entity.Course;
 import service.ModuleService;
-import model.Module;
+import model.entity.Module;
 import service.CourseService;
 
 /**

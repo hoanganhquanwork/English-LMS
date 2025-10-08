@@ -6,7 +6,7 @@ package service;
 
 import dal.CategoryDAO;
 import java.util.List;
-import model.Category;
+import model.entity.Category;
 
 /**
  *

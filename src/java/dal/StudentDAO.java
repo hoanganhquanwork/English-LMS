@@ -4,7 +4,7 @@
  */
 package dal;
 
-import model.*;
+import model.entity.StudentProfile;
 import java.sql.*;
 
 /**

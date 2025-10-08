@@ -1,4 +1,4 @@
-package model;
+package model.entity;
 
 public class FlashcardSet {
     private int setId;

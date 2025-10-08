@@ -1,12 +1,13 @@
 package service;
 
 import dal.ParentProfileDAO;
+
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
-import model.Users;
-import model.ParentProfile;
+import model.entity.Users;
+import model.entity.ParentProfile;
 
 public class ParentProfileService {
     private final ParentProfileDAO dao = new ParentProfileDAO();

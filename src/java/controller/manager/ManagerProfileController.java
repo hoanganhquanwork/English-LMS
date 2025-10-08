@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import model.ManagerProfile;
-import model.Users;
+import model.entity.ManagerProfile;
+import model.entity.Users;
 import service.ManagerService;
 
 @WebServlet(name = "ManagerProfileController", urlPatterns = {"/manager-profile"})

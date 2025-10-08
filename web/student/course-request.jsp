@@ -149,7 +149,7 @@
                                             <th>Khóa học</th>
                                             <th>Trạng thái</th>
                                             <th>Ghi chú</th>
-                                            <th class="text-end">Hành động</th>
+                                            <th>Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>

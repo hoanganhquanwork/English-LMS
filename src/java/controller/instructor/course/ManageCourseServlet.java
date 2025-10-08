@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Category;
-import model.Course;
-import model.Users;
+import model.entity.Category;
+import model.entity.Course;
+import model.entity.Users;
 import service.CategoryService;
 import service.CourseService;
 

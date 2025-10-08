@@ -6,7 +6,7 @@ package service;
 
 import dal.ModuleDAO;
 import java.util.List;
-import model.Module;
+import model.entity.Module;
 
 /**
  *

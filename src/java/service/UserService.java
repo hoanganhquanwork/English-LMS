@@ -5,7 +5,7 @@
 package service;
 
 import dal.UserDAO;
-import model.Users;
+import model.entity.Users;
 
 /**
  *
