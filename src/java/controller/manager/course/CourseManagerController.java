@@ -7,14 +7,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Course;
+import model.entity.Course;
 import service.CourseManagerService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import model.Users;
+import model.entity.Users;
 import service.ManagerService;
 
 @WebServlet(name = "CourseManagerServlet", urlPatterns = {"/coursemanager"})

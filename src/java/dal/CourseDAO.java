@@ -1,14 +1,9 @@
 
 package dal;
 
+import model.entity.Category;
 import java.util.List;
-import model.Course;
-
-/**
- *
- * @author Admin
- */
-import model.*;
+import model.entity.Course;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -158,31 +153,6 @@ public class CourseDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
-    }
-
-    public Map<Integer, Integer> getEnrollCounts(Collection<Integer> courseIds) {
-        if (courseIds == null || courseIds.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        String in = makePlaceholders(courseIds.size());
-        String sql = "SELECT course_id, COUNT(*) AS cnt FROM Enrollments "
-                + "WHERE course_id IN (" + in + ") GROUP BY course_id";
-        Map<Integer, Integer> m = new HashMap<>();
-        try {
-            PreparedStatement st = connection.prepareStatement(sql);
-            int i = 1;
-            for (Integer id : courseIds) {
-                st.setInt(i++, id);
-            }
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                m.put(rs.getInt(1), rs.getInt(2));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return m;
     }
 
     private static Course mapCourse(ResultSet rs) throws SQLException {

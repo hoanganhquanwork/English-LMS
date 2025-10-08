@@ -1,8 +1,8 @@
 package service;
 
 import dal.ParentProfileDAO;
-import model.Users;
-import model.ParentProfile;
+import model.entity.Users;
+import model.entity.ParentProfile;
 
 public class ParentProfileService {
     private final ParentProfileDAO dao = new ParentProfileDAO();

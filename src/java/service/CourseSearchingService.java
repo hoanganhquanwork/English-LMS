@@ -5,11 +5,9 @@
 package service;
 
 import dal.CourseDAO;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import model.Category;
-import model.Course;
+import model.entity.Category;
+import model.entity.Course;
 
 /**
  *
@@ -40,7 +38,4 @@ public class CourseSearchingService {
         return cdao.getAllLevels();
     }
     
-     public Map<Integer, Integer> getEnrollCounts(Collection<Integer> courseIds) {
-        return cdao.getEnrollCounts(courseIds);
-    }
 }

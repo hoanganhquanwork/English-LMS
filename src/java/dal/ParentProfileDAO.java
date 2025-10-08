@@ -1,8 +1,8 @@
 package dal;
 
 import java.sql.*;
-import model.Users;
-import model.ParentProfile;
+import model.entity.Users;
+import model.entity.ParentProfile;
 
 public class ParentProfileDAO extends DBContext {
 

@@ -4,9 +4,9 @@
  */
 package service;
 
+import model.entity.CourseRequest;
 import dal.CourseRequestDAO;
 import java.util.List;
-import model.*;
 
 /**
  *

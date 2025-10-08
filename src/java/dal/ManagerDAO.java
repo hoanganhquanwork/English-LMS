@@ -5,7 +5,7 @@
 package dal;
 import java.sql.*;
 import java.util.*;
-import model.ManagerProfile;
+import model.entity.ManagerProfile;
 
 public class ManagerDAO extends DBContext {
 

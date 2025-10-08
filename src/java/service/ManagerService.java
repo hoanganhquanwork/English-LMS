@@ -6,8 +6,8 @@ package service;
 
 import dal.ManagerDAO;
 import dal.UserDAO;
-import model.ManagerProfile;
-import model.Users;
+import model.entity.ManagerProfile;
+import model.entity.Users;
 
 public class ManagerService {
 

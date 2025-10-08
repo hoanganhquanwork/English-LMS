@@ -19,10 +19,10 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
-import model.Category;
-import model.Course;
-import model.InstructorProfile;
-import model.Users;
+import model.entity.Category;
+import model.entity.Course;
+import model.entity.InstructorProfile;
+import model.entity.Users;
 import service.CourseService;
 
 /**

@@ -7,11 +7,11 @@ package dal;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
-import model.CourseManagers;
-import model.Course;
-import model.Category;
-import model.InstructorProfile;
-import model.Users;
+import model.entity.CourseManagers;
+import model.entity.Course;
+import model.entity.Category;
+import model.entity.InstructorProfile;
+import model.entity.Users;
 
 public class CourseManagerDAO extends DBContext {
 

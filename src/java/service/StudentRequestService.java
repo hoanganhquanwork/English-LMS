@@ -7,7 +7,7 @@ package service;
 import dal.CourseRequestDAO;
 import dal.ParentProfileDAO;
 import dal.StudentDAO;
-import model.CourseRequest;
+import model.entity.CourseRequest;
 
 /**
  *

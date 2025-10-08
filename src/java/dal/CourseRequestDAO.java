@@ -4,9 +4,12 @@
  */
 package dal;
 
+import model.entity.CourseRequest;
+import model.entity.Course;
+import model.entity.ParentProfile;
+import model.entity.StudentProfile;
 import java.util.ArrayList;
 import java.util.List;
-import model.*;
 import java.sql.*;
 
 /**

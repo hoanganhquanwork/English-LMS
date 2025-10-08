@@ -13,8 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.CourseRequest;
-import model.StudentProfile;
+import model.entity.CourseRequest;
+import model.entity.StudentProfile;
 import service.CourseRequestService;
 import service.StudentRequestService;
 

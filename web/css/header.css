@@ -17,7 +17,7 @@ header {
 .search-wrapper {
     flex: 1;
     display: flex;
-    justify-content: flex-start-start;
+    justify-content: flex-start;
 }
 .search-bar {
     width: 60%;

@@ -5,8 +5,8 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import model.Users;
-import model.ParentProfile;
+import model.entity.Users;
+import model.entity.ParentProfile;
 import service.AuthService;
 import service.ParentProfileService;
 import service.UserService;

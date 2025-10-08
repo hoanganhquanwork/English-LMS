@@ -14,13 +14,4 @@ import java.util.Map;
  */
 public class ReviewService {
 
-    private final ReviewDAO rdao = new ReviewDAO();
-
-    public Map<Integer, Double> getAvgForCourses(Collection<Integer> courseIds) {
-        return rdao.getAvgForCourses(courseIds);
-    }
-    
-    public double getAvarageRateForCourse(int courseId){
-        return rdao.getAvarageRatingCourse(courseId);
-    }
 }

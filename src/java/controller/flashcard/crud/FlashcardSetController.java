@@ -5,9 +5,9 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import model.Flashcard;
-import model.FlashcardSet;
-import model.Users;
+import model.entity.Flashcard;
+import model.entity.FlashcardSet;
+import model.entity.Users;
 import service.FlashcardService;
 
 public class FlashcardSetController extends HttpServlet {

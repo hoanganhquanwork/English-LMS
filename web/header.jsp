@@ -12,15 +12,16 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Header Page</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css"/>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css"/>
+
     </head>
     <body>
         <header class="py-2">
             <div class="container d-flex align-items-center justify-content-between">      
                 <div class="d-flex align-items-center flex-shrink-0">
                     <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/image/logo/logo.png" 
-                                        alt="hi" height="28" class="me-3"></a>
+                                                                           alt="hi" height="28" class="me-3"></a>
                     <a href="${pageContext.request.contextPath}/courseSearching" class="nav-link me-3">Khám phá</a>
                     <c:if test="${sessionScope.user != null}">
                         <a href="#" class="nav-link me-3">Khóa học của tôi</a>

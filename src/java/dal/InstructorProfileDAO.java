@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import model.InstructorProfile;
+import model.entity.InstructorProfile;
 
 public class InstructorProfileDAO extends DBContext {
     private UserDAO dao = new UserDAO();
