@@ -8,8 +8,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
-import model.Course;
-import model.Module;
+import model.entity.Course;
+import model.entity.Module;
 
 /**
  *

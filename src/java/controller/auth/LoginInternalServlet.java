@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Users;
+import model.entity.Users;
 import service.AuthService;
 import service.TokenService;
 
@@ -101,12 +101,13 @@ public class LoginInternalServlet extends HttpServlet {
 
             switch (role) {
                 case "Instructor":
-
+                    response.sendRedirect(request.getContextPath() + "/instructorDashboard");
                     break;
                 case "Manager":
-
+                    response.sendRedirect(request.getContextPath() + "/dashboard-manager");
                     break;
                 case "Admin":
+                    response.sendRedirect(request.getContextPath() + "/AdminUserController");
 
                     break;
                 default:

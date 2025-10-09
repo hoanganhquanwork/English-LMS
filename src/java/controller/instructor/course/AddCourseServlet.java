@@ -19,10 +19,10 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
-import model.Category;
-import model.Course;
-import model.InstructorProfile;
-import model.Users;
+import model.entity.Category;
+import model.entity.Course;
+import model.entity.InstructorProfile;
+import model.entity.Users;
 import service.CourseService;
 
 /**
@@ -76,7 +76,7 @@ public class AddCourseServlet extends HttpServlet {
             Users user = (Users) session.getAttribute("user");
 
             if (user == null || !"Instructor".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("auth/login.jsp");
                 return;
             }
             InstructorProfileDAO instructorDAO = new InstructorProfileDAO();

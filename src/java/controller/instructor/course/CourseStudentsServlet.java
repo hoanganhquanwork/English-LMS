@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Course;
-import model.Enrollment;
+import model.entity.Course;
+import model.entity.Enrollment;
 import service.CourseService;
 import service.EnrollmentService;
 
@@ -62,7 +62,7 @@ public class CourseStudentsServlet extends HttpServlet {
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
 
-        request.getRequestDispatcher("teacher1/student.jsp").forward(request, response);
+        request.getRequestDispatcher("teacher/student.jsp").forward(request, response);
     }
 
 

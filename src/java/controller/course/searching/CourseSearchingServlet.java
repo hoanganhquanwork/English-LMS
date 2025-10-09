@@ -14,8 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import model.Category;
-import model.Course;
+import model.entity.Category;
+import model.entity.Course;
 import service.CourseSearchingService;
 import service.ReviewService;
 

@@ -10,7 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import model.Users;
+import model.entity.Users;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -271,6 +271,23 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public boolean updateUser(Users u) {
+        String sql = "UPDATE Users SET full_name=?, email=?, phone=?, gender=?, status=?, profile_picture=? WHERE user_id=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, u.getFullName());
+            ps.setString(2, u.getEmail());
+            ps.setString(3, u.getPhone());
+            ps.setString(4, u.getGender());
+            ps.setString(5, u.getStatus());
+            ps.setString(6, u.getProfilePicture());
+            ps.setInt(7, u.getUserId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean updateProfilePicture(Users user) {

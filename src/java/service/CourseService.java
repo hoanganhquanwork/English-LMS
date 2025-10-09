@@ -6,7 +6,7 @@ package service;
 
 import dal.CourseDAO;
 import java.util.List;
-import model.Course;
+import model.entity.Course;
 
 /**
  *

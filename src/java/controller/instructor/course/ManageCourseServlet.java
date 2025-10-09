@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Category;
-import model.Course;
-import model.Users;
+import model.entity.Category;
+import model.entity.Course;
+import model.entity.Users;
 import service.CategoryService;
 import service.CourseService;
 
@@ -51,7 +51,7 @@ public class ManageCourseServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("auth/login.jsp");
             return;
         }
 
@@ -74,7 +74,7 @@ public class ManageCourseServlet extends HttpServlet {
         request.setAttribute("cateList", cateList);
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
-        request.getRequestDispatcher("teacher1/courses.jsp").forward(request, response);
+        request.getRequestDispatcher("teacher/courses.jsp").forward(request, response);
     }
 
     @Override

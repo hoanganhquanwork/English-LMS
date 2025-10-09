@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Users;
+import model.entity.Users;
 import service.InstructorService;
 
 /**
@@ -75,7 +75,7 @@ public class InstructorDashboardController extends HttpServlet {
         request.setAttribute("courseCount", courseCount);
         request.setAttribute("studentCount", studentCount);
 
-        request.getRequestDispatcher("teacher1/dashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("teacher/dashboard.jsp").forward(request, response);
     }
 
     @Override

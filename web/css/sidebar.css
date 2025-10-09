@@ -1,0 +1,57 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 7, 2025, 11:52:08 PM
+    Author     : Admin
+*/
+
+body {
+  background-color: #f8f9fa;
+}
+
+/* Sidebar layout */
+.sidebar {
+  width: 300px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  background-color: #fff;
+  border-right: 1px solid #dee2e6;
+}
+
+/* Module buttons */
+.sidebar .btn {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  color: #212529;
+  font-weight: 500;
+}
+.sidebar .btn:hover {
+  background-color: #f8f9fa;
+}
+.sidebar .btn:focus {
+  box-shadow: none !important;
+}
+
+/* Item highlight */
+.sidebar li.bg-light {
+  background-color: #f1f8ff !important;
+}
+.sidebar li:hover {
+  background-color: #f8f9fa;
+}
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}

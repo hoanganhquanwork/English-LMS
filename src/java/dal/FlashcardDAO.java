@@ -3,7 +3,7 @@ package dal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import model.Flashcard;
+import model.entity.Flashcard;
 
 public class FlashcardDAO extends DBContext {
 

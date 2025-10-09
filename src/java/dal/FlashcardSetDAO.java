@@ -3,7 +3,7 @@ package dal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import model.FlashcardSet;
+import model.entity.FlashcardSet;
 
 public class FlashcardSetDAO extends DBContext {
 
@@ -113,6 +113,33 @@ public class FlashcardSetDAO extends DBContext {
         }
     }
 
+    public List<FlashcardSet> getAllSets() {
+        List<FlashcardSet> list = new ArrayList<>();
+        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, "
+                + "       COUNT(c.card_id) AS termCount, u.username AS authorUsername "
+                + "FROM FlashcardSets s "
+                + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
+                + "JOIN Users u ON s.student_id = u.user_id "
+                + "GROUP BY s.set_id, s.student_id, s.title, s.description, u.username ORDER BY s.set_id DESC";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                list.add(new FlashcardSet(
+                        rs.getInt("set_id"),
+                        rs.getInt("student_id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getInt("termCount"),
+                        rs.getString("authorUsername")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<FlashcardSet> searchMySets(int studentId, String keyword) {
         List<FlashcardSet> list = new ArrayList<>();
         String sql = "SELECT s.set_id, s.student_id, s.title, s.description, "
@@ -132,33 +159,6 @@ public class FlashcardSetDAO extends DBContext {
             String kw = "%" + keyword + "%";
             stm.setString(2, kw);
             stm.setString(3, kw);
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                list.add(new FlashcardSet(
-                        rs.getInt("set_id"),
-                        rs.getInt("student_id"),
-                        rs.getString("title"),
-                        rs.getString("description"),
-                        rs.getInt("termCount"),
-                        rs.getString("authorUsername")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public List<FlashcardSet> getAllSets() {
-        List<FlashcardSet> list = new ArrayList<>();
-        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, "
-                + "       COUNT(c.card_id) AS termCount, u.username AS authorUsername "
-                + "FROM FlashcardSets s "
-                + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
-                + "JOIN Users u ON s.student_id = u.user_id "
-                + "GROUP BY s.set_id, s.student_id, s.title, s.description, u.username ORDER BY s.set_id DESC";
-        try {
-            PreparedStatement stm = connection.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 list.add(new FlashcardSet(

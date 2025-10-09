@@ -6,7 +6,7 @@ package service;
 
 import dal.TokenDAO;
 import java.time.LocalDateTime;
-import model.Users;
+import model.entity.Users;
 
 /**
  *

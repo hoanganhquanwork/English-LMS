@@ -6,7 +6,7 @@ package service;
 
 import dal.EnrollmentDAO;
 import java.util.List;
-import model.Enrollment;
+import model.entity.Enrollment;
 
 /**
  *

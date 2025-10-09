@@ -6,7 +6,7 @@
     <title>My Flashcards & Library</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard-home-styles.css">
 </head>
-<body>
+<body class="dashboard">
         <jsp:include page="/header.jsp" />
 
     <div class="add-set-btn">

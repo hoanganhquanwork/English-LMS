@@ -1,14 +1,9 @@
 
 package dal;
 
+import model.entity.Category;
 import java.util.List;
-import model.Course;
-
-/**
- *
- * @author Admin
- */
-import model.*;
+import model.entity.Course;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +23,7 @@ public class CourseDAO extends DBContext {
                 + "LEFT JOIN (SELECT e.course_id, COUNT(*) AS enroll_count "
                 + "           FROM Enrollments e GROUP BY e.course_id) enr "
                 + "  ON enr.course_id = c.course_id "
-                + "WHERE c.status = 'approved' AND c.publish_at IS NOT NULL "
+                + "WHERE c.status = 'publish' AND c.publish_at IS NOT NULL "
         );
 
         List<Object> params = new ArrayList();
@@ -83,7 +78,7 @@ public class CourseDAO extends DBContext {
     public int countCourse(
             int[] categoryIDs, String[] languages, String[] levels,
             String keyword) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Course c WHERE c.status='approved' AND c.publish_at IS NOT NULL ");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Course c WHERE c.status='publish' AND c.publish_at IS NOT NULL ");
         List<Object> params = new ArrayList<>();
 
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -160,31 +155,6 @@ public class CourseDAO extends DBContext {
         return list;
     }
 
-    public Map<Integer, Integer> getEnrollCounts(Collection<Integer> courseIds) {
-        if (courseIds == null || courseIds.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        String in = makePlaceholders(courseIds.size());
-        String sql = "SELECT course_id, COUNT(*) AS cnt FROM Enrollments "
-                + "WHERE course_id IN (" + in + ") GROUP BY course_id";
-        Map<Integer, Integer> m = new HashMap<>();
-        try {
-            PreparedStatement st = connection.prepareStatement(sql);
-            int i = 1;
-            for (Integer id : courseIds) {
-                st.setInt(i++, id);
-            }
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                m.put(rs.getInt(1), rs.getInt(2));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return m;
-    }
-
     private static Course mapCourse(ResultSet rs) throws SQLException {
         Course c = new Course();
         c.setCourseId(rs.getInt("course_id"));
@@ -242,7 +212,7 @@ public class CourseDAO extends DBContext {
                 + "    FROM Enrollments e\n"
                 + "    GROUP BY e.course_id\n"
                 + ") enr ON enr.course_id = c.course_id\n"
-                + "WHERE c.status = 'approved'\n"
+                + "WHERE c.status = 'publish'\n"
                 + "  AND c.publish_at IS NOT NULL\n"
                 + "ORDER BY ISNULL(enr.enroll_count, 0) DESC, c.publish_at DESC;";
 
@@ -263,7 +233,7 @@ public class CourseDAO extends DBContext {
         String sql = "SELECT TOP 4 c.course_id, c.title, c.description, c.thumbnail, \n"
                 + "c.language, c.level, c.price, c.publish_at, c.created_at\n"
                 + "FROM Course c\n"
-                + "WHERE c.status = 'approved'\n"
+                + "WHERE c.status = 'publish'\n"
                 + "ORDER BY c.publish_at DESC";
         List<Course> list = new ArrayList<>();
         try {
@@ -332,7 +302,7 @@ public class CourseDAO extends DBContext {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(extractCourse(rs)); // hàm convert ResultSet → Course
+                list.add(extractCourse(rs)); 
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -367,6 +337,7 @@ public class CourseDAO extends DBContext {
         c.setStatus(rs.getString("status"));
         c.setPrice(rs.getBigDecimal("price"));
         c.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        c.setPublishAt(rs.getTimestamp("publish_at").toLocalDateTime());
         c.setCategory(cdao.getCategoryById(rs.getInt("category_id")));
 
         return c;

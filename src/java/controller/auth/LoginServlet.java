@@ -15,8 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import model.Users;
+import model.entity.StudentProfile;
+import model.entity.Users;
 import service.AuthService;
+import service.StudentService;
 import service.TokenService;
 
 /**
@@ -25,9 +27,10 @@ import service.TokenService;
  */
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
-
+    
     private final AuthService authService = new AuthService();
     private final TokenService tokenService = new TokenService();
+    private final StudentService studentService = new StudentService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -113,7 +116,7 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("remember-me");
-
+        
         Users user = authService.getUserByLogin(username, password);
         if (user != null) {
             HttpSession session = request.getSession(true);
@@ -124,11 +127,15 @@ public class LoginServlet extends HttpServlet {
             }
             session.setAttribute("user", user);
             session.setAttribute("role", role);
-
+            if (role.equalsIgnoreCase("Student")) {
+                StudentProfile s = studentService.getStudentProfile(user.getUserId());
+                session.setAttribute("student", s);
+            }
+            
             if (rememberMe != null) {
                 authService.createRememberMe(user, response);
             }
-
+            
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }

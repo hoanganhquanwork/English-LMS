@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Course;
+import model.entity.Course;
 import service.ModuleService;
-import model.Module;
+import model.entity.Module;
 import service.CourseService;
 
 /**
@@ -53,7 +53,7 @@ public class ManageModuleServlet extends HttpServlet {
         List<Module> list = service.getModulesByCourse(courseId);
         request.setAttribute("course", course);
          request.setAttribute("moduleList", list);
-        request.getRequestDispatcher("teacher1/Module.jsp").forward(request, response);
+        request.getRequestDispatcher("teacher/module.jsp").forward(request, response);
     } 
 
     /** 

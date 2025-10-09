@@ -3,8 +3,8 @@ package service;
 import java.util.List;
 import dal.FlashcardDAO;
 import dal.FlashcardSetDAO;
-import model.Flashcard;
-import model.FlashcardSet;
+import model.entity.Flashcard;
+import model.entity.FlashcardSet;
 
 public class FlashcardService {
     private FlashcardSetDAO setDAO = new FlashcardSetDAO();

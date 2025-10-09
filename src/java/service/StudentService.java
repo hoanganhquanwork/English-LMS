@@ -12,8 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import model.StudentProfile;
-import model.Users;
+import model.entity.StudentProfile;
+import model.entity.Users;
 
 /**
  *
