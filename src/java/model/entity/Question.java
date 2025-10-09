@@ -9,21 +9,26 @@ package model.entity;
  * @author Lenovo
  */
 public class Question {
-    private int questionId;
+     private int questionId;
     private int moduleId;
-    private Integer lessonId;  // Có thể null
-    private String questionText;
-    private String questionType; // 'mcq_single', 'mcq_multiple', 'true_false'
-    private String explanation;
+    private Integer lessonId;         // Có thể null
+    private String content;           // Nội dung câu hỏi
+    private String mediaType;         // image | audio | null
+    private String mediaUrl;          // đường dẫn ảnh hoặc audio
+    private String type;              // mcq_single | mcq_multi | fib
+    private String explanation;       // Giải thích đáp án (hiển thị sau khi nộp)
 
-    public Question() {}
+    public Question() {
+    }
 
-    public Question(int questionId, int moduleId, Integer lessonId, String questionText, String questionType, String explanation) {
+    public Question(int questionId, int moduleId, Integer lessonId, String content, String mediaType, String mediaUrl, String type, String explanation) {
         this.questionId = questionId;
         this.moduleId = moduleId;
         this.lessonId = lessonId;
-        this.questionText = questionText;
-        this.questionType = questionType;
+        this.content = content;
+        this.mediaType = mediaType;
+        this.mediaUrl = mediaUrl;
+        this.type = type;
         this.explanation = explanation;
     }
 
@@ -51,20 +56,36 @@ public class Question {
         this.lessonId = lessonId;
     }
 
-    public String getQuestionText() {
-        return questionText;
+    public String getContent() {
+        return content;
     }
 
-    public void setQuestionText(String questionText) {
-        this.questionText = questionText;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public String getQuestionType() {
-        return questionType;
+    public String getMediaType() {
+        return mediaType;
     }
 
-    public void setQuestionType(String questionType) {
-        this.questionType = questionType;
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getExplanation() {
@@ -74,4 +95,7 @@ public class Question {
     public void setExplanation(String explanation) {
         this.explanation = explanation;
     }
+
+    
+
 }

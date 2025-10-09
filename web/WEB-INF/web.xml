@@ -8,6 +8,22 @@
         <servlet-name>FlashcardDashboardController</servlet-name>
         <servlet-class>controller.flashcard.crud.FlashcardDashboardController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CreateLessonServlet</servlet-name>
+        <servlet-class>controller.instructor.lesson.CreateLessonServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateLessonServlet</servlet-name>
+        <servlet-class>controller.instructor.lesson.UpdateLessonServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManageQuestionServlet</servlet-name>
+        <servlet-class>controller.instructor.question.ManageQuestionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddQuestion</servlet-name>
+        <servlet-class>controller.instructor.question.AddQuestion</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>FlashcardDashboardController</servlet-name>
         <url-pattern>/dashboard</url-pattern>
@@ -28,5 +44,28 @@
         <servlet-name>ParentProfileController</servlet-name>
         <url-pattern>/parent/profile</url-pattern>
     </servlet-mapping>
-   
+    <servlet-mapping>
+        <servlet-name>ParentProfileController</servlet-name>
+        <url-pattern>/parent/settings</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ParentProfileController</servlet-name>
+        <url-pattern>/parent/delete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateLessonServlet</servlet-name>
+        <url-pattern>/createLesson</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateLessonServlet</servlet-name>
+        <url-pattern>/updateLesson</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageQuestionServlet</servlet-name>
+        <url-pattern>/ManageQuestionServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddQuestion</servlet-name>
+        <url-pattern>/addQuestion</url-pattern>
+    </servlet-mapping>
 </web-app>

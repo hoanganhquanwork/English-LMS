@@ -83,10 +83,6 @@
                                 <i class="fas fa-users"></i>
                                 Học sinh
                             </a>
-                            <a href="ManageQuestionServlet?courseId=${course.courseId}" class="sidebar-link">
-                                <i class="fas fa-question-circle"></i>
-                                Câu hỏi
-                            </a>
                           
                         </nav>
                     </div>
@@ -97,6 +93,7 @@
 
                 <!-- Main Content -->
                 <main class="main-content">
+
                     <!-- Modules List -->
                     <div class="module-list">
                         <div class="section-header">
@@ -130,19 +127,6 @@
                                            onclick="return confirm('Bạn có chắc chắn muốn xóa module này không?');">
                                             <i class="fas fa-trash"></i>
                                         </a>
-                                        <div class="lesson-actions">
-                                            <button class="btn-icon" title="Thêm bài học" onclick="toggleAddLessonMenu('${h.moduleId}')">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                            <div id="addLessonMenu-${h.moduleId}" class="lesson-dropdown">
-                                                <a href="ManageLessonServlet?courseId=${course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
-                                                    <i class="fas fa-video"></i> Bài học video
-                                                </a>
-                                                <a href="lesson-create-reading.jsp" class="lesson-dropdown-item">
-                                                    <i class="fas fa-file-alt"></i> Bài học reading
-                                                </a>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -189,25 +173,5 @@
         </div>
 
         <script src="js/course-content.js"></script>
-        <script>
-            function toggleAddLessonMenu(moduleId) {
-                const menu = document.getElementById('addLessonMenu-' + moduleId);
-                if (!menu) return;
-                const isShown = menu.classList.contains('show');
-                document.querySelectorAll('.lesson-dropdown.show').forEach(el => el.classList.remove('show'));
-                if (!isShown) {
-                    menu.classList.add('show');
-                }
-            }
-
-
-            document.addEventListener('click', function (e) {
-                const isButton = e.target.closest('.lesson-actions .btn-icon');
-                const isMenu = e.target.closest('.lesson-dropdown');
-                if (!isButton && !isMenu) {
-                    document.querySelectorAll('.lesson-dropdown.show').forEach(el => el.classList.remove('show'));
-                }
-            });
-        </script>
     </body>
 </html>

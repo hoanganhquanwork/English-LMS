@@ -17,7 +17,7 @@ import model.entity.QuestionOption;
 public class QuestionDAO extends DBContext {
 
     public int insertQuestion(Question q) throws SQLException {
-        String sql = "INSERT INTO Question (module_id, lesson_id, question_text, question_type, explanation) "
+        String sql = "INSERT INTO Question (module_id, lesson_id, content, type, explanation) "
                 + "OUTPUT INSERTED.question_id VALUES (?, ?, ?, ?, ?)";
         try (
                 PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -27,8 +27,8 @@ public class QuestionDAO extends DBContext {
             } else {
                 ps.setNull(2, java.sql.Types.INTEGER);
             }
-            ps.setString(3, q.getQuestionText());
-            ps.setString(4, q.getQuestionType());
+            ps.setString(3, q.getContent());
+            ps.setString(4, q.getType());
             ps.setString(5, q.getExplanation());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -59,8 +59,8 @@ public class QuestionDAO extends DBContext {
                 q.setQuestionId(rs.getInt("question_id"));
                 q.setModuleId(rs.getInt("module_id"));
                 q.setLessonId(rs.getObject("lesson_id") != null ? rs.getInt("lesson_id") : null);
-                q.setQuestionText(rs.getString("question_text"));
-                q.setQuestionType(rs.getString("question_type"));
+                q.setContent(rs.getString("content"));
+                q.setType(rs.getString("type"));
                 q.setExplanation(rs.getString("explanation"));
                 list.add(q);
             }
