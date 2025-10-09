@@ -11,11 +11,12 @@ public class ParentLinkRequest {
     private String status;
     private Timestamp createdAt;
     private Timestamp decidedAt;
-    private Users student; 
-    
+    private Users student; // thêm thông tin học sinh
+
     public ParentLinkRequest() {
     }
 
+    // getters/setters
     public int getRequestId() {
         return requestId;
     }
