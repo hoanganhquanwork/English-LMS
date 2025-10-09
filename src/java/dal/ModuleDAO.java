@@ -42,14 +42,13 @@ public class ModuleDAO extends DBContext {
     }
 
     public boolean insertModule(Module module) {
-        String sql = "INSERT INTO Modules (course_id, title, description, order_index, created_by) "
+        String sql = "INSERT INTO Modules (course_id, title, description, order_index) "
                 + "SELECT ?, ?, ?, ISNULL(MAX(order_index), 0) + 1, ? "
                 + "FROM Modules WHERE course_id = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setInt(1, module.getCourse().getCourseId());
             st.setString(2, module.getTitle());
             st.setString(3, module.getDescription());
-            st.setInt(4, module.getCreatedBy().getUser().getUserId());
             st.setInt(5, module.getCourse().getCourseId());
             return st.executeUpdate() > 0;
         } catch (SQLException e) {

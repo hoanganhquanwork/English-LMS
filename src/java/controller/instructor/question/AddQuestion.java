@@ -80,8 +80,8 @@ public class AddQuestion extends HttpServlet {
 
                 Question q = new Question();
                 q.setModuleId(moduleId);
-                q.setQuestionText(text);
-                q.setQuestionType(type);
+                q.setContent(text);
+                q.setType(type);
                 q.setExplanation(explanation);
                 int qid = dao.insertQuestion(q);
 

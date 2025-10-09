@@ -15,19 +15,17 @@ public class Module {
     private String title;
     private String description;
     private int orderIndex;
-    private InstructorProfile createdBy;
 
  
     public Module() {
     }
 
-    public Module(int moduleId, Course course, String title, String description, int orderIndex, InstructorProfile createdBy) {
+    public Module(int moduleId, Course course, String title, String description, int orderIndex) {
         this.moduleId = moduleId;
         this.course = course;
         this.title = title;
         this.description = description;
         this.orderIndex = orderIndex;
-        this.createdBy = createdBy;
     }
 
 
@@ -72,15 +70,6 @@ public class Module {
     public void setOrderIndex(int orderIndex) {
         this.orderIndex = orderIndex;
     }
-
-    public InstructorProfile getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(InstructorProfile createdBy) {
-        this.createdBy = createdBy;
-    }
-
 
 }
 

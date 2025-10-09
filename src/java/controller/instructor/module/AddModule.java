@@ -78,7 +78,6 @@ public class AddModule extends HttpServlet {
         module.setCourse(course);
         module.setTitle(title);
         module.setDescription(description);
-         module.setCreatedBy(instructor);
         boolean success = moduleService.createModule(module);
 
         if (success) {
