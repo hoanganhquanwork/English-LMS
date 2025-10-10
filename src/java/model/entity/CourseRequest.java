@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model.entity;
+
 import java.time.LocalDateTime;
+
 /**
  *
  * @author Admin
@@ -16,8 +18,10 @@ public class CourseRequest {
     private ParentProfile parent;
     private String status;
     private String note;
-    private LocalDateTime  createdAt;
-    private LocalDateTime  decidedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime decidedAt;
+    private String formattedCreatedAt;
+    private String formattedDecidedAt;
 
     public CourseRequest() {
     }
@@ -85,6 +89,20 @@ public class CourseRequest {
     public void setDecidedAt(LocalDateTime decidedAt) {
         this.decidedAt = decidedAt;
     }
-    
-    
+
+    public String getFormattedCreatedAt() {
+        return formattedCreatedAt;
+    }
+
+    public void setFormattedCreatedAt(String formattedCreatedAt) {
+        this.formattedCreatedAt = formattedCreatedAt;
+    }
+
+    public String getFormattedDecidedAt() {
+        return formattedDecidedAt;
+    }
+
+    public void setFormattedDecidedAt(String formattedDecidedAt) {
+        this.formattedDecidedAt = formattedDecidedAt;
+    }
 }
