@@ -83,12 +83,21 @@ public class DiscussionDAO extends DBContext {
         return listPost;
     }
 
-//    public int getTotalPostCount(int discussionId) {
-//        String sql = "SELECT COUNT(*) FROM DiscussionPosts WHERE discussion_id = ?";
-//        try {
-//            PreparedStatement st = connection.prepareStatement(sql);
-//            st.setInt(1, discussionId);
-    
+    public int getTotalPostCount(int discussionId) {
+        String sql = "SELECT COUNT(*) FROM DiscussionPosts WHERE discussion_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, discussionId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     private int getNextOrderIndex(int moduleId) {
         String sql = "SELECT ISNULL(MAX(order_index), 0) + 1 FROM ModuleItem WHERE module_id = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
@@ -100,7 +109,7 @@ public class DiscussionDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
+        return 1;
     }
 
     public List<DiscussionPostDTO> getDiscussionPosts(int discussionId) {
@@ -267,33 +276,33 @@ public class DiscussionDAO extends DBContext {
     }
 
     //for view my discussion
-//    public DiscussionPostDTO getDiscussionPostsByUserId(int discussionId, int userId) {
-//        String sql = "SELECT * FROM DiscussionPosts WHERE discussion_id = ? AND author_user_id = ?";
-//        try {
-//            PreparedStatement st = connection.prepareStatement(sql);
-//            st.setInt(1, discussionId);
-//            st.setInt(2, userId);
-//
-//            ResultSet rs = st.executeQuery();
-//            if (rs.next()) {
-//                DiscussionPostDTO post = new DiscussionPostDTO();
-//                post.setPostId(rs.getLong("post_id"));
-//                post.setContent(rs.getString("content"));
-//                post.setRole(udao.getUserById(rs.getInt("author_user_id")).getRole());
-//                post.setAuthorName(udao.getUserById(rs.getInt("author_user_id")).getUsername());
-//                post.setAvatar(udao.getUserById(rs.getInt("author_user_id")).getProfilePicture());
-//                post.setFullName(udao.getUserById(rs.getInt("author_user_id")).getFullName());
-//                post.setCreatedAt(rs.getString("created_at"));
-//                post.setEditedAt(rs.getString("edited_at"));
-//                List<DiscussionCommentDTO> comments = getDiscussionComments(post.getPostId());
-//                post.setComments(comments);
-//                return post;
-//
-//            }
-//            return 1;
-//        }
+    public DiscussionPostDTO getDiscussionPostsByUserId(int discussionId, int userId) {
+        String sql = "SELECT * FROM DiscussionPosts WHERE discussion_id = ? AND author_user_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, discussionId);
+            st.setInt(2, userId);
 
-    
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                DiscussionPostDTO post = new DiscussionPostDTO();
+                post.setPostId(rs.getLong("post_id"));
+                post.setContent(rs.getString("content"));
+                post.setRole(udao.getUserById(rs.getInt("author_user_id")).getRole());
+                post.setAuthorName(udao.getUserById(rs.getInt("author_user_id")).getUsername());
+                post.setAvatar(udao.getUserById(rs.getInt("author_user_id")).getProfilePicture());
+                post.setFullName(udao.getUserById(rs.getInt("author_user_id")).getFullName());
+                post.setCreatedAt(rs.getString("created_at"));
+                post.setEditedAt(rs.getString("edited_at"));
+                List<DiscussionCommentDTO> comments = getDiscussionComments(post.getPostId());
+                post.setComments(comments);
+                return post;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public boolean insertDiscussion(int moduleId, String title, String description) {
         try {
