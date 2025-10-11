@@ -18,10 +18,11 @@ import model.entity.Module;
  * @author Lenovo
  */
 public class LessonService {
-     private LessonDAO lessonDAO = new LessonDAO();
-       private ModuleDAO moduleDAO = new ModuleDAO();
-     
- public Map<Module, List<Lesson>> getCourseContent(int courseId) throws SQLException {
+
+    private LessonDAO lessonDAO = new LessonDAO();
+    private ModuleDAO moduleDAO = new ModuleDAO();
+
+    public Map<Module, List<Lesson>> getCourseContent(int courseId) throws SQLException {
         List<Module> modules = moduleDAO.getModulesByCourse(courseId);
         Map<Module, List<Lesson>> result = new LinkedHashMap<>();
         for (Module m : modules) {
@@ -29,5 +30,36 @@ public class LessonService {
             result.put(m, lessons);
         }
         return result;
+    }
+    
+    public boolean addLesson(Lesson lesson) {
+        try {
+            
+            if (lesson == null) {
+                System.err.println(" Lesson object is null");
+                return false;
+            }
+
+            if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
+                System.err.println(" Lesson title is missing");
+                return false;
+            }
+
+            if (lesson.getContentType() == null) {
+                System.err.println(" Lesson content type is missing");
+                return false;
+            }
+
+            
+            lessonDAO.insertLesson(lesson);
+
+            System.out.println(" Lesson inserted successfully!");
+            return true;
+
+        } catch (Exception e) {
+            System.err.println(" Error inserting lesson: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 }

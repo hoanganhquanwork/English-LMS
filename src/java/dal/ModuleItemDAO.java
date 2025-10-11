@@ -6,6 +6,8 @@ package dal;
 
 import model.entity.ModuleItem;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -29,5 +31,37 @@ public class ModuleItemDAO extends DBContext{
             }
         }
         return -1;
+    }
+    public int getNextOrderIndex(int moduleId) throws SQLException {
+    String sql = "SELECT ISNULL(MAX(order_index), 0) + 1 FROM ModuleItem WHERE module_id = ?";
+    try (PreparedStatement st = connection.prepareStatement(sql)) {
+        st.setInt(1, moduleId);
+        ResultSet rs = st.executeQuery();
+        if (rs.next()) return rs.getInt(1);
+    }
+    return 1;
+}
+     public List<ModuleItem> getItemsByModule(int moduleId) {
+        List<ModuleItem> list = new ArrayList<>();
+     String sql = "SELECT * FROM ModuleItem WHERE module_id = ? ORDER BY order_index ASC";
+
+
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setInt(1, moduleId);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                ModuleItem item = new ModuleItem();
+                item.setModuleItemId(rs.getInt("module_item_id"));
+                item.setModuleId(rs.getInt("module_id"));
+                item.setItemType(rs.getString("item_type"));
+                item.setOrderIndex(rs.getInt("order_index"));
+                item.setRequired(rs.getBoolean("is_required"));
+                list.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }
