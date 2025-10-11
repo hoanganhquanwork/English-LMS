@@ -16,7 +16,6 @@ import model.entity.Discussion;
 
 /**
  *
-<<<<<<< src/java/dal/DiscussionDAO.java
  * @author Admin
  */
 public class DiscussionDAO extends DBContext {
@@ -84,26 +83,20 @@ public class DiscussionDAO extends DBContext {
         return listPost;
     }
 
-    public int getTotalPostCount(int discussionId) {
-        String sql = "SELECT COUNT(*) FROM DiscussionPosts WHERE discussion_id = ?";
-        try {
-            PreparedStatement st = connection.prepareStatement(sql);
-            st.setInt(1, discussionId);
-=======
- * @author Lenovo
- */
-public class DiscussionDAO extends DBContext {
-
-    private int getNextOrderIndex(int moduleId) throws SQLException {
+//    public int getTotalPostCount(int discussionId) {
+//        String sql = "SELECT COUNT(*) FROM DiscussionPosts WHERE discussion_id = ?";
+//        try {
+//            PreparedStatement st = connection.prepareStatement(sql);
+//            st.setInt(1, discussionId);
+    
+    private int getNextOrderIndex(int moduleId) {
         String sql = "SELECT ISNULL(MAX(order_index), 0) + 1 FROM ModuleItem WHERE module_id = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setInt(1, moduleId);
->>>>>>> src/java/dal/DiscussionDAO.java
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
             }
-<<<<<<< src/java/dal/DiscussionDAO.java
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -274,31 +267,33 @@ public class DiscussionDAO extends DBContext {
     }
 
     //for view my discussion
-    public DiscussionPostDTO getDiscussionPostsByUserId(int discussionId, int userId) {
-        String sql = "SELECT * FROM DiscussionPosts WHERE discussion_id = ? AND author_user_id = ?";
-        try {
-            PreparedStatement st = connection.prepareStatement(sql);
-            st.setInt(1, discussionId);
-            st.setInt(2, userId);  
+//    public DiscussionPostDTO getDiscussionPostsByUserId(int discussionId, int userId) {
+//        String sql = "SELECT * FROM DiscussionPosts WHERE discussion_id = ? AND author_user_id = ?";
+//        try {
+//            PreparedStatement st = connection.prepareStatement(sql);
+//            st.setInt(1, discussionId);
+//            st.setInt(2, userId);
+//
+//            ResultSet rs = st.executeQuery();
+//            if (rs.next()) {
+//                DiscussionPostDTO post = new DiscussionPostDTO();
+//                post.setPostId(rs.getLong("post_id"));
+//                post.setContent(rs.getString("content"));
+//                post.setRole(udao.getUserById(rs.getInt("author_user_id")).getRole());
+//                post.setAuthorName(udao.getUserById(rs.getInt("author_user_id")).getUsername());
+//                post.setAvatar(udao.getUserById(rs.getInt("author_user_id")).getProfilePicture());
+//                post.setFullName(udao.getUserById(rs.getInt("author_user_id")).getFullName());
+//                post.setCreatedAt(rs.getString("created_at"));
+//                post.setEditedAt(rs.getString("edited_at"));
+//                List<DiscussionCommentDTO> comments = getDiscussionComments(post.getPostId());
+//                post.setComments(comments);
+//                return post;
+//
+//            }
+//            return 1;
+//        }
 
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                DiscussionPostDTO post = new DiscussionPostDTO();
-                post.setPostId(rs.getLong("post_id"));
-                post.setContent(rs.getString("content"));
-                post.setRole(udao.getUserById(rs.getInt("author_user_id")).getRole());
-                post.setAuthorName(udao.getUserById(rs.getInt("author_user_id")).getUsername());
-                post.setAvatar(udao.getUserById(rs.getInt("author_user_id")).getProfilePicture());
-                post.setFullName(udao.getUserById(rs.getInt("author_user_id")).getFullName());
-                post.setCreatedAt(rs.getString("created_at"));
-                post.setEditedAt(rs.getString("edited_at"));
-                List<DiscussionCommentDTO> comments = getDiscussionComments(post.getPostId());
-                post.setComments(comments);
-                return post;  
-=======
-        }
-        return 1;
-    }
+    
 
     public boolean insertDiscussion(int moduleId, String title, String description) {
         try {
@@ -316,7 +311,6 @@ public class DiscussionDAO extends DBContext {
                 moduleItemId = rs.getInt(1);
             }
 
-           
             String sql2 = "INSERT INTO Discussion (discussion_id, title, description) VALUES (?, ?, ?)";
             PreparedStatement st2 = connection.prepareStatement(sql2);
             st2.setInt(1, moduleItemId);
@@ -354,15 +348,11 @@ public class DiscussionDAO extends DBContext {
                 Timestamp cr = rs.getTimestamp("created_at");
                 d.setCreatedAt(cr != null ? cr.toLocalDateTime() : null);
                 return d;
->>>>>>> src/java/dal/DiscussionDAO.java
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-<<<<<<< src/java/dal/DiscussionDAO.java
 
-=======
->>>>>>> src/java/dal/DiscussionDAO.java
 }
