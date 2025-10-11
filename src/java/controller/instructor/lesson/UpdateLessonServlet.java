@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller.instructor.lesson;
 
 import dal.LessonDAO;
@@ -21,69 +20,81 @@ import service.LessonService;
 import service.ModuleService;
 import util.YouTubeApiClient;
 import model.entity.Module;
+import service.ModuleItemService;
 
 /**
  *
  * @author Lenovo
  */
 public class UpdateLessonServlet extends HttpServlet {
-   
-   
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateLessonServlet</title>");  
+            out.println("<title>Servlet UpdateLessonServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet UpdateLessonServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet UpdateLessonServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
-     private ModuleService service = new ModuleService();
+    }
+    private ModuleService service = new ModuleService();
     private LessonService lessonService = new LessonService();
+    private ModuleItemService contentService = new ModuleItemService();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         int moduleId = Integer.parseInt(request.getParameter("moduleId"));
         int courseId = Integer.parseInt(request.getParameter("courseId"));
         String lessonIdStr = request.getParameter("lessonId");
+        String targetJsp = "teacher/lesson-video-content.jsp";
         try {
             List<Module> list = service.getModulesByCourse(courseId);
-            Map<Module, List<Lesson>> content = lessonService.getCourseContent(courseId);
+            Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
 
             Lesson currentLesson = null;
             if (lessonIdStr != null && !lessonIdStr.isEmpty()) {
-                            LessonDAO lDao = new LessonDAO();
+                LessonDAO lDao = new LessonDAO();
                 int lessonId = Integer.parseInt(lessonIdStr);
                 currentLesson = lDao.getLessonById(lessonId);
+                if (currentLesson != null) {
+                    if ("reading".equalsIgnoreCase(currentLesson.getContentType())) {
+                        targetJsp = "teacher/lesson-update-reading.jsp";
+                    } else if ("video".equalsIgnoreCase(currentLesson.getContentType())) {
+                        targetJsp = "teacher/lesson-video-content.jsp";
+                    }
+                }
             }
-             request.setAttribute("courseId", courseId);
+            request.setAttribute("courseId", courseId);
             request.setAttribute("moduleId", moduleId);
             request.setAttribute("moduleList", list);
-            request.setAttribute("content", content);
-            request.setAttribute("lesson", currentLesson); 
-            request.getRequestDispatcher("teacher/lesson-video-content.jsp").forward(request, response);
+            request.setAttribute("content", courseContent);
+            request.setAttribute("lesson", currentLesson);
+            request.getRequestDispatcher(targetJsp).forward(request, response);
         } catch (Exception e) {
             throw new ServletException(e);
         }
-    } 
+    }
 
-      private YouTubeApiClient ytClient;
-       public void init() {
+    private YouTubeApiClient ytClient;
+
+    public void init() {
 
         String apiKey = "AIzaSyB6ElDUHgL8NL8Lf3DjIJxhwdXlQ2GyZho";
         ytClient = new YouTubeApiClient(apiKey);
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-      try {
+            throws ServletException, IOException {
+        try {
             int courseId = Integer.parseInt(request.getParameter("courseId"));
             int moduleId = Integer.parseInt(request.getParameter("moduleId"));
             int lessonId = Integer.parseInt(request.getParameter("lessonId"));
@@ -116,7 +127,6 @@ public class UpdateLessonServlet extends HttpServlet {
             // Cập nhật Lesson
             lessonDAO.updateLesson(lesson);
 
-
             // Quay lại trang cập nhật bài học
             response.sendRedirect("updateLesson?courseId=" + courseId
                     + "&moduleId=" + moduleId
@@ -128,8 +138,9 @@ public class UpdateLessonServlet extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

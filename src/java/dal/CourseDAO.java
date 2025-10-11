@@ -336,8 +336,13 @@ public class CourseDAO extends DBContext {
         c.setThumbnail(rs.getString("thumbnail"));
         c.setStatus(rs.getString("status"));
         c.setPrice(rs.getBigDecimal("price"));
-        c.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-        c.setPublishAt(rs.getTimestamp("publish_at").toLocalDateTime());
+     
+    Timestamp createdAtTs = rs.getTimestamp("created_at");
+    Timestamp publishAtTs = rs.getTimestamp("publish_at");
+
+    c.setCreatedAt(createdAtTs != null ? createdAtTs.toLocalDateTime() : null);
+    c.setPublishAt(publishAtTs != null ? publishAtTs.toLocalDateTime() : null);
+
         c.setCategory(cdao.getCategoryById(rs.getInt("category_id")));
 
         return c;

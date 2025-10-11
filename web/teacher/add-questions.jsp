@@ -123,292 +123,115 @@
                             </div>
                         </form>
 
-
-                        <!--                         Form Section 
-                                                <div class="form-section">
-                                                    <div class="form-row">
-                                                        <div class="form-group">
-                                                            <label for="questionBank">Ngân hàng câu hỏi *</label>
-                                                            <select id="questionBank" name="questionBank" class="form-select" required>
-                                                                <option value="">-- Chọn --</option>
-                                                                <option value="1">Ngân hàng câu hỏi 1</option>
-                                                                <option value="2">Ngân hàng câu hỏi 2</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                        
-                                                 Questions List Section 
-                                                <div class="questions-list-section">
-                                                    <div class="section-header">
-                                                        <h3>Danh sách câu hỏi</h3>
-                                                        <button class="btn btn-outline collapse-btn">
-                                                            <i class="fas fa-chevron-up"></i>
-                                                            Thu gọn các câu hỏi
-                                                        </button>
-                                                    </div>
-                        
-                                                     Questions Content Area 
-                                                    <div class="questions-content-area">
-                                                        <div id="questionsList">
-                                                            <div class="empty-questions">
-                                                                <div class="empty-icon">
-                                                                    <i class="fas fa-question-circle"></i>
-                                                                </div>
-                                                                <p>Chưa có câu hỏi nào được thêm</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                        
-                                                 Action Buttons 
-                                                <div class="action-buttons">
-                                                    <div class="left-actions">
-                                                        <div class="dropdown">
-                                                            <button class="btn btn-primary dropdown-toggle" onclick="toggleQuestionDropdown()">
-                                                                <i class="fas fa-plus"></i>
-                                                                Thêm câu hỏi
-                                                            </button>
-                                                            <div id="questionDropdown" class="dropdown-menu">
-                                                                <a href="#" onclick="addQuestion('single')" class="dropdown-item">
-                                                                    <i class="fas fa-circle"></i>
-                                                                    Câu hỏi lựa chọn 1 đáp án
-                                                                </a>
-                                                                <a href="#" onclick="addQuestion('multiple')" class="dropdown-item">
-                                                                    <i class="fas fa-check-square"></i>
-                                                                    Chọn nhiều đáp án
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                                                        <div class="dropdown">
-                                                                                            <button class="btn btn-outline dropdown-toggle">
-                                                                                                <i class="fas fa-file-word"></i>
-                                                                                                Nhập từ Word
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <button class="btn btn-outline">
-                                                                                            <i class="fas fa-file-excel"></i>
-                                                                                            Nhập từ Excel
-                                                                                        </button>
-                                                    </div>
-                                                </div>-->
-
-                        <!-- Navigation Buttons -->
-                                                <div class="navigation-buttons">
-                                                    <a href="ManageQuestionServlet" class="btn btn-outline">
-                                                        <i class="fas fa-chevron-left"></i>
-                                                        <<< Quay lại danh sách
-                                                    </a>
-                                                    <button class="btn btn-primary">
-                                                        Lưu
-                                                    </button>
-                                                </div>
                     </div>
                 </main>
             </div>
         </div>
 
         <script>
-
             let questionCount = 0;
-            function createOptionHTML(questionNumber) {
-                let html = "";
-                for (let i = 1; i <= 4; i++) {
-                    html +=
-                            '<div>' +
-                            '<input type="text" name="optionContent' + questionNumber + '_' + i + '" ' +
-                            'class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">' +
-                            '<input type="checkbox" name="correct' + questionNumber + '" value="' + i + '"> Đúng' +
-                            '</div>';
-                }
-                return html;
-            }
+
+function createOptionHTML(questionNumber) {
+    let html = "";
+    for (let i = 1; i <= 4; i++) {
+        html += '<div class="answer-option">';
+        html += '    <input type="checkbox" name="correct' + questionNumber + '" value="' + i + '" ';
+        html += '        id="correct-' + questionNumber + '-' + i + '" class="correct-answer-checkbox">';
+        html += '    <label for="correct-' + questionNumber + '-' + i + '" class="correct-answer-label">';
+        html += '        <i class="fas fa-check"></i>';
+        html += '    </label>';
+        html += '    <input type="text" name="optionContent' + questionNumber + '_' + i + '" ';
+        html += '        class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">';
+        html += '    <button type="button" class="remove-option-btn" onclick="removeOption(this)">';
+        html += '        <i class="fas fa-trash"></i>';
+        html += '    </button>';
+        html += '</div>';
+    }
+    return html;
+}
+
+function addQuestion(type) {
+    questionCount++;
+    const list = document.getElementById("questionsList");
+    const empty = list.querySelector(".empty-questions");
+    if (empty) empty.remove();
+
+    // Bắt đầu ghép chuỗi HTML
+    let html = '';
+    html += '<div class="question-form" id="question-' + questionCount + '">';
+    html += '    <div class="question-header">';
+    html += '        <div class="question-number">Câu ' + questionCount + '.</div>';
+    html += '        <button type="button" class="delete-question-btn" onclick="deleteQuestion(' + questionCount + ')">';
+    html += '            <i class="fas fa-trash"></i>';
+    html += '        </button>';
+    html += '    </div>';
+
+    html += '    <div class="question-content">';
+    html += '        <input type="hidden" name="questionType' + questionCount + '" value="' + type + '">';
+    html += '        <div class="question-input-group">';
+    html += '            <textarea name="questionText' + questionCount + '" ';
+    html += '                class="question-input" placeholder="Nhập nội dung câu hỏi tại đây..." required></textarea>';
+    html += '        </div>';
+
+    // Gọi hàm sinh option (vì createOptionHTML trả về HTML)
+    html += '        <div class="answer-options">' + createOptionHTML(questionCount) + '</div>';
+
+    html += '        <button type="button" class="add-option-btn" onclick="addOption(' + questionCount + ')">';
+    html += '            <i class="fas fa-plus"></i> Thêm phương án';
+    html += '        </button>';
+
+    html += '        <div class="explanation-group">';
+    html += '            <textarea name="explanation' + questionCount + '" ';
+    html += '                class="explanation-input" placeholder="Nhập lời giải chi tiết tại đây (nếu có)"></textarea>';
+    html += '        </div>';
+    html += '    </div>';
+    html += '</div>';
+
+    // Thêm vào danh sách
+    list.insertAdjacentHTML("beforeend", html);
+}
 
 
-            function addQuestion(type) {
-                questionCount++;
-                const list = document.getElementById("questionsList");
-                const empty = list.querySelector(".empty-questions");
-                if (empty)
-                    empty.remove();
-                const html =
-                        '<div class="question-item" style="border:1px solid #ddd;padding:10px;margin-bottom:10px">' +
-                        '<h4>Câu ' + questionCount + '</h4>' +
-                        '<input type="hidden" name="questionType' + questionCount + '" value="' + type + '">' +
-                        '<textarea name="questionText' + questionCount + '" placeholder="Nhập nội dung câu hỏi..." required></textarea>' +
-                        '<div class="options">' + createOptionHTML(questionCount) + '</div>' +
-                        '<textarea name="explanation' + questionCount + '" placeholder="Giải thích (nếu có)"></textarea>' +
-                        '</div>';
-                list.insertAdjacentHTML("beforeend", html);
-            }
+function deleteQuestion(number) {
+    // Xóa toàn bộ phần câu hỏi theo id
+    var question = document.getElementById("question-" + number);
+    if (question) {
+        question.remove();
+    }
+}
 
-            document.addEventListener('DOMContentLoaded', function () {
-                // Collapse/Expand functionality
-                const collapseBtn = document.querySelector('.collapse-btn');
-                const questionsContent = document.querySelector('.questions-content-area');
-                collapseBtn.addEventListener('click', function () {
-                    const isCollapsed = questionsContent.style.display === 'none';
-                    questionsContent.style.display = isCollapsed ? 'block' : 'none';
-                    const icon = this.querySelector('i');
-                    icon.className = isCollapsed ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
-                    this.innerHTML = isCollapsed ?
-                            '<i class="fas fa-chevron-up"></i> Thu gọn các câu hỏi' :
-                            '<i class="fas fa-chevron-down"></i> Mở rộng các câu hỏi';
-                });
-            });
-            function toggleQuestionDropdown() {
-                const dropdown = document.getElementById('questionDropdown');
-                dropdown.classList.toggle('show');
-            }
+function removeOption(button) {
+    // Tìm div cha có class .answer-option và xóa nó
+    var optionDiv = button.closest(".answer-option");
+    if (optionDiv) {
+        optionDiv.remove();
+    }
+}
 
-//            function addQuestion(type) {
-//                questionCount++;
-//                const questionsList = document.getElementById('questionsList');
-//
-//                // Remove empty state if exists
-//                const emptyState = questionsList.querySelector('.empty-questions');
-//                if (emptyState) {
-//                    emptyState.remove();
-//                }
-//
-//                const questionHtml = createQuestionForm(questionCount, type);
-//                questionsList.insertAdjacentHTML('beforeend', questionHtml);
-//
-//                // Close dropdown
-//                document.getElementById('questionDropdown').classList.remove('show');
-//            }
+function addOption(questionNumber) {
+    var optionsDiv = document.querySelector("#question-" + questionNumber + " .answer-options");
+    var currentCount = optionsDiv.querySelectorAll(".answer-option").length;
+    var newIndex = currentCount + 1;
 
-            function createQuestionForm(questionNumber, type) {
-                const isMultiple = type === 'multiple';
-                const inputType = isMultiple ? 'checkbox' : 'radio';
-                const iconClass = isMultiple ? 'fas fa-check-square' : 'fas fa-circle';
-                const typeText = isMultiple ? 'Chọn nhiều đáp án' : 'Câu hỏi lựa chọn 1 đáp án';
-                return `
-                    <div class="question-form" id="question-${questionNumber}">
-                        <div class="question-header">
-                            <div class="question-number">Câu ${questionNumber}.</div>
-                            <div class="question-type">
-                                <i class="${iconClass}"></i>
-            ${typeText}
-                            </div>
-                           
-                       
-                            <button class="delete-question-btn" onclick="deleteQuestion(${questionNumber})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="question-content">
-                            <div class="question-input-group">
-                               <input type="text" name="questionText' + questionNumber + '" class="question-input" placeholder="Nhập nội dung câu hỏi tại đây....">
-                            </div>
-                            
-                            <div class="answer-options">
-                                <div class="answer-option">
-                                    <input type="checkbox" class="correct-answer-checkbox" id="correct-${questionNumber}-1">
-                                    <label for="correct-${questionNumber}-1" class="correct-answer-label">
-                                        <i class="fas fa-check"></i>
-                                    </label>
-                                    <input type="text" class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">
-                                    <button class="remove-option-btn" onclick="removeOption(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                                <div class="answer-option">
-                                    <input type="checkbox" class="correct-answer-checkbox" id="correct-${questionNumber}-2">
-                                    <label for="correct-${questionNumber}-2" class="correct-answer-label">
-                                        <i class="fas fa-check"></i>
-                                    </label>
-                                    <input type="text" class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">
-                                    <button class="remove-option-btn" onclick="removeOption(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                                <div class="answer-option">
-                                    <input type="checkbox" class="correct-answer-checkbox" id="correct-${questionNumber}-3">
-                                    <label for="correct-${questionNumber}-3" class="correct-answer-label">
-                                        <i class="fas fa-check"></i>
-                                    </label>
-                                    <input type="text" class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">
-                                    <button class="remove-option-btn" onclick="removeOption(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                                <div class="answer-option">
-                                    <input type="checkbox" class="correct-answer-checkbox" id="correct-${questionNumber}-4">
-                                    <label for="correct-${questionNumber}-4" class="correct-answer-label">
-                                        <i class="fas fa-check"></i>
-                                    </label>
-                                    <input type="text" class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">
-                                    <button class="remove-option-btn" onclick="removeOption(this)">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <button class="add-option-btn" onclick="addOption(${questionNumber})">
-                                <i class="fas fa-plus"></i>
-                                Thêm phương án
-                            </button>
-                            
-                            <div class="explanation-group">
-                                <textarea class="explanation-input" placeholder="Nhập lời giải chi tiết tại đây (Nếu có)"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
+    var html = '';
+    html += '<div class="answer-option">';
+    html += '    <input type="checkbox" name="correct' + questionNumber + '" value="' + newIndex + '" ';
+    html += '        id="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-checkbox">';
+    html += '    <label for="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-label">';
+    html += '        <i class="fas fa-check"></i>';
+    html += '    </label>';
+    html += '    <input type="text" name="optionContent' + questionNumber + '_' + newIndex + '" ';
+    html += '        class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">';
+    html += '    <button type="button" class="remove-option-btn" onclick="removeOption(this)">';
+    html += '        <i class="fas fa-trash"></i>';
+    html += '    </button>';
+    html += '</div>';
+
+    optionsDiv.insertAdjacentHTML("beforeend", html);
+}
 
 
 
-            function deleteQuestion(questionNumber) {
-                const questionElement = document.getElementById(`question-${questionNumber}`);
-                questionElement.remove();
-                // Show empty state if no questions left
-                const questionsList = document.getElementById('questionsList');
-                if (questionsList.children.length === 0) {
-                    questionsList.innerHTML = `
-                        <div class="empty-questions">
-                            <div class="empty-icon">
-                                <i class="fas fa-question-circle"></i>
-                            </div>
-                            <p>Chưa có câu hỏi nào được thêm</p>
-                        </div>
-                    `;
-                }
-            }
-
-            function removeOption(button) {
-                const optionElement = button.closest('.answer-option');
-                optionElement.remove();
-            }
-
-            function addOption(questionNumber) {
-                const answerOptions = document.querySelector(`#question-${questionNumber} .answer-options`);
-                const optionCount = answerOptions.children.length + 1;
-                const newOption = document.createElement('div');
-                newOption.className = 'answer-option';
-                newOption.innerHTML = `
-                    <input type="checkbox" class="correct-answer-checkbox" id="correct-${questionNumber}-${optionCount}">
-                    <label for="correct-${questionNumber}-${optionCount}" class="correct-answer-label">
-                        <i class="fas fa-check"></i>
-                    </label>
-                    <input type="text" class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">
-                    <button class="remove-option-btn" onclick="removeOption(this)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                answerOptions.appendChild(newOption);
-            }
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function (event) {
-                const dropdown = document.getElementById('questionDropdown');
-                const dropdownToggle = document.querySelector('.dropdown-toggle');
-                if (!dropdown.contains(event.target) && !dropdownToggle.contains(event.target)) {
-                    dropdown.classList.remove('show');
-                }
-            });
         </script>
     </body>
 </html>

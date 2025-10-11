@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model.entity;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -28,8 +29,7 @@ public class Module {
         this.orderIndex = orderIndex;
     }
 
-
-    
+ 
     public int getModuleId() {
         return moduleId;
     }
@@ -71,6 +71,7 @@ public class Module {
         this.orderIndex = orderIndex;
     }
 
+    
 }
 
 

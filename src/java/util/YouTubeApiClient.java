@@ -45,7 +45,8 @@ public class YouTubeApiClient {
         return null;
     }
     
-    public static String toEmbedUrl(String urlOrId) {
+    public static String toEmbedUrl(String urlOrId) 
+    {
         String id = extractVideoId(urlOrId);
         if (id == null) return null;
         return "https://www.youtube.com/embed/" + id;
