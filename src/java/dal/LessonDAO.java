@@ -34,7 +34,7 @@ public class LessonDAO extends DBContext {
         }
     }
 
-    public Lesson getLessonById(int moduleItemId) throws SQLException {
+    public Lesson getLessonById(int moduleItemId){
         String sql = "SELECT * FROM Lesson WHERE lesson_id = ?";
         try (
                 PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -50,6 +50,8 @@ public class LessonDAO extends DBContext {
                 l.setTextContent(rs.getString("text_content"));
                 return l;
             }
+        }catch(SQLException e){
+            e.printStackTrace();
         }
         return null;
     }

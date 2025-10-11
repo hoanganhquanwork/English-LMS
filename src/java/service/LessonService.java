@@ -31,6 +31,12 @@ public class LessonService {
         }
         return result;
     }
+
+
+    public Lesson getLessonById(int lessonId) {
+        return lessonDAO.getLessonById(lessonId);
+    }
+
     
     public boolean addLesson(Lesson lesson) {
         try {
