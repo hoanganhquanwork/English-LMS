@@ -1,4 +1,3 @@
-
 package dal;
 
 import model.entity.Category;
@@ -10,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class CourseDAO extends DBContext {
 
@@ -302,7 +302,7 @@ public class CourseDAO extends DBContext {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                list.add(extractCourse(rs)); 
+                list.add(extractCourse(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -342,7 +342,8 @@ public class CourseDAO extends DBContext {
 
         return c;
     }
-    public  boolean  addCourse(Course course) {
+
+    public boolean addCourse(Course course) {
         String sql = "INSERT INTO Course (title, description, language, level, created_by, category_id) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -352,7 +353,7 @@ public class CourseDAO extends DBContext {
             ps.setString(4, course.getLevel());
             ps.setInt(5, course.getCreatedBy().getUser().getUserId());
             ps.setInt(6, course.getCategory().getCategoryId());
-           return ps.executeUpdate() > 0;
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -380,9 +381,8 @@ public class CourseDAO extends DBContext {
         }
         return false;
     }
-        
-    
-     public boolean deleteCourse(int courseId) {
+
+    public boolean deleteCourse(int courseId) {
         String sql = "DELETE FROM Course WHERE course_id = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setInt(1, courseId);
@@ -393,4 +393,5 @@ public class CourseDAO extends DBContext {
         return false;
     }
 
+    
 }

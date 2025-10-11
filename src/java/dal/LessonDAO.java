@@ -11,16 +11,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import model.entity.Module;
+
 /**
  *
  * @author Lenovo
  */
-public class LessonDAO extends DBContext{
-      public void insertLesson(Lesson lesson) throws SQLException {
-        String sql = "INSERT INTO Lesson (lesson_id, title, content_type, video_url, duration_sec, text_content) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+public class LessonDAO extends DBContext {
+
+    public void insertLesson(Lesson lesson) throws SQLException {
+        String sql = "INSERT INTO Lesson (lesson_id, title, content_type, video_url, duration_sec, text_content) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         try (
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setInt(1, lesson.getModuleItemId());
             ps.setString(2, lesson.getTitle());
@@ -31,33 +33,35 @@ public class LessonDAO extends DBContext{
             ps.executeUpdate();
         }
     }
-      
-      public Lesson getLessonById(int moduleItemId) throws SQLException {
-    String sql = "SELECT * FROM Lesson WHERE lesson_id = ?";
-    try (
-         PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, moduleItemId);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            Lesson l = new Lesson();
-            l.setModuleItemId(rs.getInt("lesson_id"));
-            l.setTitle(rs.getString("title"));
-            l.setContentType(rs.getString("content_type"));
-            l.setVideoUrl(rs.getString("video_url"));
-            l.setDurationSec(rs.getInt("duration_sec"));
-            l.setTextContent(rs.getString("text_content"));
-            return l;
+
+    public Lesson getLessonById(int moduleItemId){
+        String sql = "SELECT * FROM Lesson WHERE lesson_id = ?";
+        try (
+                PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, moduleItemId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Lesson l = new Lesson();
+                l.setModuleItemId(rs.getInt("lesson_id"));
+                l.setTitle(rs.getString("title"));
+                l.setContentType(rs.getString("content_type"));
+                l.setVideoUrl(rs.getString("video_url"));
+                l.setDurationSec(rs.getInt("duration_sec"));
+                l.setTextContent(rs.getString("text_content"));
+                return l;
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
         }
+        return null;
     }
-    return null;
-}
-      public List<Lesson> getAllLessons() throws SQLException {
+
+    public List<Lesson> getAllLessons() throws SQLException {
         List<Lesson> lessons = new ArrayList<>();
         String sql = "SELECT lesson_id, title, content_type, video_url, duration_sec, text_content FROM Lesson";
 
         try (
-             PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Lesson lesson = new Lesson();
@@ -72,7 +76,8 @@ public class LessonDAO extends DBContext{
         }
         return lessons;
     }
-   public List<Lesson> getLessonsByModule(int moduleId) throws SQLException {
+
+    public List<Lesson> getLessonsByModule(int moduleId) throws SQLException {
         String sql = """
             SELECT l.lesson_id, l.title, l.content_type, l.video_url, l.duration_sec, l.text_content
             FROM Lesson l
@@ -82,7 +87,7 @@ public class LessonDAO extends DBContext{
         """;
 
         try (
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, moduleId);
             ResultSet rs = ps.executeQuery();
             List<Lesson> list = new ArrayList<>();
@@ -99,11 +104,11 @@ public class LessonDAO extends DBContext{
             return list;
         }
     }
-   
+
     public void updateLesson(Lesson l) throws SQLException {
         String sql = "UPDATE Lesson SET title = ?, video_url = ?, duration_sec = ?, text_content = ? WHERE lesson_id = ?";
         try (
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, l.getTitle());
             ps.setString(2, l.getVideoUrl());
             ps.setObject(3, l.getDurationSec(), java.sql.Types.INTEGER);

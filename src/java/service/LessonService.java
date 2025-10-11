@@ -18,10 +18,11 @@ import model.entity.Module;
  * @author Lenovo
  */
 public class LessonService {
-     private LessonDAO lessonDAO = new LessonDAO();
-       private ModuleDAO moduleDAO = new ModuleDAO();
-     
- public Map<Module, List<Lesson>> getCourseContent(int courseId) throws SQLException {
+
+    private LessonDAO lessonDAO = new LessonDAO();
+    private ModuleDAO moduleDAO = new ModuleDAO();
+
+    public Map<Module, List<Lesson>> getCourseContent(int courseId) throws SQLException {
         List<Module> modules = moduleDAO.getModulesByCourse(courseId);
         Map<Module, List<Lesson>> result = new LinkedHashMap<>();
         for (Module m : modules) {
@@ -29,5 +30,9 @@ public class LessonService {
             result.put(m, lessons);
         }
         return result;
+    }
+
+    public Lesson getLessonById(int lessonId) {
+        return lessonDAO.getLessonById(lessonId);
     }
 }
