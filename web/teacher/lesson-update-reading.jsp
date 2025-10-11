@@ -5,11 +5,33 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Thêm mới bài học dạng video</title>
+        <title>Cập nhật bài học Reading</title>
         <link rel="stylesheet" href="css/styles.css">
         <link rel="stylesheet" href="css/course-content.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
+            .content-editor {
+                width: 100%;
+                min-height: 400px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 20px;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 16px;
+                line-height: 1.8;
+                background: #fafafa;
+                color: #2c3e50;
+                box-sizing: border-box;
+                resize: vertical;
+                transition: all 0.2s ease-in-out;
+            }
+
+            .content-editor:focus {
+                outline: none;
+                border-color: #3498db;
+                box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+                background: #fff;
+            }
             .lesson-content-page {
                 display: flex;
                 gap: 24px;
@@ -17,7 +39,7 @@
             }
 
             .topic-sidebar {
-                width: 320px;
+                width: 280px;
                 background: #fff;
                 border-radius: 12px;
                 padding: 16px;
@@ -107,7 +129,25 @@
                 background: #fff;
                 border-radius: 12px;
                 box-shadow: 0 2px 8px rgba(0,0,0,.08);
-                padding: 24px;
+                padding: 16px 24px;
+                min-width: 0;
+            }
+
+            .main-content * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            .main-content .form-group {
+                margin-bottom: 16px;
+            }
+
+            .main-content .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #2c3e50;
             }
 
             .back-link{
@@ -138,7 +178,44 @@
                 display:flex;
                 justify-content:flex-end;
                 gap:12px;
-                margin-top:20px
+                margin-top:20px;
+                padding: 20px 0;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-secondary {
+                background: #6c757d;
+                color: white;
+            }
+
+            .btn-secondary:hover {
+                background: #5a6268;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+
+            .btn-primary {
+                background: #007bff;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: #0056b3;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0,123,255,0.3);
             }
 
             .module-header {
@@ -225,25 +302,164 @@
                 width: 16px;
                 text-align: center;
             }
+
+            .form-group textarea {
+                resize: vertical;
+                min-height: 100px;
+            }
+
+            .form-group input[type="text"] {
+                width: 100%;
+                padding: 12px 16px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 16px;
+                box-sizing: border-box;
+            }
+
+            .form-group input[type="text"]:focus {
+                outline: none;
+                border-color: #3498db;
+                box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            }
+
+            .reading-preview {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 16px;
+                margin-top: 12px;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+            }
+
+            .lesson-info {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 20px;
+            }
+
+            .lesson-info h3 {
+                color: #2c3e50;
+                margin-bottom: 10px;
+                font-size: 16px;
+            }
+
+            .info-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 14px;
+                color: #6c757d;
+            }
+
+             .info-item i {
+                 color: #3498db;
+                 width: 16px;
+             }
+
+             .action-buttons {
+                 display: flex;
+                 gap: 12px;
+                 margin: 20px 0;
+                 flex-wrap: wrap;
+             }
+
+             .btn-action {
+                 padding: 10px 16px;
+                 border: 1px solid #ddd;
+                 border-radius: 8px;
+                 font-size: 14px;
+                 font-weight: 600;
+                 cursor: pointer;
+                 transition: all 0.3s ease;
+                 text-decoration: none;
+                 display: inline-flex;
+                 align-items: center;
+                 gap: 8px;
+                 background: white;
+                 color: #6c757d;
+             }
+
+             .btn-action:hover {
+                 transform: translateY(-1px);
+                 box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+             }
+
+             .btn-action.btn-primary {
+                 background: #007bff;
+                 color: white;
+                 border-color: #007bff;
+             }
+
+             .btn-action.btn-primary:hover {
+                 background: #0056b3;
+                 border-color: #0056b3;
+                 box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+             }
+
+             .btn-action.btn-secondary {
+                 background: white;
+                 color: #6c757d;
+                 border-color: #ddd;
+             }
+
+             .btn-action.btn-secondary:hover {
+                 background: #f8f9fa;
+                 border-color: #adb5bd;
+                 color: #495057;
+             }
         </style>
+
+        <script src="https://cdn.tiny.cloud/1/808iwiomkwovmb2cvokzivnjb0nka12kkujkdkuf8tpcoxtw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                tinymce.init({
+                    selector: '#content',
+                    width: '100%',
+                    height: 400,
+                    menubar: false,
+                    plugins: 'lists link image media table code',
+                    toolbar:
+                            'undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code',
+                    content_style: `
+                body {
+                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                  font-size: 15px;
+                  line-height: 1.6;
+                  color: #2c3e50;
+                  background-color: #fafafa;
+                  padding: 16px;
+                  border-radius: 8px;
+                }
+            `,
+                    setup: function (editor) {
+                        editor.on('change keyup', function () {
+                            editor.save(); // cập nhật lại textarea
+                        });
+                    }
+                });
+            });
+        </script>
     </head>
     <body>
-        <div id="page" data-courseid="${courseId}"></div>
-        <div class="container" style="max-width: 1500px;">
+        <div id="page" data-courseid="${param.courseId}"></div>
+        <div class="container" style="max-width: 1600px; margin: 0 auto; padding: 0 20px;">
             <a class="back-link" href="manageModule?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
             <div class="page-title-wrap">
-                <h2>Thêm mới bài học dạng video</h2>
+                <h2>Cập nhật bài học Reading</h2>
             </div>
 
             <div class="lesson-content-page">
                 <!-- Left Sidebar -->
                 <aside class="topic-sidebar">
-                    <div class="sidebar-header">Hướng dẫn</div>
                     <div class="sidebar-search">
                         <input type="text" placeholder="Tìm kiếm">
                         <i class="fas fa-search" style="color: #7f8c8d;"></i>
                     </div>
-
                     <div class="topic-tree">
                         <c:forEach var="h" items="${requestScope.content}">
                             <div class="module-header" style="position: relative;">
@@ -268,8 +484,7 @@
                                 </div>
                             </div>
                             <c:forEach var="item" items="${h.value}">
-
-                                <div class="tree-item" style="margin-left: 16px;">
+                                <div class="tree-item ${item.moduleItemId == lesson.moduleItemId ? 'active' : ''}" style="margin-left: 16px;">
                                     <c:choose>
                                         <c:when test="${item.itemType == 'lesson'}">
                                             <a href="updateLesson?courseId=${param.courseId}&moduleId=${h.key.moduleId}&lessonId=${item.moduleItemId}" style="text-decoration: none; color: inherit;">
@@ -284,45 +499,56 @@
                                             </a>
                                         </c:when>
                                     </c:choose>
-
                                 </div>
                             </c:forEach>
                         </c:forEach>
-                    </div>
-
+                    </div>                
                     <div class="guide-section">
                         <div class="guide-label">HƯỚNG DẪN</div>
                         <div class="guide-icon">
-                            <i class="fas fa-user" style="color: #3498db;"></i>
-                            <span>NEWS</span>
+                            <i class="fas fa-file-alt" style="color: #3498db;"></i>
+                            <span>READING</span>
                         </div>
                     </div>
                 </aside>
 
                 <!-- Main Content -->
-                <main class="main-content" style="height: 400px;">
-                    <form action="createLesson" method="post">
+                <main class="main-content" style="height: 700px;">
+                    <form action="updateReadingLesson" method="post">
                         <input type="hidden" name="courseId" value="${param.courseId}">
-                        <input type="hidden" name="moduleId" value="${requestScope.moduleId}">
+                        <input type="hidden" name="moduleId" value="${param.moduleId}">
+                        <input type="hidden" name="lessonId" value="${lesson.moduleItemId}">
 
                         <div class="form-group">
                             <label for="title">Tên bài học <span style="color:#e74c3c">*</span></label>
-                            <input id="title" name="title" type="text" placeholder="Nhập tên bài học" required>
+                            <input id="title" name="title" type="text" placeholder="Nhập tên bài học" 
+                                   value="${lesson.title}" required>
                         </div>
 
-                        <div class="form-group">
-                            <label>Video <span style="color:#e74c3c">*</span></label>
-                            <div class="radio-row">
-                                <!--                                <label><input type="radio" name="videoType" value="upload"> Tải video lên</label>-->
-                                <label><input type="radio" name="videoType" value="youtube" checked> Video có sẵn trên Youtube</label>
-                            </div>
-                            <input type="text" name="youtubeUrl" placeholder="Đường dẫn URL Youtube">
-                            <div class="hint">Chú ý: Vui lòng chỉ nhập đường dẫn trực tiếp của video. Đường dẫn kênh youtube, video riêng tư hoặc danh sách phát là không hợp lệ!</div>
-                        </div>
+                         <div class="form-group">
+                             <label for="content">Nội dung bài đọc <span style="color:#e74c3c">*</span></label>
+                             <textarea id="content" name="content" class="content-editor" 
+                                       placeholder="Nhập nội dung bài đọc..." required>${lesson.textContent}</textarea>
+                         </div>
 
-                        <div class="actions">
-                            <a class="btn btn-secondary" href="module.jsp?courseId=${param.courseId}">Hủy bỏ</a>
-                            <button type="submit" class="btn btn-primary">Lưu</button>
+                         <!-- Action Buttons -->
+                         <div class="action-buttons">
+                             <button type="button" class="btn btn-action btn-primary" onclick="addQuestions()">
+                                 <i class="fas fa-plus"></i>
+                                 Thêm câu hỏi
+                             </button>
+                          
+                         </div>
+
+                         <div class="actions">
+                            <a class="btn btn-secondary" href="manageModule?courseId=${param.courseId}">
+                                <i class="fas fa-times"></i>
+                                Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Cập nhật bài học
+                            </button>
                         </div>
                     </form>
                 </main>
@@ -343,20 +569,43 @@
                 dropdown.classList.toggle('show');
             }
 
-            function createLesson(type, moduleId) {
-                const courseId = document.getElementById('page').dataset.courseid || '';
-                let url = '';
+             function createLesson(type, moduleId) {
+                 const courseId = document.getElementById('page').dataset.courseid || '';
+                 let url = '';
 
-                if (type === 'video') {
-                    url = `ManageLessonServlet?courseId=${courseId}&moduleId=${moduleId}`;
-                } else if (type === 'reading') {
-                    url = `lesson-create-reading.jsp?courseId=${courseId}&moduleId=${moduleId}`;
+                 if (type === 'video') {
+                     url = `ManageLessonServlet?courseId=${courseId}&moduleId=${moduleId}`;
+                 } else if (type === 'reading') {
+                     url = `lesson-create-reading.jsp?courseId=${courseId}&moduleId=${moduleId}`;
+                 }
+
+                 if (url) {
+                     window.location.href = url;
+                 }
+             }
+
+             // Action button functions
+         
+
+            // Xử lý form submit
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const title = document.getElementById('title').value.trim();
+                const content = tinymce.get('content').getContent();
+
+                if (!title) {
+                    e.preventDefault();
+                    alert('Vui lòng nhập tên bài học');
+                    document.getElementById('title').focus();
+                    return false;
                 }
 
-                if (url) {
-                    window.location.href = url;
+                if (!content || content === '<p></p>' || content === '') {
+                    e.preventDefault();
+                    alert('Vui lòng nhập nội dung bài đọc');
+                    tinymce.get('content').focus();
+                    return false;
                 }
-            }
+            });
 
             document.addEventListener('click', function (event) {
                 if (!event.target.closest('.module-header')) {
@@ -368,6 +617,3 @@
         </script>
     </body>
 </html>
-
-
-

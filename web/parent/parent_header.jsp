@@ -44,7 +44,7 @@
                class="<%= "children".equals(currentPage) ? "active" : "" %>">Quản lý con</a>
             <a href="enrollments.html"
                class="<%= "enrollments".equals(currentPage) ? "active" : "" %>">Đăng ký khóa học</a>
-            <a href="approvals.html"
+            <a href="${pageContext.request.contextPath}/parent/approvals"
                class="<%= "approvals".equals(currentPage) ? "active" : "" %>">Phê duyệt</a>
             <a href="payments.html"
                class="<%= "payments".equals(currentPage) ? "active" : "" %>">Thanh toán</a>

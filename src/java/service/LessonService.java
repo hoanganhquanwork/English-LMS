@@ -32,7 +32,40 @@ public class LessonService {
         return result;
     }
 
+
     public Lesson getLessonById(int lessonId) {
         return lessonDAO.getLessonById(lessonId);
+    }
+
+    
+    public boolean addLesson(Lesson lesson) {
+        try {
+            
+            if (lesson == null) {
+                System.err.println(" Lesson object is null");
+                return false;
+            }
+
+            if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
+                System.err.println(" Lesson title is missing");
+                return false;
+            }
+
+            if (lesson.getContentType() == null) {
+                System.err.println(" Lesson content type is missing");
+                return false;
+            }
+
+            
+            lessonDAO.insertLesson(lesson);
+
+            System.out.println(" Lesson inserted successfully!");
+            return true;
+
+        } catch (Exception e) {
+            System.err.println(" Error inserting lesson: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 }

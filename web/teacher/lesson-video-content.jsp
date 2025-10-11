@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Cập nhật bài học dạng video</title>
         <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="css/course-students.css">
         <link rel="stylesheet" href="css/course-content.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
@@ -576,6 +577,58 @@
                 border-color: #3498db;
             }
 
+            .action-buttons {
+                display: flex;
+                gap: 12px;
+                margin: 20px 0;
+                flex-wrap: wrap;
+            }
+
+            .btn-action {
+                padding: 10px 16px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: white;
+                color: #6c757d;
+            }
+
+            .btn-action:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+
+            .btn-action.btn-primary {
+                background: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+
+            .btn-action.btn-primary:hover {
+                background: #0056b3;
+                border-color: #0056b3;
+                box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+            }
+
+            .btn-action.btn-secondary {
+                background: white;
+                color: #6c757d;
+                border-color: #ddd;
+            }
+
+            .btn-action.btn-secondary:hover {
+                background: #f8f9fa;
+                border-color: #adb5bd;
+                color: #495057;
+            }
+
             .page-actions {
                 display: flex;
                 justify-content: flex-end;
@@ -629,12 +682,10 @@
             <div class="lesson-content-page">
                 <!-- Left Sidebar -->
                 <aside class="topic-sidebar">
-                    <div class="sidebar-header">Hướng dẫn</div>
                     <div class="sidebar-search">
                         <input type="text" placeholder="Tìm kiếm">
                         <i class="fas fa-search" style="color: #7f8c8d;"></i>
                     </div>
-
                     <div class="topic-tree">
                         <c:forEach var="h" items="${requestScope.content}">
                             <div class="module-header" style="position: relative;">
@@ -658,21 +709,31 @@
                                     </div>
                                 </div>
                             </div>
-                            <c:forEach var="lesson" items="${h.value}">
-                                <div class="tree-item" style="margin-left: 16px;">
-                                    <a href="updateLesson?courseId=${param.courseId}&moduleId=${h.key.moduleId}&lessonId=${lesson.moduleItemId}" style="text-decoration: none; color: inherit;">
-                                        <i class="fas fa-play" style="color: #e74c3c;"></i> ${lesson.title}
-                                    </a>
+                            <c:forEach var="item" items="${h.value}">
+                                <div class="tree-item ${item.moduleItemId == lesson.moduleItemId ? 'active' : ''}" style="margin-left: 16px;">
+                                    <c:choose>
+                                        <c:when test="${item.itemType == 'lesson'}">
+                                            <a href="updateLesson?courseId=${param.courseId}&moduleId=${h.key.moduleId}&lessonId=${item.moduleItemId}" style="text-decoration: none; color: inherit;">
+                                                <i class="fas fa-play" style="color: #e74c3c;"></i>  Bài học #${item.moduleItemId}
+                                            </a>
+                                        </c:when>
+                                        <c:when test="${item.itemType == 'discussion'}">
+                                            <a href="viewDiscussion?courseId=${param.courseId}&moduleId=${h.key.moduleId}&discussionId=${item.moduleItemId}"
+                                               style="text-decoration: none; color: inherit;">
+                                                <i class="fas fa-comments" style="color: #f39c12;"></i>
+                                                Thảo luận #${item.moduleItemId}
+                                            </a>
+                                        </c:when>
+                                    </c:choose>
                                 </div>
                             </c:forEach>
                         </c:forEach>
-                    </div>
-
+                    </div>                
                     <div class="guide-section">
                         <div class="guide-label">HƯỚNG DẪN</div>
                         <div class="guide-icon">
-                            <i class="fas fa-user" style="color: #3498db;"></i>
-                            <span>NEWS</span>
+                            <i class="fas fa-file-alt" style="color: #3498db;"></i>
+                            <span>READING</span>
                         </div>
                     </div>
                 </aside>
@@ -698,10 +759,10 @@
                         </div>
                     </div>
 
-                                <form action="updateLesson" method="post">
+                    <form action="updateLesson" method="post">
                         <input type="hidden" name="courseId" value="${param.courseId}">
                         <input type="hidden" name="moduleId" value="${param.moduleId}">
-                        <input type="hidden" name="lessonId" value="${param.lessonId}">
+                        <input type="hidden" name="lessonId" value="${param.moduleItemId}">
 
                         <div class="lesson-form">
                             <div class="form-group">
@@ -733,6 +794,8 @@
                                 </c:choose>
                             </div>
 
+                            <!-- Action Buttons -->
+
 
                             <div class="page-actions">
                                 <a href="module.jsp?courseId=${param.courseId}" class="btn btn-secondary">
@@ -742,13 +805,46 @@
                                     Lưu
                                 </button>
                             </div>
-                                    </div>
-                   </form>
+                        </div>
+                    </form>
+<!--                                        <div id="questionSection" class="add-questions-page" style="margin-top: 60px;">
+                                            <h3 style="margin-bottom: 16px;">Câu hỏi của bài học</h3>
+                                            <div id="questionsList" class="questions-content-area">
+                                                <div class="empty-questions">
+                                                    <p>Chưa có câu hỏi nào được thêm</p>
+                                                </div>
+                                            </div>
+                    
+                                            <div class="actions">
+                                                <button type="button" class="btn btn-primary" onclick="addQuestion('mcq_single')">
+                                                    + Thêm câu hỏi
+                                                </button>
+                                            </div>
+                                        </div>-->
+                    <form action="AddLessonQuestionServlet" class="add-questions-page" style="margin-top: 60px;" method="post">
+                        <input type="hidden" name="lessonId" value="${lesson.moduleItemId}">
+                          <h3 style="margin-bottom: 16px;">Câu hỏi của bài học</h3>
+                        <div id="questionsList" class="questions-content-area">
+                            <div class="empty-questions">
+                                <p>Chưa có câu hỏi nào được thêm</p>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button type="button" class="btn btn-primary" onclick="addQuestion('mcq_single')">
+                                + Thêm câu hỏi
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Lưu câu hỏi
+                            </button>
+                        </div>
+                    </form>
                 </main>
             </div>
         </div>
 
         <script>
+            let questionCount = 0;
             function toggleDropdown(dropdownId) {
                 // Đóng tất cả dropdown khác
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
@@ -777,6 +873,9 @@
                 }
             }
 
+            // Action button functions
+
+
             // Đóng dropdown khi click bên ngoài
             document.addEventListener('click', function (event) {
                 if (!event.target.closest('.module-header')) {
@@ -804,6 +903,96 @@
                 // Xử lý phát video
                 console.log('Phát video');
             });
+
+
+            function createOptionHTML(questionNumber) {
+                var html = "";
+                for (var i = 1; i <= 4; i++) {
+                    html += '<div class="answer-option">';
+                    html += '    <input type="checkbox" name="correct' + questionNumber + '" value="' + i + '" ' +
+                            'id="correct-' + questionNumber + '-' + i + '" class="correct-answer-checkbox">';
+                    html += '    <label for="correct-' + questionNumber + '-' + i + '" class="correct-answer-label">';
+                    html += '        <i class="fas fa-check"></i>';
+                    html += '    </label>';
+                    html += '    <input type="text" name="optionContent' + questionNumber + '_' + i + '" ' +
+                            'class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">';
+                    html += '    <button type="button" class="remove-option-btn" onclick="removeOption(this)">';
+                    html += '        <i class="fas fa-trash"></i>';
+                    html += '    </button>';
+                    html += '</div>';
+                }
+                return html;
+            }
+
+            function addQuestion(type) {
+                questionCount++;
+                var list = document.getElementById("questionsList");
+                var empty = list.querySelector(".empty-questions");
+                if (empty)
+                    empty.remove();
+
+                var html = '';
+                html += '<div class="question-form" id="question-' + questionCount + '">';
+                html += '    <div class="question-header">';
+                html += '        <div class="question-number">Câu ' + questionCount + '.</div>';
+                html += '        <button type="button" class="delete-question-btn" onclick="deleteQuestion(' + questionCount + ')">';
+                html += '            <i class="fas fa-trash"></i>';
+                html += '        </button>';
+                html += '    </div>';
+                html += '    <div class="question-content">';
+                html += '        <input type="hidden" name="questionType' + questionCount + '" value="' + type + '">';
+                html += '        <div class="question-input-group">';
+                html += '            <textarea name="questionText' + questionCount + '" class="question-input" ' +
+                        'placeholder="Nhập nội dung câu hỏi..." required></textarea>';
+                html += '        </div>';
+                html += '        <div class="answer-options">' + createOptionHTML(questionCount) + '</div>';
+                html += '        <button type="button" class="add-option-btn" onclick="addOption(' + questionCount + ')">';
+                html += '            <i class="fas fa-plus"></i> Thêm phương án';
+                html += '        </button>';
+                html += '        <div class="explanation-group">';
+                html += '            <textarea name="explanation' + questionCount + '" class="explanation-input" ' +
+                        'placeholder="Nhập lời giải chi tiết (nếu có)"></textarea>';
+                html += '        </div>';
+                html += '    </div>';
+                html += '</div>';
+
+                list.insertAdjacentHTML("beforeend", html);
+            }
+
+            function deleteQuestion(number) {
+                var q = document.getElementById("question-" + number);
+                if (q)
+                    q.remove();
+            }
+
+            function removeOption(button) {
+                var optionDiv = button.closest(".answer-option");
+                if (optionDiv)
+                    optionDiv.remove();
+            }
+
+            function addOption(questionNumber) {
+                var optionsDiv = document.querySelector("#question-" + questionNumber + " .answer-options");
+                var currentCount = optionsDiv.querySelectorAll(".answer-option").length;
+                var newIndex = currentCount + 1;
+
+                var html = '';
+                html += '<div class="answer-option">';
+                html += '    <input type="checkbox" name="correct' + questionNumber + '" value="' + newIndex + '" ' +
+                        'id="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-checkbox">';
+                html += '    <label for="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-label">';
+                html += '        <i class="fas fa-check"></i>';
+                html += '    </label>';
+                html += '    <input type="text" name="optionContent' + questionNumber + '_' + newIndex + '" ' +
+                        'class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">';
+                html += '    <button type="button" class="remove-option-btn" onclick="removeOption(this)">';
+                html += '        <i class="fas fa-trash"></i>';
+                html += '    </button>';
+                html += '</div>';
+
+                optionsDiv.insertAdjacentHTML("beforeend", html);
+            }
+
         </script>
     </body>
 </html>

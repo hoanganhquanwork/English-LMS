@@ -2,31 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.instructor.lesson;
+package controller.instructor.discussion;
 
-import dal.LessonDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import model.entity.Lesson;
-import service.LessonService;
-import service.ModuleService;
-import model.entity.Module;
-import model.entity.ModuleItem;
-import service.ModuleItemService;
+import service.DiscussionService;
 
 /**
  *
  * @author Lenovo
  */
-@WebServlet(name = "ManageLessonServlet", urlPatterns = {"/ManageLessonServlet"})
-public class ManageLessonServlet extends HttpServlet {
+public class CreateDiscussion extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,52 +35,39 @@ public class ManageLessonServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageLessonServlet</title>");
+            out.println("<title>Servlet CreateDiscussion</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageLessonServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CreateDiscussion at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
 
-    private ModuleService service = new ModuleService();
-    private LessonService lessonService = new LessonService();
-    private ModuleItemService contentService = new ModuleItemService();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int moduleId = Integer.parseInt(request.getParameter("moduleId"));
-        int courseId = Integer.parseInt(request.getParameter("courseId"));
-     
-        try {
-            List<Module> list = service.getModulesByCourse(courseId);
-            Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
-            
-            request.setAttribute("courseId", courseId);
-            request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
-            request.setAttribute("content", courseContent);
-            request.getRequestDispatcher("teacher/lesson-create-video.jsp").forward(request, response);
-
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
+        request.setAttribute("moduleId", moduleId);
+        request.getRequestDispatcher("teacher/create-discussion.jsp").forward(request, response);
     }
+    private DiscussionService discussionService = new DiscussionService();
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+
+        boolean success = discussionService.createDiscussion(moduleId, title, description);
+
+        if (success) {
+            response.sendRedirect("moduleDetail?moduleId=" + moduleId + "&msg=discussion_created");
+        } else {
+            request.setAttribute("error", "Không thể tạo thảo luận, vui lòng thử lại!");
+            request.getRequestDispatcher("instructor/module/createDiscussion.jsp").forward(request, response);
+        }
     }
 
     /**

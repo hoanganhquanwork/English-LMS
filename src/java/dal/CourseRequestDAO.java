@@ -11,6 +11,11 @@ import model.entity.StudentProfile;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import model.entity.Users;
 
 /**
  *
@@ -199,4 +204,133 @@ public class CourseRequestDAO extends DBContext {
             return false;
         }
     }
+
+    public List<CourseRequest> getRequestsByParentAndStatus(int parentId, String status) {
+        List<CourseRequest> list = new ArrayList<>();
+        String sql = """
+        SELECT 
+            r.request_id, r.student_id, r.course_id, r.status, 
+            r.note, r.created_at, r.decided_at,
+            c.title AS course_title, c.price AS course_price,
+            u.full_name AS student_name, u.profile_picture, u.email, u.phone,
+            s.grade_level, s.institution, s.address
+        FROM CourseRequests r
+        JOIN Course c ON r.course_id = c.course_id
+        JOIN StudentProfile s ON r.student_id = s.user_id
+        JOIN Users u ON s.user_id = u.user_id
+        WHERE r.parent_id = ? AND r.status = ?
+        ORDER BY r.created_at DESC
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, parentId);
+            ps.setString(2, status);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                CourseRequest req = new CourseRequest();
+                req.setRequestId(rs.getInt("request_id"));
+                req.setStatus(rs.getString("status"));
+                req.setNote(rs.getString("note"));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+                req.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                req.setFormattedCreatedAt(req.getCreatedAt().format(formatter));
+
+                Timestamp decided = rs.getTimestamp("decided_at");
+                if (decided != null) {
+                    LocalDateTime decidedAt = decided.toLocalDateTime();
+                    req.setDecidedAt(decidedAt);
+                    req.setFormattedDecidedAt(decidedAt.format(formatter));
+                }
+
+                if (decided != null) {
+                    req.setDecidedAt(decided.toLocalDateTime());
+                }
+
+                // --- Map Course ---
+                Course c = new Course();
+                c.setCourseId(rs.getInt("course_id"));
+                c.setTitle(rs.getString("course_title"));
+                c.setPrice(rs.getBigDecimal("course_price"));
+                req.setCourse(c);
+
+                // --- Map Student + User ---
+                Users u = new Users();
+                u.setUserId(rs.getInt("student_id"));
+                u.setFullName(rs.getString("student_name"));
+                u.setProfilePicture(rs.getString("profile_picture"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+
+                StudentProfile s = new StudentProfile();
+                s.setUserId(rs.getInt("student_id"));
+                s.setGradeLevel(rs.getString("grade_level"));
+                s.setInstitution(rs.getString("institution"));
+                s.setAddress(rs.getString("address"));
+                s.setUser(u);
+
+                req.setStudent(s);
+                list.add(req);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public boolean updateStatus(int requestId, String status) {
+        String sql = "UPDATE CourseRequests SET status=?, decided_at=GETDATE() WHERE request_id=?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, status);
+            ps.setInt(2, requestId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Map<String, Integer> countByStatus(int parentId) {
+        Map<String, Integer> map = new HashMap<>();
+        String sql = """
+            SELECT status, COUNT(*) AS total
+            FROM CourseRequests
+            WHERE parent_id=?
+            GROUP BY status
+        """;
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, parentId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                map.put(rs.getString("status"), rs.getInt("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+    
+    public void updateNoteForRequest(int requestId, String note) {
+    String sql = """
+        UPDATE CourseRequests
+        SET note = ?, decided_at = GETDATE()
+        WHERE request_id = ?
+    """;
+    try{
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, note);
+        ps.setInt(2, requestId);
+
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 }

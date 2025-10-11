@@ -8,11 +8,8 @@ import dal.DiscussionDAO;
 import java.util.List;
 import model.dto.DiscussionDTO;
 import model.dto.DiscussionPostDTO;
+import model.entity.Discussion;
 
-/**
- *
- * @author Admin
- */
 public class DiscussionService {
 
     private DiscussionDAO discussionDAO = new DiscussionDAO();
@@ -89,4 +86,14 @@ public class DiscussionService {
         }
         return (postIndex / pageSize) + 1;
     }
+
+    public boolean createDiscussion(int moduleId, String title, String description) {
+        return discussionDAO.insertDiscussion(moduleId, title, description);
+    }
+
+    public Discussion getDiscussion(int id) {
+        return discussionDAO.getDiscussionById(id);
+    }
+
+
 }

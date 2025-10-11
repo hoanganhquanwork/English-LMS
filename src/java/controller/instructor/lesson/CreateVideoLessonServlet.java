@@ -20,7 +20,7 @@ import util.YouTubeApiClient;
  *
  * @author Lenovo
  */
-public class CreateLessonServlet extends HttpServlet {
+public class CreateVideoLessonServlet extends HttpServlet {
 
     private YouTubeApiClient ytClient;
 
@@ -74,7 +74,6 @@ public class CreateLessonServlet extends HttpServlet {
             LessonDAO lDao = new LessonDAO();
             lDao.insertLesson(lesson);
 
-//            Lesson lessonSaved = lDao.getLessonById(moduleItemId);
 
              response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId + "&lessonId=" + moduleItemId);
         } catch (Exception e) {

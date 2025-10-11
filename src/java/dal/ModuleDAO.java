@@ -23,7 +23,7 @@ public class ModuleDAO extends DBContext {
 
     public List<Module> getModulesByCourse(int courseId) {
         List<Module> list = new ArrayList<>();
-        String sql = "SELECT * FROM Modules WHERE course_id = ? ORDER BY order_index ASC";
+        String sql = "SELECT * FROM Module WHERE course_id = ? ORDER BY order_index ASC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, courseId);
@@ -44,14 +44,14 @@ public class ModuleDAO extends DBContext {
     }
 
     public boolean insertModule(Module module) {
-        String sql = "INSERT INTO Modules (course_id, title, description, order_index) "
-                + "SELECT ?, ?, ?, ISNULL(MAX(order_index), 0) + 1, ? "
-                + "FROM Modules WHERE course_id = ?";
+        String sql = "INSERT INTO Module (course_id, title, description, order_index) "
+                + "SELECT ?, ?, ?, ISNULL(MAX(order_index), 0) + 1 "
+                + "FROM Module WHERE course_id = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setInt(1, module.getCourse().getCourseId());
             st.setString(2, module.getTitle());
             st.setString(3, module.getDescription());
-            st.setInt(5, module.getCourse().getCourseId());
+            st.setInt(4, module.getCourse().getCourseId());
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,7 +60,7 @@ public class ModuleDAO extends DBContext {
     }
 
     public boolean updateModule(Module module) {
-        String sql = "UPDATE Modules SET title=?, description=? WHERE module_id=?";
+        String sql = "UPDATE Module SET title=?, description=? WHERE module_id=?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, module.getTitle());
             st.setString(2, module.getDescription());
@@ -73,7 +73,7 @@ public class ModuleDAO extends DBContext {
     }
 
     public boolean deleteModule(int moduleId) {
-        String sql = "DELETE FROM Modules WHERE module_id = ?";
+        String sql = "DELETE FROM Module WHERE module_id = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setInt(1, moduleId);
             return st.executeUpdate() > 0;

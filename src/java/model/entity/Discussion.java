@@ -4,17 +4,31 @@
  */
 package model.entity;
 
-import java.util.Date;
+
+import java.time.LocalDateTime;
 
 /**
  *
- * @author Admin
+ * @author Lenovo
  */
 public class Discussion {
-    private int discussionId;
+
+    private int discussionId;  // trùng với module_item_id
     private String title;
     private String description;
-    private Date createdAt;
+    private LocalDateTime createdAt;
+
+    public Discussion() {
+    }
+
+    public Discussion(int discussionId, String title, String description, LocalDateTime createdAt) {
+        this.discussionId = discussionId;
+        this.title = title;
+        this.description = description;
+        this.createdAt = createdAt;
+    }
+
+
 
     public int getDiscussionId() {
         return discussionId;
@@ -23,6 +37,7 @@ public class Discussion {
     public void setDiscussionId(int discussionId) {
         this.discussionId = discussionId;
     }
+
 
     public String getTitle() {
         return title;
@@ -40,13 +55,14 @@ public class Discussion {
         this.description = description;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-    
-    
+
+
+
 }

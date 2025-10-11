@@ -7,6 +7,7 @@ package service;
 import model.entity.CourseRequest;
 import dal.CourseRequestDAO;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -99,5 +100,22 @@ public class CourseRequestService {
         } catch (Exception e) {
             throw new RuntimeException("cancelPendingRequest thất bại", e);
         }
+    }
+
+    public List<CourseRequest> getRequests(int parentId, String status) {
+        return crdao.getRequestsByParentAndStatus(parentId, status);
+    }
+
+    public Map<String, Integer> getStatusCounts(int parentId) {
+        return crdao.countByStatus(parentId);
+    }
+
+    public boolean parentCourseRequestAction(int requestId, String status) {
+        return crdao.updateStatus(requestId, status);
+    }
+
+    public void updateNoteForRequest(int requestId, String note) {
+        String reason = "[Phụ huynh] Lý do từ chối: ".concat(note);
+        crdao.updateNoteForRequest(requestId, reason);
     }
 }

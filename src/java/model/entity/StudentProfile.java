@@ -15,6 +15,7 @@ public class StudentProfile {
     private String institution;  
     private Integer parentId;     //Interger do co the null     
     private String address;     
+    private Users user;
 
     public StudentProfile() {
     }
@@ -65,6 +66,13 @@ public class StudentProfile {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
     }
 
 }

@@ -2,86 +2,71 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.instructor.lesson;
 
-import dal.LessonDAO;
+package controller.instructor.discussion;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import model.entity.Lesson;
-import service.LessonService;
-import service.ModuleService;
-import model.entity.Module;
-import model.entity.ModuleItem;
-import service.ModuleItemService;
+import model.entity.Discussion;
+import service.DiscussionService;
 
 /**
  *
  * @author Lenovo
  */
-@WebServlet(name = "ManageLessonServlet", urlPatterns = {"/ManageLessonServlet"})
-public class ManageLessonServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
+public class ViewDiscussion extends HttpServlet {
+   
+    /** 
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageLessonServlet</title>");
+            out.println("<title>Servlet ViewDiscussion</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageLessonServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ViewDiscussion at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    }
+    } 
 
-    private ModuleService service = new ModuleService();
-    private LessonService lessonService = new LessonService();
-    private ModuleItemService contentService = new ModuleItemService();
-
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /** 
+     * Handles the HTTP <code>GET</code> method.
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+     private DiscussionService service = new DiscussionService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
-        int courseId = Integer.parseInt(request.getParameter("courseId"));
-     
-        try {
-            List<Module> list = service.getModulesByCourse(courseId);
-            Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
-            
-            request.setAttribute("courseId", courseId);
-            request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
-            request.setAttribute("content", courseContent);
-            request.getRequestDispatcher("teacher/lesson-create-video.jsp").forward(request, response);
+    throws ServletException, IOException {
+        int discussionId = Integer.parseInt(request.getParameter("id"));
 
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-    }
+        Discussion discussion = service.getDiscussion(discussionId);
+      
 
-    /**
+        request.setAttribute("discussion", discussion);
+        request.getRequestDispatcher("teacher/discussion.jsp").forward(request, response);
+    } 
+
+    /** 
      * Handles the HTTP <code>POST</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -89,13 +74,12 @@ public class ManageLessonServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
-     *
      * @return a String containing servlet description
      */
     @Override
