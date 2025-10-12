@@ -19,7 +19,7 @@ public class RevenueDAO extends DBContext {
         List<RevenueReportDTO> list = new ArrayList<>();
 
         String sql = "SELECT MONTH(o.paid_at) AS month, "
-                + "COUNT(DISTINCT oi.course_id) AS courses_sold, "
+                + "COUNT(oi.course_id) AS courses_sold, "
                 + "SUM(p.amount_vnd) AS total_revenue "
                 + "FROM Orders o "
                 + "LEFT JOIN OrderItems oi ON o.order_id = oi.order_id "
@@ -83,7 +83,7 @@ public class RevenueDAO extends DBContext {
         List<RevenueReportDTO> list = new ArrayList<>();
 
         String sql = "SELECT YEAR(o.paid_at) AS year, MONTH(o.paid_at) AS month, "
-                + "COUNT(DISTINCT oi.course_id) AS courses_sold, "
+                + "COUNT(oi.course_id) AS courses_sold, "
                 + "SUM(p.amount_vnd) AS total_revenue "
                 + "FROM Orders o "
                 + "LEFT JOIN OrderItems oi ON o.order_id = oi.order_id "
