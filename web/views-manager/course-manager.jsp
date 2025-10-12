@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Quản lý khóa học</title>
-        <link rel="stylesheet" href="<c:url value='/css/manager-style.css?v=120' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-style.css?v=20' />">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     </head>
     <body class="dashboard">
@@ -60,23 +60,17 @@
                     </form>
                 </div>
 
-                <form method="post" action="coursemanager" id="bulkForm">
-                    <input type="hidden" name="action" id="bulkAction">
-                    <input type="hidden" name="status" value="${status}">
-                    <input type="hidden" name="keyword" value="${keyword}">
-                    <input type="hidden" name="sort" value="${sort}">
-                    <div class="table-header">
-                        <h2 class="table-title">Danh sách khóa học</h2>
-                        <div class="bulk-actions">
-                            <button type="submit" class="btn btn-success" onclick="return setBulkAction('approve')">
-                                <i class="fa fa-check"></i> Duyệt hàng loạt
-                            </button>
-                            <button type="button" class="btn btn-danger" onclick="return setBulkAction('reject')">
-                                <i class="fa fa-times"></i> Từ chối hàng loạt
-                            </button>
-                        </div>
+                <div class="table-header">
+                    <h2 class="table-title">Danh sách khóa học</h2>
+                    <div class="bulk-actions">
+                        <button form="bulkForm" type="submit" class="btn btn-success" onclick="return setBulkAction('approve')">
+                            <i class="fa fa-check"></i> Duyệt hàng loạt
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="return setBulkAction('reject')">
+                            <i class="fa fa-times"></i> Từ chối hàng loạt
+                        </button>
                     </div>
-                </form>
+                </div>
 
                 <table class="table">
                     <thead>
@@ -98,14 +92,20 @@
                                 <td>
                                     <div class="course-info">
                                         <img src="${course.thumbnail != null ? course.thumbnail : '/views-manager/icon/default.png'}" class="thumbnail">
-                                        <div><strong>${course.title}</strong><br><small class="muted">${course.category.name}</small></div>
+                                        <div>
+                                            <strong>${course.title}</strong><br>
+                                            <small class="muted">${course.category.name}</small>
+                                        </div>
                                     </div>
                                 </td>
 
                                 <td>
                                     <div class="teacher-info">
                                         <img src="${course.createdBy.user.profilePicture != null ? course.createdBy.user.profilePicture : '/views-manager/icon/default.png'}" class="avatar">
-                                        <div><strong>${course.createdBy.user.fullName}</strong><br><small>${course.createdBy.user.email}</small></div>
+                                        <div>
+                                            <strong>${course.createdBy.user.fullName}</strong><br>
+                                            <small>${course.createdBy.user.email}</small>
+                                        </div>
                                     </div>
                                 </td>
 
@@ -129,7 +129,7 @@
                                 </td>
 
                                 <td>
-                                    <a href="${pageContext.request.contextPath}/coursedetail?courseId=${course.courseId}" 
+                                    <a href="${pageContext.request.contextPath}/coursedetail?courseId=${course.courseId}"
                                        class="btn btn-outline" title="Xem chi tiết">
                                         <i class="fas fa-eye"></i>
                                     </a>
@@ -166,39 +166,44 @@
                                             </form>
                                         </c:when>
                                     </c:choose>
-                                    </div>
                                 </td>
                             </tr>
                         </c:forEach>
                     </tbody>
                 </table>
             </div>
-
-            <div id="rejectModal" class="modal">
-                <div class="modal-content">
-                    <h3>Nhập lý do từ chối</h3>
-                    <p id="rejectCount" class="muted"></p>
-                    <form id="rejectForm" method="post" action="coursemanager" onsubmit="return disableSubmit(this)">
-                        <input type="hidden" name="action" id="rejectAction">
-                        <input type="hidden" name="courseIds" id="rejectCourseIds">
-                        <input type="hidden" name="status" value="${status}">
-                        <input type="hidden" name="keyword" value="${keyword}">
-                        <input type="hidden" name="sort" value="${sort}">
-                        <textarea name="rejectReason" placeholder="Nhập lý do..." required></textarea>
-                        <div class="modal-buttons">
-                            <button type="submit" class="btn btn-danger">Gửi lý do</button>
-                            <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Hủy</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </main>
+
+        <form method="post" action="coursemanager" id="bulkForm" style="display:none;">
+            <input type="hidden" name="action" id="bulkAction">
+            <input type="hidden" name="status" value="${status}">
+            <input type="hidden" name="keyword" value="${keyword}">
+            <input type="hidden" name="sort" value="${sort}">
+        </form>
+
+        <div id="rejectModal" class="modal">
+            <div class="modal-content">
+                <h3>Nhập lý do từ chối</h3>
+                <p id="rejectCount" class="muted"></p>
+                <form id="rejectForm" method="post" action="coursemanager" onsubmit="return disableSubmit(this)">
+                    <input type="hidden" name="action" id="rejectAction">
+                    <input type="hidden" name="courseIds" id="rejectCourseIds">
+                    <input type="hidden" name="status" value="${status}">
+                    <input type="hidden" name="keyword" value="${keyword}">
+                    <input type="hidden" name="sort" value="${sort}">
+                    <textarea name="rejectReason" placeholder="Nhập lý do..." required></textarea>
+                    <div class="modal-buttons">
+                        <button type="submit" class="btn btn-danger">Gửi lý do</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <script>
             function toggleSelectAll(source) {
                 document.querySelectorAll('input[name="courseIds"][form="bulkForm"]').forEach(cb => cb.checked = source.checked);
             }
-
             function setBulkAction(action) {
                 const checked = document.querySelectorAll('input[name="courseIds"][form="bulkForm"]:checked');
                 if (!checked.length) {
@@ -207,7 +212,8 @@
                 }
                 if (action === 'approve') {
                     document.getElementById('bulkAction').value = 'bulkApprove';
-                    return true;
+                    document.getElementById('bulkForm').submit();
+                    return false;
                 }
                 if (action === 'reject') {
                     const ids = Array.from(checked).map(cb => cb.value).join(',');
@@ -215,7 +221,6 @@
                     return false;
                 }
             }
-
             function openRejectModal(action, ids) {
                 document.getElementById('rejectAction').value = action;
                 document.getElementById('rejectCourseIds').value = ids;
@@ -224,14 +229,12 @@
                         count > 1 ? `Bạn đang từ chối ${count} khóa học.` : `Bạn đang từ chối 1 khóa học.`;
                 document.getElementById('rejectModal').style.display = 'flex';
             }
-
             function openSingleReject(id) {
                 openRejectModal('reject', id);
             }
             function closeRejectModal() {
                 document.getElementById('rejectModal').style.display = 'none';
             }
-
             function disableSubmit(form) {
                 const btn = form.querySelector('button[type="submit"]');
                 if (btn) {
