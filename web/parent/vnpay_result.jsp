@@ -10,33 +10,59 @@
         <h2>💰 Kết quả thanh toán</h2>
     </div>
 
-    <div class="child-item" style="text-align:center; padding:30px;">
-        <c:choose>
-            <c:when test="${result eq 'success'}">
-                <h3 style="color:#16a34a;">✅ Thanh toán thành công!</h3>
-                <p>Đơn hàng #${orderId} đã được thanh toán thành công.</p>
-                <p><strong>Mã giao dịch:</strong> ${txnRef}</p>
-                <p><strong>Số tiền:</strong> 
-                    <fmt:formatNumber value="${amount}" pattern="#,##0" /> VND
-                </p>
-                <p><strong>Thời gian thanh toán:</strong> ${payDate}</p>
-            </c:when>
+    <c:choose>
+        <c:when test="${result eq 'success'}">
+            <!-- Success State -->
+            <div class="payment-result-card success">
+                <div class="result-animation">
+                    <div class="success-icon">🎉</div>
+                    <div class="confetti">
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                    </div>
+                </div>
+                
+                <div class="result-content">
+                    <h3 class="result-title success">🎊 Thanh toán thành công!</h3>
+                    <p class="result-message">Chúc mừng! Giao dịch của bạn đã được xử lý thành công.</p>
+                    
+                    <div class="success-message">
+                        <p>🎯 Đơn hàng của bạn đã được xác nhận và sẽ được xử lý trong thời gian sớm nhất.</p>
+                        <p>📧 Bạn sẽ nhận được email xác nhận trong vài phút tới.</p>
+                    </div>
+                </div>
+            </div>
+        </c:when>
 
-            <c:otherwise>
-                <h3 style="color:#dc2626;">❌ Thanh toán thất bại</h3>
-                <p>Rất tiếc, giao dịch không thành công hoặc đã bị hủy.</p>
-                <p><strong>Mã giao dịch:</strong> ${txnRef}</p>
-                <p><strong>Đơn hàng:</strong> #${orderId}</p>
-                <p>Vui lòng thử lại hoặc kiểm tra trạng thái đơn hàng.</p>
-            </c:otherwise>
-        </c:choose>
+        <c:otherwise>
+            <!-- Error State -->
+            <div class="payment-result-card error">
+                <div class="result-animation">
+                    <div class="error-icon">😔</div>
+                </div>
+                
+                <div class="result-content">
+                    <h3 class="result-title error">❌ Thanh toán không thành công</h3>
+                    <p class="result-message">Rất tiếc, giao dịch không thể hoàn tất hoặc đã bị hủy.</p>
+ 
+                    <div class="error-message">
+                        <p>🔄 Vui lòng thử lại thanh toán hoặc liên hệ hỗ trợ nếu vấn đề vẫn tiếp diễn.</p>
+                        <p>💡 Bạn có thể kiểm tra trạng thái đơn hàng trong danh sách đơn hàng.</p>
+                    </div>
+                </div>
+            </div>
+        </c:otherwise>
+    </c:choose>
 
-        <div style="margin-top:30px;">
-            <a href="${pageContext.request.contextPath}/parent/orders" class="btn success" 
-               style="padding:10px 25px; font-size:16px;">
-                🔙 Quay lại danh sách đơn hàng
-            </a>
-        </div>
+    <div class="action-buttons">
+        <a href="${pageContext.request.contextPath}/parent/orders" class="btn primary">
+            <span class="btn-icon">📋</span>
+            <span class="btn-text">Xem danh sách đơn hàng</span>
+        </a>
+        
     </div>
 </main>
 

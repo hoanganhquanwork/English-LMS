@@ -13,7 +13,7 @@ public class StudentProfile {
     private int userId;
     private String gradeLevel;   
     private String institution;  
-    private Integer parentId;     //Interger do co the null     
+    private Integer parentId;        
     private String address;     
     private Users user;
 

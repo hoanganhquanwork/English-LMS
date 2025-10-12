@@ -12,31 +12,40 @@
 
 <main class="container">
     <div class="page-title">
-        <h2>Quản lý tài khoản liên kết</h2>
+        <h2>👨‍👩‍👧‍👦 Quản lý tài khoản liên kết</h2>
         <p class="lead">Liên kết và quản lý tài khoản học sinh của bạn.</p>
+    </div>
 
+    <!-- Filter Tabs -->
+    <div class="filter-section">
         <div class="filter-tabs">
-            <form method="get" action="parentlinkstudent" style="display:inline;">
+            <form method="get" action="parentlinkstudent" class="filter-form">
                 <input type="hidden" name="filter" value="approved" />
                 <button type="submit"
                         class="filter-btn ${param.filter == 'approved' || empty param.filter ?  'active' : ''}">
-                    Đã kết nối (${approvedCount})
+                    <span class="filter-icon">✅</span>
+                    <span class="filter-text">Đã kết nối</span>
+                    <span class="filter-count">(${approvedCount})</span>
                 </button>
             </form>
 
-            <form method="get" action="parentlinkstudent" style="display:inline;">
+            <form method="get" action="parentlinkstudent" class="filter-form">
                 <input type="hidden" name="filter" value="pending" />
                 <button type="submit"
                         class="filter-btn ${param.filter == 'pending' ? 'active' : ''}">
-                    Chờ duyệt (${pendingCount})
+                    <span class="filter-icon">⏳</span>
+                    <span class="filter-text">Chờ duyệt</span>
+                    <span class="filter-count">(${pendingCount})</span>
                 </button>
             </form>
 
-            <form method="get" action="parentlinkstudent" style="display:inline;">
+            <form method="get" action="parentlinkstudent" class="filter-form">
                 <input type="hidden" name="filter" value="closed" />
                 <button type="submit"
                         class="filter-btn ${param.filter == 'closed' ? 'active' : ''}">
-                    Đã hủy / Từ chối (${closedCount})
+                    <span class="filter-icon">❌</span>
+                    <span class="filter-text">Đã hủy / Từ chối</span>
+                    <span class="filter-count">(${closedCount})</span>
                 </button>
             </form>
         </div>
@@ -45,103 +54,125 @@
     <div class="children-list">
         <c:choose>
             <c:when test="${empty requests}">
-                <div class="empty-message">
-                    <c:choose>
-                        <c:when test="${filter eq 'approved'}">Hiện chưa có liên kết nào được duyệt.</c:when>
-                        <c:when test="${filter eq 'closed'}">Chưa có yêu cầu bị hủy hoặc từ chối.</c:when>
-                        <c:otherwise>Không có yêu cầu đang chờ duyệt.</c:otherwise>
-                    </c:choose>
+                <div class="empty-state">
+                    <div class="empty-icon">👨‍👩‍👧‍👦</div>
+                    <h3>Không có tài khoản liên kết</h3>
+                    <p>
+                        <c:choose>
+                            <c:when test="${filter eq 'approved'}">Hiện chưa có liên kết nào được duyệt.</c:when>
+                            <c:when test="${filter eq 'closed'}">Chưa có yêu cầu bị hủy hoặc từ chối.</c:when>
+                            <c:otherwise>Không có yêu cầu đang chờ duyệt.</c:otherwise>
+                        </c:choose>
+                    </p>
                 </div>
             </c:when>
 
             <c:otherwise>
-                <c:forEach var="r" items="${requests}">
-                    <div class="child-item">
-                        <div class="child-header">
-                            <div class="child-avatar">
-                                <img src="${empty r.student.profilePicture 
-                                            ? 'https://via.placeholder.com/80x80/ccc/ffffff?text=HS' 
-                                            : r.student.profilePicture}" 
-                                     alt="Avatar" />
+                <div class="children-grid">
+                    <c:forEach var="r" items="${requests}">
+                        <div class="child-card ${r.status}">
+                            <div class="child-header">
+                                <div class="child-avatar">
+                                    <img src="${empty r.student.profilePicture 
+                                                ? 'https://via.placeholder.com/70x70/4f46e5/ffffff?text=HS' 
+                                                : r.student.profilePicture}" 
+                                         alt="Avatar" />
+                                </div>
+
+                                <div class="child-info">
+                                    <h3 class="child-name">${r.student.fullName}</h3>
+                                    <p class="child-email">📧 ${r.student.email}</p>
+                                    <p class="child-id">🆔 Mã HS: ${r.studentId}</p>
+                                </div>
+
+                                <div class="child-status">
+                                    <c:choose>
+                                        <c:when test="${r.status eq 'approved'}">
+                                            <span class="status-badge active">✅ Đang hoạt động</span>
+                                        </c:when>
+
+                                        <c:when test="${r.status eq 'pending'}">
+                                            <span class="status-badge pending">⏳ Chờ xác nhận</span>
+                                        </c:when>
+
+                                        <c:when test="${r.status eq 'canceled'}">
+                                            <span class="status-badge canceled">❌ Đã hủy liên kết</span>
+                                        </c:when>
+
+                                        <c:when test="${r.status eq 'rejected'}">
+                                            <span class="status-badge rejected">❌ Đã từ chối</span>
+                                        </c:when>
+                                    </c:choose>
+                                </div>
                             </div>
 
-                            <div class="child-basic-info">
-                                <h3>${r.student.fullName}</h3>
-                                <p class="child-email">Email: ${r.student.email}</p>
-                                <p class="child-details">Mã HS: ${r.studentId}</p>
-                            </div>
-
-                            <div class="child-status">
-                                <c:choose>
-                                    <c:when test="${r.status eq 'approved'}">
-                                        <span class="status-badge active">Đang hoạt động</span>
-                                        <p class="link-date">Liên kết từ:
-                                            <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
-                                        </p>
-                                    </c:when>
-
-                                    <c:when test="${r.status eq 'pending'}">
-                                        <span class="status-badge pending">Chờ xác nhận</span>
-                                        <p class="link-date">Yêu cầu liên kết:
-                                            <fmt:formatDate value="${r.createdAt}" pattern="dd/MM/yyyy HH:mm" />
-                                        </p>
-                                    </c:when>
-
-                                    <c:when test="${r.status eq 'canceled'}">
-                                        <span class="status-badge canceled">Đã hủy liên kết</span>
-                                        <p class="link-date">Hủy lúc:
-                                            <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
-                                        </p>
-                                    </c:when>
-
-                                    <c:when test="${r.status eq 'rejected'}">
-                                        <span class="status-badge rejected">Đã từ chối</span>
-                                        <p class="link-date">Từ chối lúc:
-                                            <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
-                                        </p>
-                                    </c:when>
-                                </c:choose>
+                            <div class="child-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">📅 Trạng thái:</span>
+                                    <span class="detail-value">
+                                        <c:choose>
+                                            <c:when test="${r.status eq 'approved'}">
+                                                Liên kết từ: <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
+                                            </c:when>
+                                            <c:when test="${r.status eq 'pending'}">
+                                                Yêu cầu liên kết: <fmt:formatDate value="${r.createdAt}" pattern="dd/MM/yyyy HH:mm" />
+                                            </c:when>
+                                            <c:when test="${r.status eq 'canceled'}">
+                                                Hủy lúc: <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
+                                            </c:when>
+                                            <c:when test="${r.status eq 'rejected'}">
+                                                Từ chối lúc: <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
+                                            </c:when>
+                                        </c:choose>
+                                    </span>
+                                </div>
 
                                 <c:if test="${not empty r.note}">
-                                    <p class="note">Lý do: ${r.note}</p>
+                                    <div class="note-section">
+                                        <span class="note-label">📝 Lý do:</span>
+                                        <span class="note-content">${r.note}</span>
+                                    </div>
+                                </c:if>
+                            </div>
+
+                            <div class="child-actions">
+                                <c:if test="${r.status eq 'pending'}">
+                                    <form method="post" action="parentlinkstudent" class="action-form">
+                                        <input type="hidden" name="requestId" value="${r.requestId}" />
+                                        <input type="hidden" name="action" value="approve" />
+                                        <input type="hidden" name="note" value="" />
+                                        <button type="button" class="approve-btn" onclick="confirmAction(this, 'approve')">
+                                            <span class="btn-icon">✅</span>
+                                            <span class="btn-text">Xác nhận liên kết</span>
+                                        </button>
+                                    </form>
+
+                                    <form method="post" action="parentlinkstudent" class="action-form">
+                                        <input type="hidden" name="requestId" value="${r.requestId}" />
+                                        <input type="hidden" name="action" value="reject" />
+                                        <input type="hidden" name="note" value="" />
+                                        <button type="button" class="reject-btn" onclick="confirmAction(this, 'reject')">
+                                            <span class="btn-icon">❌</span>
+                                            <span class="btn-text">Từ chối</span>
+                                        </button>
+                                    </form>
+                                </c:if>
+
+                                <c:if test="${r.status eq 'approved'}">
+                                    <form method="post" action="parentlinkstudent" class="action-form">
+                                        <input type="hidden" name="requestId" value="${r.requestId}" />
+                                        <input type="hidden" name="action" value="cancel" />
+                                        <input type="hidden" name="note" value="" />
+                                        <button type="button" class="cancel-btn" onclick="confirmAction(this, 'cancel')">
+                                            <span class="btn-icon">🔗</span>
+                                            <span class="btn-text">Hủy liên kết</span>
+                                        </button>
+                                    </form>
                                 </c:if>
                             </div>
                         </div>
-
-                        <div class="child-actions">
-                            <c:if test="${r.status eq 'pending'}">
-                                <form method="post" action="parentlinkstudent" class="action-form" style="display:inline;">
-                                    <input type="hidden" name="requestId" value="${r.requestId}" />
-                                    <input type="hidden" name="action" value="approve" />
-                                    <input type="hidden" name="note" value="" />
-                                    <button type="button" class="btn success" onclick="confirmAction(this, 'approve')">
-                                        Xác nhận liên kết
-                                    </button>
-                                </form>
-
-                                <form method="post" action="parentlinkstudent" class="action-form" style="display:inline;">
-                                    <input type="hidden" name="requestId" value="${r.requestId}" />
-                                    <input type="hidden" name="action" value="reject" />
-                                    <input type="hidden" name="note" value="" />
-                                    <button type="button" class="btn danger outline" onclick="confirmAction(this, 'reject')">
-                                        Từ chối
-                                    </button>
-                                </form>
-                            </c:if>
-
-                            <c:if test="${r.status eq 'approved'}">
-                                <form method="post" action="parentlinkstudent" class="action-form" style="display:inline;">
-                                    <input type="hidden" name="requestId" value="${r.requestId}" />
-                                    <input type="hidden" name="action" value="cancel" />
-                                    <input type="hidden" name="note" value="" />
-                                    <button type="button" class="btn danger outline" onclick="confirmAction(this, 'cancel')">
-                                        Hủy liên kết
-                                    </button>
-                                </form>
-                            </c:if>
-                        </div>
-                    </div>
-                </c:forEach>
+                    </c:forEach>
+                </div>
             </c:otherwise>
         </c:choose>
     </div>

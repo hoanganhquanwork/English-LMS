@@ -136,57 +136,44 @@ public class OrderItemDAO extends DBContext {
     }
 
     public List<OrderItem> getOrderItemsByOrderId(int orderId) {
-        List<OrderItem> items = new ArrayList<>();
+    List<OrderItem> list = new ArrayList<>();
+    String sql = "SELECT oi.order_item_id, oi.price_vnd, " +
+                 "c.course_id, c.title, " +
+                 "s.user_id AS student_id, u.full_name AS student_name " +
+                 "FROM OrderItems oi " +
+                 "JOIN Course c ON oi.course_id = c.course_id " +
+                 "JOIN StudentProfile s ON oi.student_id = s.user_id " +
+                 "JOIN Users u ON s.user_id = u.user_id " +
+                 "WHERE oi.order_id = ?";
+    try (PreparedStatement st = connection.prepareStatement(sql)) {
+        st.setInt(1, orderId);
+        ResultSet rs = st.executeQuery();
 
-        String sql = """
-            SELECT 
-                oi.order_item_id, 
-                oi.order_id,
-                oi.course_id,
-                oi.student_id,
-                oi.price_vnd,
+        while (rs.next()) {
+            OrderItem item = new OrderItem();
+            item.setOrderItemId(rs.getInt("order_item_id"));
+            item.setPriceVnd(rs.getBigDecimal("price_vnd"));
 
-                c.title AS course_title,
-                s.user_id AS student_user_id,
-                u.full_name AS student_name
-            FROM OrderItems oi
-            JOIN Course c ON oi.course_id = c.course_id
-            JOIN StudentProfile s ON oi.student_id = s.user_id
-            JOIN Users u ON s.user_id = u.user_id
-            WHERE oi.order_id = ?
-            ORDER BY oi.order_item_id
-        """;
+            // --- Course ---
+            Course c = new Course();
+            c.setCourseId(rs.getInt("course_id"));
+            c.setTitle(rs.getString("title"));
+            item.setCourse(c);
 
-        try (PreparedStatement stm = connection.prepareStatement(sql)) {
-            stm.setInt(1, orderId);
-            ResultSet rs = stm.executeQuery();
+            // --- Student ---
+            StudentProfile s = new StudentProfile();
+            s.setUserId(rs.getInt("student_id"));  
+            Users user = new Users();
+            user.setFullName(rs.getString("student_name"));
+            s.setUser(user);
+            item.setStudent(s);
 
-            while (rs.next()) {
-                OrderItem item = new OrderItem();
-                item.setOrderItemId(rs.getInt("order_item_id"));
-                item.setPriceVnd(rs.getBigDecimal("price_vnd"));
-
-                // --- Course ---
-                Course course = new Course();
-                course.setCourseId(rs.getInt("course_id"));
-                course.setTitle(rs.getString("course_title"));
-                item.setCourse(course);
-
-                // --- Student ---
-                StudentProfile student = new StudentProfile();
-                Users studentUser = new Users();
-                studentUser.setUserId(rs.getInt("student_user_id"));
-                studentUser.setFullName(rs.getString("student_name"));
-                student.setUser(studentUser);
-                item.setStudent(student);
-
-                items.add(item);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            list.add(item);
         }
-
-        return items;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return list;
+}
+
 }

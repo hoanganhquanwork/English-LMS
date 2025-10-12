@@ -16,91 +16,134 @@
     </div>
 
     <!-- Bộ lọc trạng thái -->
-    <div class="filter-tabs" style="text-align:center; margin-bottom:20px;">
-        <button class="filter-btn active" onclick="showTab('pending')">Chờ thanh toán</button>
-        <button class="filter-btn" onclick="showTab('paid')">Đã thanh toán</button>
+    <div class="filter-section">
+        <div class="filter-tabs">
+            <button class="filter-btn active" onclick="showTab('pending')">
+                <span class="filter-icon">⏳</span>
+                <span class="filter-text">Chờ thanh toán</span>
+            </button>
+            <button class="filter-btn" onclick="showTab('paid')">
+                <span class="filter-icon">✅</span>
+                <span class="filter-text">Đã thanh toán</span>
+            </button>
+        </div>
     </div>
 
     <!-- Danh sách Pending -->
     <div id="tab-pending" class="order-tab">
         <c:if test="${not empty pendingOrders}">
-            <c:forEach var="order" items="${pendingOrders}">
-                <div class="child-item">
-                    <div class="child-header">
-                        <div class="child-basic-info">
-                            <h4>Đơn hàng #${order.orderId}</h4>
-                            <p>Ngày tạo: ${order.formattedCreatedAt}</p>
+            <div class="orders-grid">
+                <c:forEach var="order" items="${pendingOrders}">
+                    <div class="order-card pending">
+                        <div class="order-card-header">
+                            <div class="order-info">
+                                <h3 class="order-id">📋 Đơn hàng #${order.orderId}</h3>
+                                <p class="order-date">📅 ${order.formattedCreatedAt}</p>
+                            </div>
+                            <div class="order-status">
+                                <span class="status-badge pending">⏳ Chờ thanh toán</span>
+                            </div>
                         </div>
-                        <div class="child-status" style="text-align:right;">
-                            <span class="status-badge pending">Chờ thanh toán</span>
-                            <p><strong>Tổng:</strong>
-                                <fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true" /> VND
-                            </p>
-                            <a href="${pageContext.request.contextPath}/parent/orderdetail?orderId=${order.orderId}"
-                               class="btn success">Xem đơn hàng</a>
-                        </div>
-                    </div>
 
-                    <div class="child-detail">
-                        <ul>
-                            <c:forEach var="item" items="${order.items}">
-                               
-                                    <li>     
-                                    Tên khóa học: <strong>${item.course.title}</strong> 
-                                    <br>
-                                    Giá: <strong>
-                                        <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND </strong>  <br>
-                                        Học sinh mua: <strong>${item.student.user.fullName} </strong> 
-                                </li>
-                            </c:forEach>
-                        </ul>
+                        <div class="order-items">
+                            <h4 class="items-title">📚 Khóa học:</h4>
+                            <div class="items-list">
+                                <c:forEach var="item" items="${order.items}">
+                                    <div class="order-item">
+                                        <div class="item-info">
+                                            <span class="course-name">${item.course.title}</span>
+                                            <span class="student-name">👨‍🎓 ${item.student.user.fullName}</span>
+                                        </div>
+                                        <span class="item-price">
+                                            <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND
+                                        </span>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+
+                        <div class="order-footer">
+                            <div class="total-amount">
+                                <span class="total-label">💰 Tổng tiền:</span>
+                                <span class="total-value">
+                                    <fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true" /> VND
+                                </span>
+                            </div>
+                            <a href="${pageContext.request.contextPath}/parent/orderdetail?orderId=${order.orderId}"
+                               class="view-order-btn">
+                                <span class="btn-icon">👁️</span>
+                                <span class="btn-text">Xem chi tiết</span>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </c:forEach>
+                </c:forEach>
+            </div>
         </c:if>
         <c:if test="${empty pendingOrders}">
-            <p style="text-align:center; color:#666;">Không có đơn hàng chờ thanh toán.</p>
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <h3>Không có đơn hàng chờ thanh toán</h3>
+                <p>Hiện tại bạn chưa có đơn hàng nào đang chờ thanh toán.</p>
+            </div>
         </c:if>
     </div>
 
     <!-- Danh sách Paid -->
     <div id="tab-paid" class="order-tab" style="display:none;">
         <c:if test="${not empty paidOrders}">
-            <c:forEach var="order" items="${paidOrders}">
-                <div class="child-item">
-                    <div class="child-header">
-                        <div class="child-basic-info">
-                            <h4>Đơn hàng #${order.orderId}</h4>
-                            <p>Thanh toán lúc: ${order.formattedPaidAt}</p>
+            <div class="orders-grid">
+                <c:forEach var="order" items="${paidOrders}">
+                    <div class="order-card paid">
+                        <div class="order-card-header">
+                            <div class="order-info">
+                                <h3 class="order-id">📋 Đơn hàng #${order.orderId}</h3>
+                                <p class="order-date">💰 ${order.formattedPaidAt}</p>
+                            </div>
+                            <div class="order-status">
+                                <span class="status-badge active">✅ Đã thanh toán</span>
+                            </div>
                         </div>
-                        <div class="child-status" style="text-align:right;">
-                            <span class="status-badge active">Đã thanh toán</span>
-                            <p><strong>Tổng:</strong>
-                                <fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true" /> VND
-                            </p>
-                            <a href="${pageContext.request.contextPath}/parent/orderdetail?orderId=${order.orderId}"
-                               class="btn success">Xem đơn hàng</a>
-                        </div>
-                    </div>
 
-                    <div class="child-detail">
-                        <ul>
-                            <c:forEach var="item" items="${order.items}">
-                                <li>     
-                                    Tên khóa học: <strong>${item.course.title}</strong> 
-                                    <br>
-                                    Giá: <strong>
-                                        <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND </strong>  <br>
-                                        Học sinh mua: <strong>${item.student.user.fullName} </strong> 
-                                </li>
-                            </c:forEach>
-                        </ul>
+                        <div class="order-items">
+                            <h4 class="items-title">📚 Khóa học:</h4>
+                            <div class="items-list">
+                                <c:forEach var="item" items="${order.items}">
+                                    <div class="order-item">
+                                        <div class="item-info">
+                                            <span class="course-name">${item.course.title}</span>
+                                            <span class="student-name">👨‍🎓 ${item.student.user.fullName}</span>
+                                        </div>
+                                        <span class="item-price">
+                                            <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND
+                                        </span>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+
+                        <div class="order-footer">
+                            <div class="total-amount">
+                                <span class="total-label">💰 Tổng tiền:</span>
+                                <span class="total-value">
+                                    <fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true" /> VND
+                                </span>
+                            </div>
+                            <a href="${pageContext.request.contextPath}/parent/orderdetail?orderId=${order.orderId}"
+                               class="view-order-btn">
+                                <span class="btn-icon">👁️</span>
+                                <span class="btn-text">Xem chi tiết</span>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </c:forEach>
+                </c:forEach>
+            </div>
         </c:if>
         <c:if test="${empty paidOrders}">
-            <p style="text-align:center; color:#666;">Không có đơn hàng đã thanh toán.</p>
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <h3>Không có đơn hàng đã thanh toán</h3>
+                <p>Hiện tại bạn chưa có đơn hàng nào đã được thanh toán.</p>
+            </div>
         </c:if>
     </div>
 </main>
@@ -118,3 +161,4 @@
         event.target.classList.add('active');
     }
 </script>
+

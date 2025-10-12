@@ -18,4 +18,8 @@ public class EnrollmentService {
     public List<Enrollment> getEnrollments(int courseId, String keyword, String status) {
         return dao.searchAndFilterEnrollments(courseId, keyword, status);
     }
+    public boolean enrollAfterPayment(int courseId, int studentId) {
+    return dao.insertEnrollmentAfterPayment(courseId, studentId);
+}
+
 }

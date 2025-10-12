@@ -15,71 +15,90 @@
         <p class="lead">Xem lại thông tin đơn hàng trước khi thanh toán.</p>
     </div>
 
-    <div class="child-item">
-        <p><strong>Trạng thái:</strong>
-            <c:choose>
-                <c:when test="${order.status == 'pending'}">
-                    <span class="status-badge pending">Chờ thanh toán</span>
-                </c:when>
-                <c:when test="${order.status == 'paid'}">
-                    <span class="status-badge active">Đã thanh toán</span>
-                </c:when>
-                <c:when test="${order.status == 'cancelled'}">
-                    <span class="status-badge rejected">Đã hủy</span>
-                </c:when>
-            </c:choose>
-        </p>
-
-        <p><strong>Ngày tạo:</strong> ${order.formattedCreatedAt}</p>
-        <c:if test="${not empty order.formattedPaidAt}">
-            <p><strong>Thanh toán lúc:</strong> ${order.formattedPaidAt}</p>
-        </c:if>
-    </div>
-
-    <div class="children-list">
-        <c:forEach var="item" items="${order.items}">
-            <div class="child-item">
-                <div class="child-header">
-                    <div class="child-basic-info">
-                        <h3>${item.course.title}</h3>
-                        <p class="child-email">Học sinh: ${item.student.user.fullName}</p>
-                    </div>
-                    <div class="child-status" style="text-align:right;">
-                        <p class="link-date">
-                            <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND
-                        </p>
-                    </div>
+    <div class="order-info-card">
+        <div class="order-header">
+            <div class="order-status-section">
+                <h3 class="order-status-title">📋 Thông tin đơn hàng</h3>
+                <div class="status-container">
+                    <span class="status-label">Trạng thái:</span>
+                    <c:choose>
+                        <c:when test="${order.status == 'pending'}">
+                            <span class="status-badge pending">⏳ Chờ thanh toán</span>
+                        </c:when>
+                        <c:when test="${order.status == 'paid'}">
+                            <span class="status-badge active">✅ Đã thanh toán</span>
+                        </c:when>
+                        <c:when test="${order.status == 'cancelled'}">
+                            <span class="status-badge rejected">❌ Đã hủy</span>
+                        </c:when>
+                    </c:choose>
                 </div>
             </div>
-        </c:forEach>
+            
+            <div class="order-dates">
+                <div class="date-item">
+                    <span class="date-label">📅 Ngày tạo:</span>
+                    <span class="date-value">${order.formattedCreatedAt}</span>
+                </div>
+                <c:if test="${not empty order.formattedPaidAt}">
+                    <div class="date-item">
+                        <span class="date-label">💰 Thanh toán lúc:</span>
+                        <span class="date-value">${order.formattedPaidAt}</span>
+                    </div>
+                </c:if>
+            </div>
+        </div>
     </div>
 
-    <div class="child-item" style="margin-top: 24px;">
-        <h3 style="text-align:right;">
-            Tổng tiền: 
-            <fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true" /> VND
-        </h3>
+    <div class="course-items-section">
+        <h3 class="section-title">📚 Khóa học trong đơn hàng</h3>
+        <div class="course-items-list">
+            <c:forEach var="item" items="${order.items}">
+                <div class="course-item">
+                    <div class="course-item-content">
+                        <div class="course-info">
+                            <h4 class="course-title">${item.course.title}</h4>
+                            <p class="student-info">👨‍🎓 Học sinh: ${item.student.user.fullName}</p>
+                        </div>
+                        <div class="course-price">
+                            <span class="price-value">
+                                <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+    </div>
+
+    <div class="total-amount-card">
+        <div class="total-amount-content">
+            <span class="total-label">💰 Tổng tiền:</span>
+            <span class="total-value">
+                <fmt:formatNumber value="${order.totalAmount}" type="number" groupingUsed="true" /> VND
+            </span>
+        </div>
     </div>
 
     <c:if test="${order.status == 'pending'}">
-        <div style="text-align:center; margin-top:24px;">
-            <form method="post" action="${pageContext.request.contextPath}/parent/vnpay-initiate">
+        <div class="action-buttons">
+            <form method="post" action="${pageContext.request.contextPath}/parent/vnpay-initiate" class="payment-form">
                 <input type="hidden" name="orderId" value="${order.orderId}" />
-                <button type="submit" class="btn success" style="font-size:16px; padding:10px 30px;">
-                    ✅ Tiến hành thanh toán (VNPAY)
+                <button type="submit" class="payment-btn">
+                    <span class="btn-icon">💳</span>
+                    <span class="btn-text">Tiến hành thanh toán (VNPAY)</span>
+                </button>
+            </form>
+            
+            <form action="${pageContext.request.contextPath}/parent/cancelorder" method="get" class="cancel-form">
+                <input type="hidden" name="orderId" value="${order.orderId}" />
+                <button type="submit" class="cancel-btn"
+                        onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này không?')">
+                    <span class="btn-icon">❌</span>
+                    <span class="btn-text">Hủy đơn hàng</span>
                 </button>
             </form>
         </div>
-    </c:if>
-
-    <c:if test="${order.status == 'pending'}">
-        <form action="${pageContext.request.contextPath}/parent/cancelorder" method="get" style="display:inline;">
-            <input type="hidden" name="orderId" value="${order.orderId}" />
-            <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này không?')">
-                Hủy đơn hàng
-            </button>
-        </form>
     </c:if>
 </main>
 
