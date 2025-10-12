@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.entity.Lesson;
 import model.entity.ModuleItem;
+import service.LessonService;
 import util.YouTubeApiClient;
 
 /**
@@ -35,12 +36,13 @@ public class CreateVideoLessonServlet extends HttpServlet {
             throws ServletException, IOException {
 
     }
+     private LessonService lessonService = new LessonService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-             int courseId = Integer.parseInt(request.getParameter("courseId"));
+            int courseId = Integer.parseInt(request.getParameter("courseId"));
             int moduleId = Integer.parseInt(request.getParameter("moduleId"));
             String title = request.getParameter("title");
             String youtubeUrl = request.getParameter("youtubeUrl");
@@ -51,31 +53,15 @@ public class CreateVideoLessonServlet extends HttpServlet {
             // 2. Gọi YouTube API để lấy duration
             String isoDuration = ytClient.fetchIsoDuration(videoId);
             int durationSec = YouTubeApiClient.isoDurationToSeconds(isoDuration);
-
-            // Insert vào ModuleItem
-            ModuleItem item = new ModuleItem();
-            item.setModuleId(moduleId);
-            item.setItemType("lesson");
-            item.setOrderIndex(1); // tạm
-            item.setRequired(true);
-
-            ModuleItemDAO miDao = new ModuleItemDAO();
-            int moduleItemId = miDao.insertModuleItem(item);
-
-            // Insert vào Lesson
             Lesson lesson = new Lesson();
-            lesson.setModuleItemId(moduleItemId);
             lesson.setTitle(title);
             lesson.setContentType("video");
             lesson.setVideoUrl(YouTubeApiClient.toEmbedUrl(videoId));
             lesson.setDurationSec(durationSec);
             lesson.setTextContent(null);
 
-            LessonDAO lDao = new LessonDAO();
-            lDao.insertLesson(lesson);
-
-
-             response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId + "&lessonId=" + moduleItemId);
+            boolean success = lessonService.addLesson(lesson, moduleId);
+            response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId );
         } catch (Exception e) {
             throw new ServletException(e);
         }
