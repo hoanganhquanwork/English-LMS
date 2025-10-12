@@ -6,6 +6,7 @@ package service;
 
 import model.entity.CourseRequest;
 import dal.CourseRequestDAO;
+import dal.OrderItemDAO;
 import java.util.List;
 import java.util.Map;
 
@@ -111,6 +112,18 @@ public class CourseRequestService {
     }
 
     public boolean parentCourseRequestAction(int requestId, String status) {
+        if (status.equalsIgnoreCase("approved")) {
+            CourseRequest req = crdao.getById(requestId);
+            OrderItemDAO orderItemDAO = new OrderItemDAO();
+            double price = req.getCourse().getPrice().doubleValue();
+
+            orderItemDAO.createFromCourseRequest(
+                    req.getRequestId(),
+                    req.getCourse().getCourseId(),
+                    req.getStudent().getUserId(),
+                    price
+            );
+        }
         return crdao.updateStatus(requestId, status);
     }
 
