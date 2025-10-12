@@ -5,6 +5,7 @@
 package service;
 
 import dal.DiscussionDAO;
+import dal.ModuleItemDAO;
 import java.util.List;
 import model.dto.DiscussionDTO;
 import model.dto.DiscussionPostDTO;
@@ -13,6 +14,7 @@ import model.entity.Discussion;
 public class DiscussionService {
 
     private DiscussionDAO discussionDAO = new DiscussionDAO();
+    private ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
 
     public boolean addDiscussionPost(String content, int authorUserId, int discussionId) {
         if (content == null || content.trim().isEmpty()) {
@@ -95,5 +97,19 @@ public class DiscussionService {
         return discussionDAO.getDiscussionById(id);
     }
 
+    public boolean updateDiscussion(Discussion discussion) {
+        return discussionDAO.updateDiscussion(discussion);
+    }
+
+    public boolean deleteDiscussion(int discussionId) {
+        try {
+            boolean discussionDeleted = discussionDAO.deleteDiscussion(discussionId);
+            boolean moduleItemDeleted = moduleItemDAO.deleteModuleItem(discussionId);
+            return  discussionDeleted && moduleItemDeleted;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }

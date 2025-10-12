@@ -103,6 +103,7 @@ public class LessonDAO extends DBContext {
             }
             return list;
         }
+        
     }
 
     public void updateLesson(Lesson l) throws SQLException {
@@ -118,6 +119,28 @@ public class LessonDAO extends DBContext {
         }
     }
 
-
+ public boolean deleteLessonById(int lessonId) {
+        String sql = "DELETE FROM Lesson WHERE lesson_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, lessonId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+ public boolean updateLessonReading(Lesson lesson) {
+        String sql = "UPDATE Lesson SET title = ?, text_content = ? WHERE lesson_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, lesson.getTitle());
+            ps.setString(2, lesson.getTextContent());
+            ps.setInt(3, lesson.getModuleItemId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }

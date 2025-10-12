@@ -13,7 +13,6 @@ import model.entity.Users;
 
 public class OrderDAO extends DBContext {
 
-    // 🔹 Tạo đơn hàng mới (pending)
     public int createOrder(int parentId, BigDecimal totalAmount) {
         String sql = """
             INSERT INTO Orders (parent_id, status, created_at)
@@ -30,7 +29,7 @@ public class OrderDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("❌ Lỗi khi tạo Order mới:");
+            System.out.println("Lỗi khi tạo Order mới:");
             e.printStackTrace();
         }
         return -1;
@@ -126,5 +125,46 @@ public class OrderDAO extends DBContext {
         }
         return false;
     }
+
+    public List<Orders> getOrdersByParentAndStatus(int parentId, String status) {
+    List<Orders> list = new ArrayList<>();
+    String sql = """
+        SELECT o.order_id, o.status, o.payment_method, o.created_at, o.paid_at,
+               ISNULL(SUM(oi.price_vnd), 0) AS total_amount
+        FROM Orders o
+        LEFT JOIN OrderItems oi ON o.order_id = oi.order_id
+        WHERE o.parent_id = ? AND o.status = ?
+        GROUP BY o.order_id, o.status, o.payment_method, o.created_at, o.paid_at
+        ORDER BY o.created_at DESC
+    """;
+
+    try (PreparedStatement stm = connection.prepareStatement(sql)) {
+        stm.setInt(1, parentId);
+        stm.setString(2, status);
+
+        ResultSet rs = stm.executeQuery();
+        while (rs.next()) {
+            Orders order = new Orders();
+            order.setOrderId(rs.getInt("order_id"));
+            order.setStatus(rs.getString("status"));
+            order.setPaymentMethod(rs.getString("payment_method"));
+
+            Timestamp createdAt = rs.getTimestamp("created_at");
+            if (createdAt != null)
+                order.setCreatedAt(createdAt.toLocalDateTime());
+
+            Timestamp paidAt = rs.getTimestamp("paid_at");
+            if (paidAt != null)
+                order.setPaidAt(paidAt.toLocalDateTime());
+
+            order.setTotalAmount(rs.getBigDecimal("total_amount"));
+
+            list.add(order);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 
 }

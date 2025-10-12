@@ -30,7 +30,7 @@
             <form method="post" action="paymentitems" onsubmit="return confirmSelection()">
                 <div class="children-list">
                     <c:forEach var="item" items="${items}">
-                        <div class="child-item">
+                        <div class="child-item">    
                             <div class="child-header">
                                 <div class="child-avatar">
                                     <img src="${empty item.student.user.profilePicture 
@@ -47,7 +47,14 @@
                                 <div class="child-status" style="text-align:right;">
                                     <span class="status-badge pending">Chờ thanh toán</span>
                                     <p class="link-date">
-                                        <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND
+                                        <c:choose>
+                                            <c:when test="${not empty item.priceVnd}">
+                                                <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span style="color: red;">Giá không có</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </p>
                                 </div>
                             </div>

@@ -76,15 +76,5 @@ public class OrderItem {
         this.createdAt = createdAt;
     }
 
-    @Override
-    public String toString() {
-        return "OrderItem{" +
-                "orderItemId=" + orderItemId +
-                ", order=" + (order != null ? order.getOrderId() : "null") +
-                ", request=" + (request != null ? request.getRequestId() : "null") +
-                ", course=" + (course != null ? course.getTitle() : "null") +
-                ", student=" + (student != null ? student.getUserId() : "null") +
-                ", priceVnd=" + priceVnd +
-                '}';
-    }
+   
 }
