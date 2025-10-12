@@ -10,7 +10,9 @@ public class CourseDetailDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1) > 0;
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -108,7 +110,9 @@ public class CourseDetailDAO extends DBContext {
                WHERE m.course_id = ?) AS discussionCount
         """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            for (int i = 1; i <= 5; i++) ps.setInt(i, courseId);
+            for (int i = 1; i <= 5; i++) {
+                ps.setInt(i, courseId);
+            }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 stats.put("moduleCount", rs.getInt("moduleCount"));
@@ -121,5 +125,32 @@ public class CourseDetailDAO extends DBContext {
             e.printStackTrace();
         }
         return stats;
+    }
+
+    public Map<String, Object> getInstructorInfo(int courseId) {
+        Map<String, Object> instructor = new HashMap<>();
+        String sql
+                = "SELECT u.user_id, u.full_name, u.email, "
+                + "       i.expertise, i.qualifications, i.bio "
+                + "FROM Course c "
+                + "JOIN InstructorProfile i ON c.created_by = i.user_id "
+                + "JOIN Users u ON i.user_id = u.user_id "
+                + "WHERE c.course_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, courseId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                instructor.put("userId", rs.getInt("user_id"));
+                instructor.put("fullName", rs.getString("full_name"));
+                instructor.put("email", rs.getString("email"));
+                instructor.put("expertise", rs.getString("expertise"));
+                instructor.put("qualifications", rs.getString("qualifications"));
+                instructor.put("bio", rs.getString("bio"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return instructor;
     }
 }

@@ -175,6 +175,7 @@ body.dashboard {
     margin-bottom: 10px;
 }
 
+/* Reading box */
 .reading-box {
     background-color: #fff;
     border-left: 5px solid #007bff;
@@ -183,17 +184,20 @@ body.dashboard {
     margin: 12px 0;
     box-shadow: 0 1px 6px rgba(0,0,0,0.08);
 }
+
 .reading-box h4 {
     color: #007bff;
     font-weight: 600;
     margin-bottom: 10px;
 }
+
 .reading-box .reading-content {
     font-size: 15px;
     line-height: 1.7;
     color: #333;
     text-align: justify;
 }
+
 .reading-meta {
     margin-top: 10px;
     font-size: 13px;
