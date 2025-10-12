@@ -31,7 +31,7 @@
             }
             /*video*/
             .video-page-wrapper {
-                max-width: 1120px;
+                max-width: 1300px;
                 margin: 0 auto;
 
             }
@@ -44,7 +44,7 @@
                 overflow: hidden;
                 background: #f5f7fb;
                 width: 100%;
-                max-width: 1300px;
+                max-width: 1500px;
                 height: auto;
                 margin: 0 auto;
                 display: block;
@@ -323,9 +323,10 @@
 
                 <c:if test="${requestScope.selectedItemType == 'lesson'}" >
 
+                    <!--For reading-->
                     <c:if test="${requestScope.selectedContentType == 'reading'}" >
                         <div class="reading-container">
-                            <h1>${requestScope.lesson.title}</h1>
+                            <h1>Lesson ${requestScope.orderIndex}: ${requestScope.lesson.title}</h1>
                         </div>
                         <div class="custom-container">
                             <div>
@@ -355,17 +356,140 @@
                         </div>
                     </c:if>
 
+                    <!--For video-->
                     <c:if test="${requestScope.selectedContentType == 'video'}" >
                         <div class="ratio ratio-21x9 video-frame shadow-sm">
+                            <c:set var="portSuffix" value="" />
+                            <c:if test="${pageContext.request.serverPort != 80 && pageContext.request.serverPort != 443}">
+                                <c:set var="portSuffix" value=":${pageContext.request.serverPort}" />
+                            </c:if>
+                            <c:set var="origin" value="${pageContext.request.scheme}://${pageContext.request.serverName}${portSuffix}" />
                             <iframe 
-                                src="https://www.youtube.com/embed/${requestScope.lesson.videoUrl}"
+                                id="yt-player"
+                                src="https://www.youtube.com/embed/${requestScope.lesson.videoUrl}?enablejsapi=1&rel=0&modestbranding=1&playsinline=1&origin=${origin}"
                                 title="${requestScope.lesson.title}"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 allowfullscreen
                                 frameborder="0">
                             </iframe>
                         </div>
-                        <h4 class="fw-bold mb-3">${cp.course.title}</h4>
+                        <h4 class="fw-bold mb-3 mt-3 ms-2">Lesson ${requestScope.orderIndex}: ${cp.course.title}</h4>
+
+                        <div class="pb-5">
+                            <h5 class="fw-bold mb-3 mt-5">Kiểm tra nhanh</h5>
+                            <c:set var="isVideoCompleted" value="${requestScope.videoStatus == 'completed'}"/>
+                            <c:choose>
+                                <c:when test="${!isVideoCompleted}">
+                                    <div id="lockedNotice"
+                                         class="card bg-light border-0 rounded-3 shadow-sm mb-4 ${isVideoCompleted ? 'd-none' : ''}">
+                                        <div class="card-body text-center py-5">
+                                            <div class="display-6 mb-3"><i class="bi bi-lock"></i></div>
+                                            <h5 class="fw-semibold mb-2">Bạn vẫn còn bài học cần phải hoàn thành</h5>
+                                            <p class="text-muted mb-0">Phần này sẽ mở ra khi bạn hoàn thành video ở bên trên</p>
+                                        </div>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div>
+                                        <form action="${pageContext.request.contextPath}/checkVideoQuiz" method="post">
+                                            <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                            <input type="hidden" name="itemId"   value="${activeItemId}">
+                                            <c:forEach var="q" items="${listLessonQuestion}" varStatus="st">
+                                                <div class="card border-0 bg-light rounded-3 shadow-sm mb-4">
+                                                    <div class="card-body">
+                                                        <div class="fw-semibold mb-3">Câu ${st.count}: ${q.content}</div>
+
+                                                        <!-- MCQ single choice -->
+                                                        <c:if test="${q.type == 'mcq_single'}">
+                                                            <c:set var="userChoice" value="${requestScope.userAnswers[q.questionId]}" />
+                                                            <c:set var="isCorrect" value="${quizResult[q.questionId]}" />
+                                                            <c:forEach var="opt" items="${q.options}" varStatus="optSt">
+                                                                <div class="form-check mb-2">
+                                                                    <input class="form-check-input"
+                                                                           type="radio"
+                                                                           name="answers[${q.questionId}]"
+                                                                           id="q${q.questionId}o${opt.optionId}"
+                                                                           value="${opt.optionId}" 
+                                                                           <c:if test="${optSt.first}">required</c:if>
+                                                                           <c:if test="${userChoice == opt.optionId}">checked</c:if>
+                                                                           <c:if test="${autoPassed}">disabled</c:if> />
+
+                                                                           <label class="form-check-label
+                                                                           ${autoPassed && opt.isCorrect ? ' text-success fw-bold' : ''}
+                                                                           ${!autoPassed && showResult && userChoice == opt.optionId && isCorrect ? ' text-success fw-bold' : ''}
+                                                                           ${!autoPassed && showResult && userChoice == opt.optionId && !isCorrect ? ' text-danger fw-bold' : ''}"                                                                           for="q${q.questionId}o${opt.optionId}">
+                                                                        ${opt.content}
+                                                                    </label>
+                                                                </div>
+                                                            </c:forEach>
+                                                        </c:if>
+                                                        <!-- Text answer -->
+                                                        <c:if test="${q.type == 'text'}">
+                                                            <c:choose>
+                                                                <c:when test="${autoPassed}">
+                                                                    <c:set var="displayValue" value="" />
+                                                                    <c:forEach var="key" items="${q.answers}">
+                                                                        <c:set var="displayValue" value="${displayValue}" />
+                                                                    </c:forEach>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:set var="displayValue" value="${userTextAnswers[q.questionId]}" />
+                                                                </c:otherwise>
+                                                            </c:choose>
+
+                                                            <input type="text"
+                                                                   name="answersText[${q.questionId}]"
+                                                                   value="${displayValue}"
+                                                                   class="form-control
+                                                                   <c:if test='${showResult && isCorrect}'>is-valid</c:if>
+                                                                   <c:if test='${showResult && !isCorrect}'>is-invalid</c:if>"
+                                                                       placeholder="Nhập câu trả lời của bạn..."
+                                                                   <c:if test='${autoPassed}'>readonly</c:if>
+                                                                       required/>
+                                                        </c:if>
+
+
+
+                                                        <!-- Hiện kết quả sau khi chấm -->
+                                                        <c:if test="${showResult}">
+                                                            <div class="mt-3 small
+                                                                 <c:choose>
+                                                                     <c:when test='${autoPassed}'>text-success</c:when>
+                                                                     <c:otherwise>${quizResult[q.questionId] == true ? "text-success" : "text-danger"}</c:otherwise>
+                                                                 </c:choose>">
+                                                                <c:choose>
+                                                                    <c:when test='${autoPassed}'>Đã hoàn thành </c:when>
+                                                                    <c:otherwise>
+                                                                        ${quizResult[q.questionId] ? 'Đúng rồi!' : 'Chưa đúng.'}
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                                <c:if test="${not empty q.explanation}">
+                                                                    — Giải thích: ${q.explanation}
+                                                                </c:if>
+                                                            </div>
+                                                        </c:if>
+
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                            <c:if test="${!autoPassed}">
+                                                <button type="submit" class="btn btn-primary">Gửi câu trả lời</button>
+                                            </c:if>
+                                            <c:if test="${autoPassed}">
+                                                <button type="submit" class="btn-complete">
+                                                    <a class="link-custom" 
+                                                       href="${pageContext.request.contextPath}/coursePage?itemId=${activeItemId+1}&courseId=${cp.course.courseId}">
+                                                        Đi tới mục tiếp theo
+                                                    </a>
+                                                </button>
+                                                <i class="bi bi-check-circle-fill text-success ms-2"></i>
+                                                <span class="text-success ms-2">Đã hoàn thành</span>
+                                            </c:if>
+                                        </form>
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </c:if>
 
                 </c:if>
@@ -384,7 +508,7 @@
                             <form action="${pageContext.request.contextPath}/discussionPost" method="get">
                                 <input type="hidden" name="courseId" value="${cp.course.courseId}">
                                 <input type="hidden" name="itemId" value="${activeItemId}">
-                                <input type="hidden" name="status" value="${status}">
+                                <input type="hidden" name="status" value="${requestScope.status}">
                                 <div class="mb-4 rely-frame" >
                                     <label for="userReply" class="form-label fw-bold">Phản hồi của bạn</label>
                                     <textarea id="userReply" name="userReply" class="form-control" rows="6" placeholder="Nhập ý kiến của bạn tại đây..."></textarea>
@@ -539,7 +663,7 @@
                                                             <input type="hidden" name="itemId" value="${activeItemId}">
                                                             <input type="hidden" name="commentId" value="${com.commentId}">
                                                             <input type="hidden" name="pageNumber" value="${requestScope.page}">
-                                                            
+
                                                             <label for="commentReply${com.commentId}" class="fw-bold mb-3">Chỉnh sửa nội dung</label>
                                                             <textarea id="commentReply${com.commentId}" name="userReply" class="form-control" rows="6"></textarea>
                                                             <div class="text-end">
@@ -590,6 +714,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- TinyMCE CDN -->
     <script src="https://cdn.tiny.cloud/1/esuprsg124x1emavjxk5j55wk30o7g9i1obl1k8j5gt99d0y/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <!--Youtube API-->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <script>
                                                         tinymce.init({
                                                             selector: '#userReply',
@@ -711,5 +838,38 @@
                                                                 form.style.display = "none";
                                                             }
                                                         }
+
+
+                                                        //for video youtube api
+                                                        let ytPlayer;
+
+                                                        // phải là global để YouTube API gọi được
+                                                        window.onYouTubeIframeAPIReady = function () {
+                                                            ytPlayer = new YT.Player('yt-player', {
+                                                                events: {
+                                                                    'onStateChange': window.onPlayerStateChange
+                                                                }
+                                                            });
+                                                        };
+
+                                                        window.onPlayerStateChange = function (e) {
+                                                            if (e.data === YT.PlayerState.ENDED) {
+                                                                window.markVideoWatched().finally(() => location.reload());
+                                                            }
+                                                        };
+
+                                                        // cũng phải global
+                                                        window.markVideoWatched = function () {
+                                                            const form = new FormData();
+                                                            form.append('courseId', '${cp.course.courseId}');
+                                                            form.append('itemId', '${activeItemId}');
+                                                            form.append('contentType', 'markVideoWatched');
+
+                                                            return fetch('${pageContext.request.contextPath}/moduleItemProgress', {
+                                                                method: 'POST',
+                                                                body: form,
+                                                                credentials: 'include'
+                                                            });
+                                                        };
     </script>
 </html>

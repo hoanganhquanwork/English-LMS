@@ -18,12 +18,14 @@ import model.dto.DiscussionDTO;
 import model.dto.DiscussionPostDTO;
 import model.dto.ModuleItemViewDTO;
 import model.dto.ModuleWithItemsDTO;
+import model.dto.QuestionDTO;
 import model.entity.Lesson;
 import model.entity.Users;
 import service.CoursePageService;
 import service.DiscussionService;
 import service.LessonService;
 import service.ProgressService;
+import service.QuestionService;
 import util.ParseUtil;
 import static util.ParseUtil.parseIntOrNull;
 
@@ -38,6 +40,7 @@ public class CoursePageControllerServlet extends HttpServlet {
     private ProgressService progressService = new ProgressService();
     private LessonService lessonService = new LessonService();
     private DiscussionService discussionService = new DiscussionService();
+    private QuestionService questionService = new QuestionService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -115,7 +118,7 @@ public class CoursePageControllerServlet extends HttpServlet {
                 item = getItem(coursePage, findFirstItemId(coursePage));
                 itemId = (item != null ? item.getModuleItemId() : null);
             }
-            //update for when first click module item
+            //update progress for when first click module item
             progressService.createFirstProgressIfNeeded(userId, itemId);
 
 //            request.setAttribute("item", item);
@@ -125,11 +128,38 @@ public class CoursePageControllerServlet extends HttpServlet {
             request.setAttribute("selectedContentType", item.getContentType());
             request.setAttribute("title", item.getTitle());
             request.setAttribute("status", item.getStatus());
-
+            request.setAttribute("orderIndex", item.getOrderIndex());
             if ("lesson".equalsIgnoreCase(item.getItemType())) {
                 if ("video".equalsIgnoreCase(item.getContentType())) {
                     Lesson video = lessonService.getLessonById(item.getModuleItemId());
+                    List<QuestionDTO> listLessonQuestion = questionService.getQuestionByLessonId(item.getModuleItemId());
+                    boolean isWatchVideo = progressService.hasWatchedVideo(userId, item.getModuleItemId());
+                    if (isWatchVideo) {
+                        request.setAttribute("videoStatus", "completed");
+                    }
+                    request.setAttribute("listLessonQuestion", listLessonQuestion);
                     request.setAttribute("lesson", video);
+
+                    HttpSession ss = request.getSession(false);
+                    if (ss != null && ss.getAttribute("flashShowResult") != null) {
+                        request.setAttribute("showResult", true);
+                        request.setAttribute("quizResult", ss.getAttribute("flashQuizResult"));
+                        request.setAttribute("userAnswers", ss.getAttribute("flashAnswers"));
+                        request.setAttribute("userTextAnswers", ss.getAttribute("flashTextAnswers"));
+                        request.setAttribute("autoPassed", ss.getAttribute("flashPassed"));
+                        
+                        ss.removeAttribute("flashShowResult");
+                        ss.removeAttribute("flashQuizResult");
+                        ss.removeAttribute("flashAnswers");
+                        ss.removeAttribute("flashTextAnswers");
+                        ss.removeAttribute("flashPassed");
+                    } else {
+                        boolean isLessonCompleted = progressService.isLessonCompleted(userId, itemId);
+                        if (isLessonCompleted) {
+                            request.setAttribute("showResult", true);
+                            request.setAttribute("autoPassed", true);
+                        }
+                    }
                 } else if ("reading".equalsIgnoreCase(item.getContentType())) {
                     Lesson reading = lessonService.getLessonById(item.getModuleItemId());
                     request.setAttribute("lesson", reading);

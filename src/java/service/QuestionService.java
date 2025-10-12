@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import model.entity.Question;
 import model.entity.QuestionOption;
+import model.dto.QuestionDTO;
 
 /**
  *
@@ -64,5 +65,31 @@ public class QuestionService {
             return false;
         }
     }
+
+
+
+
+    public List<QuestionDTO> getQuestionByLessonId(int lessonId) {
+        if (lessonId <= 0) {
+            throw new IllegalArgumentException("Tham số không hợp lệ");
+        }
+        return questionDAO.getQuestionByLessonId(lessonId);
+    }
+
+    public boolean isCorrectOption(int questionId, int optionId) {
+        if (questionId <= 0 || optionId <= 0) {
+            throw new IllegalArgumentException("Tham số không hợp lệ");
+        }
+        return questionDAO.isCorrectOption(questionId, optionId);
+    }
+    
+    public boolean isCorrectTextAnswer(int questionId, String answer){
+        if (questionId <= 0 || answer.isBlank()) {
+            throw new IllegalArgumentException("Tham số không hợp lệ");
+        }
+        return questionDAO.isCorrectTextAnswer(questionId, answer);
+    }
+    
+    
 
 }

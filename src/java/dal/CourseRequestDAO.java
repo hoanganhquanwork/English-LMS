@@ -315,22 +315,81 @@ public class CourseRequestDAO extends DBContext {
         }
         return map;
     }
-    
+
     public void updateNoteForRequest(int requestId, String note) {
-    String sql = """
+        String sql = """
         UPDATE CourseRequests
         SET note = ?, decided_at = GETDATE()
         WHERE request_id = ?
     """;
-    try{
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, note);
-        ps.setInt(2, requestId);
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, note);
+            ps.setInt(2, requestId);
 
-        ps.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-}
+
+    public CourseRequest getById(int requestId) {
+        String sql = """
+        SELECT 
+            r.request_id, r.student_id, r.course_id, r.parent_id,
+            r.status, r.note, r.created_at, r.decided_at,
+            c.title AS course_title, c.price AS course_price
+        FROM CourseRequests r
+        JOIN Course c ON r.course_id = c.course_id
+        WHERE r.request_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, requestId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    CourseRequest req = new CourseRequest();
+                    req.setRequestId(rs.getInt("request_id"));
+                    req.setStatus(rs.getString("status"));
+                    req.setNote(rs.getString("note"));
+
+                    Timestamp createdAt = rs.getTimestamp("created_at");
+                    if (createdAt != null) {
+                        req.setCreatedAt(createdAt.toLocalDateTime());
+                    }
+
+                    Timestamp decidedAt = rs.getTimestamp("decided_at");
+                    if (decidedAt != null) {
+                        req.setDecidedAt(decidedAt.toLocalDateTime());
+                    }
+
+                    // --- Map Course ---
+                    Course c = new Course();
+                    c.setCourseId(rs.getInt("course_id"));
+                    c.setTitle(rs.getString("course_title"));
+                    c.setPrice(rs.getBigDecimal("course_price"));
+                    req.setCourse(c);
+
+                    // --- Map Student ---
+                    StudentProfile s = new StudentProfile();
+                    s.setUserId(rs.getInt("student_id"));
+                    req.setStudent(s);
+
+                    // --- Map Parent (nếu có) ---
+                    if (rs.getObject("parent_id") != null) {
+                        ParentProfile p = new ParentProfile();
+                        p.setUserId(rs.getInt("parent_id"));
+                        req.setParent(p);
+                    }
+
+                    return req;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 }

@@ -8,6 +8,9 @@ import model.entity.Question;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.dto.QuestionDTO;
+import model.dto.QuestionOptionDTO;
+import model.dto.QuestionTextKeyDTO;
 import model.entity.QuestionOption;
 
 /**
@@ -201,4 +204,112 @@ public class QuestionDAO extends DBContext {
             }
         }
     }
+
+    public List<QuestionDTO> getQuestionByLessonId(int lessonId) {
+        List<QuestionDTO> listQuestion = new ArrayList<>();
+        String sql = "SELECT * FROM Question WHERE lesson_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, lessonId);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                QuestionDTO question = new QuestionDTO();
+                question.setQuestionId(rs.getInt("question_id"));
+                question.setModuleId(rs.getInt("module_id"));
+                question.setLessonId(rs.getInt("lesson_id"));
+                question.setContent(rs.getString("content"));
+                question.setMediaType(rs.getString("media_type"));
+                question.setMediaUrl(rs.getString("media_url"));
+                question.setType(rs.getString("type"));
+                question.setExplanation(rs.getString("explanation"));
+                question.setOptions(getOptionsByQuestionId(question.getQuestionId()));  // Lấy các lựa chọn
+                question.setAnswers(getAnswersByQuestionId(question.getQuestionId()));  // Lấy các câu trả lời kiểu text
+                listQuestion.add(question);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listQuestion;
+    }
+
+    private List<QuestionOptionDTO> getOptionsByQuestionId(int questionId) {
+        List<QuestionOptionDTO> options = new ArrayList<>();
+        String sql = "SELECT * FROM QuestionOption WHERE question_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, questionId);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                QuestionOptionDTO option = new QuestionOptionDTO();
+                option.setOptionId(rs.getInt("option_id"));
+                option.setContent(rs.getString("content"));
+                option.setIsCorrect(rs.getBoolean("is_correct"));
+                options.add(option);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return options;
+    }
+
+    private List<QuestionTextKeyDTO> getAnswersByQuestionId(int questionId) {
+        List<QuestionTextKeyDTO> answers = new ArrayList<>();
+        String sql = "SELECT * FROM QuestionTextKey WHERE question_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, questionId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                QuestionTextKeyDTO answer = new QuestionTextKeyDTO();
+                answer.setKeyId(rs.getInt("key_id"));
+                answer.setAnswerText(rs.getString("answer_text"));
+                answers.add(answer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return answers;
+    }
+
+    public boolean isCorrectOption(int qid, int optionId) {
+        String sql = "SELECT 1 FROM QuestionOption WHERE question_id = ? AND option_id = ? AND is_correct = 1";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, qid);
+            st.setInt(2, optionId);
+            ResultSet rs = st.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isCorrectTextAnswer(int qid, String answer) {
+        if (answer == null || answer.isBlank()) {
+            return false;
+        }
+
+        String sql = "SELECT answer_text FROM QuestionTextKey WHERE question_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, qid);
+            ResultSet rs = st.executeQuery();
+
+            String normalizedAnswer = normalize(answer);
+            if (rs.next()) {
+                String correctAnswer = normalize(rs.getString("answer_text"));
+                if (correctAnswer.equals(normalizedAnswer)) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private String normalize(String s) {
+        return (s == null) ? "" : s.trim().toLowerCase();
+    }
+
 }

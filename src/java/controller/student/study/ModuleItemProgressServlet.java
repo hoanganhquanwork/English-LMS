@@ -7,6 +7,7 @@ package controller.student.study;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,8 +22,9 @@ import static util.ParseUtil.parseIntOrNull;
  * @author Admin
  */
 @WebServlet(name = "ModuleItemProgressServlet", urlPatterns = {"/moduleItemProgress"})
+@MultipartConfig
 public class ModuleItemProgressServlet extends HttpServlet {
-    
+
     ProgressService progressService = new ProgressService();
 
     /**
@@ -88,19 +90,22 @@ public class ModuleItemProgressServlet extends HttpServlet {
             return;
         }
         int userId = user.getUserId();
-        String courseIdRaw = request.getParameter("courseId");
-        String itemIdRaw = request.getParameter("itemId");
         String contentType = request.getParameter("contentType");
-        Integer courseId = parseIntOrNull(courseIdRaw);
-        Integer itemId = parseIntOrNull(itemIdRaw);
+        Integer courseId = parseIntOrNull(request.getParameter("courseId"));
+        Integer itemId = parseIntOrNull(request.getParameter("itemId"));
+
+//        for mark video
+
         if (itemId != null) {
             if (contentType.equalsIgnoreCase("reading")) {
                 progressService.updateReadingCompletedProgress(userId, itemId);
             }
+            if (contentType.equalsIgnoreCase("markVideoWatched")) {
+                progressService.markVideoWatched(userId, itemId);
+            }
         }
         response.sendRedirect(request.getContextPath() + "/coursePage?itemId=" + itemId + "&courseId=" + courseId);
     }
-    
 
     /**
      * Returns a short description of the servlet.
