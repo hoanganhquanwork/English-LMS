@@ -218,7 +218,7 @@ public class CourseManagerDAO extends DBContext {
     public boolean schedulePublish(int courseId, Timestamp publishDate) {
         String sql
                 = "UPDATE Course "
-                + "SET publish_at = ?, status = 'approved' "
+                + "SET publish_at = ?, status = 'publish' "
                 + "WHERE course_id = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -359,5 +359,4 @@ public class CourseManagerDAO extends DBContext {
             }
         }
     }
-
 }

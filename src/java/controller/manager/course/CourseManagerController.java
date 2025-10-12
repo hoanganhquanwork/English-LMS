@@ -39,7 +39,7 @@ public class CourseManagerController extends HttpServlet {
         if (keyword == null) {
             keyword = "";
         }
-
+        
         List<Course> courseList = courseService.getFilteredCourses(status, keyword, sort);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -126,7 +126,7 @@ public class CourseManagerController extends HttpServlet {
                         session.setAttribute("errorMessage", "Vui lòng nhập lý do từ chối.");
                         break;
                     }
-
+                    
                     int courseId = Integer.parseInt(idStr);
                     boolean success = courseService.rejectCourseWithReason(courseId, manager.getUserId(), reason);
                     if (success) {

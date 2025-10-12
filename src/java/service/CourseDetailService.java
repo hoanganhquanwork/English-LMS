@@ -53,7 +53,6 @@ public class CourseDetailService {
             data.put("instructor", instructor);
 
         } catch (Exception e) {
-            System.err.println("[ERROR] Lỗi trong CourseDetailService.getFullDetail: " + e.getMessage());
             e.printStackTrace();
         }
 

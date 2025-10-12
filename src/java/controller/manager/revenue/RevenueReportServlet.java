@@ -78,7 +78,7 @@ public class RevenueReportServlet extends HttpServlet {
             type = "month";
         }
 
-        RevenueService service = new RevenueService(); // ✅ Dùng service thay vì DAO
+        RevenueService service = new RevenueService(); 
 
         try {
             if (type.equals("year")) {

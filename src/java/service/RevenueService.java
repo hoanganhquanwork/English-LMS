@@ -35,7 +35,7 @@ public class RevenueService {
     }
 
     private void fillMissingMonths(List<RevenueReportDTO> reports, int year) {
-        boolean[] exists = new boolean[13]; // 1..12
+        boolean[] exists = new boolean[13];
         for (RevenueReportDTO r : reports) {
             exists[r.getMonth()] = true;
         }

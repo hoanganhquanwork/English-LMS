@@ -26,7 +26,7 @@
                     <div class="alert alert-danger">${sessionScope.errorMessage}</div>
                     <c:remove var="errorMessage" scope="session"/>
                 </c:if>
-
+                    
                 <div class="filter-panel">
                     <form method="get" action="coursemanager" class="filter-form">
                         <div class="filter-grid">

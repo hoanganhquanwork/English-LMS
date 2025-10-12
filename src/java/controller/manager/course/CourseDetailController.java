@@ -21,6 +21,9 @@ import model.entity.Course;
 import model.entity.Users;
 import service.CourseDetailService;
 import service.CourseManagerService;
+import model.entity.Module;
+import model.entity.ModuleItem;
+import model.entity.Users;
 
 /**
  *
@@ -32,7 +35,7 @@ public class CourseDetailController extends HttpServlet {
     private final CourseManagerService courseService = new CourseManagerService();
     private final CourseDetailService detailService = new CourseDetailService();
 
-    @Override
+  @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -92,6 +95,16 @@ public class CourseDetailController extends HttpServlet {
         }
     }
 
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+ 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -156,6 +169,8 @@ public class CourseDetailController extends HttpServlet {
                         } else {
                             message = "Khóa học đã được lên lịch đăng thành công!";
                         }
+                    } else {
+                        request.setAttribute("errorMessage", "Vui lòng chọn ngày đăng!");
                     }
                     break;
                 }
