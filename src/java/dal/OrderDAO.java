@@ -36,11 +36,10 @@ public class OrderDAO extends DBContext {
         return -1;
     }
 
-    // 🔹 Cập nhật tổng tiền và trạng thái đơn hàng
-    public void updateTotalAndStatus(int orderId, BigDecimal total, String status) {
-        String sql = "UPDATE Orders SET status = ?, paid_at = NULL, payment_method = NULL WHERE order_id = ?";
+    public void updateOrderPaidSuccess(int orderId) {
+        String sql = "UPDATE Orders SET status = ?, paid_at = GETDATE(), payment_method = NULL WHERE order_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, status);
+            ps.setString(1, "paid");
             ps.setInt(2, orderId);
             ps.executeUpdate();
         } catch (SQLException e) {

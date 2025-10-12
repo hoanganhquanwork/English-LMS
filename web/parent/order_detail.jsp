@@ -34,7 +34,6 @@
         <c:if test="${not empty order.formattedPaidAt}">
             <p><strong>Thanh toán lúc:</strong> ${order.formattedPaidAt}</p>
         </c:if>
-
     </div>
 
     <div class="children-list">
@@ -64,7 +63,7 @@
 
     <c:if test="${order.status == 'pending'}">
         <div style="text-align:center; margin-top:24px;">
-            <form method="post" action="vnpay-initiate">
+            <form method="post" action="${pageContext.request.contextPath}/parent/vnpay-initiate">
                 <input type="hidden" name="orderId" value="${order.orderId}" />
                 <button type="submit" class="btn success" style="font-size:16px; padding:10px 30px;">
                     ✅ Tiến hành thanh toán (VNPAY)
@@ -72,8 +71,9 @@
             </form>
         </div>
     </c:if>
+
     <c:if test="${order.status == 'pending'}">
-        <form action="cancelorder" method="get" style="display:inline;">
+        <form action="${pageContext.request.contextPath}/parent/cancelorder" method="get" style="display:inline;">
             <input type="hidden" name="orderId" value="${order.orderId}" />
             <button type="submit" class="btn btn-danger"
                     onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này không?')">
@@ -87,81 +87,44 @@
     <div class="container bottom">© 2025 LinguaTrack</div>
 </footer>
 
+<!-- ✅ Script an toàn: chỉ auto-cancel khi user thực sự rời trang -->
 <script>
-    let orderCancelled = false;
+let orderCancelled = false;
+let isNavigating = false;
 
-    function autoCancel() {
-        const orderId = "${order.orderId}";
-        const status = "${order.status}";
-
-        if (orderId && status.trim() === "pending" && !orderCancelled) {
-            orderCancelled = true;
-
-            // Sử dụng fetch với keepalive để đảm bảo request được gửi
-            fetch("${pageContext.request.contextPath}/parent/cancelorder?orderId=" + orderId, {
-                method: 'GET',
-                keepalive: true,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            }).then(response => {
-                console.log("Auto cancel response:", response.status);
-            }).catch(err => {
-                console.log("Auto cancel request failed:", err);
-                // Fallback: thử lại với sendBeacon
-                if (navigator.sendBeacon) {
-                    navigator.sendBeacon("${pageContext.request.contextPath}/parent/cancelorder?orderId=" + orderId);
-                }
-            });
-
-            console.log("Auto cancelling order:", orderId);
-        }
+// 🔹 Khi user click link hoặc submit form → đánh dấu đang chuyển trang (không auto-cancel)
+document.addEventListener("click", (e) => {
+    const target = e.target.closest("a, button, form");
+    if (target) {
+        isNavigating = true;
     }
+});
+document.addEventListener("submit", () => isNavigating = true);
 
-// Xử lý khi trang bị ẩn (chuyển tab, minimize)
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "hidden") {
-            autoCancel();
-        }
-    });
-
-// Xử lý khi đóng trang/tab
-    window.addEventListener("beforeunload", autoCancel);
-
-// Xử lý khi rời khỏi trang (back button, navigation)
-    window.addEventListener("pagehide", autoCancel);
-
-// Backup: sử dụng sendBeacon nếu fetch không hoạt động
-    function fallbackAutoCancel() {
-        const orderId = "${order.orderId}";
-        const status = "${order.status}";
-
-        if (orderId && status.trim() === "pending" && !orderCancelled) {
-            orderCancelled = true;
-
-            // Tạo form để gửi POST request
-            const form = document.createElement('form');
-            form.method = 'GET';
-            form.action = "${pageContext.request.contextPath}/parent/cancelorder";
-            form.style.display = 'none';
-
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'orderId';
-            input.value = orderId;
-            form.appendChild(input);
-
-            document.body.appendChild(form);
-            form.submit();
-        }
+function autoCancel() {
+    if (isNavigating) return; // ❌ không hủy nếu user bấm nút điều hướng
+    const orderId = "${order.orderId}";
+    const status = "${order.status}";
+    if (orderId && status.trim() === "pending" && !orderCancelled) {
+        orderCancelled = true;
+        fetch("${pageContext.request.contextPath}/parent/cancelorder?orderId=" + orderId, {
+            method: "GET",
+            keepalive: true,
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        }).then(r => console.log("Auto cancel:", r.status))
+          .catch(err => {
+              console.warn("Auto cancel failed, fallback sendBeacon:", err);
+              if (navigator.sendBeacon) {
+                  navigator.sendBeacon("${pageContext.request.contextPath}/parent/cancelorder?orderId=" + orderId);
+              }
+          });
     }
+}
 
-// Fallback với sendBeacon
-    window.addEventListener("beforeunload", () => {
-        if (!orderCancelled) {
-            fallbackAutoCancel();
-        }
-    });
+// 🔹 Chỉ hủy khi thật sự rời khỏi trang
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") autoCancel();
+});
+window.addEventListener("beforeunload", autoCancel);
+window.addEventListener("pagehide", autoCancel);
 </script>
-
-

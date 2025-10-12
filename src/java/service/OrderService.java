@@ -22,4 +22,8 @@ public class OrderService {
             return false;
         }
     }
+
+    public void updateOrderPaidSuccess(int orderId) {
+        orderDAO.updateOrderPaidSuccess(orderId);
+    }
 }
