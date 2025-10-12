@@ -44,7 +44,79 @@ public class ProgressDAO extends DBContext {
         }
     }
 
+    public boolean markVideoWatched(int studentId, int moduleItemId) {
+        String sql = "UPDATE Progress "
+                + "SET percent_done = 100, updated_at = GETDATE() "
+                + "WHERE student_id = ? AND module_item_id = ?";
 
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, moduleItemId);
+            int rows = st.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean markLessonVideoCompleted(int studentId, int moduleItemId) {
+        String sql = "UPDATE Progress "
+                + "SET status = 'completed', completed_at = GETDATE(), updated_at = GETDATE() "
+                + "WHERE student_id = ? AND module_item_id = ?";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, moduleItemId);
+            int rows = st.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean hasWatchedVideo(int studentId, int moduleItemId) {
+        String sql = "SELECT percent_done "
+                + "FROM Progress "
+                + "WHERE student_id = ? AND module_item_id = ?";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, moduleItemId);
+            ResultSet rs = st.executeQuery();
+            if (!rs.next()) {
+                return false;
+            }
+            double percent = rs.getDouble("percent_done");
+            return percent == 100.0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    //kiem tra xem hoan thanh lesson chua
+    public boolean isLessonCompleted(int studentId, int moduleItemId) {
+        String sql = "SELECT status FROM Progress WHERE student_id=? AND module_item_id=?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, moduleItemId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return "completed".equalsIgnoreCase(rs.getString("status"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
     public boolean updateDiscussionCompletedProgress(int studentId, int moduleItemId) {
         String sql = "UPDATE Progress SET status = ? WHERE student_id = ? AND module_item_id = ?";
 
