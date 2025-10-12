@@ -9,7 +9,8 @@ package model.entity;
  * @author Lenovo
  */
 public class Question {
-     private int questionId;
+
+    private int questionId;
     private int moduleId;
     private Integer lessonId;         // Có thể null
     private String content;           // Nội dung câu hỏi
@@ -95,7 +96,5 @@ public class Question {
     public void setExplanation(String explanation) {
         this.explanation = explanation;
     }
-
-    
 
 }

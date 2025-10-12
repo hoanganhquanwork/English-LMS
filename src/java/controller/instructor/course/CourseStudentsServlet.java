@@ -44,15 +44,16 @@ public class CourseStudentsServlet extends HttpServlet {
         }
     }
 
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         int courseId = Integer.parseInt(request.getParameter("courseId"));
+        int courseId = Integer.parseInt(request.getParameter("courseId"));
         String keyword = request.getParameter("keyword");
         String status = request.getParameter("status");
 
-        if (status == null) status = "all";
+        if (status == null) {
+            status = "all";
+        }
 
         Course course = courseService.getCourseById(courseId);
         List<Enrollment> studentList = enrollmentService.getEnrollments(courseId, keyword, status);
@@ -64,7 +65,6 @@ public class CourseStudentsServlet extends HttpServlet {
 
         request.getRequestDispatcher("teacher/student.jsp").forward(request, response);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

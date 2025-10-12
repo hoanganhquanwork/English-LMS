@@ -5,52 +5,18 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tạo Thảo Luận Mới</title>
+        <title>Tạo Quiz Mới</title>
         <link rel="stylesheet" href="css/styles.css">
         <link rel="stylesheet" href="css/course-content.css">
         <link rel="stylesheet" href="css/teacher-common.css">
-        <link rel="stylesheet" href="css/teacher-content-editor.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-        <script src="https://cdn.tiny.cloud/1/808iwiomkwovmb2cvokzivnjb0nka12kkujkdkuf8tpcoxtw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                tinymce.init({
-                    selector: '#description',
-                    width: '200%',
-                    height: 400,
-                    branding: false,
-                    statusbar: false,
-                    menubar: false,
-                    plugins: 'lists link image media table code',
-                    toolbar:
-                            'undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code',
-                    content_style: `
-                    body {
-                      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                      font-size: 15px;
-                      line-height: 1.6;
-                      color: #2c3e50;
-                      background-color: #fafafa;
-                      padding: 16px;
-                      border-radius: 8px;
-                    }
-                `,
-                    setup: function (editor) {
-                        editor.on('change keyup', function () {
-                            editor.save(); // cập nhật lại textarea
-                        });
-                    }
-                });
-            });
-        </script>
     </head>
     <body>
         <div id="page" data-courseid="${param.courseId}"></div>
         <div class="container" style="max-width: 1600px; margin: 0 auto; padding: 0 20px;">
             <a class="back-link" href="manageModule?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
             <div class="page-title-wrap">
-                <h2>Tạo Thảo Luận Mới</h2>
+                <h2>Tạo Quiz Mới</h2>
             </div>
 
             <div class="lesson-content-page">
@@ -121,28 +87,51 @@
                     <div class="guide-section">
                         <div class="guide-label">HƯỚNG DẪN</div>
                         <div class="guide-icon">
-                            <i class="fas fa-comments" style="color: #f39c12;"></i>
-                            <span>DISCUSSION</span>
+                            <i class="fas fa-question-circle" style="color: #9b59b6;"></i>
+                            <span>QUIZ</span>
                         </div>
                     </div>
                 </aside>
 
                 <!-- Main Content -->
                 <main class="main-content" style="height: 700px;">
-                    <form action="createDiscussion" method="post">
+                    <form action="createQuiz" method="post">
                         <input type="hidden" name="courseId" value="${param.courseId}">
                         <input type="hidden" name="moduleId" value="${param.moduleId}">
 
                         <div class="form-group">
-                            <label for="title">Tiêu đề <span style="color:#e74c3c">*</span></label>
-                            <input id="title" name="title" type="text" placeholder="Ví dụ: Self-Reflection: Good and Bad UX" 
-                                   required>
+                            <label for="title">Tiêu đề Quiz <span style="color:#e74c3c">*</span></label>
+                            <input id="title" name="title" type="text" placeholder="Nhập tiêu đề quiz" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="attempts_allowed">Số lần thử cho phép</label>
+                                <input id="attempts_allowed" name="attempts_allowed" type="number" 
+                                       placeholder="Để trống = không giới hạn" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="passing_score_pct">Điểm đạt (%)</label>
+                                <input id="passing_score_pct" name="passing_score_pct" type="number" 
+                                       placeholder="Để trống = chỉ ôn tập" min="0" max="100" step="0.01">
+                            </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="description">Nội dung mô tả <span style="color:#e74c3c">*</span></label>
-                            <textarea id="description" name="description" class="content-editor" 
-                                      placeholder="Nhập nội dung hướng dẫn cho discussion..." required></textarea>
+                            <label for="pick_count">Số câu hỏi</label>
+                            <input id="pick_count" name="pick_count" type="number" 
+                                   placeholder="Để trống = lấy hết pool" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Chọn module để lấy câu hỏi từ pool:</label>
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <c:forEach var="m" items="${moduleList}">
+                                    <label style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="checkbox" name="sourceModules" value="${m.moduleId}">
+                                        <span>${m.title}</span>
+                                    </label>
+                                </c:forEach>
+                            </div>
                         </div>
 
                         <div class="actions">
@@ -152,7 +141,7 @@
                             </a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i>
-                                Tạo Thảo Luận
+                                Tạo Quiz
                             </button>
                         </div>
                     </form>
@@ -200,19 +189,38 @@
             // Xử lý form submit
             document.querySelector('form').addEventListener('submit', function (e) {
                 const title = document.getElementById('title').value.trim();
-                const content = tinymce.get('description').getContent();
+                const attemptsAllowed = document.getElementById('attempts_allowed').value;
+                const passingScore = document.getElementById('passing_score_pct').value;
+                const pickCount = document.getElementById('pick_count').value;
 
                 if (!title) {
                     e.preventDefault();
-                    alert('Vui lòng nhập tiêu đề thảo luận');
+                    alert('Vui lòng nhập tiêu đề quiz');
                     document.getElementById('title').focus();
                     return false;
                 }
 
-                if (!content || content === '<p></p>' || content === '') {
+                // Validate attempts_allowed
+                if (attemptsAllowed && (parseInt(attemptsAllowed) < 1)) {
                     e.preventDefault();
-                    alert('Vui lòng nhập nội dung mô tả');
-                    tinymce.get('description').focus();
+                    alert('Số lần thử phải lớn hơn 0');
+                    document.getElementById('attempts_allowed').focus();
+                    return false;
+                }
+
+                // Validate passing_score_pct
+                if (passingScore && (parseFloat(passingScore) < 0 || parseFloat(passingScore) > 100)) {
+                    e.preventDefault();
+                    alert('Điểm đạt phải từ 0% đến 100%');
+                    document.getElementById('passing_score_pct').focus();
+                    return false;
+                }
+
+                // Validate pick_count
+                if (pickCount && (parseInt(pickCount) < 1)) {
+                    e.preventDefault();
+                    alert('Số câu hỏi lấy từ pool phải lớn hơn 0');
+                    document.getElementById('pick_count').focus();
                     return false;
                 }
             });
@@ -227,3 +235,4 @@
         </script>
     </body>
 </html>
+

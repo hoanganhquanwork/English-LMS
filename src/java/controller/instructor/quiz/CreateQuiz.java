@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.instructor.discussion;
+package controller.instructor.quiz;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,19 +10,22 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import model.entity.ModuleItem;
-import service.DiscussionService;
 import service.ModuleItemService;
 import service.ModuleService;
 import model.entity.Module;
+import model.entity.Quiz;
+import service.QuizService;
 
 /**
  *
  * @author Lenovo
  */
-public class CreateDiscussion extends HttpServlet {
+public class CreateQuiz extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,14 +44,15 @@ public class CreateDiscussion extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CreateDiscussion</title>");
+            out.println("<title>Servlet CreateQuiz</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CreateDiscussion at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CreateQuiz at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
+
     private ModuleService service = new ModuleService();
     private ModuleItemService contentService = new ModuleItemService();
 
@@ -66,37 +70,61 @@ public class CreateDiscussion extends HttpServlet {
             request.setAttribute("moduleId", moduleId);
             request.setAttribute("moduleList", list);
             request.setAttribute("content", courseContent);
-            request.getRequestDispatcher("teacher/create-discussion.jsp").forward(request, response);
+            request.getRequestDispatcher("teacher/create-quiz.jsp").forward(request, response);
         } catch (Exception e) {
             throw new ServletException(e);
         }
-
     }
-    private DiscussionService discussionService = new DiscussionService();
+    private QuizService quizService = new QuizService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int courseId = Integer.parseInt(request.getParameter("courseId"));
-        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
-        String title = request.getParameter("title");
-        String description = request.getParameter("description");
+        try {
+            int courseId = Integer.parseInt(request.getParameter("courseId"));
+            int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+            String title = request.getParameter("title");
 
-        boolean success = discussionService.createDiscussion(moduleId, title, description);
+            Quiz quiz = new Quiz();
+            quiz.setTitle(title);
 
-        if (success) {
-            response.sendRedirect("createDiscussion?courseId=" + courseId + "&moduleId=" + moduleId);
+            String attemptsAllowedStr = request.getParameter("attempts_allowed");
+            if (attemptsAllowedStr != null && !attemptsAllowedStr.isEmpty()) {
+                quiz.setAttemptsAllowed(Integer.parseInt(attemptsAllowedStr));
+            }
+
+            String passingScoreStr = request.getParameter("passing_score_pct");
+            if (passingScoreStr != null && !passingScoreStr.isEmpty()) {
+                quiz.setPassingScorePct(new BigDecimal(passingScoreStr));
+            }
+
+            String pickCountStr = request.getParameter("pick_count");
+            if (pickCountStr != null && !pickCountStr.isEmpty()) {
+                quiz.setPickCount(Integer.parseInt(pickCountStr));
+            }
+
+            // Các module được chọn để tạo pool câu hỏi
+            String[] selectedModules = request.getParameterValues("sourceModules");
+            List<Integer> moduleSourceIds = new ArrayList<>();
+            if (selectedModules != null) {
+                for (String m : selectedModules) {
+                    moduleSourceIds.add(Integer.parseInt(m));
+                }
+            }
+
+            boolean success = quizService.addQuizWithPool(moduleId, quiz, moduleSourceIds);
+
+            if (success) {
+                response.sendRedirect("manageModule?courseId=" + courseId);
+            } else {
+                request.setAttribute("error", "Không thể tạo quiz. Vui lòng thử lại!");
+                doGet(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Lỗi khi tạo quiz: " + e.getMessage());
+            doGet(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

@@ -363,5 +363,30 @@ public class DiscussionDAO extends DBContext {
         }
         return null;
     }
+    public boolean updateDiscussion(Discussion discussion) {
+        String sql = "UPDATE Discussion SET title = ?, description = ? WHERE discussion_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, discussion.getTitle());
+            ps.setString(2, discussion.getDescription());
+            ps.setInt(3, discussion.getDiscussionId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Xóa thảo luận theo ID
+    public boolean deleteDiscussion(int discussionId) {
+        String sql = "DELETE FROM Discussion WHERE discussion_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, discussionId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 
 }

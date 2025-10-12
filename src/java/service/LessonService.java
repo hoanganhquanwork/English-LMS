@@ -6,12 +6,14 @@ package service;
 
 import dal.LessonDAO;
 import dal.ModuleDAO;
+import dal.ModuleItemDAO;
 import java.util.List;
 import model.entity.Lesson;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import model.entity.Module;
+import model.entity.ModuleItem;
 
 /**
  *
@@ -21,6 +23,7 @@ public class LessonService {
 
     private LessonDAO lessonDAO = new LessonDAO();
     private ModuleDAO moduleDAO = new ModuleDAO();
+    private ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
 
     public Map<Module, List<Lesson>> getCourseContent(int courseId) throws SQLException {
         List<Module> modules = moduleDAO.getModulesByCourse(courseId);
@@ -32,22 +35,19 @@ public class LessonService {
         return result;
     }
 
-
     public Lesson getLessonById(int lessonId) {
         return lessonDAO.getLessonById(lessonId);
     }
 
-    
-    public boolean addLesson(Lesson lesson) {
+    public boolean addLesson(Lesson lesson, int moduleId) {
         try {
-            
             if (lesson == null) {
-                System.err.println(" Lesson object is null");
+                System.err.println("Lesson object is null");
                 return false;
             }
 
             if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
-                System.err.println(" Lesson title is missing");
+                System.err.println("Lesson title is missing");
                 return false;
             }
 
@@ -57,15 +57,57 @@ public class LessonService {
             }
 
             
-            lessonDAO.insertLesson(lesson);
+            int orderIndex = moduleItemDAO.getNextOrderIndex(moduleId);
 
-            System.out.println(" Lesson inserted successfully!");
+            ModuleItem item = new ModuleItem();
+            item.setModuleId(moduleId);
+            item.setItemType("lesson");
+            item.setOrderIndex(orderIndex);
+            item.setRequired(true);
+
+            int moduleItemId = moduleItemDAO.insertModuleItem(item);
+            if (moduleItemId == -1) {
+                System.err.println("Failed to insert ModuleItem for lesson");
+                return false;
+            }
+
+            lesson.setModuleItemId(moduleItemId);
+
+            lessonDAO.insertLesson(lesson);
+            System.out.println("esson inserted successfully!");
             return true;
 
         } catch (Exception e) {
-            System.err.println(" Error inserting lesson: " + e.getMessage());
+            System.err.println("Error inserting lesson: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
+
+    public boolean deleteLesson(int lessonId) {
+        try {
+
+            boolean lessonDeleted = lessonDAO.deleteLessonById(lessonId);
+
+            boolean moduleItemDeleted = moduleItemDAO.deleteModuleItem(lessonId);
+
+            return lessonDeleted && moduleItemDeleted;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateLesson(Lesson lesson) {
+        try {
+            lessonDAO.updateLesson(lesson);
+            System.out.println("Lesson updated successfully!");
+            return true;
+        } catch (Exception e) {
+            System.err.println("Error updating reading lesson: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
