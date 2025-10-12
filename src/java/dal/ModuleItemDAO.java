@@ -27,7 +27,7 @@ public class ModuleItemDAO extends DBContext{
 
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
-                return rs.getInt(1); // trả về module_item_id vừa insert
+                return rs.getInt(1); 
             }
         }
         return -1;
@@ -63,5 +63,16 @@ public class ModuleItemDAO extends DBContext{
         }
 
         return list;
+    }
+     public boolean deleteModuleItem(int moduleItemId) {
+        String sql = "DELETE FROM ModuleItem WHERE module_item_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, moduleItemId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

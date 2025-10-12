@@ -80,9 +80,13 @@
                                 <i class="fas fa-play-circle"></i>
                                 Nội dung khóa học
                             </a>
-                            <a href="courseStudents?courseId=${course.courseId}" class="sidebar-link active">
+                            <a href="courseStudents?courseId=${course.courseId}" class="sidebar-link  active">
                                 <i class="fas fa-users"></i>
                                 Học sinh
+                            </a>
+                            <a href="ManageQuestionServlet?courseId=${course.courseId}" class="sidebar-link">
+                                <i class="fas fa-question-circle"></i>
+                                Câu hỏi
                             </a>
                         </nav>
                     </div>

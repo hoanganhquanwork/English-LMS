@@ -36,6 +36,42 @@
         <servlet-name>CreateReadingLesson</servlet-name>
         <servlet-class>controller.instructor.lesson.CreateReadingLesson</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteQuestion</servlet-name>
+        <servlet-class>controller.instructor.question.DeleteQuestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateQuestion</servlet-name>
+        <servlet-class>controller.instructor.question.UpdateQuestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteLesson</servlet-name>
+        <servlet-class>controller.instructor.lesson.DeleteLesson</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManageDiscussionServlet</servlet-name>
+        <servlet-class>controller.instructor.discussion.ManageDiscussionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateDiscussion</servlet-name>
+        <servlet-class>controller.instructor.discussion.UpdateDiscussion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteDiscussion</servlet-name>
+        <servlet-class>controller.instructor.discussion.DeleteDiscussion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateLessonReading</servlet-name>
+        <servlet-class>controller.instructor.lesson.UpdateLessonReading</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ManageQuizServlet</servlet-name>
+        <servlet-class>controller.instructor.quiz.ManageQuizServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateQuiz</servlet-name>
+        <servlet-class>controller.instructor.quiz.CreateQuiz</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>FlashcardDashboardController</servlet-name>
         <url-pattern>/dashboard</url-pattern>
@@ -91,5 +127,41 @@
     <servlet-mapping>
         <servlet-name>CreateReadingLesson</servlet-name>
         <url-pattern>/createReadingLesson</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteQuestion</servlet-name>
+        <url-pattern>/deleteQuestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateQuestion</servlet-name>
+        <url-pattern>/updateQuestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteLesson</servlet-name>
+        <url-pattern>/deleteLesson</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageDiscussionServlet</servlet-name>
+        <url-pattern>/manageDiscussion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateDiscussion</servlet-name>
+        <url-pattern>/updateDiscussion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteDiscussion</servlet-name>
+        <url-pattern>/deleteDiscussion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateLessonReading</servlet-name>
+        <url-pattern>/updateLessonReading</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageQuizServlet</servlet-name>
+        <url-pattern>/manageQuizServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateQuiz</servlet-name>
+        <url-pattern>/createQuiz</url-pattern>
     </servlet-mapping>
 </web-app>

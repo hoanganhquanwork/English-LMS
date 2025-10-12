@@ -25,15 +25,7 @@ import service.ModuleService;
  */
 public class CreateReadingLesson extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -75,49 +67,36 @@ public class CreateReadingLesson extends HttpServlet {
     }
 
     private LessonService lessonService = new LessonService();
-    private ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // 🔹 Lấy dữ liệu từ form
+            
             int courseId = Integer.parseInt(request.getParameter("courseId"));
             int moduleId = Integer.parseInt(request.getParameter("moduleId"));
             String title = request.getParameter("title");
             String content = request.getParameter("content");
 
-            // 🔹 Bước 1: Tạo module_item cho bài học mới (vì Lesson phụ thuộc vào ModuleItem)
-            int orderIndex = moduleItemDAO.getNextOrderIndex(moduleId);
-
-            ModuleItem newItem = new ModuleItem();
-            newItem.setModuleId(moduleId);
-            newItem.setItemType("lesson");
-            newItem.setOrderIndex(orderIndex);
-            newItem.setRequired(true);
-
-            int moduleItemId = moduleItemDAO.insertModuleItem(newItem);
-
-            if (moduleItemId <= 0) {
-                throw new Exception("Không thể tạo ModuleItem mới cho bài học.");
-            }
-
-            Lesson lesson = new Lesson();
-            lesson.setModuleItemId(moduleItemId);
+           Lesson lesson = new Lesson();
             lesson.setTitle(title);
             lesson.setContentType("reading");
             lesson.setTextContent(content);
+            lesson.setVideoUrl(null);
+            lesson.setDurationSec(0);
 
-            boolean success = lessonService.addLesson(lesson);
+            
+            boolean success = lessonService.addLesson(lesson, moduleId);
 
             if (success) {
-
-                response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId + "&lessonId=" + moduleItemId);
+                response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId);
             } else {
                 request.setAttribute("error", "Không thể tạo bài học Reading. Vui lòng thử lại.");
-                request.getRequestDispatcher("teacher/lesson-create-reading.jsp").forward(request, response);
+                doGet(request, response);
             }
 
+            
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Đã xảy ra lỗi khi tạo bài học: " + e.getMessage());
