@@ -52,9 +52,9 @@
                                 <div class="price-section">
                                     <div class="price-info">
                                         <c:choose>
-                                            <c:when test="${not empty item.priceVnd}">
+                                            <c:when test="${not empty item.course.price}">
                                                 <span class="price-label">Giá khóa học:</span>
-                                                <span class="price-value"><fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND</span>
+                                                <span class="price-value"><fmt:formatNumber value="${item.course.price}" type="number" groupingUsed="true" /> VND</span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="price-error">❌ Giá không có</span>
@@ -64,7 +64,7 @@
                                     
                                     <div class="payment-action">
                                         <label class="payment-checkbox">
-                                            <input type="checkbox" name="selectedItem" value="${item.orderItemId}" />
+                                            <input type="checkbox" name="selectedItem" value="${item.requestId}" />
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Chọn thanh toán</span>
                                         </label>

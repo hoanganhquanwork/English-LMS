@@ -11,23 +11,56 @@ import java.util.*;
 import service.PaymentService;
 import util.VNPayConfig;
 
+// NEW
+import dal.CourseRequestDAO;
+import model.entity.CourseRequest;
+
 @WebServlet("/parent/vnpay-initiate")
 public class VNPayInitiateController extends HttpServlet {
     private final PaymentService paymentService = new PaymentService();
+    // NEW
+    private final CourseRequestDAO crdao = new CourseRequestDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
-            int orderId = Integer.parseInt(request.getParameter("orderId"));
-            double amount = paymentService.getOrderTotal(orderId);
-            String txnRef = "ORD" + orderId + "_" + System.currentTimeMillis();
+            int orderId = Integer.parseInt(
+                String.valueOf(request.getAttribute("orderId") != null
+                    ? request.getAttribute("orderId")
+                    : request.getParameter("orderId"))
+            );
 
-            // 1️⃣ Tạo bản ghi Payment
+            // NEW: nhận danh sách requestIds (nếu có)
+            String reqJoined = (String) request.getAttribute("requestIds");
+            if (reqJoined == null) reqJoined = request.getParameter("requestIds");
+
+            double amount;
+            String txnRef;
+
+            if (reqJoined != null && !reqJoined.isBlank()) {
+                // NEW: tính tổng tiền từ CourseRequest 'unpaid'
+                amount = 0d;
+                for (String s : reqJoined.split("-")) {
+                    if (s.isBlank()) continue;
+                    int reqId = Integer.parseInt(s);
+                    CourseRequest cr = crdao.getById(reqId);
+                    if (cr != null && "unpaid".equalsIgnoreCase(cr.getStatus())) {
+                        amount += cr.getCourse().getPrice().doubleValue();
+                    }
+                }
+                if (amount <= 0) throw new IllegalStateException("Tổng tiền không hợp lệ.");
+                // NEW: gói danh sách CR vào txnRef để return parse
+                txnRef = "ORD" + orderId + "_R" + reqJoined + "_" + System.currentTimeMillis();
+            } else {
+                // luồng cũ: lấy tổng theo order nếu cần
+                amount = paymentService.getOrderTotal(orderId);
+                txnRef = "ORD" + orderId + "_" + System.currentTimeMillis();
+            }
+
             paymentService.createPayment(orderId, amount, "card", txnRef);
 
-            // 2️⃣ Tham số gửi sang VNPay
             Map<String, String> vnp_Params = new LinkedHashMap<>();
             vnp_Params.put("vnp_Version", "2.1.0");
             vnp_Params.put("vnp_Command", "pay");
@@ -43,7 +76,6 @@ public class VNPayInitiateController extends HttpServlet {
             vnp_Params.put("vnp_CreateDate",
                     new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
 
-            // 3️⃣ Sinh chuỗi hash
             List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
             Collections.sort(fieldNames);
             StringBuilder hashData = new StringBuilder();
@@ -57,18 +89,13 @@ public class VNPayInitiateController extends HttpServlet {
                     query.append(URLEncoder.encode(name, StandardCharsets.US_ASCII))
                          .append('=')
                          .append(URLEncoder.encode(value, StandardCharsets.US_ASCII));
-                    if (itr.hasNext()) {
-                        hashData.append('&');
-                        query.append('&');
-                    }
+                    if (itr.hasNext()) { hashData.append('&'); query.append('&'); }
                 }
             }
 
-            // 4️⃣ Tạo secure hash
             String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
             query.append("&vnp_SecureHash=").append(vnp_SecureHash);
 
-            // 5️⃣ Redirect sang VNPay
             String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + query;
             response.sendRedirect(paymentUrl);
 
