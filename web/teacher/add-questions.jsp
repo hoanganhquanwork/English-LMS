@@ -16,8 +16,6 @@
         <link rel="stylesheet" href="css/styles.css">
         <link rel="stylesheet" href="css/course-students.css">
         <link rel="stylesheet" href="css/course-content.css">
-        <link rel="stylesheet" href="css/teacher-common.css">
-        <link rel="stylesheet" href="css/teacher-questions.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     </head>
