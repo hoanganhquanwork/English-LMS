@@ -87,7 +87,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div class="fw-semibold">${st.count}. ${aq.question.content}</div>
-                                    <span class="badge text-bg-light">${1/quiz.pickCount} point</span>
+                                    <span class="badge text-bg-light">${100/quiz.pickCount} point</span>
                                 </div>
 
                                 <!-- MCQ single -->
@@ -155,7 +155,7 @@
 
                     <div class="mt-4">
                         <div class="fw-semibold">${st.count}. ${aq.question.content}</div>
-                        <!--<div class="small text-muted">${1/quiz.pickCount} point</div>-->
+                        <!--<div class="small text-muted">${100/quiz.pickCount} point</div>-->
 
                         <c:if test="${aq.question.type == 'mcq_single'}">
                             <div class="mt-2">

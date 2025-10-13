@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.entity.StudentProfile;
 import service.StudentRequestService;
+import service.StudentService;
 
 /**
  *
@@ -23,6 +24,7 @@ import service.StudentRequestService;
 public class ParentLinkRequestServlet extends HttpServlet {
 
     private final StudentRequestService studentLinkService = new StudentRequestService();
+    private final StudentService studentService = new StudentService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -94,8 +96,8 @@ public class ParentLinkRequestServlet extends HttpServlet {
                 studentLinkService.createLinkRequest(studentId, parentEmail);
             } else if ("unlink".equals(requestType)) {
                 if (studentLinkService.unlinkParentAccount(studentId)) {
-                    student.setParentId(null);
-                    session.setAttribute("student", student);
+//                    student.setParentId(null);
+//                    session.setAttribute("student", student);
                 } else {
                     session.setAttribute("flash_error", "Không thể hủy liên kết.");
                 }
@@ -112,7 +114,7 @@ public class ParentLinkRequestServlet extends HttpServlet {
         }
 
         response.sendRedirect(request.getContextPath() + "/courseRequest");
-        
+
     }
 
     /**
