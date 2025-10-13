@@ -26,7 +26,7 @@ public class ParentLinkApprovalService {
     public void cancelRequest(int requestId, String note) {
         ParentLinkRequest req = requestDAO.getRequestById(requestId);
         if (req != null && "approved".equalsIgnoreCase(req.getStatus())) {
-            requestDAO.updateRequestStatus(requestId, "canceled", note);
+            requestDAO.updateRequestStatus(requestId, "unlink", note);
             requestDAO.unlinkStudentFromParent(req.getStudentId());
         }
     }
