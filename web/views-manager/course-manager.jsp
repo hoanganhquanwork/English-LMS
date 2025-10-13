@@ -1,22 +1,32 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
         <title>Quản lý khóa học</title>
-        <link rel="stylesheet" href="<c:url value='/css/manager-style.css?v=3' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-style.css?v=20' />">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     </head>
     <body class="dashboard">
-        <%@ include file="includes-manager/header-manager.jsp" %>
+        <jsp:include page="includes-manager/sidebar-manager.jsp"/>
+
         <main class="main-content">
             <div class="container">
                 <div class="page-header">
                     <h1 class="page-title">Quản lý khóa học</h1>
-                    <p class="page-subtitle">Duyệt và quản lý các khóa học được gửi bởi giáo viên</p>
+                    <p class="page-subtitle">Duyệt, chỉnh giá và xem chi tiết khóa học</p>
                 </div>
+
+                <c:if test="${not empty sessionScope.message}">
+                    <div class="alert alert-success">${sessionScope.message}</div>
+                    <c:remove var="message" scope="session"/>
+                </c:if>
+                <c:if test="${not empty sessionScope.errorMessage}">
+                    <div class="alert alert-danger">${sessionScope.errorMessage}</div>
+                    <c:remove var="errorMessage" scope="session"/>
+                </c:if>
+                    
                 <div class="filter-panel">
                     <form method="get" action="coursemanager" class="filter-form">
                         <div class="filter-grid">
@@ -29,11 +39,12 @@
                                     <option value="rejected" ${status == 'rejected' ? 'selected' : ''}>Từ chối</option>
                                 </select>
                             </div>
+
                             <div class="filter-group">
                                 <label for="keyword">Từ khóa</label>
-                                <input type="text" id="keyword" name="keyword" value="${keyword}"
-                                       placeholder="Tìm theo tên hoặc giáo viên...">
+                                <input type="text" id="keyword" name="keyword" value="${keyword}" placeholder="Tìm theo tên hoặc giáo viên...">
                             </div>
+
                             <div class="filter-group">
                                 <label for="sort">Sắp xếp</label>
                                 <select name="sort" id="sort">
@@ -41,35 +52,25 @@
                                     <option value="oldest" ${sort == 'oldest' ? 'selected' : ''}>Cũ nhất</option>
                                 </select>
                             </div>
+
                             <div class="filter-actions">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-search"></i> Lọc
-                                </button>
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Lọc</button>
                             </div>
                         </div>
                     </form>
                 </div>
-                <c:if test="${not empty errorMessage}">
-                    <div class="alert alert-warning" style="margin: 10px 0; padding: 10px; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 4px;">
-                        ${errorMessage}
+
+                <div class="table-header">
+                    <h2 class="table-title">Danh sách khóa học</h2>
+                    <div class="bulk-actions">
+                        <button form="bulkForm" type="submit" class="btn btn-success" onclick="return setBulkAction('approve')">
+                            <i class="fa fa-check"></i> Duyệt hàng loạt
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="return setBulkAction('reject')">
+                            <i class="fa fa-times"></i> Từ chối hàng loạt
+                        </button>
                     </div>
-                </c:if>
-                <form method="post" action="coursemanager" id="bulkForm">
-                    <input type="hidden" name="action" id="bulkAction">
-                    <div class="table-header">
-                        <h2 class="table-title">Danh sách khóa học</h2>
-                        <div class="bulk-actions">
-                            <button type="submit" class="btn btn-success"
-                                    onclick="return setBulkAction('approve')">
-                                <i class="fa fa-check"></i> Duyệt hàng loạt
-                            </button>
-                            <button type="submit" class="btn btn-danger"
-                                    onclick="return setBulkAction('reject')">
-                                <i class="fa fa-times"></i> Từ chối hàng loạt
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                </div>
 
                 <table class="table">
                     <thead>
@@ -79,74 +80,92 @@
                             <th>Giáo viên</th>
                             <th>Ngày gửi</th>
                             <th>Trạng thái</th>
-                            <th>Giá tiền</th>
+                            <th>Giá</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <c:forEach var="course" items="${courseList}" varStatus="loop">
                             <tr>
+                                <td><input type="checkbox" name="courseIds" value="${course.courseId}" form="bulkForm"></td>
+
                                 <td>
-                                    <input type="checkbox" name="courseIds" value="${course.courseId}" form="bulkForm">
-                                </td>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 12px;">
-                                        <img src="${course.thumbnail != null ? course.thumbnail : '/views-manager/icon/default.png'}"
-                                             alt="Course Thumbnail"
-                                             style="width: 60px; height: 40px; border-radius: 4px; object-fit: cover;">
+                                    <div class="course-info">
+                                        <img src="${course.thumbnail != null ? course.thumbnail : '/views-manager/icon/default.png'}" class="thumbnail">
                                         <div>
                                             <strong>${course.title}</strong><br>
-                                            <small style="color: var(--muted);">${course.category.name}</small>
+                                            <small class="muted">${course.category.name}</small>
                                         </div>
                                     </div>
                                 </td>
+
                                 <td>
-                                    <div style="display: flex; align-items: center; gap: 8px;">
-                                        <img src="${course.createdBy.user.profilePicture != null ? course.createdBy.user.profilePicture : '/views-manager/default.png'}"
-                                             alt="Teacher Avatar"
-                                             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                    <div class="teacher-info">
+                                        <img src="${course.createdBy.user.profilePicture != null ? course.createdBy.user.profilePicture : '/views-manager/icon/default.png'}" class="avatar">
                                         <div>
                                             <strong>${course.createdBy.user.fullName}</strong><br>
-                                            <small style="color: var(--muted);">${course.createdBy.user.email}</small>
+                                            <small>${course.createdBy.user.email}</small>
                                         </div>
                                     </div>
                                 </td>
+
                                 <td>
                                     <strong>${createdDateList[loop.index]}</strong><br>
-                                    <small style="color: #888;">${createdTimeList[loop.index]}</small>
+                                    <small class="muted">${createdTimeList[loop.index]}</small>
                                 </td>
+
+                                <td><span class="status-badge ${course.status}">${course.status}</span></td>
+
                                 <td>
-                                    <span class="status-badge ${course.status}">
-                                        ${course.status}
-                                    </span>
-                                </td>
-                                <td>
-                                    <form method="post" action="coursemanager" style="display:flex; gap:8px;">
+                                    <form method="post" action="coursemanager" class="price-inline-form" onsubmit="return disableSubmit(this)">
                                         <input type="hidden" name="action" value="setPrice">
                                         <input type="hidden" name="courseId" value="${course.courseId}">
-                                        <input type="number" name="price" step="1000" min="0"
-                                               value="${course.price}"
-                                               style="width:100px; padding:4px; border:1px solid var(--border); border-radius: var(--radius);">
-                                        <button type="submit" class="btn btn-primary btn-sm">Lưu</button>
+                                        <input type="hidden" name="status" value="${status}">
+                                        <input type="hidden" name="keyword" value="${keyword}">
+                                        <input type="hidden" name="sort" value="${sort}">
+                                        <input type="number" name="price" step="1000" min="0" value="${course.price}" class="price-inline-input">
+                                        <button type="submit" class="price-inline-btn"><i class="fas fa-save"></i></button>
                                     </form>
                                 </td>
+
                                 <td>
-                                    <a href="coursemanager?action=detail&courseId=${course.courseId}" 
+                                    <a href="${pageContext.request.contextPath}/coursedetail?courseId=${course.courseId}"
                                        class="btn btn-outline" title="Xem chi tiết">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <form method="post" action="coursemanager" style="display:inline;">
-                                        <input type="hidden" name="courseIds" value="${course.courseId}">
-                                        <input type="hidden" name="action" value="approve">
-                                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i></button>
-                                    </form>
+                                    <c:choose>
+                                        <c:when test="${course.status == 'submitted'}">
+                                            <form method="post" action="coursemanager" class="inline" onsubmit="return disableSubmit(this)">
+                                                <input type="hidden" name="action" value="approve">
+                                                <input type="hidden" name="courseIds" value="${course.courseId}">
+                                                <input type="hidden" name="status" value="${status}">
+                                                <input type="hidden" name="keyword" value="${keyword}">
+                                                <input type="hidden" name="sort" value="${sort}">
+                                                <button type="submit" class="btn btn-success"><i class="fas fa-check"></i></button>
+                                            </form>
+                                            <button type="button" class="btn btn-danger" onclick="openSingleReject('${course.courseId}')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </c:when>
 
-                                    <form method="post" action="coursemanager" style="display:inline;">
-                                        <input type="hidden" name="courseIds" value="${course.courseId}">
-                                        <input type="hidden" name="action" value="reject">
-                                        <button type="submit" class="btn btn-danger"><i class="fas fa-times"></i></button>
-                                    </form>
+                                        <c:when test="${course.status == 'approved'}">
+                                            <button type="button" class="btn btn-danger" onclick="openSingleReject('${course.courseId}')">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </c:when>
+
+                                        <c:when test="${course.status == 'rejected'}">
+                                            <form method="post" action="coursemanager" class="inline" onsubmit="return disableSubmit(this)">
+                                                <input type="hidden" name="action" value="approve">
+                                                <input type="hidden" name="courseIds" value="${course.courseId}">
+                                                <input type="hidden" name="status" value="${status}">
+                                                <input type="hidden" name="keyword" value="${keyword}">
+                                                <input type="hidden" name="sort" value="${sort}">
+                                                <button type="submit" class="btn btn-success"><i class="fas fa-rotate"></i></button>
+                                            </form>
+                                        </c:when>
+                                    </c:choose>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -155,19 +174,73 @@
             </div>
         </main>
 
+        <form method="post" action="coursemanager" id="bulkForm" style="display:none;">
+            <input type="hidden" name="action" id="bulkAction">
+            <input type="hidden" name="status" value="${status}">
+            <input type="hidden" name="keyword" value="${keyword}">
+            <input type="hidden" name="sort" value="${sort}">
+        </form>
+
+        <div id="rejectModal" class="modal">
+            <div class="modal-content">
+                <h3>Nhập lý do từ chối</h3>
+                <p id="rejectCount" class="muted"></p>
+                <form id="rejectForm" method="post" action="coursemanager" onsubmit="return disableSubmit(this)">
+                    <input type="hidden" name="action" id="rejectAction">
+                    <input type="hidden" name="courseIds" id="rejectCourseIds">
+                    <input type="hidden" name="status" value="${status}">
+                    <input type="hidden" name="keyword" value="${keyword}">
+                    <input type="hidden" name="sort" value="${sort}">
+                    <textarea name="rejectReason" placeholder="Nhập lý do..." required></textarea>
+                    <div class="modal-buttons">
+                        <button type="submit" class="btn btn-danger">Gửi lý do</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeRejectModal()">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <script>
             function toggleSelectAll(source) {
-                const checkboxes = document.querySelectorAll('input[name="courseIds"][form="bulkForm"]');
-                checkboxes.forEach(cb => cb.checked = source.checked);
+                document.querySelectorAll('input[name="courseIds"][form="bulkForm"]').forEach(cb => cb.checked = source.checked);
             }
-
             function setBulkAction(action) {
                 const checked = document.querySelectorAll('input[name="courseIds"][form="bulkForm"]:checked');
-                if (checked.length === 0) {
+                if (!checked.length) {
                     alert("Vui lòng chọn ít nhất một khóa học!");
                     return false;
                 }
-                document.getElementById('bulkAction').value = action;
+                if (action === 'approve') {
+                    document.getElementById('bulkAction').value = 'bulkApprove';
+                    document.getElementById('bulkForm').submit();
+                    return false;
+                }
+                if (action === 'reject') {
+                    const ids = Array.from(checked).map(cb => cb.value).join(',');
+                    openRejectModal('bulkReject', ids);
+                    return false;
+                }
+            }
+            function openRejectModal(action, ids) {
+                document.getElementById('rejectAction').value = action;
+                document.getElementById('rejectCourseIds').value = ids;
+                const count = ids.split(',').filter(Boolean).length;
+                document.getElementById('rejectCount').textContent =
+                        count > 1 ? `Bạn đang từ chối ${count} khóa học.` : `Bạn đang từ chối 1 khóa học.`;
+                document.getElementById('rejectModal').style.display = 'flex';
+            }
+            function openSingleReject(id) {
+                openRejectModal('reject', id);
+            }
+            function closeRejectModal() {
+                document.getElementById('rejectModal').style.display = 'none';
+            }
+            function disableSubmit(form) {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
                 return true;
             }
         </script>

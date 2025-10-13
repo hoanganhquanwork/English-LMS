@@ -3,25 +3,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.manager.course;
+package controller.manager;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.entity.Users;
+import service.ManagerService;
+import service.UserService;
 
 /**
  *
  * @author LENOVO
  */
-@WebServlet(name="ManagerDashboardServlet", urlPatterns={"/dashboard-manager"})
-public class ManagerDashboardServlet extends HttpServlet {
-   
+@MultipartConfig
+@WebServlet(name="UpdateManagerPicture", urlPatterns={"/uploadManagerAvatar"})
+public class UpdateManagerPicture extends HttpServlet {
+   ManagerService managerService = new ManagerService();
+   UserService userService = new UserService();
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -37,10 +42,10 @@ public class ManagerDashboardServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManagerDashboardServlet</title>");  
+            out.println("<title>Servlet UpdateManagerPicture</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManagerDashboardServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet UpdateManagerPicture at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -56,31 +61,41 @@ public class ManagerDashboardServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        Users currentUser = (session != null) ? (Users) session.getAttribute("user") : null;
-
-        if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/loginInternal");
-            return;
-        }
-
-        if (!"Manager".equalsIgnoreCase(currentUser.getRole())) {
-            request.setAttribute("error", "Bạn không có quyền truy cập trang Manager Dashboard!");
-            response.sendRedirect(request.getContextPath() + "/auth/login-internal.jsp");
-            return;
-        }
-
-        request.getRequestDispatcher("/views-manager/dashboard-manager.jsp").forward(request, response);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         processRequest(request, response);
-    }
+    } 
 
+    /** 
+     * Handles the HTTP <code>POST</code> method.
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+       @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("user") == null) {
+            response.sendRedirect("loginInternal");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("user");
+        boolean isUpload = managerService.updateAvatar(request, user);
+        if (isUpload) {
+            if (userService.updateProfilePicture(user)) {
+                session.setAttribute("user", user);
+                response.sendRedirect(request.getContextPath() + "/manager-profile");
+            } else {
+                request.setAttribute("updateFail", "Cập nhật avatar thất bại");
+                request.getRequestDispatcher("/views-manager/manager-profile.jsp").forward(request, response);
+            }
+        } else {
+            request.setAttribute("updateFail", "Tệp tải lên không hợp lệ");
+            request.getRequestDispatcher("/views-manager/manager-profile.jsp").forward(request, response);
+        }
+    }
     /** 
      * Returns a short description of the servlet.
      * @return a String containing servlet description

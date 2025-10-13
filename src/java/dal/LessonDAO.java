@@ -86,26 +86,26 @@ public class LessonDAO extends DBContext {
             ORDER BY mi.order_index
         """;
 
-        try (
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, moduleId);
-            ResultSet rs = ps.executeQuery();
-            List<Lesson> list = new ArrayList<>();
-            while (rs.next()) {
-                Lesson lesson = new Lesson();
-                lesson.setModuleItemId(rs.getInt("lesson_id"));
-                lesson.setTitle(rs.getString("title"));
-                lesson.setContentType(rs.getString("content_type"));
-                lesson.setVideoUrl(rs.getString("video_url"));
-                lesson.setDurationSec((Integer) rs.getObject("duration_sec"));
-                lesson.setTextContent(rs.getString("text_content"));
-                list.add(lesson);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Lesson> list = new ArrayList<>();
+                while (rs.next()) {
+                    Lesson lesson = new Lesson();
+                    lesson.setModuleItemId(rs.getInt("lesson_id"));
+                    lesson.setTitle(rs.getString("title"));
+                    lesson.setContentType(rs.getString("content_type"));
+                    lesson.setVideoUrl(rs.getString("video_url"));
+                    lesson.setDurationSec((Integer) rs.getObject("duration_sec"));
+                    lesson.setTextContent(rs.getString("text_content"));
+                    list.add(lesson);
+                }
+                return list;
             }
-            return list;
         }
         
     }
-
     public void updateLesson(Lesson l) throws SQLException {
         String sql = "UPDATE Lesson SET title = ?, video_url = ?, duration_sec = ?, text_content = ? WHERE lesson_id = ?";
         try (

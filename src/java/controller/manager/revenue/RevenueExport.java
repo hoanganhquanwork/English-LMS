@@ -2,8 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
-package controller.manager.course;
+package controller.manager.revenue;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,43 +11,47 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.entity.Users;
+import java.util.List;
+import model.dto.RevenueReportDTO;
+import service.RevenueService;
 
 /**
  *
  * @author LENOVO
  */
-@WebServlet(name="ManagerDashboardServlet", urlPatterns={"/dashboard-manager"})
-public class ManagerDashboardServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+@WebServlet(name = "RevenueExport", urlPatterns = {"/revenue-export"})
+public class RevenueExport extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManagerDashboardServlet</title>");  
+            out.println("<title>Servlet RevenueExport</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManagerDashboardServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet RevenueExport at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -58,31 +61,50 @@ public class ManagerDashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        Users currentUser = (session != null) ? (Users) session.getAttribute("user") : null;
+        response.setCharacterEncoding("UTF-8");
 
-        if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/loginInternal");
-            return;
+        String type = request.getParameter("type");
+        String yearParam = request.getParameter("year");
+
+        RevenueService service = new RevenueService();
+        List<RevenueReportDTO> reports;
+
+        try {
+            if ("year".equals(type)) {
+                reports = service.getAllMonthlyReports();
+            } else {
+                int year = java.time.Year.now().getValue();
+                if (yearParam != null && yearParam.matches("\\d{4}")) {
+                    year = Integer.parseInt(yearParam);
+                }
+                reports = service.getMonthlyReport(year);
+            }
+            service.exportCsv(response, reports, type);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Lỗi khi xuất báo cáo doanh thu!");
+            request.getRequestDispatcher("/views-manager/error.jsp").forward(request, response);
         }
-
-        if (!"Manager".equalsIgnoreCase(currentUser.getRole())) {
-            request.setAttribute("error", "Bạn không có quyền truy cập trang Manager Dashboard!");
-            response.sendRedirect(request.getContextPath() + "/auth/login-internal.jsp");
-            return;
-        }
-
-        request.getRequestDispatcher("/views-manager/dashboard-manager.jsp").forward(request, response);
     }
 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
