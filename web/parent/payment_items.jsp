@@ -30,41 +30,55 @@
             <form method="post" action="paymentitems" onsubmit="return confirmSelection()">
                 <div class="children-list">
                     <c:forEach var="item" items="${items}">
-                        <div class="child-item">
-                            <div class="child-header">
-                                <div class="child-avatar">
-                                    <img src="${empty item.student.user.profilePicture 
-                                                ? 'https://via.placeholder.com/80x80/4f46e5/ffffff?text=HS'
-                                                : item.student.user.profilePicture}"
-                                         alt="Avatar" />
+                        <div class="payment-item">    
+                            <div class="payment-item-content">
+                                <div class="course-info-section">
+                                    <div class="child-avatar">
+                                        <img src="${empty item.student.user.profilePicture 
+                                                    ? 'https://via.placeholder.com/80x80/4f46e5/ffffff?text=HS'
+                                                    : item.student.user.profilePicture}"
+                                             alt="Avatar" />
+                                    </div>
+
+                                    <div class="course-details">
+                                        <h3 class="course-title">${item.course.title}</h3>
+                                        <p class="student-name">👨‍🎓 Học sinh: ${item.student.user.fullName}</p>
+                                        <div class="course-meta">
+                                            <span class="status-badge pending">⏳ Chờ thanh toán</span>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="child-basic-info">
-                                    <h3>${item.course.title}</h3>
-                                    <p class="child-email">Học sinh: ${item.student.user.fullName}</p>
+                                <div class="price-section">
+                                    <div class="price-info">
+                                        <c:choose>
+                                            <c:when test="${not empty item.priceVnd}">
+                                                <span class="price-label">Giá khóa học:</span>
+                                                <span class="price-value"><fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="price-error">❌ Giá không có</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    
+                                    <div class="payment-action">
+                                        <label class="payment-checkbox">
+                                            <input type="checkbox" name="selectedItem" value="${item.orderItemId}" />
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-text">Chọn thanh toán</span>
+                                        </label>
+                                    </div>
                                 </div>
-
-                                <div class="child-status" style="text-align:right;">
-                                    <span class="status-badge pending">Chờ thanh toán</span>
-                                    <p class="link-date">
-                                        <fmt:formatNumber value="${item.priceVnd}" type="number" groupingUsed="true" /> VND
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div class="child-actions">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="selectedItem" value="${item.orderItemId}" />
-                                    <span>Chọn thanh toán</span>
-                                </label>
                             </div>
                         </div>
                     </c:forEach>
                 </div>
 
-                <div style="text-align:center; margin-top:30px;">
-                    <button type="submit" class="btn success" style="font-size:16px; padding:10px 30px;">
-                        💳 Thanh toán các mục đã chọn
+                <div class="payment-footer">
+                    <button type="submit" class="payment-submit-btn">
+                        <span class="btn-icon">💳</span>
+                        <span class="btn-text">Thanh toán các mục đã chọn</span>
                     </button>
                 </div>
             </form>
@@ -87,17 +101,3 @@
     }
 </script>
 
-<style>
-    .checkbox-label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 15px;
-        color: #374151;
-    }
-    input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
-    }
-</style>

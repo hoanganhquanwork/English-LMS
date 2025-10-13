@@ -15,10 +15,8 @@ public class Orders {
     private LocalDateTime createdAt;
     private String formattedPaidAt;
     private String formattedCreatedAt;
-
-    // ✅ Bổ sung 2 trường này
-    private List<OrderItem> items;         // danh sách các mục trong đơn
-    private BigDecimal totalAmount;        // tổng tiền đơn hàng
+    private List<OrderItem> items;        
+    private BigDecimal totalAmount;        
 
     public Orders() {
     }
