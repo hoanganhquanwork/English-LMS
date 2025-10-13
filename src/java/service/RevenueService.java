@@ -18,11 +18,7 @@ import java.io.PrintWriter;
  */
 public class RevenueService {
 
-    private final RevenueDAO revenueDAO;
-
-    public RevenueService() {
-        this.revenueDAO = new RevenueDAO();
-    }
+    private final RevenueDAO revenueDAO = new RevenueDAO();
 
     public List<RevenueReportDTO> getMonthlyReport(int year) {
         List<RevenueReportDTO> reports = revenueDAO.getMonthlyReport(year);
