@@ -116,7 +116,7 @@ public class ProgressDAO extends DBContext {
         }
         return false;
     }
-    
+
     public boolean updateDiscussionCompletedProgress(int studentId, int moduleItemId) {
         String sql = "UPDATE Progress SET status = ? WHERE student_id = ? AND module_item_id = ?";
 
@@ -131,4 +131,52 @@ public class ProgressDAO extends DBContext {
             return false;
         }
     }
+
+    public Double getBestScoreFromProgress(int studentId, int moduleItemId) {
+        String sql = "SELECT score_pct FROM Progress WHERE student_id=? AND module_item_id=?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, moduleItemId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    return (Double) rs.getObject("score_pct"); // có thể null
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //quiz score
+    public int updateBestQuizScore(int studentId, int moduleItemId, double newScorePct, boolean passed) {
+        String sqlUpdate
+                = "UPDATE Progress SET "
+                + "  score_pct = CASE WHEN score_pct IS NULL OR ? > score_pct THEN ? ELSE score_pct END, "
+                + "  status = CASE WHEN ? = 1 THEN 'completed' ELSE status END, "
+                + "  completed_at = CASE WHEN ? = 1 AND completed_at IS NULL THEN GETDATE() ELSE completed_at END, "
+                + "  updated_at = GETDATE() "
+                + "WHERE student_id = ? AND module_item_id = ?";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sqlUpdate);
+            int i = 1;
+            st.setDouble(i++, newScorePct);
+            st.setDouble(i++, newScorePct);
+            st.setInt(i++, passed ? 1 : 0);
+            st.setInt(i++, passed ? 1 : 0);
+            st.setInt(i++, studentId);
+            st.setInt(i++, moduleItemId);
+            int rows = st.executeUpdate();
+            if (rows == 0) {
+                throw new IllegalStateException("Progress chưa được tạo trước khi chấm điểm.");
+            }
+            return rows;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
 }
