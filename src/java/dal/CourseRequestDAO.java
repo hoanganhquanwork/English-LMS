@@ -192,7 +192,7 @@ public class CourseRequestDAO extends DBContext {
     }
 
     public boolean cancelAllPendingByStudent(int studentId, String note) {
-        String sql = "UPDATE CourseRequests SET status='canceled',"
+        String sql = "UPDATE CourseRequests SET status='canceled', parent_id = NULL, "
                 + " decided_at=GETDATE(), note = ? WHERE student_id = ? AND status = 'pending'";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
