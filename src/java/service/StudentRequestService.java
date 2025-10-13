@@ -50,9 +50,13 @@ public class StudentRequestService {
         if (!ok) {
             throw new IllegalStateException("Hủy liên kết phụ huynh không thành công");
         }
-        ok = cdao.cancelAllPendingByStudent(studenId, "Yêu cầu bị hủy do học sinh hủy liên kết");
+        ok = cdao.cancelAllPendingAndUnpaidByStudent(studenId, "Yêu cầu bị hủy do học sinh hủy liên kết");
         if (!ok) {
             throw new IllegalStateException("Thay đổi note pending request thất bại");
+        }
+        ok = cdao.detachParentFromHistory(studenId);
+        if (!ok) {
+            throw new IllegalStateException("Không thể xóa khỏi lịch sử");
         }
         return true;
     }

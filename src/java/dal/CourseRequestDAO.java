@@ -154,17 +154,18 @@ public class CourseRequestDAO extends DBContext {
     }
 
 //    From student
-    public boolean resendCourseRequest(int requestId, int studentId) {
-        String sql = "UPDATE CourseRequests SET status='pending',"
+    public boolean sendCourseRequest(int requestId, int studentId, int parentId) {
+        String sql = "UPDATE CourseRequests SET status='pending', parent_id=?, "
                 + " decided_at = NULL, note = ?  "
                 + "WHERE request_id=? AND student_id=? AND status IN ('saved','rejected','canceled')";
 
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             String defaultMessage = "Yêu cầu đang đợi phụ huynh duyệt";
-            st.setString(1, defaultMessage);
-            st.setInt(2, requestId);
-            st.setInt(3, studentId);
+            st.setInt(1, parentId);
+            st.setString(2, defaultMessage);
+            st.setInt(3, requestId);
+            st.setInt(4, studentId);
             return st.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,9 +173,9 @@ public class CourseRequestDAO extends DBContext {
         }
     }
 
-    public boolean cancelPendingRequest(int requestId, int studentId, String note) {
+    public boolean cancelRequest(int requestId, int studentId, String note) {
         String sql = "UPDATE CourseRequests  SET status='canceled', decided_at=GETDATE(),"
-                + "  note = NULLIF(?, N'')  WHERE request_id=? AND student_id=? AND status = 'pending'";
+                + "  note = NULLIF(?, N'')  WHERE request_id=? AND student_id=? AND status IN ('pending','unpaid') ";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             if (note == null) {
@@ -191,14 +192,29 @@ public class CourseRequestDAO extends DBContext {
         }
     }
 
-    public boolean cancelAllPendingByStudent(int studentId, String note) {
+    //for unlink
+    public boolean cancelAllPendingAndUnpaidByStudent(int studentId, String note) {
         String sql = "UPDATE CourseRequests SET status='canceled', parent_id = NULL, "
-                + " decided_at=GETDATE(), note = ? WHERE student_id = ? AND status = 'pending'";
+                + " decided_at=GETDATE(), note = ? WHERE student_id=? AND status IN ('pending','unpaid')";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, note);
             st.setInt(2, studentId);
             return st.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean detachParentFromHistory(int studentId) {
+        String sql = "UPDATE CourseRequests SET parent_id=NULL "
+                + "WHERE student_id=? AND status IN ('rejected','canceled','saved')";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.executeUpdate();
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

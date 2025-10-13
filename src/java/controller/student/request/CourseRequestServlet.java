@@ -157,12 +157,12 @@ public class CourseRequestServlet extends HttpServlet {
         try {
             int requestId = Integer.parseInt(requestIdRaw);
             if ("resend".equalsIgnoreCase(requestAction)) {
-                ok = courseRequestService.resendCourseRequest(requestId, studentId);
+                ok = courseRequestService.sendCourseRequest(requestId, studentId, s.getParentId());
                 if (!ok) {
                     request.setAttribute("errorMessage", "Có lỗi khi thực hiện hành động");
                 }
             } else if ("cancel".equalsIgnoreCase(requestAction)) {
-                ok = courseRequestService.cancelPendingRequest(requestId, studentId, note);
+                ok = courseRequestService.cancelRequest(requestId, studentId, note);
                 if (!ok) {
                     request.setAttribute("errorMessage", "Có lỗi khi thực hiện hành động");
                 }

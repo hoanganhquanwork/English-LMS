@@ -56,7 +56,7 @@ public class StudentDAO extends DBContext {
 
     public boolean createLinkRequest(int studentId, int parentId) {
         String sql = "INSERT INTO ParentLinkRequests(student_id, parent_id, status, created_at, decided_at) "
-                + "            VALUES (?, ?, 'pending', GETDATE(), GETDATE())";
+                + "            VALUES (?, ?, 'pending', GETDATE(), NULL";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);

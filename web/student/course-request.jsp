@@ -115,8 +115,10 @@
                                         <option value="saved" ${status == 'saved' ? 'selected': ''}>Tạm lưu</option>
                                         <option value="pending" ${status == 'pending' ? 'selected': ''}>Đang chờ</option>
                                         <option value="canceled" ${status == 'canceled' ? 'selected': ''}>Hủy bỏ</option>
-                                        <option value="approved" ${status == 'approved' ? 'selected': ''}>Đã duyệt</option>
                                         <option value="rejected" ${status == 'rejected' ? 'selected': ''}>Từ chối</option>
+                                        <option value="unpaid"   ${status == 'unpaid'   ? 'selected': ''}>Chưa thanh toán</option>
+                                        <option value="approved" ${status == 'approved' ? 'selected': ''}>Đã duyệt</option>
+
                                     </select>
                                 </div>
                                 <!--Sort-->
@@ -164,15 +166,17 @@
                                                     <c:choose>
                                                         <c:when test="${c.status=='saved'}"><span class="badge rounded-pill text-bg-secondary">Tạm lưu</span></c:when>
                                                         <c:when test="${c.status=='pending'}"><span class="badge rounded-pill text-bg-warning">Đang chờ</span></c:when>
-                                                        <c:when test="${c.status=='approved'}"><span class="badge rounded-pill text-bg-success">Được duyệt</span></c:when>
-                                                        <c:when test="${c.status=='rejected'}"><span class="badge rounded-pill text-bg-danger">Từ chối</span></c:when>
                                                         <c:when test="${c.status=='canceled'}"><span class="badge rounded-pill text-bg-primary">Hủy bỏ</span></c:when>
+                                                        <c:when test="${c.status=='rejected'}"><span class="badge rounded-pill text-bg-danger">Từ chối</span></c:when>
+                                                        <c:when test="${c.status=='unpaid'}">  <span class="badge rounded-pill text-bg-info">Chưa thanh toán</span></c:when>
+                                                        <c:when test="${c.status=='approved'}"><span class="badge rounded-pill text-bg-success">Được duyệt</span></c:when>
+
                                                     </c:choose>
                                                 </td>
                                                 <td><c:out value="${c.note}" /></td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${c.status=='pending'}">
+                                                        <c:when test="${c.status=='pending' || c.status=='unpaid'}">
                                                             <form method="post" action="${pageContext.request.contextPath}/courseRequest" style="display:inline;" onsubmit="return cancelWithNote(this);">
                                                                 <input type="hidden" name="requestId" value="${c.requestId}">
                                                                 <input type="hidden" name="requestAction" value="cancel">
