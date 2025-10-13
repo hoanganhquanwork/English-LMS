@@ -90,10 +90,11 @@
                                         <c:when test="${requestScope.requestStatus == 'approved'}">
                                             <button type="submit" name="requestType" value="unlink" class="btn btn-danger w-100">Hủy liên kết</button>
                                         </c:when>
-                                        <c:when test="${sessionScope.student.parentId == null}">
+                                        <c:when test="${requestScope.student.parentId == null}">
                                             <button type="submit" name="requestType" value="link" class="btn btn-primary w-100">Tài khoản chưa liên kết, gửi yêu cầu liên kết</button>
                                         </c:when>
                                     </c:choose>
+                                    <!--chinh session thanh request-->
                                 </form>
                             </div>
                         </div>
@@ -193,12 +194,15 @@
                                                                 <input type="hidden" name="sort"    value="${sort}">
                                                                 <input type="hidden" name="keyword" value="${keyword}">
                                                                 <input type="hidden" name="page"    value="${page}">
-                                                                <c:if test="${sessionScope.student.parentId !=null}">
+                                                                <c:if test="${requestScope.student.parentId !=null}"> 
                                                                     <button class="btn btn-sm btn-primary">Gửi yêu cầu</button>
                                                                 </c:if>
-                                                                <c:if test="${sessionScope.student.parentId ==null}">
+                                                                <!--chinh session thanh request-->
+                                                                <c:if test="${requestScope.student.parentId == null}"> 
                                                                     <button class="btn btn-sm btn-secondary" disabled="">Chưa liên kết</button>
                                                                 </c:if>
+                                                                <!--chinh session thanh request-->
+
                                                             </form>
                                                         </c:when>
                                                         <c:when test="${c.status=='approved'}">
