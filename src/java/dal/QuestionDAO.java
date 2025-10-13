@@ -117,6 +117,67 @@ public class QuestionDAO extends DBContext {
         return listQuestion;
     }
 
+    public QuestionDTO getQuestionById(int questionId) {
+        String sql = "SELECT * FROM Question WHERE question_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, questionId);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    QuestionDTO q = new QuestionDTO();
+                    q.setQuestionId(rs.getInt("question_id"));
+                    q.setModuleId(rs.getInt("module_id"));
+                    q.setLessonId(rs.getInt("lesson_id"));
+                    q.setContent(rs.getString("content"));
+                    q.setMediaType(rs.getString("media_type"));
+                    q.setMediaUrl(rs.getString("media_url"));
+                    q.setType(rs.getString("type"));
+                    q.setExplanation(rs.getString("explanation"));
+
+                    q.setOptions(getOptionsByQuestionId(q.getQuestionId()));
+                    q.setAnswers(getAnswersByQuestionId(q.getQuestionId()));
+                    return q;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<QuestionDTO> getQuestionByModuleId(int moduleId) {
+        List<QuestionDTO> listQuestion = new ArrayList<>();
+        String sql = "SELECT * FROM Question WHERE module_id = ?";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, moduleId);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    QuestionDTO question = new QuestionDTO();
+                    question.setQuestionId(rs.getInt("question_id"));
+                    question.setModuleId(rs.getInt("module_id"));
+                    question.setLessonId(rs.getInt("lesson_id"));
+                    question.setContent(rs.getString("content"));
+                    question.setMediaType(rs.getString("media_type"));
+                    question.setMediaUrl(rs.getString("media_url"));
+                    question.setType(rs.getString("type"));
+                    question.setExplanation(rs.getString("explanation"));
+
+                    question.setOptions(getOptionsByQuestionId(question.getQuestionId()));
+
+                    question.setAnswers(getAnswersByQuestionId(question.getQuestionId()));
+
+                    listQuestion.add(question);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return listQuestion;
+    }
+
     private List<QuestionOptionDTO> getOptionsByQuestionId(int questionId) {
         List<QuestionOptionDTO> options = new ArrayList<>();
         String sql = "SELECT * FROM QuestionOption WHERE question_id = ?";

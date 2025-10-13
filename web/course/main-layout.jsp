@@ -705,6 +705,132 @@
                     </div>
                 </c:if>
 
+                <!--For quiz-->
+
+                <c:if test="${requestScope.selectedItemType == 'quiz'}">
+                    <c:set var="quiz" value="${requestScope.quiz}" />
+                    <c:set var="quizView" value="${requestScope.quizView}" />
+                    <c:set var="attempt" value="${requestScope.attempt}" />
+                    <c:set var="bestScore" value="${requestScope.bestScore}" />
+
+                    <div class="custom-container">
+                        <h1 class="fw-bold mb-4">
+                            <c:if test="${not empty quiz.title}">Quiz: ${quiz.title}</c:if>
+                            </h1>
+
+                            <div class="p-4 rounded-4" style="background:#eef4ff;">
+                                <div class="row align-items-center">
+                                    <!-- Mô tả (trái) -->
+                                    <div class="col-md-9">
+                                        <div class="fw-bold mb-2">Thông tin mô tả</div>
+
+                                        <p>
+                                            Bạn cần đạt được
+                                        <c:choose>
+                                            <c:when test="${empty quiz.passingScorePct}">--</c:when>
+                                            <c:otherwise><c:out value="${quiz.passingScorePct}" />%</c:otherwise>
+                                        </c:choose>
+                                        để hoàn thành bài quiz
+                                    </p>
+
+                                    <p>
+                                        Số lượng câu hỏi trong bài quiz: ${quiz.pickCount} câu                                
+                                    </p>
+
+                                    <p>
+                                        Trạng thái:
+                                        <c:choose>
+                                            <c:when test="${attempt != null}">
+                                                <c:out value="${attempt.status == 'submitted' ? 'Đã nộp' : 'Bản nháp'}" />
+                                            </c:when>
+                                            <c:otherwise>Chưa làm</c:otherwise>
+                                        </c:choose>
+                                    </p>
+
+                                    <c:if test="${attempt != null && attempt.submittedAt != null}">
+                                        <p>Thời gian: ${attempt.submittedAt}</p>
+                                    </c:if>
+                                </div>
+
+                                <!-- Nút (phải) -->
+                                <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                    <c:choose>
+                                        <c:when test="${quizView == 'intro' || attempt == null}">
+                                            <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                                <input type="hidden" name="itemId" value="${activeItemId}">
+                                                <button class="btn btn-primary px-4">Bắt đầu</button>
+                                            </form>
+                                        </c:when>
+
+                                        <c:when test="${attempt != null && attempt.status == 'submitted'}">
+                                            <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                                <input type="hidden" name="itemId" value="${activeItemId}">
+                                                <button class="btn btn-primary px-4">
+                                                    <i class="bi bi-arrow-clockwise me-1"></i>Làm lại
+                                                </button>
+                                            </form>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <a href="${pageContext.request.contextPath}/doQuiz?attemptId=${attempt.attemptId}&courseId=${cp.course.courseId}&itemId=${activeItemId}"
+                                               class="btn btn-primary px-4">Tiếp tục</a>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <c:choose>
+                                <c:when test="${bestScore >= quiz.passingScorePct}">
+                                    <div class="p-4 rounded-4 bg-success-subtle ">
+                                    </c:when>
+
+                                    <c:otherwise>
+                                        <div class="p-4 rounded-4 bg-danger-subtle">
+                                        </c:otherwise>
+                                    </c:choose>
+
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                                        <div>
+                                            <div class="fw-bold mb-1">Kết quả của bạn</div>
+
+                                            <div class="small text-muted">
+                                                Điểm cao nhất (ghi nhận):
+                                                <span class="fw-semibold
+                                                      ${bestScore >= quiz.passingScorePct ? 'text-success' : 'text-danger'}">
+                                                    <c:choose>
+                                                        <c:when test="${not empty bestScore}">
+                                                            ${bestScore}%
+                                                        </c:when>
+                                                        <c:otherwise>--</c:otherwise>
+                                                    </c:choose>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-md-end">
+                                            <c:choose>
+                                                <c:when test="${not empty latestSubmittedId}">
+                                                    <a class="btn btn-outline-primary"
+                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
+                                                        Xem kết quả gần nhất
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button class="btn btn-outline-secondary" disabled>Chưa có bài nộp nào</button>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+
+                        </div>
+                    </c:if>
+
             </main>
 
             <!--<hr class="custom-hr">-->
