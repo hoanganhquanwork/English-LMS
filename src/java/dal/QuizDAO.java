@@ -6,6 +6,7 @@ package dal;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import model.dto.QuestionDTO;
@@ -13,6 +14,7 @@ import model.dto.QuizAttemptAnswerDTO;
 import model.dto.QuizAttemptDTO;
 import model.dto.QuizAttemptQuestionDTO;
 import model.dto.QuizDTO;
+import model.entity.Quiz;
 
 /**
  *
