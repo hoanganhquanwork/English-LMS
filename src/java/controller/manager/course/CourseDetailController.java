@@ -175,22 +175,18 @@ public class CourseDetailController extends HttpServlet {
                     }
                     break;
                 }
-                case "publish": {
-                    String publishDateStr = request.getParameter("publishDate");
-                    if (publishDateStr != null && !publishDateStr.isEmpty()) {
-                        LocalDate publishDate = LocalDate.parse(publishDateStr);
-                        LocalDateTime publishDateTime = publishDate.atStartOfDay();
-                        boolean success = courseService.schedulePublish(courseId, publishDateTime);
-                        if (success) {
-                            message = "Khóa học đã được lên lịch đăng!";
-                        } else {
-                            request.setAttribute("errorMessage", "Ngày đăng không hợp lệ (phải sau hôm nay và trong vòng 1 năm).");
-                        }
-                    } else {
-                        request.setAttribute("errorMessage", "Vui lòng chọn ngày đăng!");
+                case "publish":
+                String publishDateStr = request.getParameter("publishDate");
+                if (publishDateStr != null && !publishDateStr.isEmpty()) {
+                    LocalDate publishDate = LocalDate.parse(publishDateStr);
+                    LocalDateTime publishDateTime = publishDate.atStartOfDay();
+
+                    boolean success = courseService.schedulePublish(courseId, publishDateTime);
+                    if (!success) {
+                        request.setAttribute("error", "Ngày đăng không hợp lệ (phải sau hôm nay và trong vòng 1 năm).");
                     }
-                    break;
                 }
+                break;
                 case "unpublish":
                     courseService.unpublishCourse(courseId);
                     message = "Khóa học đã được gỡ đăng.";
