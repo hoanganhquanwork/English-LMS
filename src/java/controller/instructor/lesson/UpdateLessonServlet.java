@@ -5,7 +5,6 @@
 package controller.instructor.lesson;
 
 import dal.LessonDAO;
-import dal.ModuleItemDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,7 +19,10 @@ import service.LessonService;
 import service.ModuleService;
 import util.YouTubeApiClient;
 import model.entity.Module;
+import model.entity.Question;
+import model.entity.QuestionOption;
 import service.ModuleItemService;
+import service.QuestionService;
 
 /**
  *
@@ -58,6 +60,7 @@ public class UpdateLessonServlet extends HttpServlet {
         try {
             List<Module> list = service.getModulesByCourse(courseId);
             Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
+            Map<Question, List<QuestionOption>> questionMap = null;
 
             Lesson currentLesson = null;
             if (lessonIdStr != null && !lessonIdStr.isEmpty()) {
@@ -70,13 +73,17 @@ public class UpdateLessonServlet extends HttpServlet {
                     } else if ("video".equalsIgnoreCase(currentLesson.getContentType())) {
                         targetJsp = "teacher/lesson-video-content.jsp";
                     }
+                    QuestionService qService = new QuestionService();
+                    questionMap = qService.getLessonQuestionsMap(lessonId);
                 }
             }
+
             request.setAttribute("courseId", courseId);
             request.setAttribute("moduleId", moduleId);
             request.setAttribute("moduleList", list);
             request.setAttribute("content", courseContent);
             request.setAttribute("lesson", currentLesson);
+            request.setAttribute("questionMap", questionMap);
             request.getRequestDispatcher(targetJsp).forward(request, response);
         } catch (Exception e) {
             throw new ServletException(e);
@@ -101,36 +108,26 @@ public class UpdateLessonServlet extends HttpServlet {
             String title = request.getParameter("title");
             String youtubeUrl = request.getParameter("videoUrl");
 
-            LessonDAO lessonDAO = new LessonDAO();
-            Lesson lesson = lessonDAO.getLessonById(lessonId);
-
-            if (lesson == null) {
-                throw new ServletException("Không tìm thấy bài học với ID = " + lessonId);
-            }
-
+            Lesson lesson = new Lesson();
+            lesson.setModuleItemId(lessonId);
             lesson.setTitle(title);
 
-            // Nếu người dùng nhập link YouTube mới
             if (youtubeUrl != null && !youtubeUrl.trim().isEmpty()) {
-                // Lấy videoId từ URL
+
                 String videoId = YouTubeApiClient.extractVideoId(youtubeUrl);
 
-                // Gọi YouTube API để lấy thời lượng mới
                 String isoDuration = ytClient.fetchIsoDuration(videoId);
                 int durationSec = YouTubeApiClient.isoDurationToSeconds(isoDuration);
 
-                // Cập nhật lại videoUrl và thời lượng
                 lesson.setVideoUrl(YouTubeApiClient.toEmbedUrl(videoId));
                 lesson.setDurationSec(durationSec);
             }
 
-            // Cập nhật Lesson
-            lessonDAO.updateLesson(lesson);
+            boolean success = lessonService.updateLesson(lesson);
 
-            // Quay lại trang cập nhật bài học
-            response.sendRedirect("updateLesson?courseId=" + courseId
-                    + "&moduleId=" + moduleId
-                    + "&lessonId=" + lessonId);
+            if (success) {
+                response.sendRedirect("updateLesson?courseId=" + courseId + "&moduleId=" + moduleId + "&lessonId=" + lessonId);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

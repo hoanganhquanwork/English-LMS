@@ -86,25 +86,26 @@ public class LessonDAO extends DBContext {
             ORDER BY mi.order_index
         """;
 
-        try (
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, moduleId);
-            ResultSet rs = ps.executeQuery();
-            List<Lesson> list = new ArrayList<>();
-            while (rs.next()) {
-                Lesson lesson = new Lesson();
-                lesson.setModuleItemId(rs.getInt("lesson_id"));
-                lesson.setTitle(rs.getString("title"));
-                lesson.setContentType(rs.getString("content_type"));
-                lesson.setVideoUrl(rs.getString("video_url"));
-                lesson.setDurationSec((Integer) rs.getObject("duration_sec"));
-                lesson.setTextContent(rs.getString("text_content"));
-                list.add(lesson);
-            }
-            return list;
-        }
-    }
 
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Lesson> list = new ArrayList<>();
+                while (rs.next()) {
+                    Lesson lesson = new Lesson();
+                    lesson.setModuleItemId(rs.getInt("lesson_id"));
+                    lesson.setTitle(rs.getString("title"));
+                    lesson.setContentType(rs.getString("content_type"));
+                    lesson.setVideoUrl(rs.getString("video_url"));
+                    lesson.setDurationSec((Integer) rs.getObject("duration_sec"));
+                    lesson.setTextContent(rs.getString("text_content"));
+                    list.add(lesson);
+                }
+                return list;
+            }
+        }
+        
+    }
     public void updateLesson(Lesson l) throws SQLException {
         String sql = "UPDATE Lesson SET title = ?, video_url = ?, duration_sec = ?, text_content = ? WHERE lesson_id = ?";
         try (
@@ -118,6 +119,28 @@ public class LessonDAO extends DBContext {
         }
     }
 
-
+ public boolean deleteLessonById(int lessonId) {
+        String sql = "DELETE FROM Lesson WHERE lesson_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, lessonId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+ public boolean updateLessonReading(Lesson lesson) {
+        String sql = "UPDATE Lesson SET title = ?, text_content = ? WHERE lesson_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, lesson.getTitle());
+            ps.setString(2, lesson.getTextContent());
+            ps.setInt(3, lesson.getModuleItemId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }

@@ -16,6 +16,8 @@
         <link rel="stylesheet" href="css/styles.css">
         <link rel="stylesheet" href="css/course-students.css">
         <link rel="stylesheet" href="css/course-content.css">
+        <link rel="stylesheet" href="css/teacher-common.css">
+        <link rel="stylesheet" href="css/teacher-questions.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     </head>
@@ -74,7 +76,7 @@
                     <div class="sidebar-card">
                         <h4>Menu Khóa học</h4>
                         <nav class="sidebar-menu">
-                            <a href="module?courseId=${course.courseId}" class="sidebar-link">
+                            <a href="manageModule?courseId=${course.courseId}" class="sidebar-link">
                                 <i class="fas fa-play-circle"></i>
                                 Nội dung khóa học
                             </a>
@@ -82,7 +84,7 @@
                                 <i class="fas fa-users"></i>
                                 Học sinh
                             </a>
-                            <a href="ManageQuestionServlet" class="sidebar-link">
+                            <a href="ManageQuestionServlet?courseId=${course.courseId}" class="sidebar-link   active">
                                 <i class="fas fa-question-circle"></i>
                                 Câu hỏi
                             </a>

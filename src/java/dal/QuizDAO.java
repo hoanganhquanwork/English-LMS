@@ -22,6 +22,37 @@ public class QuizDAO extends DBContext {
 
     private QuestionDAO questionDAO = new QuestionDAO();
 
+    //anth
+    public boolean insertQuiz(Quiz quiz) throws SQLException {
+        String sql = "INSERT INTO Quiz (quiz_id, title, attempts_allowed, passing_score_pct, pick_count) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, quiz.getQuizId());
+            ps.setString(2, quiz.getTitle());
+            if (quiz.getAttemptsAllowed() != null) ps.setInt(3, quiz.getAttemptsAllowed());
+            else ps.setNull(3, Types.INTEGER);
+            if (quiz.getPassingScorePct() != null) ps.setBigDecimal(4, quiz.getPassingScorePct());
+            else ps.setNull(4, Types.DECIMAL);
+            if (quiz.getPickCount() != null) ps.setInt(5, quiz.getPickCount());
+            else ps.setNull(5, Types.INTEGER);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public List<Integer> getQuestionIdsByModules(List<Integer> moduleIds) throws SQLException {
+        if (moduleIds.isEmpty()) return Collections.emptyList();
+        String inClause = String.join(",", moduleIds.stream().map(String::valueOf).toArray(String[]::new));
+        String sql = "SELECT question_id FROM Question WHERE module_id IN (" + inClause + ")";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            List<Integer> list = new ArrayList<>();
+            while (rs.next()) list.add(rs.getInt("question_id"));
+            return list;
+        }
+    }
+
+    //
+
+
     //tuanta
     public QuizDTO getQuizById(int quizId) {
         String sql = "SELECT q.quiz_id, q.title, q.attempts_allowed, q.passing_score_pct, q.pick_count, mi.module_id "
@@ -381,7 +412,7 @@ public class QuizDAO extends DBContext {
         }
         return null;
     }
-
+}
     //
     //end tuanta
-}
+

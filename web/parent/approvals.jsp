@@ -13,32 +13,40 @@
 
 <main class="container">
     <div class="page-title">
-        <h2>Phê duyệt yêu cầu đăng ký khóa học</h2>
+        <h2>📋 Phê duyệt yêu cầu đăng ký khóa học</h2>
         <p class="lead">Xem xét và phê duyệt các yêu cầu đăng ký từ con em.</p>
+    </div>
 
-        <!-- Tabs -->
+    <!-- Filter Tabs -->
+    <div class="filter-section">
         <div class="filter-tabs">
-            <form method="get" action="approvals" style="display:inline;">
+            <form method="get" action="approvals" class="filter-form">
                 <input type="hidden" name="status" value="pending" />
                 <button type="submit"
                         class="filter-btn ${selectedStatus == 'pending' || empty selectedStatus ? 'active' : ''}">
-                    Chờ duyệt (${counts['pending'] != null ? counts['pending'] : 0})
+                    <span class="filter-icon">⏳</span>
+                    <span class="filter-text">Chờ duyệt</span>
+                    <span class="filter-count">(${counts['pending'] != null ? counts['pending'] : 0})</span>
                 </button>
             </form>
 
-            <form method="get" action="approvals" style="display:inline;">
+            <form method="get" action="approvals" class="filter-form">
                 <input type="hidden" name="status" value="approved" />
                 <button type="submit"
                         class="filter-btn ${selectedStatus == 'approved' ? 'active' : ''}">
-                    Đã duyệt (${counts['approved'] != null ? counts['approved'] : 0})
+                    <span class="filter-icon">✅</span>
+                    <span class="filter-text">Đã duyệt</span>
+                    <span class="filter-count">(${counts['approved'] != null ? counts['approved'] : 0})</span>
                 </button>
             </form>
 
-            <form method="get" action="approvals" style="display:inline;">
+            <form method="get" action="approvals" class="filter-form">
                 <input type="hidden" name="status" value="rejected" />
                 <button type="submit"
                         class="filter-btn ${selectedStatus == 'rejected' ? 'active' : ''}">
-                    Đã từ chối (${counts['rejected'] != null ? counts['rejected'] : 0})
+                    <span class="filter-icon">❌</span>
+                    <span class="filter-text">Đã từ chối</span>
+                    <span class="filter-count">(${counts['rejected'] != null ? counts['rejected'] : 0})</span>
                 </button>
             </form>
         </div>
@@ -48,96 +56,113 @@
     <section class="approval-list">
         <c:choose>
             <c:when test="${empty requests}">
-                <p class="muted">Không có yêu cầu nào phù hợp.</p>
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <h3>Không có yêu cầu nào phù hợp</h3>
+                    <p>Hiện tại không có yêu cầu nào trong trạng thái này.</p>
+                </div>
             </c:when>
 
             <c:otherwise>
-                <c:forEach var="req" items="${requests}">
-                    <div class="approval-card">
-                        <div class="card-header">
-                            <div class="student-info">
-                                <c:choose>
-                                    <c:when test="${empty req.student.user.profilePicture}">
-                                        <img class="avatar"
-                                             src="https://via.placeholder.com/55x55/4f46e5/ffffff?text=HS"
-                                             alt="Avatar" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <img class="avatar"
-                                             src="${pageContext.request.contextPath}/${req.student.user.profilePicture}"
-                                             alt="Avatar" />
-                                    </c:otherwise>
-                                </c:choose>
+                <div class="approval-grid">
+                    <c:forEach var="req" items="${requests}">
+                        <div class="approval-card ${req.status}">
+                            <div class="card-header">
+                                <div class="student-info">
+                                    <c:choose>
+                                        <c:when test="${empty req.student.user.profilePicture}">
+                                            <img class="avatar"
+                                                 src="https://via.placeholder.com/60x60/4f46e5/ffffff?text=HS"
+                                                 alt="Avatar" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img class="avatar"
+                                                 src="${pageContext.request.contextPath}/${req.student.user.profilePicture}"
+                                                 alt="Avatar" />
+                                        </c:otherwise>
+                                    </c:choose>
 
-                                <div>
-                                    <strong>${req.student.user.fullName}</strong><br />
-                                    <span class="muted-text">${req.formattedCreatedAt}</span>
+                                    <div class="student-details">
+                                        <h4 class="student-name">${req.student.user.fullName}</h4>
+                                        <p class="request-date">📅 ${req.formattedCreatedAt}</p>
+                                    </div>
+                                </div>
+
+                                <div class="status-container">
+                                    <c:choose>
+                                        <c:when test="${req.status eq 'pending'}">
+                                            <span class="status-badge pending">⏳ Chờ duyệt</span>
+                                        </c:when>
+                                        <c:when test="${req.status eq 'approved'}">
+                                            <span class="status-badge active">✅ Đã duyệt</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="status-badge rejected">❌ Đã từ chối</span>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </div>
 
-                            <c:choose>
-                                <c:when test="${req.status eq 'pending'}">
-                                    <span class="badge urgent">Chờ duyệt</span>
-                                </c:when>
-                                <c:when test="${req.status eq 'approved'}">
-                                    <span class="status-badge active">Đã duyệt</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="status-badge rejected">Đã từ chối</span>
-                                </c:otherwise>
-                            </c:choose>
+                            <div class="course-info">
+                                <h3 class="course-title">${req.course.title}</h3>
+                                <div class="course-meta">
+                                    <span class="meta-item">🎓 ${not empty req.student.gradeLevel ? req.student.gradeLevel : 'Không rõ lớp'}</span>
+                                    <span class="meta-item">🏫 ${not empty req.student.institution ? req.student.institution : 'Không rõ trường'}</span>
+                                </div>
+                                <div class="price-section">
+                                    <span class="price-label">Giá khóa học:</span>
+                                    <span class="price-value">
+                                        <fmt:formatNumber value="${req.course.price}" type="number" groupingUsed="true" /> VNĐ
+                                    </span>
+                                </div>
+                            </div>
+
+                            <c:if test="${not empty req.note}">
+                                <div class="reason-box">
+                                    <h5>📝 Ghi chú:</h5>
+                                    <p>${req.note}</p>
+                                </div>
+                            </c:if>
+
+                            <c:if test="${req.status == 'pending'}">
+                                <div class="action-buttons">
+                                    <form method="post" action="approvals" class="action-form">
+                                        <input type="hidden" name="requestId" value="${req.requestId}" />
+                                        <input type="hidden" name="action" value="approved" />
+                                        <input type="hidden" name="note" value="" />
+                                        <button type="button" class="approve-btn" onclick="confirmAction(this, 'approve')">
+                                            <span class="btn-icon">✅</span>
+                                            <span class="btn-text">Phê duyệt</span>
+                                        </button>
+                                    </form>
+
+                                    <form method="post" action="approvals" class="action-form">
+                                        <input type="hidden" name="requestId" value="${req.requestId}" />
+                                        <input type="hidden" name="action" value="rejected" />
+                                        <input type="hidden" name="note" value="" />
+                                        <button type="button" class="reject-btn" onclick="confirmAction(this, 'reject')">
+                                            <span class="btn-icon">❌</span>
+                                            <span class="btn-text">Từ chối</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </c:if>
+
+                            <c:if test="${req.status == 'approved' && not empty req.formattedDecidedAt}">
+                                <div class="decision-info">
+                                    <span class="decision-label">✅ Phê duyệt lúc:</span>
+                                    <span class="decision-date">${req.formattedDecidedAt}</span>
+                                </div>
+                            </c:if>
+                            <c:if test="${req.status == 'rejected' && not empty req.formattedDecidedAt}">
+                                <div class="decision-info">
+                                    <span class="decision-label">❌ Từ chối lúc:</span>
+                                    <span class="decision-date">${req.formattedDecidedAt}</span>
+                                </div>
+                            </c:if>
                         </div>
-
-                        <div class="course-info">
-                            <h3>${req.course.title}</h3>
-                            <div class="meta">
-                                <span>🎓 ${not empty req.student.gradeLevel ? req.student.gradeLevel : 'Không rõ lớp'}</span>
-                                <span>🏫 ${not empty req.student.institution ? req.student.institution : 'Không rõ trường'}</span>
-                            </div>
-                            <div class="price">
-                                <strong>
-                                    <fmt:formatNumber value="${req.course.price}" type="number" groupingUsed="true" />
-                                </strong> VNĐ
-                            </div>
-                        </div>
-
-                        <c:if test="${not empty req.note}">
-                            <div class="reason-box">
-                                <h5>Ghi chú:</h5>
-                                <p>${req.note}</p>
-                            </div>
-                        </c:if>
-
-                        <c:if test="${req.status == 'pending'}">
-                            <div class="actions">
-                                <form method="post" action="approvals" style="display:inline;" class="action-form">
-                                    <input type="hidden" name="requestId" value="${req.requestId}" />
-                                    <input type="hidden" name="action" value="approved" />
-                                    <input type="hidden" name="note" value="" />
-                                    <button type="button" class="btn success" onclick="confirmAction(this, 'approve')">
-                                        ✓ Phê duyệt
-                                    </button>
-                                </form>
-
-                                <form method="post" action="approvals" style="display:inline;" class="action-form">
-                                    <input type="hidden" name="requestId" value="${req.requestId}" />
-                                    <input type="hidden" name="action" value="rejected" />
-                                    <input type="hidden" name="note" value="" />
-                                    <button type="button" class="btn danger outline" onclick="confirmAction(this, 'reject')">
-                                        ✗ Từ chối
-                                    </button>
-                                </form>
-                            </div>
-                        </c:if>
-
-                        <c:if test="${req.status == 'approved' && not empty req.formattedDecidedAt}">
-                            <p class="link-date">Phê duyệt lúc: ${req.formattedDecidedAt}</p>
-                        </c:if>
-                        <c:if test="${req.status == 'rejected' && not empty req.formattedDecidedAt}">
-                            <p class="link-date">Từ chối lúc: ${req.formattedDecidedAt}</p>
-                        </c:if>
-                    </div>
-                </c:forEach>
+                    </c:forEach>
+                </div>
             </c:otherwise>
         </c:choose>
     </section>

@@ -73,6 +73,19 @@ public class EnrollmentDAO extends DBContext {
 
     return list;
 }
+    public boolean insertEnrollmentAfterPayment(int courseId, int studentId) {
+    String sql = "INSERT INTO Enrollments (course_id, student_id, enrolled_at, status) "
+               + "VALUES (?, ?, GETDATE(), 'active')";
+    try (PreparedStatement st = connection.prepareStatement(sql)) {
+        st.setInt(1, courseId);
+        st.setInt(2, studentId);
+        return st.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 
 
 

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <fmt:setLocale value="vi_VN" />
 <fmt:setBundle basename="messages" />
@@ -9,10 +9,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Cài đặt tài khoản | LinguaTrack</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent-profile-styles.css" />
+                <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
+
     </head>
     <body>
         <!-- Header -->
-        <jsp:include page="/header.jsp" />
+        <%@ include file="parent_header.jsp" %>
 
         <!-- Main -->
         <main class="container">

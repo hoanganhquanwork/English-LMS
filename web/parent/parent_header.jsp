@@ -46,12 +46,11 @@
                class="<%= "enrollments".equals(currentPage) ? "active" : "" %>">Đăng ký khóa học</a>
             <a href="${pageContext.request.contextPath}/parent/approvals"
                class="<%= "approvals".equals(currentPage) ? "active" : "" %>">Phê duyệt</a>
-            <a href="payments.html"
+            <a href="${pageContext.request.contextPath}/parent/paymentitems"
                class="<%= "payments".equals(currentPage) ? "active" : "" %>">Thanh toán</a>
-            <a href="progress.html"
-               class="<%= "progress".equals(currentPage) ? "active" : "" %>">Tiến độ</a>
+            <a href="${pageContext.request.contextPath}/parent/orders"
+               class="<%= "orders".equals(currentPage) ? "active" : "" %>">Đơn hàng</a>
         </nav>
-        <button class="hamburger btn ghost">☰</button>
     </div>
 </header>
 

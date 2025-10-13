@@ -73,7 +73,7 @@
                     <div class="sidebar-card">
                         <h4>Menu Khóa học</h4>
                         <nav class="sidebar-menu">
-                            <a href="module?courseId=${course.courseId}" class="sidebar-link">
+                            <a href="manageModule?courseId=${course.courseId}" class="sidebar-link ">
                                 <i class="fas fa-play-circle"></i>
                                 Nội dung khóa học
                             </a>
@@ -81,7 +81,7 @@
                                 <i class="fas fa-users"></i>
                                 Học sinh
                             </a>
-                            <a href="questions?courseId=${course.courseId}" class="sidebar-link active">
+                            <a href="ManageQuestionServlet?courseId=${course.courseId}" class="sidebar-link active">
                                 <i class="fas fa-question-circle"></i>
                                 Câu hỏi
                             </a>

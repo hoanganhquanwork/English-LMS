@@ -10,7 +10,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+import model.entity.ModuleItem;
 import service.DiscussionService;
+import service.ModuleItemService;
+import service.ModuleService;
+import model.entity.Module;
 
 /**
  *
@@ -43,19 +49,35 @@ public class CreateDiscussion extends HttpServlet {
             out.println("</html>");
         }
     }
+    private ModuleService service = new ModuleService();
+    private ModuleItemService contentService = new ModuleItemService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int moduleId = Integer.parseInt(request.getParameter("moduleId"));
-        request.setAttribute("moduleId", moduleId);
-        request.getRequestDispatcher("teacher/create-discussion.jsp").forward(request, response);
+        int courseId = Integer.parseInt(request.getParameter("courseId"));
+
+        try {
+            List<Module> list = service.getModulesByCourse(courseId);
+            Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
+
+            request.setAttribute("courseId", courseId);
+            request.setAttribute("moduleId", moduleId);
+            request.setAttribute("moduleList", list);
+            request.setAttribute("content", courseContent);
+            request.getRequestDispatcher("teacher/create-discussion.jsp").forward(request, response);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+
     }
     private DiscussionService discussionService = new DiscussionService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int courseId = Integer.parseInt(request.getParameter("courseId"));
         int moduleId = Integer.parseInt(request.getParameter("moduleId"));
         String title = request.getParameter("title");
         String description = request.getParameter("description");
@@ -63,10 +85,7 @@ public class CreateDiscussion extends HttpServlet {
         boolean success = discussionService.createDiscussion(moduleId, title, description);
 
         if (success) {
-            response.sendRedirect("moduleDetail?moduleId=" + moduleId + "&msg=discussion_created");
-        } else {
-            request.setAttribute("error", "Không thể tạo thảo luận, vui lòng thử lại!");
-            request.getRequestDispatcher("instructor/module/createDiscussion.jsp").forward(request, response);
+            response.sendRedirect("createDiscussion?courseId=" + courseId + "&moduleId=" + moduleId);
         }
     }
 

@@ -17,16 +17,17 @@ import model.dto.QuizAttemptAnswerDTO;
 import model.dto.QuizAttemptDTO;
 import model.dto.QuizAttemptQuestionDTO;
 import model.dto.QuizDTO;
+import dal.ModuleItemDAO;
+import model.entity.ModuleItem;
+import model.entity.Quiz;
+import java.sql.SQLException;
 
-/**
- *
- * @author Admin
- */
 public class QuizService {
 
     private QuizDAO quizDAO = new QuizDAO();
     private QuestionDAO questionDAO = new QuestionDAO();
     private ProgressDAO progressDAO = new ProgressDAO();
+    private ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
 
     public QuizDTO getQuizById(int quizId) {
         if (quizId <= 0) {
@@ -150,6 +151,35 @@ public class QuizService {
             throw new IllegalArgumentException("Không thể tìm bản ghi");
         }
         return quizDAO.findLatestSubmittedAttempt(quizId, studentId);
+    }
+
+    public boolean addQuizWithPool(int moduleId, Quiz quiz, List<Integer> moduleSourceIds) {
+        try {
+            ModuleItem item = new ModuleItem();
+            item.setModuleId(moduleId);
+            item.setItemType("quiz");
+            item.setOrderIndex(moduleItemDAO.getNextOrderIndex(moduleId));   
+            item.setRequired(false);
+            int moduleItemId = moduleItemDAO.insertModuleItem(item);
+            if (moduleItemId == -1) {
+                System.out.println(" Không thể tạo ModuleItem cho quiz");
+                return false;
+            }
+
+            quiz.setQuizId(moduleItemId);
+            boolean created = quizDAO.insertQuiz(quiz);
+
+            // In ra pool câu hỏi (có thể lưu sau)
+            if (moduleSourceIds != null && !moduleSourceIds.isEmpty()) {
+                List<Integer> questionIds = quizDAO.getQuestionIdsByModules(moduleSourceIds);
+                System.out.println("Quiz question pool: " + questionIds);
+            }
+
+            return created;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
 

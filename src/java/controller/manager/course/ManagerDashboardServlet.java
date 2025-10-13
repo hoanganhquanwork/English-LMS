@@ -62,13 +62,13 @@ public class ManagerDashboardServlet extends HttpServlet {
         Users currentUser = (session != null) ? (Users) session.getAttribute("user") : null;
 
         if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/loginInternal");
             return;
         }
 
         if (!"Manager".equalsIgnoreCase(currentUser.getRole())) {
             request.setAttribute("error", "Bạn không có quyền truy cập trang Manager Dashboard!");
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/auth/login-internal.jsp");
             return;
         }
 

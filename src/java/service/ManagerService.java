@@ -6,6 +6,12 @@ package service;
 
 import dal.ManagerDAO;
 import dal.UserDAO;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import model.entity.ManagerProfile;
 import model.entity.Users;
 
@@ -25,5 +31,20 @@ public class ManagerService {
     }
     public boolean updateUser(Users u) {
         return userDAO.updateUser(u);
+    }
+     public boolean updateAvatar(HttpServletRequest request, Users user) throws IOException, ServletException {
+        Part avatar = request.getPart("avatar");
+        if (avatar == null || avatar.getSize() <= 0) {
+            return false; 
+        }
+        int maxSize = 5 * 1024 * 1024;
+        if (avatar.getSize() > maxSize) {
+            return false;
+        }
+        String shortPath = Paths.get(avatar.getSubmittedFileName()).getFileName().toString();
+        String savePath = request.getServletContext().getRealPath("/image/avatar") + File.separator + shortPath;
+        avatar.write(savePath);
+        user.setProfilePicture("image/avatar/" + shortPath);
+        return true;
     }
 }
