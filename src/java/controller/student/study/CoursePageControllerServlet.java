@@ -19,6 +19,8 @@ import model.dto.DiscussionPostDTO;
 import model.dto.ModuleItemViewDTO;
 import model.dto.ModuleWithItemsDTO;
 import model.dto.QuestionDTO;
+import model.dto.QuizAttemptDTO;
+import model.dto.QuizDTO;
 import model.entity.Lesson;
 import model.entity.Users;
 import service.CoursePageService;
@@ -26,6 +28,7 @@ import service.DiscussionService;
 import service.LessonService;
 import service.ProgressService;
 import service.QuestionService;
+import service.QuizService;
 import util.ParseUtil;
 import static util.ParseUtil.parseIntOrNull;
 
@@ -41,6 +44,7 @@ public class CoursePageControllerServlet extends HttpServlet {
     private LessonService lessonService = new LessonService();
     private DiscussionService discussionService = new DiscussionService();
     private QuestionService questionService = new QuestionService();
+    private QuizService quizService = new QuizService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -147,7 +151,7 @@ public class CoursePageControllerServlet extends HttpServlet {
                         request.setAttribute("userAnswers", ss.getAttribute("flashAnswers"));
                         request.setAttribute("userTextAnswers", ss.getAttribute("flashTextAnswers"));
                         request.setAttribute("autoPassed", ss.getAttribute("flashPassed"));
-                        
+
                         ss.removeAttribute("flashShowResult");
                         ss.removeAttribute("flashQuizResult");
                         ss.removeAttribute("flashAnswers");
@@ -164,6 +168,34 @@ public class CoursePageControllerServlet extends HttpServlet {
                     Lesson reading = lessonService.getLessonById(item.getModuleItemId());
                     request.setAttribute("lesson", reading);
                 }
+            } else if ("quiz".equalsIgnoreCase(item.getItemType())) {
+                int quizId = item.getModuleItemId();
+                int studentId = user.getUserId();
+
+                //lay info cua quiz
+                QuizDTO quiz = quizService.getQuizById(quizId);
+                request.setAttribute("quiz", quiz);
+
+                QuizAttemptDTO lastAttempt = quizService.findLatestAttempt(quizId, studentId);
+                if (lastAttempt == null) {
+                    request.setAttribute("quizView", "intro");
+                } else if ("draft".equalsIgnoreCase(lastAttempt.getStatus())) {
+                    QuizAttemptDTO draft = quizService.loadAttempt(lastAttempt.getAttemptId());
+                    request.setAttribute("attempt", draft);
+                    request.setAttribute("quizView", "doing");
+
+                } else if ("submitted".equalsIgnoreCase(lastAttempt.getStatus())) {
+                    request.setAttribute("attempt", lastAttempt);
+                    request.setAttribute("quizView", "result");
+                }
+
+                Double bestScore = quizService.getBestScore(quizId, studentId);
+                request.setAttribute("bestScore", bestScore);
+                QuizAttemptDTO latestSubmitted = quizService.findLatestSubmittedAttempt(quizId, studentId);
+                request.setAttribute("latestSubmittedId", latestSubmitted.getAttemptId());
+                System.out.println(bestScore);
+                System.out.println(latestSubmitted.getAttemptId());
+
             } else if ("discussion".equalsIgnoreCase(item.getItemType())) {
                 DiscussionDTO discussion = discussionService.getDiscussionByModuleItemId(item.getModuleItemId());
                 boolean firstPostStatus = discussionService.hasDiscussionPost(userId, item.getModuleItemId());

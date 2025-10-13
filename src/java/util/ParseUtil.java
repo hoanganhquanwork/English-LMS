@@ -21,4 +21,16 @@ public class ParseUtil {
             return null;
         }
     }
+    
+    public static Long parseLongOrNull(String s){
+        if (s == null || s.isBlank()) {
+            return null;
+        }
+
+        try {
+            return Long.valueOf(s.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 }
