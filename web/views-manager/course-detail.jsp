@@ -100,9 +100,7 @@
                     <form method="post" action="<c:url value='/coursedetail'/>" class="inline-form">
                         <input type="hidden" name="action" value="updatePrice">
                         <input type="hidden" name="courseId" value="${course.courseId}">
-                        <input type="number" name="price" 
-                               value="${course.price != null ? course.price : 0}" 
-                               min="0" step="1000" class="price-inline-input">
+                        <input type="number" name="price" value="${course.price != null ? course.price : 0}" min="0" step="1000" class="price-inline-input">
                         <button class="price-inline-btn" title="Cập nhật giá"><i class="fa fa-save"></i></button>
                     </form>
                 </div>
@@ -168,7 +166,7 @@
                                                     <c:choose>
                                                         <c:when test="${i['contentType'] == 'video'}">
                                                             <div class="video-container">
-                                                                <iframe src="${i['videoUrl']}" allowfullscreen></iframe>
+                                                                <iframe src="https://www.youtube.com/embed/${i['videoUrl']}" allowfullscreen></iframe>
                                                                 <p class="video-duration muted">
                                                                     ⏱ Thời lượng: 
                                                                     ${i['durationSec'] != null ? i['durationSec'] : 0} giây
