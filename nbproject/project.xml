@@ -51,12 +51,13 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.javax.mail-1.6.2.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
+                    <file>${&gt;&gt;&gt;&gt;&gt;&gt;&gt; 689d4aa commit}</file>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.json-20250517.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
+                    <file>${ fix publish on course and add feature}</file>
+                </library>
+                <library dirs="200">
+                    <file>${ View detail of course}</file>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>
