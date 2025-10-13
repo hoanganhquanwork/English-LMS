@@ -26,10 +26,8 @@ public class OrderListController extends HttpServlet {
         Users parent = (Users) session.getAttribute("user");
         int parentId = parent.getUserId();
 
-        List<Orders> pendingOrders = service.getOrdersByParentAndStatus(parentId, "pending");
         List<Orders> paidOrders = service.getOrdersByParentAndStatus(parentId, "paid");
 
-        request.setAttribute("pendingOrders", pendingOrders);
         request.setAttribute("paidOrders", paidOrders);
 
         request.getRequestDispatcher("/parent/order_list.jsp").forward(request, response);

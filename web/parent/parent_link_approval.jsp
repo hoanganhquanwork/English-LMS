@@ -95,7 +95,7 @@
                                             <span class="status-badge pending">⏳ Chờ xác nhận</span>
                                         </c:when>
 
-                                        <c:when test="${r.status eq 'canceled'}">
+                                        <c:when test="${r.status eq 'unlink'}">
                                             <span class="status-badge canceled">❌ Đã hủy liên kết</span>
                                         </c:when>
 
@@ -117,7 +117,7 @@
                                             <c:when test="${r.status eq 'pending'}">
                                                 Yêu cầu liên kết: <fmt:formatDate value="${r.createdAt}" pattern="dd/MM/yyyy HH:mm" />
                                             </c:when>
-                                            <c:when test="${r.status eq 'canceled'}">
+                                            <c:when test="${r.status eq 'unlink'}">
                                                 Hủy lúc: <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
                                             </c:when>
                                             <c:when test="${r.status eq 'rejected'}">
