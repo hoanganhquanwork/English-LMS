@@ -72,6 +72,10 @@
         <servlet-name>CreateQuiz</servlet-name>
         <servlet-class>controller.instructor.quiz.CreateQuiz</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateQuiz</servlet-name>
+        <servlet-class>controller.instructor.quiz.UpdateQuiz</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>FlashcardDashboardController</servlet-name>
         <url-pattern>/dashboard</url-pattern>
@@ -163,5 +167,9 @@
     <servlet-mapping>
         <servlet-name>CreateQuiz</servlet-name>
         <url-pattern>/createQuiz</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateQuiz</servlet-name>
+        <url-pattern>/updateQuiz</url-pattern>
     </servlet-mapping>
 </web-app>

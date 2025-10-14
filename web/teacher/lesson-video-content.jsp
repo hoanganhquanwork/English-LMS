@@ -1228,7 +1228,7 @@
                     <form action="updateLesson" method="post">
                         <input type="hidden" name="courseId" value="${param.courseId}">
                         <input type="hidden" name="moduleId" value="${param.moduleId}">
-                       <input type="hidden" name="lessonId" value="${lesson.moduleItemId}">
+                        <input type="hidden" name="lessonId" value="${lesson.moduleItemId}">
 
                         <div class="lesson-form">
                             <div class="form-group">
@@ -1241,7 +1241,7 @@
                                     <c:when test="${not empty lesson.videoUrl}">
                                         <div class="video-wrapper" id="videoWrapper">
                                             <iframe 
-                                                src="${lesson.videoUrl}" 
+                                                src="https://www.youtube.com/embed/${lesson.videoUrl}" 
                                                 frameborder="0" 
                                                 allowfullscreen
                                                 class="video-iframe">
@@ -1264,7 +1264,7 @@
 
 
                             <div class="page-actions">
-                                <a href="module.jsp?courseId=${param.courseId}" class="btn btn-secondary">
+                                <a href="manageModule?courseId=${param.courseId}" class="btn btn-secondary">
                                     Hủy bỏ
                                 </a>
                                 <button type="submit" class="btn btn-primary">
@@ -1324,9 +1324,9 @@
                                                 </c:forEach>
                                             </div>
                                             <%--<c:if test="${not empty entry.key.explanation}">--%>
-                                                <div class="explanation-group">
-                                                    <textarea class="explanation-input" readonly>${entry.key.explanation}</textarea>
-                                                </div>
+                                            <div class="explanation-group">
+                                                <textarea class="explanation-input" readonly>${entry.key.explanation}</textarea>
+                                            </div>
                                             <%--</c:if>--%>
                                         </div>
                                     </div>
@@ -1391,7 +1391,7 @@
                 dropdown.classList.toggle('show');
             }
 
-             function createLesson(type, moduleId) {
+            function createLesson(type, moduleId) {
                 var courseId = document.getElementById('page').dataset.courseid || '';
                 var url = '';
 
@@ -1633,13 +1633,13 @@
             function makeQuestionEditable(questionForm) {
                 // Chuyển câu hỏi thành textarea
                 convertQuestionToTextarea(questionForm);
-                
+
                 // Làm cho các phương án có thể chỉnh sửa
                 makeOptionsEditable(questionForm);
-                
+
                 // Làm cho phần giải thích có thể chỉnh sửa
                 makeExplanationEditable(questionForm);
-                
+
                 // Thêm nút thêm phương án
                 addOptionButton(questionForm);
             }
@@ -1698,7 +1698,7 @@
                 }
 
                 // Xử lý sự kiện click
-                label.onclick = function() {
+                label.onclick = function () {
                     toggleCorrectAnswer(checkbox, label, questionForm);
                 };
 
@@ -1730,7 +1730,7 @@
                 removeBtn.type = 'button';
                 removeBtn.className = 'remove-option-btn';
                 removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                removeBtn.onclick = function() {
+                removeBtn.onclick = function () {
                     removeOption(removeBtn);
                 };
                 option.appendChild(removeBtn);
@@ -1751,7 +1751,7 @@
                     addOptionBtn.type = 'button';
                     addOptionBtn.className = 'add-option-btn';
                     addOptionBtn.innerHTML = '<i class="fas fa-plus"></i> Thêm phương án';
-                    addOptionBtn.onclick = function() {
+                    addOptionBtn.onclick = function () {
                         addOptionToEdit(questionForm);
                     };
                     answerOptionsContainer.appendChild(addOptionBtn);
@@ -1804,7 +1804,7 @@
 
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'answer-option';
-                
+
                 // Tạo checkbox
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
@@ -1812,32 +1812,32 @@
                 checkbox.value = newIndex;
                 checkbox.id = 'edit-correct-' + newIndex;
                 checkbox.className = 'correct-answer-checkbox';
-                
+
                 // Tạo label
                 const label = document.createElement('label');
                 label.htmlFor = 'edit-correct-' + newIndex;
                 label.className = 'correct-answer-label';
                 label.innerHTML = '<i class="fas fa-check"></i>';
-                label.onclick = function() {
+                label.onclick = function () {
                     toggleCorrectAnswer(checkbox, label, questionForm);
                 };
-                
+
                 // Tạo input text
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.name = 'editOptionContent_' + newIndex;
                 input.className = 'answer-input';
                 input.placeholder = 'Nhập phương án. Ví dụ: Việt Nam';
-                
+
                 // Tạo nút xóa
                 const removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
                 removeBtn.className = 'remove-option-btn';
                 removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                removeBtn.onclick = function() {
+                removeBtn.onclick = function () {
                     removeOption(removeBtn);
                 };
-                
+
                 // Thêm các phần tử vào div
                 optionDiv.appendChild(checkbox);
                 optionDiv.appendChild(label);
@@ -1846,7 +1846,7 @@
 
                 answerOptionsContainer.insertBefore(optionDiv, answerOptionsContainer.querySelector('.add-option-btn'));
             }
-             function toggleCorrectAnswer(clickedLabel) {
+            function toggleCorrectAnswer(clickedLabel) {
                 const checkbox = clickedLabel.previousElementSibling;
                 const questionForm = clickedLabel.closest('.question-form');
 
