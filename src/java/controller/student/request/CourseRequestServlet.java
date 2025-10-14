@@ -159,7 +159,7 @@ public class CourseRequestServlet extends HttpServlet {
             if ("resend".equalsIgnoreCase(requestAction)) {
                 ok = courseRequestService.sendCourseRequest(requestId, studentId, s.getParentId());
                 if (!ok) {
-                    request.setAttribute("errorMessage", "Có lỗi khi thực hiện hành động");
+                    request.setAttribute("errorMessage", "Có lỗi khi thực hiện hành động này");
                 }
             } else if ("cancel".equalsIgnoreCase(requestAction)) {
                 ok = courseRequestService.cancelRequest(requestId, studentId, note);

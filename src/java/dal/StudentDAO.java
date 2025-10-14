@@ -54,9 +54,46 @@ public class StudentDAO extends DBContext {
         return 0;
     }
 
+    public boolean resentLinkRequest(int studentId, int parentId) {
+        String sql = "UPDATE ParentLinkRequests SET status = 'pending',"
+                + " created_at = GETDATE(), decided_at = NULL, note = NULL WHERE student_id = ? AND parent_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, parentId);
+            return st.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getRejectNote(int studentId, int parentId) {
+        String sql = "SELECT note "
+                + "FROM ParentLinkRequests "
+                + "WHERE student_id = ? AND parent_id = ?  AND status = 'rejected'";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, parentId);
+
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getString("note");
+            } else {
+                return null;
+            }
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean createLinkRequest(int studentId, int parentId) {
         String sql = "INSERT INTO ParentLinkRequests(student_id, parent_id, status, created_at, decided_at) "
-                + "            VALUES (?, ?, 'pending', GETDATE(), NULL";
+                + "            VALUES (?, ?, 'pending', GETDATE(), NULL)";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);
@@ -82,7 +119,7 @@ public class StudentDAO extends DBContext {
             st1.setInt(1, studentId);
             st1.setInt(2, parentId);
             if (st1.executeUpdate() == 0) {
-                return false; 
+                return false;
             }
 
             PreparedStatement st2 = connection.prepareStatement(secondSql);

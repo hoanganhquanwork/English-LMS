@@ -77,15 +77,23 @@
                                         <div id="errEmail" class="text-danger small mt-1"></div>
                                         <div class="text-danger small mt-1">${requestScope.messageRequest}</div>
                                     </div>
+                                    <c:if test="${requestScope.noteReject != null}">
+                                        <div class="text-danger d-flex align-items-center mb-3">
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                            <span>Ghi chú từ chối: ${requestScope.noteReject}</span>
+                                        </div>
+                                    </c:if>
+
+
                                     <c:choose>
                                         <c:when test="${requestScope.requestStatus == 'pending'}">
                                             <button type="submit" name="requestType" value="cancel" class="btn btn-secondary w-100">Yêu cầu liên kết đang được xử lý, hủy yêu cầu</button>
                                         </c:when>
                                         <c:when test="${requestScope.requestStatus == 'canceled'}">
-                                            <button id="resubmit" type="submit" name="requestType" value="link" class="btn btn-danger w-100">Yêu cầu liên kết đã bị hủy, gửi lại</button>
+                                            <button id="resubmit" type="submit" name="requestType" value="resend" class="btn btn-danger w-100">Yêu cầu liên kết đã bị hủy, gửi lại</button>
                                         </c:when>
                                         <c:when test="${requestScope.requestStatus == 'rejected'}">
-                                            <button id="resubmit" type="submit" name="requestType" value="link" class="btn btn-danger w-100">Yêu cầu liên kết bị từ chối, gửi lại</button>
+                                            <button id="resubmit" type="submit" name="requestType" value="resend" class="btn btn-danger w-100">Yêu cầu liên kết bị từ chối, gửi lại</button>
                                         </c:when>
                                         <c:when test="${requestScope.requestStatus == 'approved'}">
                                             <button type="submit" name="requestType" value="unlink" class="btn btn-danger w-100">Hủy liên kết</button>

@@ -35,10 +35,38 @@ public class StudentRequestService {
         }
         boolean ok = sdao.createLinkRequest(studentId, parentId);
         if (!ok) {
-            throw new IllegalStateException("Không thể tạo email");
+            throw new IllegalStateException("Không thể tạo liên kết");
         }
         return true;
+    }
 
+    public boolean resentLinkRequest(int studentId, String parentEmail) {
+        if (parentEmail == null || parentEmail.isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập email phụ huynh.");
+        }
+        Integer currentPid = pdao.getParentIdByStudentId(studentId);
+        if (currentPid != null) {
+            throw new IllegalStateException("Tài khoản đã liên kết, vui lòng hủy liên kết trước");
+        }
+
+        Integer parentId = pdao.getParentIdByEmail(parentEmail);
+        if (parentId == null) {
+            throw new IllegalArgumentException("Email phụ huynh cần liên kết không hợp lệ");
+        }
+        boolean ok = sdao.resentLinkRequest(studentId, parentId);
+        if (!ok) {
+            throw new IllegalStateException("Không thể tạo liên kết");
+        }
+        return true;
+    }
+
+    public String getRejectNote(int studentId, String parentEmail) {
+        Integer currentPid = pdao.getParentIdByStudentId(studentId);
+        Integer parentId = pdao.getParentIdByEmail(parentEmail);
+        if (currentPid != null && parentId != null) {
+            return sdao.getRejectNote(studentId, parentId);
+        }
+        return null;
     }
 
     public boolean unlinkParentAccount(int studenId) {
@@ -50,10 +78,8 @@ public class StudentRequestService {
         if (!ok) {
             throw new IllegalStateException("Hủy liên kết phụ huynh không thành công");
         }
-        ok = cdao.cancelAllPendingAndUnpaidByStudent(studenId, "Yêu cầu bị hủy do học sinh hủy liên kết");
-        if (!ok) {
-            throw new IllegalStateException("Thay đổi note pending request thất bại");
-        }
+        cdao.cancelAllPendingAndUnpaidByStudent(studenId, "Yêu cầu bị hủy do học sinh hủy liên kết");
+
         ok = cdao.detachParentFromHistory(studenId);
         if (!ok) {
             throw new IllegalStateException("Không thể xóa khỏi lịch sử");
