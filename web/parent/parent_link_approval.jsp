@@ -24,7 +24,7 @@
                 <button type="submit"
                         class="filter-btn ${param.filter == 'approved' || empty param.filter ?  'active' : ''}">
                     <span class="filter-icon">✅</span>
-                    <span class="filter-text">Đã kết nối</span>
+                    <span class="filter-text">Đã liên kết</span>
                     <span class="filter-count">(${approvedCount})</span>
                 </button>
             </form>
@@ -44,7 +44,7 @@
                 <button type="submit"
                         class="filter-btn ${param.filter == 'closed' ? 'active' : ''}">
                     <span class="filter-icon">❌</span>
-                    <span class="filter-text">Đã hủy / Từ chối</span>
+                    <span class="filter-text">Huỷ liên kết / Từ chối</span>
                     <span class="filter-count">(${closedCount})</span>
                 </button>
             </form>
@@ -96,11 +96,11 @@
                                         </c:when>
 
                                         <c:when test="${r.status eq 'unlink'}">
-                                            <span class="status-badge canceled">❌ Đã hủy liên kết</span>
+                                            <span class="status-badge canceled">❌ Hủy liên kết</span>
                                         </c:when>
 
                                         <c:when test="${r.status eq 'rejected'}">
-                                            <span class="status-badge rejected">❌ Đã từ chối</span>
+                                            <span class="status-badge rejected">❌ Từ chối</span>
                                         </c:when>
                                     </c:choose>
                                 </div>
@@ -118,7 +118,7 @@
                                                 Yêu cầu liên kết: <fmt:formatDate value="${r.createdAt}" pattern="dd/MM/yyyy HH:mm" />
                                             </c:when>
                                             <c:when test="${r.status eq 'unlink'}">
-                                                Hủy lúc: <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
+                                                Hủy liên kết lúc: <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
                                             </c:when>
                                             <c:when test="${r.status eq 'rejected'}">
                                                 Từ chối lúc: <fmt:formatDate value="${r.decidedAt}" pattern="dd/MM/yyyy HH:mm" />
