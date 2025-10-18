@@ -43,4 +43,7 @@ public class CourseService {
     public boolean removeCourse(int courseId) {
         return courseDAO.deleteCourse(courseId);
     }
+     public boolean submitCourse(int courseId) {        
+            return courseDAO.updateCourseStatus(courseId, "submitted");   
+    }
 }

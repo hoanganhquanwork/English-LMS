@@ -7,6 +7,7 @@ package service;
 import dal.LessonDAO;
 import dal.ModuleDAO;
 import dal.ModuleItemDAO;
+import dal.QuestionDAO;
 import java.util.List;
 import model.entity.Lesson;
 import java.sql.SQLException;
@@ -24,6 +25,7 @@ public class LessonService {
     private LessonDAO lessonDAO = new LessonDAO();
     private ModuleDAO moduleDAO = new ModuleDAO();
     private ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
+   
 
     public Map<Module, List<Lesson>> getCourseContent(int courseId) throws SQLException {
         List<Module> modules = moduleDAO.getModulesByCourse(courseId);
@@ -56,7 +58,6 @@ public class LessonService {
                 return false;
             }
 
-            
             int orderIndex = moduleItemDAO.getNextOrderIndex(moduleId);
 
             ModuleItem item = new ModuleItem();
@@ -86,12 +87,9 @@ public class LessonService {
 
     public boolean deleteLesson(int lessonId) {
         try {
-
-            boolean lessonDeleted = lessonDAO.deleteLessonById(lessonId);
-
-            boolean moduleItemDeleted = moduleItemDAO.deleteModuleItem(lessonId);
-
-            return lessonDeleted && moduleItemDeleted;
+         
+            boolean moduleDeleted = moduleItemDAO.deleteModuleItem(lessonId);
+            return moduleDeleted;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

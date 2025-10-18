@@ -102,10 +102,9 @@ public class DiscussionService {
     }
 
     public boolean deleteDiscussion(int discussionId) {
-        try {
-            boolean discussionDeleted = discussionDAO.deleteDiscussion(discussionId);
+        try {         
             boolean moduleItemDeleted = moduleItemDAO.deleteModuleItem(discussionId);
-            return  discussionDeleted && moduleItemDeleted;
+            return   moduleItemDeleted;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

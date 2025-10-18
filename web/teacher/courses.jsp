@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -8,6 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Courses | Teacher | LinguaTrack LMS</title>
         <link rel="stylesheet" href="css/styles.css" />
+        <link rel="stylesheet" href="css/courses.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     </head>
     <body>
@@ -41,7 +43,7 @@
                                 </select>
                             </form>
                         </div>
-                       
+
                     </div>
 
                     <div style="overflow:auto;">
@@ -74,21 +76,44 @@
                                         <td style="text-align:center;">${h.language}</td>
                                         <td style="text-align:center;">${h.level}</td>
                                         <td>
-                                            <span style="display:inline-block; padding:4px 8px; background:#e8f5e9; color:#2e7d32; border-radius:999px; text-transform:capitalize;">
+                                            <span class="status-badge status-${fn:toLowerCase(h.status)}">
                                                 ${h.status}
                                             </span>
                                         </td>
                                         <td>
-                                            <div style="display:flex; gap:8px;">
-                                                <a class="btn-icon edit-btn" title="Sửa" onclick="editCourse(this)">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="deleteCourse?courseId=${h.courseId}" 
-                                                   class="btn-icon" 
-                                                   title="Xóa" 
-                                                   onclick="return confirm('Bạn có chắc muốn xóa khóa học này không?');">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                            <div class="action-buttons">
+                                                <c:if test="${h.status == 'draft'}">
+                                                    <a href="submitCourse?courseId=${h.courseId}" 
+                                                       class="btn-icon" 
+                                                       title="Submit khóa học" 
+                                                       onclick="return confirm('Bạn có chắc muốn submit khóa học này để phê duyệt không?');">
+                                                        <i class="fas fa-paper-plane"></i>
+                                                    </a>
+                                                </c:if>
+                                                <c:if test="${h.status == 'rejected'}">
+                                                    <a href="submitCourse?courseId=${h.courseId}" 
+                                                       class="btn-icon" 
+                                                       title="Submit lại khóa học" 
+                                                       onclick="return confirm('Bạn có chắc muốn submit lại khóa học này để phê duyệt không?');">
+                                                        <i class="fas fa-redo"></i>
+                                                    </a>
+                                                    <a href="getRejectionReason?courseId=${h.courseId}"
+                                                       class="btn-icon"
+                                                       title="Xem lí do từ chối">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </c:if>
+                                                <c:if test="${h.status == 'draft' || h.status == 'rejected' || h.status == 'unpublish'}">
+                                                    <a class="btn-icon edit-btn" title="Sửa" onclick="editCourse(this)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="deleteCourse?courseId=${h.courseId}" 
+                                                       class="btn-icon" 
+                                                       title="Xóa" 
+                                                       onclick="return confirm('Bạn có chắc muốn xóa khóa học này không?');">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </tr> 
@@ -114,7 +139,7 @@
                 <div class="modal-body">
                     <form id="courseForm" action="addCourse" method="post" >
                         <input type="hidden" id="courseId" name="courseId">
-                 
+
 
                         <div class="form-group">
                             <label for="courseTitle">Tên khóa học *</label>
@@ -168,8 +193,87 @@
             </div>
         </div>
 
+        <!-- Modal hiển thị lí do từ chối -->
+        <div id="rejectionModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="rejectionModalTitle">Lí do từ chối khóa học</h3>
+                    <span class="close" onclick="closeRejectionModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="rejection-info">
+                        <div class="course-info">
+                            <h4 id="rejectedCourseTitle"></h4>
+                            <p><strong>Mã khóa học:</strong> <span id="rejectedCourseId"></span></p>
+                        </div>
+                        <div class="rejection-reason">
+                            <h4>Lí do từ chối:</h4>
+                            <div id="rejectionReasonContent" class="rejection-content">
+                                <!-- Nội dung lí do từ chối sẽ được load từ server -->
+                            </div>
+                        </div>
+                        <div class="rejection-actions">
+                            <button type="button" class="btn secondary" onclick="closeRejectionModal()">Đóng</button>
+                            <button type="button" class="btn" onclick="resubmitCourse()">Submit lại</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <c:if test="${not empty rejectionReason}">
+            <script>
+                window.addEventListener("DOMContentLoaded", function () {
+                    // Tự động mở modal khi có dữ liệu rejectReason
+                    showRejectionModal(
+                            '${rejectedCourseId}',
+                            'Khóa học ${rejectedCourseId}',
+                            '${fn:escapeXml(rejectionReason)}'
+                            );
+                });
+            </script>
+        </c:if>
+
         <link rel="stylesheet" href="css/courses.css" />
         <script src="js/courses.js"></script>
+        <script>
+        let currentRejectedCourseId = null;
+
+        function showRejectionModal(courseId, courseTitle, reason) {
+            currentRejectedCourseId = courseId;
+            document.getElementById('rejectedCourseTitle').textContent = courseTitle;
+            document.getElementById('rejectedCourseId').textContent = courseId;
+
+            const reasonBox = document.getElementById('rejectionReasonContent');
+            if (reason && reason.trim() !== "") {
+                reasonBox.innerHTML = "<p>" + reason + "</p>";
+            } else {
+                reasonBox.innerHTML = "<p class='text-muted'>Không có thông tin chi tiết về lý do từ chối.</p>";
+            }
+
+            document.getElementById('rejectionModal').style.display = 'flex';
+        }
+
+        function closeRejectionModal() {
+            document.getElementById('rejectionModal').style.display = 'none';
+            currentRejectedCourseId = null;
+        }
+
+        function resubmitCourse() {
+            if (currentRejectedCourseId) {
+                if (confirm('Bạn có chắc muốn submit lại khóa học này để phê duyệt không?')) {
+                    window.location.href = 'submitCourse?courseId=' + currentRejectedCourseId;
+                }
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const rejectionModal = document.getElementById('rejectionModal');
+            if (event.target === rejectionModal) {
+                closeRejectionModal();
+            }
+        };
+        </script>
     </body>
 </html>
 

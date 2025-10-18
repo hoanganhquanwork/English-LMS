@@ -397,6 +397,17 @@ public class CourseDAO extends DBContext {
         }
         return false;
     }
+     public boolean updateCourseStatus(int courseId, String status) {
+        String sql = "UPDATE Course SET status = ?, publish_at = NULL WHERE course_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, courseId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     
 }

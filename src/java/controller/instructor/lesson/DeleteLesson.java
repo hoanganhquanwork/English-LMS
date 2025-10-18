@@ -48,19 +48,26 @@ public class DeleteLesson extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+         response.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
         try {
             int courseId = Integer.parseInt(request.getParameter("courseId"));
             int moduleId = Integer.parseInt(request.getParameter("moduleId"));
             int lessonId = Integer.parseInt(request.getParameter("lessonId"));
 
+          
             boolean success = lessonService.deleteLesson(lessonId);
-
+         
             if (success) {
-                response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId);
+              
+                response.sendRedirect("ManageLessonServlet?courseId=" + courseId +"&moduleId=" +moduleId);
+            } else {
+                out.println("<h3 style='color:red'>Không thể xoá bài học trong DB</h3>");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServletException("Lỗi khi xoá bài học", e);
+            out.println("<h3 style='color:red'>Lỗi Servlet: " + e.getMessage() + "</h3>");
         }
     }
 

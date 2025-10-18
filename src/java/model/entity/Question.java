@@ -11,26 +11,30 @@ package model.entity;
 public class Question {
 
     private int questionId;
-    private int moduleId;
-    private Integer lessonId;         // Có thể null
-    private String content;           // Nội dung câu hỏi
-    private String mediaType;         // image | audio | null
-    private String mediaUrl;          // đường dẫn ảnh hoặc audio
-    private String type;              // mcq_single | mcq_multi | fib
-    private String explanation;       // Giải thích đáp án (hiển thị sau khi nộp)
+    private Integer lessonId;
+    private String content;
+    private String mediaUrl;
+    private String type;
+    private InstructorProfile createdBy;
+    private String explanation;
+    private String status;
+    private Integer topicId;
+    private String reviewComment;
 
     public Question() {
     }
 
-    public Question(int questionId, int moduleId, Integer lessonId, String content, String mediaType, String mediaUrl, String type, String explanation) {
+    public Question(int questionId, Integer lessonId, String content, String mediaUrl, String type, InstructorProfile createdBy, String explanation, String status, Integer topicId, String reviewComment) {
         this.questionId = questionId;
-        this.moduleId = moduleId;
         this.lessonId = lessonId;
         this.content = content;
-        this.mediaType = mediaType;
         this.mediaUrl = mediaUrl;
         this.type = type;
+        this.createdBy = createdBy;
         this.explanation = explanation;
+        this.status = status;
+        this.topicId = topicId;
+        this.reviewComment = reviewComment;
     }
 
     public int getQuestionId() {
@@ -39,14 +43,6 @@ public class Question {
 
     public void setQuestionId(int questionId) {
         this.questionId = questionId;
-    }
-
-    public int getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(int moduleId) {
-        this.moduleId = moduleId;
     }
 
     public Integer getLessonId() {
@@ -65,14 +61,6 @@ public class Question {
         this.content = content;
     }
 
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
-    }
-
     public String getMediaUrl() {
         return mediaUrl;
     }
@@ -89,12 +77,46 @@ public class Question {
         this.type = type;
     }
 
+    public InstructorProfile getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(InstructorProfile createdBy) {
+        this.createdBy = createdBy;
+    }
+
+ 
+
     public String getExplanation() {
         return explanation;
     }
 
     public void setExplanation(String explanation) {
         this.explanation = explanation;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Integer getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(Integer topicId) {
+        this.topicId = topicId;
+    }
+
+    public String getReviewComment() {
+        return reviewComment;
+    }
+
+    public void setReviewComment(String reviewComment) {
+        this.reviewComment = reviewComment;
     }
 
 }

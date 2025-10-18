@@ -79,6 +79,13 @@
                                                 Quiz #${item.moduleItemId}
                                             </a>
                                         </c:when>
+                                         <c:when test="${item.itemType == 'assignment'}">
+                                            <a href="updateAssignment?courseId=${param.courseId}&moduleId=${h.key.moduleId}&assignmentId=${item.moduleItemId}"
+                                               style="text-decoration: none; color: inherit;">
+                                                <i class="fas fa-tasks" style="color: #27ae60;"></i>
+                                                Assignment #${item.moduleItemId}
+                                            </a>
+                                        </c:when>
                                     </c:choose>
                                 </div>
                             </c:forEach>
@@ -122,17 +129,7 @@
                             <input id="pick_count" name="pick_count" type="number" 
                                    placeholder="Để trống = lấy hết pool" min="1">
                         </div>
-                        <div class="form-group">
-                            <label>Chọn module để lấy câu hỏi từ pool:</label>
-                            <div style="display: flex; flex-direction: column; gap: 6px;">
-                                <c:forEach var="m" items="${moduleList}">
-                                    <label style="display: flex; align-items: center; gap: 8px;">
-                                        <input type="checkbox" name="sourceModules" value="${m.moduleId}">
-                                        <span>${m.title}</span>
-                                    </label>
-                                </c:forEach>
-                            </div>
-                        </div>
+               
 
                         <div class="actions">
                             <a class="btn btn-secondary" href="manageModule?courseId=${param.courseId}">

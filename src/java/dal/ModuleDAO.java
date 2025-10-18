@@ -83,9 +83,16 @@ public class ModuleDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-        ModuleDAO dao = new ModuleDAO();
-
+     public int countQuestionsByModule(int moduleId) {
+        String sql = "SELECT COUNT(*) FROM Question WHERE module_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, moduleId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
     
     

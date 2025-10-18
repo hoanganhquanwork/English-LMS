@@ -18,6 +18,7 @@ import model.dto.QuizAttemptDTO;
 import model.dto.QuizAttemptQuestionDTO;
 import model.dto.QuizDTO;
 import dal.ModuleItemDAO;
+import java.math.BigDecimal;
 import model.entity.ModuleItem;
 import model.entity.Quiz;
 import java.sql.SQLException;
@@ -153,30 +154,48 @@ public class QuizService {
         return quizDAO.findLatestSubmittedAttempt(quizId, studentId);
     }
 
-    public boolean addQuizWithPool(int moduleId, Quiz quiz, List<Integer> moduleSourceIds) {
+   
+    public int createQuiz(int moduleId, String title, Integer attemptsAllowed, Double passingScorePct, Integer pickCount) {
         try {
+            
             ModuleItem item = new ModuleItem();
             item.setModuleId(moduleId);
             item.setItemType("quiz");
-            item.setOrderIndex(moduleItemDAO.getNextOrderIndex(moduleId));   
-            item.setRequired(false);
+            item.setOrderIndex(moduleItemDAO.getNextOrderIndex(moduleId));
+            item.setRequired(true);
+
             int moduleItemId = moduleItemDAO.insertModuleItem(item);
             if (moduleItemId == -1) {
-                System.out.println(" Không thể tạo ModuleItem cho quiz");
-                return false;
+                System.err.println("Không thể tạo ModuleItem cho quiz");
+                return -1;
             }
 
-            quiz.setQuizId(moduleItemId);
-            boolean created = quizDAO.insertQuiz(quiz);
+           
+            Quiz quiz = new Quiz(moduleItemId, title, attemptsAllowed, passingScorePct, pickCount);
+            boolean success = quizDAO.insertQuiz(quiz);
 
-            // In ra pool câu hỏi (có thể lưu sau)
-            if (moduleSourceIds != null && !moduleSourceIds.isEmpty()) {
-                List<Integer> questionIds = quizDAO.getQuestionIdsByModules(moduleSourceIds);
-                System.out.println("Quiz question pool: " + questionIds);
-            }
+            return success ? moduleItemId : -1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 
-            return created;
-        } catch (SQLException e) {
+    public boolean updateQuiz(int quizId, String title, Integer attemptsAllowed, BigDecimal passingScorePct, Integer pickCount) {
+        try {
+            return quizDAO.updateQuiz(quizId, title, attemptsAllowed, passingScorePct, pickCount);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteQuiz(int quizId) {
+        try {
+         
+                boolean itemDeleted = moduleItemDAO.deleteModuleItem(quizId);
+                return itemDeleted;
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

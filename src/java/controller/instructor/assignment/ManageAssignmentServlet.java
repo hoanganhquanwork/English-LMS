@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.instructor.quiz;
+package controller.instructor.assignment;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,12 +15,13 @@ import java.util.Map;
 import model.entity.ModuleItem;
 import service.ModuleItemService;
 import service.ModuleService;
+import model.entity.Module;
 
 /**
  *
  * @author Lenovo
  */
-public class ManageQuizServlet extends HttpServlet {
+public class ManageAssignmentServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,38 +40,44 @@ public class ManageQuizServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageQuizServlet</title>");
+            out.println("<title>Servlet ManageAssignmentServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageQuizServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ManageAssignmentServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
+
     private ModuleService service = new ModuleService();
     private ModuleItemService contentService = new ModuleItemService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+        throws ServletException, IOException {
+    response.setContentType("text/plain;charset=UTF-8");
+
+    try {
         int courseId = Integer.parseInt(request.getParameter("courseId"));
+        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
 
-        try {
-            List<model.entity.Module> list = service.getModulesByCourse(courseId);
-            Map<model.entity.Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
+        System.out.println("📘 ManageAssignmentServlet running for courseId=" + courseId + ", moduleId=" + moduleId);
 
-            request.setAttribute("courseId", courseId);
-            request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
-            request.setAttribute("content", courseContent);
-              request.getRequestDispatcher("teacher/create-quiz.jsp").forward(request, response);
+        List<Module> modules = service.getModulesByCourse(courseId);
+        Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
 
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-      
+        request.setAttribute("courseId", courseId);
+        request.setAttribute("moduleId", moduleId);
+        request.setAttribute("moduleList", modules);
+        request.setAttribute("content", courseContent);
+
+        request.getRequestDispatcher("teacher/create-assignment.jsp").forward(request, response);
+
+    } catch (Exception e) {
+        e.printStackTrace(); // log console
+        response.getWriter().println("❌ Lỗi trong ManageAssignmentServlet: " + e.getMessage());
     }
+}
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
