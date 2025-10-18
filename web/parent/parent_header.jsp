@@ -43,7 +43,7 @@
             <a href="${pageContext.request.contextPath}/parentlinkstudent"
                class="<%= "children".equals(currentPage) ? "active" : "" %>">Quản lý con</a>
             <a href="enrollments.html"
-               class="<%= "enrollments".equals(currentPage) ? "active" : "" %>">Đăng ký khóa học</a>
+               class="<%= "enrollments".equals(currentPage) ? "active" : "" %>">Tiến độ học tập</a>
             <a href="${pageContext.request.contextPath}/parent/approvals"
                class="<%= "approvals".equals(currentPage) ? "active" : "" %>">Phê duyệt</a>
             <a href="${pageContext.request.contextPath}/parent/paymentitems"

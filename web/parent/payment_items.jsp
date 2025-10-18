@@ -54,7 +54,9 @@
                                         <c:choose>
                                             <c:when test="${not empty item.course.price}">
                                                 <span class="price-label">Giá khóa học:</span>
-                                                <span class="price-value"><fmt:formatNumber value="${item.course.price}" type="number" groupingUsed="true" /> VND</span>
+                                                <span class="price-value">
+                                                    <fmt:formatNumber value="${item.course.price}" type="number" groupingUsed="true" /> VND
+                                                </span>
                                             </c:when>
                                             <c:otherwise>
                                                 <span class="price-error">❌ Giá không có</span>
@@ -64,7 +66,12 @@
                                     
                                     <div class="payment-action">
                                         <label class="payment-checkbox">
-                                            <input type="checkbox" name="selectedItem" value="${item.requestId}" />
+                                            <!-- GẮN data-price để JS đọc số -->
+                                            <input type="checkbox"
+                                                   name="selectedItem"
+                                                   value="${item.requestId}"
+                                                   <c:if test="${empty item.course.price}">disabled</c:if>
+                                                   data-price="${empty item.course.price ? 0 : item.course.price}" />
                                             <span class="checkbox-custom"></span>
                                             <span class="checkbox-text">Chọn thanh toán</span>
                                         </label>
@@ -73,6 +80,16 @@
                             </div>
                         </div>
                     </c:forEach>
+                </div>
+
+                <!-- KHU VỰC HIỂN THỊ TỔNG THEO LỰA CHỌN -->
+                <div class="payment-summary" style="display:flex;justify-content:space-between;align-items:center;margin:16px 0;padding:12px 16px;border:1px solid #e5e7eb;border-radius:10px;background:#f9fafb;">
+                    <div>
+                        <strong>Đã chọn: </strong> <span id="selCount">0</span> mục
+                        <br> <br>
+                        <strong>Tổng số tiền: </strong> <span class ="price-value" id="selTotal">0 VND</span>
+                    </div>
+                    <small class="muted">Tổng tiền được cập nhật theo các mục đã chọn</small>
                 </div>
 
                 <div class="payment-footer">
@@ -91,13 +108,37 @@
 </footer>
 
 <script>
+    const fmtVND = new Intl.NumberFormat('vi-VN');
+
+    function recalcTotal() {
+        let sum = 0;
+        let count = 0;
+        document.querySelectorAll('input[name="selectedItem"]:checked').forEach(cb => {
+            count++;
+            const p = parseFloat(cb.dataset.price || '0');
+            if (!Number.isNaN(p)) sum += p;
+        });
+        document.getElementById('selCount').textContent = count.toString();
+        document.getElementById('selTotal').textContent = fmtVND.format(Math.round(sum)) + ' VND';
+    }
+
     function confirmSelection() {
         const checked = document.querySelectorAll('input[name="selectedItem"]:checked');
         if (checked.length === 0) {
             alert('Vui lòng chọn ít nhất một khóa học để thanh toán!');
             return false;
         }
-        return confirm('Bạn có chắc muốn tạo đơn thanh toán cho ' + checked.length + ' khóa học đã chọn?');
+        const totalText = document.getElementById('selTotal').textContent;
+        return confirm('Bạn có chắc muốn tạo đơn thanh toán cho ' + checked.length + ' khóa học đã chọn?'
+                       + '\nTổng thanh toán: ' + totalText);
     }
-</script>
 
+    // Lắng nghe thay đổi checkbox
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.name === 'selectedItem') {
+            recalcTotal();
+        }
+    });
+
+   
+</script>

@@ -31,7 +31,6 @@
                     
                     <div class="success-message">
                         <p>🎯 Đơn hàng của bạn đã được xác nhận và sẽ được xử lý trong thời gian sớm nhất.</p>
-                        <p>📧 Bạn sẽ nhận được email xác nhận trong vài phút tới.</p>
                     </div>
                 </div>
             </div>
@@ -50,7 +49,6 @@
  
                     <div class="error-message">
                         <p>🔄 Vui lòng thử lại thanh toán hoặc liên hệ hỗ trợ nếu vấn đề vẫn tiếp diễn.</p>
-                        <p>💡 Bạn có thể kiểm tra trạng thái đơn hàng trong danh sách đơn hàng.</p>
                     </div>
                 </div>
             </div>

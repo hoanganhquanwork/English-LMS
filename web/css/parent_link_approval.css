@@ -383,11 +383,6 @@ body {
     font-weight: 500;
 }
 
-.course-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
 
 .price-section {
     display: flex;
@@ -987,6 +982,7 @@ body {
 }
 
 .course-meta {
+    align-items: flex-start;
     display: flex;
     flex-direction: column;
     gap: 8px;
