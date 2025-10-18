@@ -168,9 +168,6 @@
     </section>
 </main>
 
-<footer class="footer">
-    <div class="container bottom">© 2025 LinguaTrack</div>
-</footer>
 
 <script>
     // ✅ Hàm xác nhận duyệt / từ chối (có nhập lý do)

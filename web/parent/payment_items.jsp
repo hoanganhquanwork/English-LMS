@@ -103,8 +103,8 @@
     </c:choose>
 </main>
 
-<footer class="footer">
-    <div class="container bottom">© 2025 LinguaTrack</div>
+<footer>
+        <jsp:include page="/footer.jsp" />
 </footer>
 
 <script>
