@@ -60,7 +60,7 @@ public class DeleteLesson extends HttpServlet {
          
             if (success) {
               
-                response.sendRedirect("manageLesson?courseId=" + courseId +"&moduleId=" +moduleId);
+                response.sendRedirect("ManageLessonServlet?courseId=" + courseId +"&moduleId=" +moduleId);
             } else {
                 out.println("<h3 style='color:red'>Không thể xoá bài học trong DB</h3>");
             }

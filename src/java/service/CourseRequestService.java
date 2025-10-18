@@ -6,7 +6,6 @@ package service;
 
 import model.entity.CourseRequest;
 import dal.CourseRequestDAO;
-import dal.OrderItemDAO;
 import java.util.List;
 import java.util.Map;
 
@@ -70,22 +69,26 @@ public class CourseRequestService {
         return (int) Math.ceil(pages / (double) pageSize);
     }
 
-    public boolean resendCourseRequest(int requestId, int studentId) {
+    public boolean sendCourseRequest(int requestId, int studentId, int parentId) {
         if (requestId < 0) {
             throw new IllegalArgumentException("requestId không hợp lệ");
         }
         if (studentId < 0) {
             throw new IllegalArgumentException("studentId không hợp lệ");
         }
+        
+        if (parentId < 0) {
+            throw new IllegalArgumentException("parentId không hợp lệ");
+        }
 
         try {
-            return crdao.resendCourseRequest(requestId, studentId);
+            return crdao.sendCourseRequest(requestId, studentId, parentId);
         } catch (Exception e) {
             throw new RuntimeException("Yêu cầu thất bại", e);
         }
     }
 
-    public boolean cancelPendingRequest(int requestId, int studentId, String note) {
+    public boolean cancelRequest(int requestId, int studentId, String note) {
         if (requestId <= 0) {
             throw new IllegalArgumentException("requestId không hợp lệ");
         }
@@ -97,7 +100,7 @@ public class CourseRequestService {
             note = note.trim();
         }
         try {
-            return crdao.cancelPendingRequest(requestId, studentId, note);
+            return crdao.cancelRequest(requestId, studentId, note);
         } catch (Exception e) {
             throw new RuntimeException("cancelPendingRequest thất bại", e);
         }
@@ -113,16 +116,7 @@ public class CourseRequestService {
 
     public boolean parentCourseRequestAction(int requestId, String status) {
         if (status.equalsIgnoreCase("approved")) {
-            CourseRequest req = crdao.getById(requestId);
-            OrderItemDAO orderItemDAO = new OrderItemDAO();
-            double price = req.getCourse().getPrice().doubleValue();
-
-            orderItemDAO.createFromCourseRequest(
-                    req.getRequestId(),
-                    req.getCourse().getCourseId(),
-                    req.getStudent().getUserId(),
-                    price
-            );
+            return crdao.updateStatus(requestId, "unpaid");
         }
         return crdao.updateStatus(requestId, status);
     }

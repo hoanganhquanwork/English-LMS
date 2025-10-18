@@ -4,39 +4,39 @@
  */
 package controller.instructor.question;
 
+import dal.InstructorProfileDAO;
 import dal.ModuleDAO;
-import dal.QuestionDAO;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 import java.util.ArrayList;
 import java.util.List;
 import model.entity.Question;
 import model.entity.QuestionOption;
 import model.entity.Module;
-import java.sql.*;
+import java.io.*;
+import java.nio.file.*;
 import model.entity.Course;
+import model.entity.InstructorProfile;
+import model.entity.QuestionTextKey;
+import model.entity.Users;
 import service.CourseService;
 import service.QuestionService;
 
-/**
- *
- * @author Lenovo
- */
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 1024 * 1024 * 10,
+        maxRequestSize = 1024 * 1024 * 50
+)
 public class AddQuestion extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -53,7 +53,7 @@ public class AddQuestion extends HttpServlet {
             out.println("</html>");
         }
     }
-     private CourseService courseService = new CourseService();
+    private CourseService courseService = new CourseService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -73,13 +73,14 @@ public class AddQuestion extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+
             String courseId = request.getParameter("courseId");
             String lessonIdStr = request.getParameter("lessonId");
-            Integer lessonId = null;
-            if (lessonIdStr != null && !lessonIdStr.isEmpty()) {
-                lessonId = Integer.parseInt(lessonIdStr);
-            }
+            Integer lessonId = (lessonIdStr != null && !lessonIdStr.isEmpty())
+                    ? Integer.parseInt(lessonIdStr) : null;
+
+            String uploadDir = getServletContext().getRealPath("/uploads/questions");
+            Files.createDirectories(Paths.get(uploadDir));
 
             int i = 1;
             while (true) {
@@ -90,63 +91,91 @@ public class AddQuestion extends HttpServlet {
 
                 String type = request.getParameter("questionType" + i);
                 String explanation = request.getParameter("explanation" + i);
-                System.out.println("===> Câu " + i + " có explanation: " + explanation);
+
+                Part filePart = request.getPart("file" + i);
+                String fileUrl = null;
+                if (filePart != null && filePart.getSize() > 0) {
+                    String fileName = System.currentTimeMillis() + "_" + Paths.get(filePart.getSubmittedFileName()).getFileName();
+                    Path uploadPath = Paths.get(uploadDir, fileName);
+                    filePart.write(uploadPath.toString());
+                    fileUrl = "uploads/questions/" + fileName;
+                }
+                HttpSession session = request.getSession(false);
+                Users user = (Users) session.getAttribute("user");
+                if (user == null || !"Instructor".equalsIgnoreCase(user.getRole())) {
+                    response.sendRedirect("auth/login.jsp");
+                    return;
+                }
+                InstructorProfileDAO instructorDAO = new InstructorProfileDAO();
+                InstructorProfile instructor = instructorDAO.getByUserId(user.getUserId());
 
                 Question q = new Question();
-                q.setModuleId(moduleId);
                 q.setLessonId(lessonId);
                 q.setContent(text);
                 q.setType(type);
                 q.setExplanation(explanation);
+                q.setMediaUrl(fileUrl);
+                q.setStatus("draft");
+                q.setTopicId(null);
+                q.setCreatedBy(instructor);
 
-                List<QuestionOption> options = new ArrayList<>();
-                for (int j = 1; j <= 10; j++) {
-                    String content = request.getParameter("optionContent" + i + "_" + j);
-                    if (content == null || content.isEmpty()) {
-                        continue;
-                    }
+                if ("mcq_single".equals(type)) {
+                    List<QuestionOption> options = new ArrayList<>();
 
-                    boolean isCorrect = false;
-                    String[] corrects = request.getParameterValues("correct" + i);
-                    if (corrects != null) {
-                        for (String c : corrects) {
-                            if (Integer.parseInt(c) == j) {
-                                isCorrect = true;
-                                break;
+                    for (int j = 1; j <= 10; j++) {
+                        String optContent = request.getParameter("optionContent" + i + "_" + j);
+                        if (optContent == null || optContent.isEmpty()) {
+                            continue;
+                        }
+
+                        boolean isCorrect = false;
+                        String[] corrects = request.getParameterValues("correct" + i);
+                        if (corrects != null) {
+                            for (String c : corrects) {
+                                if (Integer.parseInt(c) == j) {
+                                    isCorrect = true;
+                                    break;
+                                }
                             }
                         }
+
+                        QuestionOption opt = new QuestionOption();
+                        opt.setContent(optContent);
+                        opt.setCorrect(isCorrect);
+                        options.add(opt);
                     }
 
-                    QuestionOption opt = new QuestionOption();
-                    opt.setContent(content);
-                    opt.setCorrect(isCorrect);
-                    options.add(opt);
+                    questionService.addQuestionWithOptions(q, options);
+                } else if ("text".equals(type)) {
+                    String correctAnswer = request.getParameter("correctAnswer" + i);
+                    if (correctAnswer != null && !correctAnswer.trim().isEmpty()) {
+                        QuestionTextKey key = new QuestionTextKey();
+                        key.setAnswerText(correctAnswer.trim());
+                        questionService.addQuestionWithTextKey(q, key);
+                    } else {
+
+                        questionService.addQuestionWithTextKey(q, null);
+                    }
                 }
 
-                questionService.addQuestionWithOptions(q, options);
                 i++;
             }
 
             if (lessonId != null) {
-                response.sendRedirect("updateLesson?courseId=" + request.getParameter("courseId")
-                        + "&moduleId=" + moduleId
-                        + "&lessonId=" + lessonId
-                        );
+                response.sendRedirect("updateLesson?courseId=" + courseId
+                       
+                        + "&lessonId=" + lessonId);
             } else {
-                response.sendRedirect("ManageQuestionServlet?moduleId=" + moduleId );
+//                response.sendRedirect("ManageQuestionServlet?courseId=" + courseId);
             }
 
         } catch (Exception e) {
-            throw new ServletException("Lỗi khi thêm câu hỏi hàng loạt", e);
+            e.printStackTrace();
+            throw new ServletException(" Lỗi khi thêm câu hỏi hàng loạt", e);
         }
 
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

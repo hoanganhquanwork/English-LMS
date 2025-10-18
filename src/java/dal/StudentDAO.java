@@ -14,8 +14,8 @@ import java.sql.*;
 public class StudentDAO extends DBContext {
 
     public StudentProfile findStudentById(int userId) {
-        String sql = "SELECT user_id, grade_level, institution, parent_id, address\n"
-                + "            FROM StudentProfile\n"
+        String sql = "SELECT user_id, grade_level, institution, parent_id, address "
+                + "            FROM StudentProfile "
                 + "            WHERE user_id = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -38,8 +38,8 @@ public class StudentDAO extends DBContext {
     }
 
     public int updateStudentProfile(StudentProfile sp) {
-        String sql = "UPDATE StudentProfile\n"
-                + "            SET grade_level = ?, institution = ?, address = ?\n"
+        String sql = "UPDATE StudentProfile "
+                + "            SET grade_level = ?, institution = ?, address = ? "
                 + "            WHERE user_id = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -54,9 +54,46 @@ public class StudentDAO extends DBContext {
         return 0;
     }
 
+    public boolean resentLinkRequest(int studentId, int parentId) {
+        String sql = "UPDATE ParentLinkRequests SET status = 'pending',"
+                + " created_at = GETDATE(), decided_at = NULL, note = NULL WHERE student_id = ? AND parent_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, parentId);
+            return st.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getRejectNote(int studentId, int parentId) {
+        String sql = "SELECT note "
+                + "FROM ParentLinkRequests "
+                + "WHERE student_id = ? AND parent_id = ?  AND status = 'rejected'";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, parentId);
+
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getString("note");
+            } else {
+                return null;
+            }
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean createLinkRequest(int studentId, int parentId) {
         String sql = "INSERT INTO ParentLinkRequests(student_id, parent_id, status, created_at, decided_at) "
-                + "            VALUES (?, ?, 'pending', GETDATE(), GETDATE())";
+                + "            VALUES (?, ?, 'pending', GETDATE(), NULL)";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);
@@ -69,9 +106,14 @@ public class StudentDAO extends DBContext {
     }
 
     public boolean unlinkParentRequest(int studentId, int parentId) {
-        String firstSql = "UPDATE StudentProfile SET parent_id=NULL WHERE user_id=? AND parent_id=?";
-        String secondSql = "INSERT INTO ParentLinkRequests(student_id, parent_id, status, created_at, decided_at) "
-                + " VALUES (?, ?, 'unlink', GETDATE(), GETDATE())";
+        String firstSql = "UPDATE StudentProfile "
+                + "SET parent_id = NULL "
+                + "WHERE user_id = ? AND parent_id = ?";
+
+        String secondSql = "UPDATE ParentLinkRequests "
+                + "SET status = 'unlink', decided_at = GETDATE() "
+                + "WHERE student_id = ? AND parent_id = ? AND status = 'approved'";
+
         try {
             PreparedStatement st1 = connection.prepareStatement(firstSql);
             st1.setInt(1, studentId);
@@ -79,14 +121,17 @@ public class StudentDAO extends DBContext {
             if (st1.executeUpdate() == 0) {
                 return false;
             }
+
             PreparedStatement st2 = connection.prepareStatement(secondSql);
             st2.setInt(1, studentId);
             st2.setInt(2, parentId);
             if (st2.executeUpdate() == 0) {
                 return false;
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
         return true;
     }
@@ -120,11 +165,11 @@ public class StudentDAO extends DBContext {
     }
 
     public String getLatestParentEmail(int studentId) {
-        String sql = "SELECT TOP 1 u.email\n"
-                + "        FROM ParentLinkRequests r\n"
-                + "        JOIN Users u ON u.user_id = r.parent_id\n"
-                + "        WHERE r.student_id = ?\n"
-                + "        ORDER BY COALESCE(r.decided_at, r.created_at) DESC, r.request_id DESC";
+        String sql = "     SELECT TOP 1 u.email "
+                + "        FROM ParentLinkRequests r "
+                + "        JOIN Users u ON u.user_id = r.parent_id "
+                + "        WHERE r.student_id = ? "
+                + "        ORDER BY COALESCE(r.decided_at, r.created_at) DESC, r.request_id DESC ";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);

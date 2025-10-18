@@ -359,4 +359,20 @@ public class CourseManagerDAO extends DBContext {
             }
         }
     }
+    
+     public String getRejectReasonByCourseId(int courseId) {
+        String sql = "SELECT reject_reason FROM CourseManagers " +
+                     "WHERE course_id = ? ";
+        try (
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, courseId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("reject_reason");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

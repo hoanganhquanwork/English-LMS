@@ -5,7 +5,9 @@
 package service;
 
 import dal.ModuleDAO;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import model.entity.Module;
 
 /**
@@ -29,5 +31,15 @@ public class ModuleService {
     }
     public boolean removeModule(int moduleId) {
         return moduleDAO.deleteModule(moduleId);
+    }
+    public Map<Module, Integer> getModulesWithQuestionCount(int courseId) {
+        List<Module> modules = moduleDAO.getModulesByCourse(courseId);
+        Map<Module, Integer> map = new LinkedHashMap<>();
+
+        for (Module m : modules) {
+            int count = moduleDAO.countQuestionsByModule(m.getModuleId());
+            map.put(m, count);
+        }
+        return map;
     }
 }

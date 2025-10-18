@@ -89,6 +89,13 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </c:when>
+                                         <c:when test="${item.itemType == 'assignment'}">
+                                            <a href="updateAssignment?courseId=${param.courseId}&moduleId=${h.key.moduleId}&assignmentId=${item.moduleItemId}"
+                                               style="text-decoration: none; color: inherit;">
+                                                <i class="fas fa-tasks" style="color: #27ae60;"></i>
+                                                Assignment #${item.moduleItemId}
+                                            </a>
+                                        </c:when>
                                     </c:choose>
                                 </div>
                             </c:forEach>

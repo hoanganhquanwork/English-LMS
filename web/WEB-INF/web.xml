@@ -21,6 +21,10 @@
         <servlet-class>controller.instructor.question.ManageQuestionServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>QuestionsController</servlet-name>
+        <servlet-class>controller.instructor.question.QuestionsController</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>AddQuestion</servlet-name>
         <servlet-class>controller.instructor.question.AddQuestion</servlet-class>
     </servlet>
@@ -76,6 +80,30 @@
         <servlet-name>UpdateQuiz</servlet-name>
         <servlet-class>controller.instructor.quiz.UpdateQuiz</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManageAssignmentServlet</servlet-name>
+        <servlet-class>controller.instructor.assignment.ManageAssignmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateAssignment</servlet-name>
+        <servlet-class>controller.instructor.assignment.CreateAssignment</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SubmitCourse</servlet-name>
+        <servlet-class>controller.instructor.course.SubmitCourse</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetRejectionReason</servlet-name>
+        <servlet-class>controller.instructor.course.GetRejectionReason</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateAssignment</servlet-name>
+        <servlet-class>controller.instructor.assignment.UpdateAssignment</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteAssignment</servlet-name>
+        <servlet-class>controller.instructor.assignment.DeleteAssignment</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>FlashcardDashboardController</servlet-name>
         <url-pattern>/dashboard</url-pattern>
@@ -115,6 +143,10 @@
     <servlet-mapping>
         <servlet-name>ManageQuestionServlet</servlet-name>
         <url-pattern>/ManageQuestionServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QuestionsController</servlet-name>
+        <url-pattern>/questions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AddQuestion</servlet-name>
@@ -171,5 +203,29 @@
     <servlet-mapping>
         <servlet-name>UpdateQuiz</servlet-name>
         <url-pattern>/updateQuiz</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageAssignmentServlet</servlet-name>
+        <url-pattern>/manageAssignment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateAssignment</servlet-name>
+        <url-pattern>/createAssignment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SubmitCourse</servlet-name>
+        <url-pattern>/submitCourse</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetRejectionReason</servlet-name>
+        <url-pattern>/getRejectionReason</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateAssignment</servlet-name>
+        <url-pattern>/updateAssignment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteAssignment</servlet-name>
+        <url-pattern>/deleteAssignment</url-pattern>
     </servlet-mapping>
 </web-app>

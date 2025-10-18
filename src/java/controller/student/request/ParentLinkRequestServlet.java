@@ -103,6 +103,8 @@ public class ParentLinkRequestServlet extends HttpServlet {
                 }
             } else if ("cancel".equals(requestType)) {
                 studentLinkService.cancelPendingRequest(studentId);
+            } else if ("resend".equals(requestType)) {
+                studentLinkService.resentLinkRequest(studentId, parentEmail);
             }
         } catch (IllegalArgumentException e) {
             session.setAttribute("flash_error", e.getMessage());
@@ -112,7 +114,6 @@ public class ParentLinkRequestServlet extends HttpServlet {
             e.printStackTrace();
             session.setAttribute("flash_error", "Có lỗi xảy ra. Vui lòng thử lại.");
         }
-
         response.sendRedirect(request.getContextPath() + "/courseRequest");
 
     }

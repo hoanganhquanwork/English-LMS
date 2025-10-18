@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import model.entity.Question;
 import model.entity.QuestionOption;
 import service.QuestionService;
@@ -48,12 +49,21 @@ public class UpdateQuestion extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        int courseId = Integer.parseInt(request.getParameter("courseId"));
+//        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+//
+//        Map<Question, List<QuestionOption>> questionMap
+//                = questionService.getQuestionsWithOptionsByModule(moduleId);
+//
+//        request.setAttribute("courseId", courseId);
+//        request.setAttribute("moduleId", moduleId);
+//        request.setAttribute("questionMap", questionMap);
+//
+//        request.getRequestDispatcher("teacher/view-questions.jsp").forward(request, response);
+//    }
 
     private QuestionService questionService = new QuestionService();
 

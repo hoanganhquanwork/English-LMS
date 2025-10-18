@@ -170,7 +170,7 @@ public class QuizService {
                 return -1;
             }
 
-            // 2️⃣ Tạo quiz tương ứng
+           
             Quiz quiz = new Quiz(moduleItemId, title, attemptsAllowed, passingScorePct, pickCount);
             boolean success = quizDAO.insertQuiz(quiz);
 
