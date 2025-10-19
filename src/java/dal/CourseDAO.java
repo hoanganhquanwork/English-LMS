@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class CourseDAO extends DBContext {
 
     public List<Course> searchCourse(int categoryIDs[], String[] languages, String[] levels,
@@ -336,12 +335,12 @@ public class CourseDAO extends DBContext {
         c.setThumbnail(rs.getString("thumbnail"));
         c.setStatus(rs.getString("status"));
         c.setPrice(rs.getBigDecimal("price"));
-     
-    Timestamp createdAtTs = rs.getTimestamp("created_at");
-    Timestamp publishAtTs = rs.getTimestamp("publish_at");
 
-    c.setCreatedAt(createdAtTs != null ? createdAtTs.toLocalDateTime() : null);
-    c.setPublishAt(publishAtTs != null ? publishAtTs.toLocalDateTime() : null);
+        Timestamp createdAtTs = rs.getTimestamp("created_at");
+        Timestamp publishAtTs = rs.getTimestamp("publish_at");
+
+        c.setCreatedAt(createdAtTs != null ? createdAtTs.toLocalDateTime() : null);
+        c.setPublishAt(publishAtTs != null ? publishAtTs.toLocalDateTime() : null);
 
         c.setCategory(cdao.getCategoryById(rs.getInt("category_id")));
 
@@ -397,7 +396,8 @@ public class CourseDAO extends DBContext {
         }
         return false;
     }
-     public boolean updateCourseStatus(int courseId, String status) {
+
+    public boolean updateCourseStatus(int courseId, String status) {
         String sql = "UPDATE Course SET status = ?, publish_at = NULL WHERE course_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
@@ -409,5 +409,35 @@ public class CourseDAO extends DBContext {
         return false;
     }
 
-    
+    public String getCourseStatus(int courseId) {
+        String sql = "SELECT status FROM Course WHERE course_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, courseId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getString("status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean isEnrolled(int studentId, int courseId) {
+        String sql = "SELECT 1 FROM Enrollments WHERE student_id = ? AND course_id = ? "
+                + "AND status IN ('active','completed')";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

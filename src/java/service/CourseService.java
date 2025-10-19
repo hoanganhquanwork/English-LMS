@@ -16,6 +16,16 @@ public class CourseService {
 
     private CourseDAO courseDAO = new CourseDAO();
 
+    public boolean isEnrolled(int studentId, int courseId){
+         if (studentId < 0) {
+            throw new IllegalArgumentException("studentId không hợp lệ");
+        }
+        if (courseId < 0) {
+            throw new IllegalArgumentException("courseId không hợp lệ");
+        }
+        return courseDAO.isEnrolled(studentId, courseId);
+    }
+    
     public int getLessonCount(int courseId) {
         return courseDAO.countLessonsByCourse(courseId);
     }

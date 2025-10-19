@@ -27,6 +27,39 @@ public class CourseRequestDAO extends DBContext {
     private StudentDAO sdao = new StudentDAO();
     private ParentProfileDAO pdao = new ParentProfileDAO();
 
+    public boolean insertSaveCourseRequest(int studentId, int courseId, String note) {
+        String sql = "INSERT INTO CourseRequests "
+                + " (student_id, course_id, status, note) "
+                + "VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            st.setString(3, "saved");
+            st.setString(4, note);
+            return st.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isRequestExist(int studentId, int courseId) {
+        String sql = "SELECT 1 FROM CourseRequests WHERE student_id = ? AND course_id = ? ";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            ResultSet rs = st.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public List<CourseRequest> searchCourseRequest(
             int studentId, String status, String sort, String keyword, int page, int pageSize) {
         StringBuilder sql = new StringBuilder("SELECT cr.request_id, cr.student_id, "
