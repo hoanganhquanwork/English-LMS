@@ -1,4 +1,4 @@
-package controller.admin;
+package controller.admin.manage;
 
 import service.AdminUserService;
 import model.entity.Users;
