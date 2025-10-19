@@ -269,8 +269,8 @@
                                                 aria-controls="module-${m.moduleId}"
                                                 aria-expanded="${expand}">
                                             <span>
-                                                <span class="ms-1 fw-bold text-dark">Module ${m.orderIndex}:</span>
-                                                <span class="ms-1 fw-bold text-dark">${m.title}</span>
+                                                <span class="ms-1 fw-semibold text-bolddark">Module ${m.orderIndex}:</span>
+                                                <span class="ms-1 fw-semibold text-dark">${m.title}</span>
                                             </span>
                                             <i class="bi bi-chevron-down"></i>
                                         </button>
