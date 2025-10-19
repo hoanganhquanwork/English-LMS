@@ -440,4 +440,35 @@ public class CourseDAO extends DBContext {
         }
         return false;
     }
+
+    public String getEnrollmentStatus(int studentId, int courseId) {
+        String sql = "SELECT status FROM Enrollments WHERE student_id = ? AND course_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getString("status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean isCompletedEnrollment(int studentId, int courseId) {
+        String sql = "SELECT 1 FROM Enrollments "
+                + "WHERE student_id = ? AND course_id = ? AND status = 'completed'";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            ResultSet rs = st.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

@@ -86,7 +86,7 @@
                                 <c:if test="${hasHalf}"><i class="bi bi-star-half"></i></c:if>
                                 <c:forEach begin="1" end="${5 - fullStars - (hasHalf ? 1 : 0)}"><i class="bi bi-star"></i></c:forEach>
                                 </span>
-                                <a class="small link-purple"  href="">
+                                <a class="small link-purple"  href="${pageContext.request.contextPath}/reviewCourse?courseId=${course.courseId}">
                                     (<fmt:formatNumber value="${course.ratingsCount}" /> lượt đánh giá)
                             </a>
                             <span class="text-light small ms-2">
@@ -391,7 +391,7 @@
         </c:choose>
         <div class="text-start mt-4">
             <a class="btn btn-outline-primary px-4 "
-               href="${pageContext.request.contextPath}/courseReviews?courseId=${course.courseId}">
+               href="${pageContext.request.contextPath}/reviewCourse?courseId=${course.courseId}">
                 Xem tất cả đánh giá
             </a>
         </div>

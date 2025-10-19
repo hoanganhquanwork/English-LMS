@@ -16,8 +16,8 @@ public class CourseService {
 
     private CourseDAO courseDAO = new CourseDAO();
 
-    public boolean isEnrolled(int studentId, int courseId){
-         if (studentId < 0) {
+    public boolean isEnrolled(int studentId, int courseId) {
+        if (studentId < 0) {
             throw new IllegalArgumentException("studentId không hợp lệ");
         }
         if (courseId < 0) {
@@ -25,7 +25,14 @@ public class CourseService {
         }
         return courseDAO.isEnrolled(studentId, courseId);
     }
-    
+
+    public String getEnrollmentStatus(int studentId, int courseId) {
+        if (studentId <= 0 || courseId <= 0) {
+            throw new IllegalArgumentException("ID không hợp lệ");
+        }
+        return courseDAO.getEnrollmentStatus(studentId, courseId);
+    }
+
     public int getLessonCount(int courseId) {
         return courseDAO.countLessonsByCourse(courseId);
     }
@@ -53,7 +60,8 @@ public class CourseService {
     public boolean removeCourse(int courseId) {
         return courseDAO.deleteCourse(courseId);
     }
-     public boolean submitCourse(int courseId) {        
-            return courseDAO.updateCourseStatus(courseId, "submitted");   
+
+    public boolean submitCourse(int courseId) {
+        return courseDAO.updateCourseStatus(courseId, "submitted");
     }
 }
