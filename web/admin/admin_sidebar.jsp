@@ -57,7 +57,7 @@
             <a href="${pageContext.request.contextPath}/admin/profile">
                 <i class="fas fa-user"></i> Hồ sơ cá nhân
             </a>
-            <a href="${pageContext.request.contextPath}/admin/change-password">
+            <a href="${pageContext.request.contextPath}/admin/changePassword">
                 <i class="fas fa-key"></i> Đổi mật khẩu
             </a>
             <a href="${pageContext.request.contextPath}/logout" class="text-danger">
