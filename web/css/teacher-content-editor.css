@@ -1,0 +1,179 @@
+/* ===========================================
+   TEACHER CONTENT EDITOR STYLES
+   Styles for content editing pages (Reading, Discussion)
+   =========================================== */
+
+/* Content Editor */
+.content-editor {
+    width: 100%;
+    min-height: 400px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    background: #fafafa;
+    color: #2c3e50;
+    box-sizing: border-box;
+    resize: vertical;
+    transition: all 0.2s ease-in-out;
+}
+
+.content-editor:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    background: #fff;
+}
+
+/* Reading Preview */
+.reading-preview {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* TinyMCE Content Style */
+.tox .tox-edit-area__iframe {
+    background-color: #fafafa !important;
+}
+
+.tox .tox-edit-area__iframe body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    color: #2c3e50 !important;
+    background-color: #fafafa !important;
+    padding: 16px !important;
+    border-radius: 8px !important;
+}
+
+/* Form Layout for Content Pages */
+.lesson-form {
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Action Buttons for Content Pages */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    padding: 10px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    color: #6c757d;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-action.btn-primary {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.btn-action.btn-primary:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+}
+
+.btn-action.btn-secondary {
+    background: white;
+    color: #6c757d;
+    border-color: #ddd;
+}
+
+.btn-action.btn-secondary:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
+/* Delete Lesson Button */
+.delete-lesson-btn {
+    background: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+}
+
+.delete-lesson-btn:hover {
+    background: #c0392b;
+    border-color: #c0392b;
+    color: white;
+}
+
+/* Page Actions */
+.page-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content-editor {
+        min-height: 300px;
+        font-size: 14px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .page-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
