@@ -241,172 +241,170 @@
 
                 </div>
             </div>
-        </main>
-    </div>
 
-    <!-- Edit User Modal -->
-    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <form id="editUserForm" method="post" action="<%=ctx%>/AdminUserEdit">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Chỉnh sửa người dùng</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="id" id="editUserId"/>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Username</label>
-                                <input class="form-control" id="editUsername" name="username" required/>
+            <!-- Edit User Modal -->
+            <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <form id="editUserForm" method="post" action="<%=ctx%>/AdminUserEdit">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Chỉnh sửa người dùng</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" id="editEmail" name="email" required/>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Số điện thoại</label>
-                                <input type="text" class="form-control" id="editPhone" name="phone"/>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Ngày sinh</label>
-                                <input type="date" class="form-control" id="editDob" name="date_of_birth"/>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Giới tính</label>
-                                <select class="form-select" id="editGender" name="gender">
-                                    <option value="">--Chọn--</option>
-                                    <option value="male">Nam</option>
-                                    <option value="female">Nữ</option>
-                                    <option value="other">Khác</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Vai trò</label>
-                                <select class="form-select" id="editRole" name="role">
-                                    <c:forEach var="role" items="${availableRoles}">
-                                        <option value="${role}">${role}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Trạng thái</label>
-                                <select class="form-select" id="editStatus" name="status" required>
-                                    <option value="active">Hoạt động</option>
-                                    <option value="deactivated">Vô hiệu hóa</option>
-                                </select>
-                                <div class="form-text">
-                                    <i class="bi bi-info-circle me-1"></i>
-                                    Chọn "Vô hiệu hóa" để tạm dừng tài khoản thay vì xóa vĩnh viễn
+                            <div class="modal-body">
+                                <input type="hidden" name="id" id="editUserId"/>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Username</label>
+                                        <input class="form-control" id="editUsername" name="username" required/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="editEmail" name="email" required/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Số điện thoại</label>
+                                        <input type="text" class="form-control" id="editPhone" name="phone"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Ngày sinh</label>
+                                        <input type="date" class="form-control" id="editDob" name="date_of_birth"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Giới tính</label>
+                                        <select class="form-select" id="editGender" name="gender">
+                                            <option value="">--Chọn--</option>
+                                            <option value="male">Nam</option>
+                                            <option value="female">Nữ</option>
+                                            <option value="other">Khác</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Vai trò</label>
+                                        <select class="form-select" id="editRole" name="role">
+                                            <c:forEach var="role" items="${availableRoles}">
+                                                <option value="${role}">${role}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Trạng thái</label>
+                                        <select class="form-select" id="editStatus" name="status" required>
+                                            <option value="active">Hoạt động</option>
+                                            <option value="deactivated">Vô hiệu hóa</option>
+                                        </select>
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Chọn "Vô hiệu hóa" để tạm dừng tài khoản thay vì xóa vĩnh viễn
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="bi bi-save me-1"></i>Lưu thay đổi
+                                </button>
+                                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Đóng</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="bi bi-save me-1"></i>Lưu thay đổi
-                        </button>
-                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Đóng</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Hidden iframe for loading user data -->
-<iframe id="hiddenFrame" name="hiddenFrame" style="display: none;"></iframe>
+        <!-- Hidden iframe for loading user data -->
+        <iframe id="hiddenFrame" name="hiddenFrame" style="display: none;"></iframe>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-                                                       document.addEventListener('DOMContentLoaded', function () {
-                                                           var ctx = '<%=ctx%>';
-                                                           var editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+                                                                   document.addEventListener('DOMContentLoaded', function () {
+                                                                       var ctx = '<%=ctx%>';
+                                                                       var editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
 
-                                                           // Handle edit button clicks
-                                                           document.querySelectorAll('.editBtn').forEach(function (btn) {
-                                                               btn.addEventListener('click', function () {
-                                                                   var userId = btn.getAttribute('data-id');
+                                                                       // Handle edit button clicks
+                                                                       document.querySelectorAll('.editBtn').forEach(function (btn) {
+                                                                           btn.addEventListener('click', function () {
+                                                                               var userId = btn.getAttribute('data-id');
 
-                                                                   // Show loading state
-                                                                   btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
-                                                                   btn.disabled = true;
+                                                                               // Show loading state
+                                                                               btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+                                                                               btn.disabled = true;
 
-                                                                   // Create a form to load user data
-                                                                   var form = document.createElement('form');
-                                                                   form.method = 'GET';
-                                                                   form.action = ctx + '/AdminUserEdit';
-                                                                   form.target = 'hiddenFrame';
-                                                                   form.style.display = 'none';
+                                                                               // Create a form to load user data
+                                                                               var form = document.createElement('form');
+                                                                               form.method = 'GET';
+                                                                               form.action = ctx + '/AdminUserEdit';
+                                                                               form.target = 'hiddenFrame';
+                                                                               form.style.display = 'none';
 
-                                                                   var idInput = document.createElement('input');
-                                                                   idInput.type = 'hidden';
-                                                                   idInput.name = 'id';
-                                                                   idInput.value = userId;
-                                                                   form.appendChild(idInput);
+                                                                               var idInput = document.createElement('input');
+                                                                               idInput.type = 'hidden';
+                                                                               idInput.name = 'id';
+                                                                               idInput.value = userId;
+                                                                               form.appendChild(idInput);
 
-                                                                   document.body.appendChild(form);
-                                                                   form.submit();
+                                                                               document.body.appendChild(form);
+                                                                               form.submit();
 
-                                                                   // Reset button state
-                                                                   btn.innerHTML = '<i class="bi bi-pencil-square"></i>';
-                                                                   btn.disabled = false;
-                                                               });
-                                                           });
+                                                                               // Reset button state
+                                                                               btn.innerHTML = '<i class="bi bi-pencil-square"></i>';
+                                                                               btn.disabled = false;
+                                                                           });
+                                                                       });
 
-                                                           // Listen for iframe load to populate form
-                                                           document.getElementById('hiddenFrame').addEventListener('load', function () {
-                                                               try {
-                                                                   var iframeDoc = this.contentDocument || this.contentWindow.document;
-                                                                   var userData = extractUserDataFromPage(iframeDoc);
+                                                                       // Listen for iframe load to populate form
+                                                                       document.getElementById('hiddenFrame').addEventListener('load', function () {
+                                                                           try {
+                                                                               var iframeDoc = this.contentDocument || this.contentWindow.document;
+                                                                               var userData = extractUserDataFromPage(iframeDoc);
 
-                                                                   if (userData) {
-                                                                       // Populate form fields
-                                                                       document.getElementById('editUserId').value = userData.userId || '';
-                                                                       document.getElementById('editUsername').value = userData.username || '';
-                                                                       document.getElementById('editEmail').value = userData.email || '';
-                                                                       document.getElementById('editPhone').value = userData.phone || '';
-                                                                       document.getElementById('editDob').value = userData.dateOfBirth || '';
-                                                                       document.getElementById('editGender').value = userData.gender || '';
-                                                                       document.getElementById('editRole').value = userData.role || 'Student';
-                                                                       document.getElementById('editStatus').value = userData.status || 'active';
+                                                                               if (userData) {
+                                                                                   // Populate form fields
+                                                                                   document.getElementById('editUserId').value = userData.userId || '';
+                                                                                   document.getElementById('editUsername').value = userData.username || '';
+                                                                                   document.getElementById('editEmail').value = userData.email || '';
+                                                                                   document.getElementById('editPhone').value = userData.phone || '';
+                                                                                   document.getElementById('editDob').value = userData.dateOfBirth || '';
+                                                                                   document.getElementById('editGender').value = userData.gender || '';
+                                                                                   document.getElementById('editRole').value = userData.role || 'Student';
+                                                                                   document.getElementById('editStatus').value = userData.status || 'active';
 
-                                                                       // Show modal
-                                                                       editModal.show();
-                                                                   }
-                                                               } catch (error) {
-                                                                   console.error('Error loading user data:', error);
-                                                                   alert('Không thể tải dữ liệu người dùng');
-                                                               }
-                                                           });
+                                                                                   // Show modal
+                                                                                   editModal.show();
+                                                                               }
+                                                                           } catch (error) {
+                                                                               console.error('Error loading user data:', error);
+                                                                               alert('Không thể tải dữ liệu người dùng');
+                                                                           }
+                                                                       });
 
-                                                           // Function to extract user data from the loaded page
-                                                           function extractUserDataFromPage(doc) {
-                                                               try {
-                                                                   var userId = doc.querySelector('input[name="id"]')?.value || '';
-                                                                   var username = doc.querySelector('input[name="username"]')?.value || '';
-                                                                   var email = doc.querySelector('input[name="email"]')?.value || '';
-                                                                   var phone = doc.querySelector('input[name="phone"]')?.value || '';
-                                                                   var dob = doc.querySelector('input[name="date_of_birth"]')?.value || '';
-                                                                   var gender = doc.querySelector('select[name="gender"]')?.value || '';
-                                                                   var role = doc.querySelector('select[name="role"]')?.value || '';
-                                                                   var status = doc.querySelector('select[name="status"]')?.value || '';
+                                                                       // Function to extract user data from the loaded page
+                                                                       function extractUserDataFromPage(doc) {
+                                                                           try {
+                                                                               var userId = doc.querySelector('input[name="id"]')?.value || '';
+                                                                               var username = doc.querySelector('input[name="username"]')?.value || '';
+                                                                               var email = doc.querySelector('input[name="email"]')?.value || '';
+                                                                               var phone = doc.querySelector('input[name="phone"]')?.value || '';
+                                                                               var dob = doc.querySelector('input[name="date_of_birth"]')?.value || '';
+                                                                               var gender = doc.querySelector('select[name="gender"]')?.value || '';
+                                                                               var role = doc.querySelector('select[name="role"]')?.value || '';
+                                                                               var status = doc.querySelector('select[name="status"]')?.value || '';
 
-                                                                   return {
-                                                                       userId: userId,
-                                                                       username: username,
-                                                                       email: email,
-                                                                       phone: phone,
-                                                                       dateOfBirth: dob,
-                                                                       gender: gender,
-                                                                       role: role,
-                                                                       status: status
-                                                                   };
-                                                               } catch (error) {
-                                                                   return null;
-                                                               }
-                                                           }
-                                                       });
-</script>   
-</body>
+                                                                               return {
+                                                                                   userId: userId,
+                                                                                   username: username,
+                                                                                   email: email,
+                                                                                   phone: phone,
+                                                                                   dateOfBirth: dob,
+                                                                                   gender: gender,
+                                                                                   role: role,
+                                                                                   status: status
+                                                                               };
+                                                                           } catch (error) {
+                                                                               return null;
+                                                                           }
+                                                                       }
+                                                                   });
+        </script>   
+    </body>
 </html>

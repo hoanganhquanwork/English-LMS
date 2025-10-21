@@ -27,7 +27,7 @@
                 <i class="fas fa-user-plus"></i> Tạo tài khoản
             </a>
 
-            <a href="${pageContext.request.contextPath}/admin/reports"
+            <a href="${pageContext.request.contextPath}/admin/report-list"
                class="${pageContext.request.requestURI.contains('/reports') ? 'active' : ''}">
                 <i class="fas fa-chart-bar"></i> Báo cáo
             </a>
