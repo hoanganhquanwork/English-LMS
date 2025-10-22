@@ -28,13 +28,13 @@
             </a>
 
             <a href="${pageContext.request.contextPath}/admin/report-list"
-               class="${pageContext.request.requestURI.contains('/reports') ? 'active' : ''}">
-                <i class="fas fa-chart-bar"></i> Báo cáo
+               class="${pageContext.request.requestURI.contains('/report-list') ? 'active' : ''}">
+                <i class="fas fa-chart-bar"></i> Quản lý báo lỗi
             </a>
 
-            <a href="${pageContext.request.contextPath}/admin/notifications"
-               class="${pageContext.request.requestURI.contains('/notifications') ? 'active' : ''}">
-                <i class="fas fa-bell"></i> Thông báo
+            <a href="${pageContext.request.contextPath}/AdminReportTypeList"
+               class="${pageContext.request.requestURI.contains('/AdminReportTypeList') ? 'active' : ''}">
+                <i class="fas fa-bell"></i> Danh sách lỗi mặc định
                 <c:if test="${not empty sessionScope.unreadCount && sessionScope.unreadCount > 0}">
                     <span class="badge">${sessionScope.unreadCount}</span>
                 </c:if>

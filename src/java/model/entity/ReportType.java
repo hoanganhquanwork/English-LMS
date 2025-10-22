@@ -11,9 +11,11 @@ public class ReportType {
     public ReportType() {
     }
 
-    public ReportType(int typeId, String name) {
+    public ReportType(int typeId, String role, String name, boolean isActive) {
         this.typeId = typeId;
+        this.role = role;
         this.name = name;
+        this.isActive = isActive;
     }
 
     // Getters & setters
