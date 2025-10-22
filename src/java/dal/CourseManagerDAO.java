@@ -293,7 +293,7 @@ public class CourseManagerDAO extends DBContext {
 
     public boolean rejectCourseWithReason(int courseId, int managerId, String reason) {
         String sqlCourse = "UPDATE Course SET status = 'rejected' "
-                + "WHERE course_id = ? AND status IN ('submitted', 'approved')";
+                + "WHERE course_id = ? AND status IN ('submitted','approved')";
 
         String sqlUpdateManager = "UPDATE CourseManagers "
                 + "SET reject_reason = ? "

@@ -104,7 +104,7 @@
                                 <td>${course.price}</td>
                                 <td>
                                     <div class="table-actions">
-                                        <a href="${pageContext.request.contextPath}/coursedetail?courseId=${course.courseId}" 
+                                        <a href="${pageContext.request.contextPath}/coursedetail?courseId=${course.courseId}"
                                            class="btn btn-outline" title="Xem chi tiết">
                                             <i class="fas fa-eye"></i>
                                         </a>

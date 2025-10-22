@@ -14,63 +14,63 @@ import model.entity.QuestionTextKey;
 
 public class QuestionManagerDAO extends DBContext {
 
-    public List<QuestionListItemDTO> getFilteredQuestions(String status, String keyword, String instructorName, String type) {
-        List<QuestionListItemDTO> list = new ArrayList<>();
+   public List<QuestionListItemDTO> getFilteredQuestions(String status, String keyword, String instructorName, String type, String topicId) {
+    List<QuestionListItemDTO> list = new ArrayList<>();
 
-        String sql = "SELECT q.question_id, q.content, q.type, q.status, "
-                + "q.explanation, q.review_comment, q.media_url, "
-                + "u.full_name AS instructor_name "
-                + "FROM Question q "
-                + "JOIN Users u ON q.created_by = u.user_id "
-                + "WHERE q.status <> 'draft' ";
+    String sql = "SELECT q.question_id, q.content, q.type, q.status, "
+               + "q.explanation, q.review_comment, q.media_url, "
+               + "u.full_name AS instructor_name, t.name AS topic_name "
+               + "FROM Question q "
+               + "JOIN Users u ON q.created_by = u.user_id "
+               + "LEFT JOIN Topics t ON q.topic_id = t.topic_id "
+               + "WHERE q.status <> 'draft' ";
 
-        if (!"all".equalsIgnoreCase(status)) {
-            sql += "AND q.status = ? ";
-        }
-        if (type != null && !"all".equalsIgnoreCase(type)) {
-            sql += "AND q.type = ? ";
-        }
-        if ((keyword != null && !keyword.isBlank()) || (instructorName != null && !instructorName.isBlank())) {
-            sql += "AND (q.content LIKE ? OR u.full_name LIKE ?) ";
-        }
-
-        sql += "ORDER BY q.question_id DESC";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            int idx = 1;
-
-            if (!"all".equalsIgnoreCase(status)) {
-                ps.setString(idx++, status);
-            }
-            if (type != null && !"all".equalsIgnoreCase(type)) {
-                ps.setString(idx++, type);
-            }
-            if ((keyword != null && !keyword.isBlank()) || (instructorName != null && !instructorName.isBlank())) {
-                ps.setString(idx++, "%" + (keyword == null ? "" : keyword) + "%");
-                ps.setString(idx++, "%" + (instructorName == null ? "" : instructorName) + "%");
-            }
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                QuestionListItemDTO q = new QuestionListItemDTO();
-                q.setQuestionId(rs.getInt("question_id"));
-                q.setContent(rs.getString("content"));
-                q.setType(rs.getString("type"));
-                q.setStatus(rs.getString("status"));
-                q.setExplanation(rs.getString("explanation"));
-                q.setReviewComment(rs.getString("review_comment"));
-                q.setMediaUrl(rs.getString("media_url"));
-                q.setInstructorName(rs.getString("instructor_name"));
-                list.add(q);
-            }
-
-        } catch (SQLException e) {
-        e.printStackTrace();
-        }
-
-        return list;
+    if (!"all".equalsIgnoreCase(status)) {
+        sql += "AND q.status = ? ";
+    }
+    if (type != null && !"all".equalsIgnoreCase(type)) {
+        sql += "AND q.type = ? ";
+    }
+    if (topicId != null && !"all".equalsIgnoreCase(topicId)) {
+        sql += "AND q.topic_id = ? ";
+    }
+    if ((keyword != null && !keyword.isBlank()) || (instructorName != null && !instructorName.isBlank())) {
+        sql += "AND (q.content LIKE ? OR u.full_name LIKE ?) ";
     }
 
+    sql += "ORDER BY q.question_id DESC";
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        int idx = 1;
+        if (!"all".equalsIgnoreCase(status)) ps.setString(idx++, status);
+        if (type != null && !"all".equalsIgnoreCase(type)) ps.setString(idx++, type);
+        if (topicId != null && !"all".equalsIgnoreCase(topicId)) ps.setInt(idx++, Integer.parseInt(topicId));
+        if ((keyword != null && !keyword.isBlank()) || (instructorName != null && !instructorName.isBlank())) {
+            ps.setString(idx++, "%" + (keyword == null ? "" : keyword) + "%");
+            ps.setString(idx++, "%" + (instructorName == null ? "" : instructorName) + "%");
+        }
+
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            QuestionListItemDTO q = new QuestionListItemDTO();
+            q.setQuestionId(rs.getInt("question_id"));
+            q.setContent(rs.getString("content"));
+            q.setType(rs.getString("type"));
+            q.setStatus(rs.getString("status"));
+            q.setExplanation(rs.getString("explanation"));
+            q.setReviewComment(rs.getString("review_comment"));
+            q.setMediaUrl(rs.getString("media_url"));
+            q.setInstructorName(rs.getString("instructor_name"));
+            q.setTopicName(rs.getString("topic_name"));
+            list.add(q);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
     public QuestionListItemDTO getQuestionDetail(int questionId) {
         String sql = "SELECT q.question_id, q.content, q.type, q.status, "
                 + "q.explanation, q.media_url, q.review_comment, "

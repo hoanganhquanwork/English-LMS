@@ -289,8 +289,90 @@ public class CourseManagerService {
         }
         return null;
     }
-         public String getRejectionReason(int courseId) {
+
+    public String getRejectionReason(int courseId) {
         return dao.getRejectReasonByCourseId(courseId);
     }
 
+    public String validateManagerAction(String action, int courseId, String reason, BigDecimal price, LocalDateTime publishDate) {
+        if (action == null || action.isBlank()) {
+            return "Thiếu hành động xử lý.";
+        }
+        if (courseId <= 0) {
+            return "Mã khóa học không hợp lệ.";
+        }
+
+        switch (action) {
+            case "approve":
+            case "reject":
+            case "publish":
+            case "unpublish":
+            case "updatePrice":
+                break;
+            default:
+                return "Hành động không hợp lệ.";
+        }
+
+        if ("reject".equals(action)) {
+            if (reason == null || reason.trim().isEmpty()) {
+                return "Vui lòng nhập lý do từ chối.";
+            }
+        }
+
+        if ("updatePrice".equals(action)) {
+            if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+                return "Giá khóa học không được nhỏ hơn 0.";
+            }
+        }
+
+        if ("publish".equals(action) && publishDate != null) {
+            LocalDateTime now = LocalDateTime.now();
+            if (publishDate.isBefore(now) || publishDate.isAfter(now.plusYears(1))) {
+                return "Ngày đăng không hợp lệ (phải sau hôm nay và trong vòng 1 năm).";
+            }
+        }
+
+        return null;
+    }
+    
+     public String performAction(String action, int courseId, String reason, BigDecimal price, LocalDateTime publishDate, int managerId) {
+        String validation = validateManagerAction(action, courseId, reason, price, publishDate);
+        if (validation != null) {
+            return validation;
+        }
+
+        switch (action) {
+            case "approve":
+                dao.updateCourseStatus(courseId, "approved");
+                return "Khóa học đã được duyệt thành công!";
+
+            case "reject":
+                dao.rejectCourseWithReason(courseId, managerId, reason);
+                return "Khóa học đã bị từ chối và phản hồi đã được gửi cho giảng viên.";
+
+            case "publish":
+                if (publishDate == null) {
+                    return dao.publishNow(courseId)
+                            ? "Khóa học đã được đăng ngay lập tức!"
+                            : "Không thể đăng khóa học.";
+                } else {
+                    return dao.schedulePublish(courseId, java.sql.Timestamp.valueOf(publishDate))
+                            ? "Khóa học đã được lên lịch đăng thành công!"
+                            : "Không thể lên lịch đăng khóa học.";
+                }
+
+            case "unpublish":
+                return dao.unpublishCourse(courseId)
+                        ? "Khóa học đã được gỡ đăng."
+                        : "Không thể gỡ đăng khóa học.";
+
+            case "updatePrice":
+                return dao.updateCoursePrice(courseId, price)
+                        ? "Cập nhật giá khóa học thành công!"
+                        : "Không thể cập nhật giá khóa học.";
+
+            default:
+                return "Hành động không hợp lệ!";
+        }
+    }
 }

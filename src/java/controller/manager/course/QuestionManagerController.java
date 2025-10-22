@@ -18,8 +18,10 @@ import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import model.dto.QuestionListItemDTO;
+import model.entity.Topic;
 import model.entity.Users;
 import service.QuestionManagerService;
+import service.TopicService;
 
 /**
  *
@@ -29,6 +31,7 @@ import service.QuestionManagerService;
 public class QuestionManagerController extends HttpServlet {
 
     private QuestionManagerService qService = new QuestionManagerService();
+    private TopicService tService = new TopicService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -113,8 +116,16 @@ public class QuestionManagerController extends HttpServlet {
         String keyword = request.getParameter("keyword");
         String instructor = request.getParameter("instructor");
         String type = request.getParameter("type");
+        String topicId = request.getParameter("topicId");
 
-        List<QuestionListItemDTO> questions = qService.getFilteredQuestions(status, keyword, instructor, type);
+        if (topicId == null || topicId.isBlank()) {
+            topicId = "all";
+        }
+
+        List<Topic> topics = tService.getAllTopics();
+        request.setAttribute("topics", topics);
+
+        List<QuestionListItemDTO> questions = qService.getFilteredQuestions(status, keyword, instructor, type, topicId);
         request.setAttribute("questions", questions);
 
         RequestDispatcher rd = request.getRequestDispatcher("/views-manager/question/question-manager.jsp");

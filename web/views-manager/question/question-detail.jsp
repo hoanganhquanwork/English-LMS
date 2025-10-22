@@ -2,11 +2,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<!-- Modal xem chi tiết câu hỏi -->
 <div id="questionDetailModal" class="modal active">
     <div class="modal-content question-detail-modal">
 
-        <!-- Nút đóng -->
         <button class="close-btn" onclick="closeDetail()">
             <i class="fas fa-times"></i>
         </button>
@@ -17,7 +15,6 @@
         </div>
 
         <div class="modal-body">
->
             <div class="q-section">
                 <h4 class="q-content">${q.content}</h4>
             </div>

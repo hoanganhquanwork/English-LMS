@@ -4,18 +4,21 @@ import dal.QuestionManagerDAO;
 import java.util.ArrayList;
 import java.util.List;
 import model.dto.QuestionListItemDTO;
+import model.dto.QuestionOptionDTO;
+import model.dto.QuestionTextKeyDTO;
+import model.entity.QuestionOption;
+import model.entity.QuestionTextKey;
 import model.entity.Users;
 import util.YouTubeApiClient;
 
 public class QuestionManagerService {
 
     private final QuestionManagerDAO dao;
-
     public QuestionManagerService() {
         this.dao = new QuestionManagerDAO();
     }
 
-    public List<QuestionListItemDTO> getFilteredQuestions(String status, String keyword, String instructor, String type) {
+    public List<QuestionListItemDTO> getFilteredQuestions(String status, String keyword, String instructor, String type, String topicId) {
         if (status == null || status.isBlank()) {
             status = "all";
         }
@@ -28,9 +31,12 @@ public class QuestionManagerService {
         if (type == null || type.isBlank()) {
             type = "all";
         }
-
-        return dao.getFilteredQuestions(status, keyword, instructor, type);
+        if (topicId == null || topicId.isBlank()) {
+            topicId = "all";
+        }
+        return dao.getFilteredQuestions(status, keyword, instructor, type, topicId);
     }
+
 
     public QuestionListItemDTO getQuestionDetail(int questionId) {
         if (questionId <= 0) {
@@ -113,19 +119,45 @@ public class QuestionManagerService {
             }
         }
     }
-    
-   public List<String> searchInstructorNames(String keyword) {
 
-    if (keyword == null || keyword.trim().isEmpty()) {
-        return new ArrayList<>(); 
+    public List<String> searchInstructorNames(String keyword) {
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        keyword = keyword.trim();
+
+        if (!keyword.matches("^[\\p{L}\\s]+$")) {
+            return new ArrayList<>();
+        }
+
+        return dao.findInstructorNames(keyword);
     }
 
-    keyword = keyword.trim();
-
-    if (!keyword.matches("^[\\p{L}\\s]+$")) {
-        return new ArrayList<>();
+    public List<QuestionOptionDTO> getOptionsByQuestionId(int questionId) {
+        List<QuestionOptionDTO> list = new ArrayList<>();
+        for (QuestionOption opt : dao.getOptionsByQuestionId(questionId)) {
+            QuestionOptionDTO dto = new QuestionOptionDTO();
+            dto.setOptionId(opt.getOptionId());
+            dto.setQuestionId(opt.getQuestionId());
+            dto.setContent(opt.getContent());
+            dto.setIsCorrect(opt.isCorrect());
+            list.add(dto);
+        }
+        return list;
     }
 
-    return dao.findInstructorNames(keyword);
-}
+    public List<QuestionTextKeyDTO> getAnswersByQuestionId(int questionId) {
+        List<QuestionTextKeyDTO> list = new ArrayList<>();
+        for (QuestionTextKey key : dao.getAnswersByQuestionId(questionId)) {
+            QuestionTextKeyDTO dto = new QuestionTextKeyDTO();
+            dto.setKeyId(key.getKeyId());
+            dto.setQuestionId(key.getQuestionId());
+            dto.setAnswerText(key.getAnswerText());
+            list.add(dto);
+        }
+        return list;
+    }
+
 }

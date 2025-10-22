@@ -41,6 +41,12 @@
                         <option value="mcq_single" ${param.type == 'mcq_single' ? 'selected' : ''}>Trắc nghiệm</option>
                         <option value="text" ${param.type == 'text' ? 'selected' : ''}>Tự luận</option>
                     </select>
+                    <select name="topicId">
+                        <option value="all" ${param.topicId == 'all' ? 'selected' : ''}>Tất cả chủ đề</option>
+                        <c:forEach var="t" items="${topics}">
+                           <option value="${t.topicId}" ${param.topicId eq t.topicId.toString() ? 'selected' : ''}>${t.name}</option>
+                        </c:forEach>
+                    </select>
                     <div class="instructor-search">
                         <input type="text" id="instructorInput" name="instructor"
                                placeholder="Tên giảng viên..."
@@ -68,6 +74,7 @@
                             <th>ID</th>
                             <th>Nội dung</th>
                             <th>Loại</th>
+                            <th>Chủ đề</th>
                             <th>Giảng viên</th>
                             <th>Trạng thái</th>
                             <th>Thao tác</th>
@@ -86,6 +93,7 @@
                                         <c:otherwise>-</c:otherwise>
                                     </c:choose>
                                 </td>
+                                <td>${empty q.topicName ? '-' : q.topicName}</td>
                                 <td>${q.instructorName}</td>
                                 <td><span class="status ${q.status}">${q.status}</span></td>
                                 <td>
@@ -271,7 +279,7 @@
                     suggestBox.style.display = 'none';
                 }
             });
-            
+
         </script>
     </body>
 </html>

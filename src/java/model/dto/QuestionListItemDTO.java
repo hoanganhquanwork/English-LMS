@@ -17,7 +17,7 @@ public class QuestionListItemDTO {
     private String mediaUrl;
     private String explanation;
     private String reviewComment;
-
+    private String topicName;
     private List<QuestionOption> options;       
     private List<QuestionTextKey> answers;      
 
@@ -100,4 +100,13 @@ public class QuestionListItemDTO {
     public void setAnswers(List<QuestionTextKey> answers) {
         this.answers = answers;
     }
+
+    public String getTopicName() {
+        return topicName;
+    }
+
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
+    }
+    
 }
