@@ -111,9 +111,7 @@
                 color: white
             }
             .go-to-next-item {
-                position: fixed;
                 bottom: 20px;
-                right: 20px;
                 padding: 10px 20px;
                 font-size: 1rem;
                 text-decoration: none;
@@ -314,10 +312,7 @@
 
             <!--Content--> 
             <main class="flex-fill p-4">
-                <a href="${pageContext.request.contextPath}/coursePage?itemId=${activeItemId+1}&courseId=${cp.course.courseId}" 
-                   class="btn btn-outline-primary go-to-next-item text-decoration-none">
-                    Đi tới mục tiếp theo
-                </a>
+
 
                 <!--For lesson-->
 
@@ -708,132 +703,195 @@
                 <!--For quiz-->
 
                 <c:if test="${requestScope.selectedItemType == 'quiz'}">
-                    <c:set var="quiz" value="${requestScope.quiz}" />
-                    <c:set var="quizView" value="${requestScope.quizView}" />
-                    <c:set var="attempt" value="${requestScope.attempt}" />
-                    <c:set var="bestScore" value="${requestScope.bestScore}" />
-
+                    <c:set var="quiz"             value="${requestScope.quiz}" />
+                    <c:set var="isGraded"         value="${requestScope.isGraded}" />
+                    <c:set var="quizView"         value="${requestScope.quizView}" />
+                    <c:set var="attempt"          value="${requestScope.attempt}" />
+                    <c:set var="bestScore"        value="${requestScope.bestScore}" />
+                    <c:set var="latestSubmittedId" value="${requestScope.latestSubmittedId}" />
+                    <c:set var="hasPassed"        value="${requestScope.hasPassed}" />
+                    <c:set var="isLocked"         value="${requestScope.isLocked}" />
+                    <c:set var="cooldownActive"   value="${requestScope.cooldownActive}" />
+                    <c:set var="retryAtDisplay"   value="${requestScope.retryAtDisplay}" />
+                    <p style="red">${requestScope.errorMessage}</p>
                     <div class="custom-container">
+                        <!-- Tiêu đề -->
                         <h1 class="fw-bold mb-4">
-                            <c:if test="${not empty quiz.title}">Quiz: ${quiz.title}</c:if>
-                            </h1>
+                            <c:choose>
+                                <c:when test="${not empty quiz and not empty quiz.title}">
+                                    Quiz: ${quiz.title}
+                                </c:when>
+                                <c:otherwise>Quiz</c:otherwise>
+                            </c:choose>
+                        </h1>
 
-                            <div class="p-4 rounded-4" style="background:#eef4ff;">
-                                <div class="row align-items-center">
-                                    <!-- Mô tả (trái) -->
-                                    <div class="col-md-9">
-                                        <div class="fw-bold mb-2">Thông tin mô tả</div>
-
-                                        <p>
-                                            Bạn cần đạt được
-                                        <c:choose>
-                                            <c:when test="${empty quiz.passingScorePct}">--</c:when>
-                                            <c:otherwise><c:out value="${quiz.passingScorePct}" />%</c:otherwise>
-                                        </c:choose>
-                                        để hoàn thành bài quiz
-                                    </p>
-
+                        <!-- Thông tin tổng quan -->
+                        <div class="p-4 rounded-4" style="background:#eef4ff;">
+                            <div class="row align-items-center">
+                                <div class="col-md-9">
+                                    <div class="fw-bold mb-2">Thông tin mô tả</div>
                                     <p>
-                                        Số lượng câu hỏi trong bài quiz: ${quiz.pickCount} câu                                
-                                    </p>
-
-                                    <p>
-                                        Trạng thái:
+                                        Yêu cầu đạt:
                                         <c:choose>
-                                            <c:when test="${attempt != null}">
-                                                <c:out value="${attempt.status == 'submitted' ? 'Đã nộp' : 'Bản nháp'}" />
+                                            <c:when test="${isGraded and not empty quiz.passingScorePct}">
+                                                <strong>${quiz.passingScorePct}%</strong>
                                             </c:when>
-                                            <c:otherwise>Chưa làm</c:otherwise>
+                                            <c:otherwise>--</c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                    <p>
+                                        Số câu hỏi: 
+                                        <c:choose>
+                                            <c:when test="${not empty quiz.pickCount}">${quiz.pickCount}</c:when>
+                                            <c:otherwise>--</c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                    <p>
+                                        Trạng thái hiện tại:
+                                        <c:choose>
+                                            <c:when test="${empty attempt}">Chưa làm</c:when>
+                                            <c:when test="${attempt.status == 'submitted'}">Đã nộp</c:when>
+                                            <c:otherwise>Bản nháp</c:otherwise>
                                         </c:choose>
                                     </p>
 
-                                    <c:if test="${attempt != null && attempt.submittedAt != null}">
-                                        <p>Thời gian: ${attempt.submittedAt}</p>
-                                    </c:if>
                                 </div>
 
-                                <!-- Nút (phải) -->
                                 <div class="col-md-3 text-md-end mt-3 mt-md-0">
                                     <c:choose>
-                                        <c:when test="${quizView == 'intro' || attempt == null}">
-                                            <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
-                                                <input type="hidden" name="courseId" value="${cp.course.courseId}">
-                                                <input type="hidden" name="itemId" value="${activeItemId}">
-                                                <button class="btn btn-primary px-4">Bắt đầu</button>
-                                            </form>
-                                        </c:when>
 
-                                        <c:when test="${attempt != null && attempt.status == 'submitted'}">
+                                        <c:when test="${quizView == 'intro'}">
                                             <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
                                                 <input type="hidden" name="courseId" value="${cp.course.courseId}">
-                                                <input type="hidden" name="itemId" value="${activeItemId}">
-                                                <button class="btn btn-primary px-4">
-                                                    <i class="bi bi-arrow-clockwise me-1"></i>Làm lại
+                                                <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                <button class="btn btn-primary px-4" ${isLocked ? 'disabled' : ''}>
+                                                    Bắt đầu
                                                 </button>
                                             </form>
                                         </c:when>
 
-                                        <c:otherwise>
+                                        <c:when test="${quizView == 'doing'}">
                                             <a href="${pageContext.request.contextPath}/doQuiz?attemptId=${attempt.attemptId}&courseId=${cp.course.courseId}&itemId=${activeItemId}"
-                                               class="btn btn-primary px-4">Tiếp tục</a>
+                                               class="btn btn-primary px-4 ${isLocked ? 'disabled' : ''}">
+                                                Tiếp tục
+                                            </a>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                                                <c:if test="${not isGraded and not empty latestSubmittedId}">
+                                                    <a class="btn btn-outline-primary"
+                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${requestScope.latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
+                                                        Xem kết quả gần nhất
+                                                    </a>
+                                                </c:if>
+
+                                                <c:choose>
+                                                    <c:when test="${isGraded}">
+                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                            <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                                            <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                            <button class="btn btn-primary px-4" 
+                                                                    ${ (hasPassed or isLocked) ? 'disabled' : '' }>
+                                                                <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
+                                                            </button>
+                                                        </form>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                            <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                                            <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                            <button class="btn btn-primary px-4">
+                                                                <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
+                                                            </button>
+                                                        </form>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
                                         </c:otherwise>
+
                                     </c:choose>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-3">
-                            <c:choose>
-                                <c:when test="${bestScore >= quiz.passingScorePct}">
-                                    <div class="p-4 rounded-4 bg-success-subtle ">
-                                    </c:when>
-
-                                    <c:otherwise>
-                                        <div class="p-4 rounded-4 bg-danger-subtle">
-                                        </c:otherwise>
-                                    </c:choose>
-
+                        <c:if test="${isGraded}">
+                            <div class="mt-3">
+                                <div class="p-4 rounded-4
+                                     ${not empty bestScore and not empty quiz.passingScorePct and bestScore >= quiz.passingScorePct 
+                                       ? 'bg-success-subtle' : 'bg-danger-subtle'}">
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                                         <div>
                                             <div class="fw-bold mb-1">Kết quả của bạn</div>
-
                                             <div class="small text-muted">
-                                                Điểm cao nhất (ghi nhận):
+                                                Điểm cao nhất:
                                                 <span class="fw-semibold
-                                                      ${bestScore >= quiz.passingScorePct ? 'text-success' : 'text-danger'}">
-                                                    <c:choose>
-                                                        <c:when test="${not empty bestScore}">
-                                                            ${bestScore}%
-                                                        </c:when>
-                                                        <c:otherwise>--</c:otherwise>
-                                                    </c:choose>
+                                                      ${not empty bestScore and not empty quiz.passingScorePct and bestScore >= quiz.passingScorePct 
+                                                        ? 'text-success' : 'text-danger'}">
+                                                      <c:choose>
+                                                          <c:when test="${not empty bestScore}">${bestScore}%</c:when>
+                                                          <c:otherwise>--</c:otherwise>
+                                                      </c:choose>
                                                 </span>
                                             </div>
                                         </div>
 
+                                        <c:if test="${isGraded}">
+                                            <c:if test="${hasPassed}">
+                                                <div class="text-end">
+                                                    <div class="alert alert-success my-2">
+                                                        <i class="bi bi-check-circle me-2"></i>
+                                                        Bạn đã đạt yêu cầu
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="${!hasPassed and cooldownActive}">
+                                                <div class="alert alert-warning my-2">
+                                                    <i class="bi bi-hourglass-split me-2"></i>
+                                                    Bạn chưa đạt. Lần làm tiếp theo lúc: <strong>${retryAtDisplay}</strong>
+                                                </div>
+                                            </c:if>
+                                        </c:if>
+
                                         <div class="text-md-end">
-                                            <c:choose>
-                                                <c:when test="${not empty latestSubmittedId}">
-                                                    <a class="btn btn-outline-primary"
-                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
-                                                        Xem kết quả gần nhất
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <button class="btn btn-outline-secondary" disabled>Chưa có bài nộp nào</button>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <c:if test="${not isGraded}">
+                                                <c:choose>
+                                                    <c:when test="${not empty latestSubmittedId }">
+                                                        <a class="btn btn-outline-primary"
+                                                           href="${pageContext.request.contextPath}/doQuiz?attemptId=${latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
+                                                            Xem bài đã nộp
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button class="btn btn-outline-secondary" disabled>Chưa có bài nộp</button>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
                                         </div>
                                     </div>
-                                </div> 
+                                </div>
                             </div>
+                        </c:if>
 
-                        </div>
-                    </c:if>
+                        <c:if test="${!isGraded}">
+                            <div class="alert alert-info mt-3">
+                                Chế độ ôn tập: không giới hạn thời gian, có thể làm lại nhiều lần. 
+                            </div>
+                        </c:if>
+                    </div>
 
+                </c:if>
+
+                <hr>
+                <div class="text-end">
+                    <a href="${pageContext.request.contextPath}/coursePage?itemId=${activeItemId+1}&courseId=${cp.course.courseId}" 
+                       class="btn btn-outline-primary go-to-next-item text-decoration-none ">
+                        Đi tới mục tiếp theo
+                    </a>
+                </div>
             </main>
 
-            <!--<hr class="custom-hr">-->
+
         </div>
 
     </body>

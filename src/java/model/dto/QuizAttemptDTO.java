@@ -19,6 +19,11 @@ public class QuizAttemptDTO {
     private int attemptNo;
     private String status;
     private LocalDateTime submittedAt;
+    private LocalDateTime startedAt;
+    private LocalDateTime deadlineAt;
+    
+    private Long remainingSeconds;
+    
     private Double scorePct;
 
     private List<QuizAttemptQuestionDTO> questions;
@@ -72,6 +77,30 @@ public class QuizAttemptDTO {
         this.submittedAt = submittedAt;
     }
 
+    public LocalDateTime getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(LocalDateTime startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public LocalDateTime getDeadlineAt() {
+        return deadlineAt;
+    }
+
+    public void setDeadlineAt(LocalDateTime deadlineAt) {
+        this.deadlineAt = deadlineAt;
+    }
+
+    public Long getRemainingSeconds() {
+        return remainingSeconds;
+    }
+
+    public void setRemainingSeconds(Long remainingSeconds) {
+        this.remainingSeconds = remainingSeconds;
+    }
+
     public Double getScorePct() {
         return scorePct;
     }
@@ -95,6 +124,6 @@ public class QuizAttemptDTO {
     public void setAnswers(List<QuizAttemptAnswerDTO> answers) {
         this.answers = answers;
     }
-    
-    
+
+   
 }

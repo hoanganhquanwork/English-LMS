@@ -4,6 +4,7 @@
  */
 package dal;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,7 +83,7 @@ public class QuizDAO extends DBContext {
     //
     //tuanta
     public QuizDTO getQuizById(int quizId) {
-        String sql = "SELECT q.quiz_id, q.title, q.attempts_allowed, q.passing_score_pct, q.pick_count, mi.module_id "
+        String sql = "SELECT q.quiz_id, q.title, q.passing_score_pct, q.pick_count, q.time_limit_min, mi.module_id "
                 + "FROM Quiz q JOIN ModuleItem mi ON q.quiz_id = mi.module_item_id "
                 + "WHERE q.quiz_id = ?";
         try {
@@ -93,10 +94,10 @@ public class QuizDAO extends DBContext {
                 QuizDTO q = new QuizDTO();
                 q.setQuizId(rs.getInt("quiz_id"));
                 q.setTitle(rs.getNString("title"));
-                //tranh neu null getInt se tra ve 0
-                q.setAttemptsAllowed((Integer) rs.getObject("attempts_allowed"));
-                q.setPassingScorePct(rs.getObject("passing_score_pct") == null ? null : rs.getDouble("passing_score_pct"));
+                BigDecimal pass = rs.getBigDecimal("passing_score_pct");
+                q.setPassingScorePct(pass == null ? null : pass.doubleValue());
                 q.setPickCount((Integer) rs.getObject("pick_count"));
+                q.setTimeLimitMin((Integer) rs.getObject("time_limit_min"));
                 q.setModuleId(rs.getInt("module_id"));
                 q.setBank(questionDAO.getQuestionByModuleId(q.getModuleId()));
                 return q;
@@ -125,7 +126,7 @@ public class QuizDAO extends DBContext {
     }
 
     public Double getBestScoreFromAttempts(int quizId, int studentId) {
-        String sql = "SELECT MAX(score_pct) FROM QuizAttempt WHERE quiz_id = ? "
+        String sql = "SELECT MAX(score_pct) AS best FROM QuizAttempt WHERE quiz_id = ? "
                 + " AND student_id = ? AND status='submitted'";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -133,7 +134,8 @@ public class QuizDAO extends DBContext {
             st.setInt(2, studentId);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
-                return rs.getObject(1) == null ? null : rs.getDouble(1);
+                BigDecimal best = (BigDecimal) rs.getObject("best");
+                return (best == null ? null : best.doubleValue());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -159,12 +161,18 @@ public class QuizDAO extends DBContext {
     }
 
     public Long createDraftAttempt(int quizId, int studentId, int attemptNo) {
-        String sql = "INSERT INTO QuizAttempt(quiz_id, student_id, attempt_no, status) VALUES (?,?,?,'draft')";
+        String sql = "INSERT INTO QuizAttempt (quiz_id, student_id, attempt_no, status, started_at, deadline_at) "
+                + " SELECT ?, ?, ?, 'draft', GETDATE(), "
+                + "       CASE WHEN q.time_limit_min IS NULL THEN NULL "
+                + "            ELSE DATEADD(minute, q.time_limit_min, GETDATE()) END "
+                + " FROM Quiz q WHERE q.quiz_id = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             st.setInt(1, quizId);
             st.setInt(2, studentId);
             st.setInt(3, attemptNo);
+            st.setInt(4, quizId);
+
             int rows = st.executeUpdate();
             if (rows > 0) {
                 ResultSet rs = st.getGeneratedKeys();
@@ -179,8 +187,10 @@ public class QuizDAO extends DBContext {
     }
 
     public QuizAttemptDTO findQuizAttempById(long attemptId) {
-        String sql = "SELECT attempt_id, quiz_id, student_id, attempt_no, status, submitted_at, score_pct "
-                + "FROM QuizAttempt WHERE attempt_id = ?";
+        String sql = "SELECT attempt_id, quiz_id, student_id, attempt_no, status, "
+                + " started_at, deadline_at, submitted_at, score_pct "
+                + " FROM QuizAttempt "
+                + " WHERE attempt_id = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setLong(1, attemptId);
@@ -192,9 +202,16 @@ public class QuizDAO extends DBContext {
                 qa.setStudentId(rs.getInt("student_id"));
                 qa.setAttemptNo(rs.getInt("attempt_no"));
                 qa.setStatus(rs.getString("status"));
-                Timestamp ts = rs.getTimestamp("submitted_at");
-                qa.setSubmittedAt(ts == null ? null : ts.toLocalDateTime());
-                qa.setScorePct(rs.getObject("score_pct") == null ? null : rs.getDouble("score_pct"));
+
+                Timestamp tsStart = rs.getTimestamp("started_at");
+                Timestamp tsDeadline = rs.getTimestamp("deadline_at");
+                Timestamp tsSubmit = rs.getTimestamp("submitted_at");
+
+                qa.setStartedAt(tsStart == null ? null : tsStart.toLocalDateTime());
+                qa.setDeadlineAt(tsDeadline == null ? null : tsDeadline.toLocalDateTime());
+                qa.setSubmittedAt(tsSubmit == null ? null : tsSubmit.toLocalDateTime());
+                BigDecimal sc = rs.getBigDecimal("score_pct");
+                qa.setScorePct(sc == null ? null : sc.doubleValue());
                 return qa;
             }
         } catch (SQLException e) {
@@ -204,9 +221,10 @@ public class QuizDAO extends DBContext {
     }
 
     public QuizAttemptDTO findLatestAttempt(int quizId, int studentId) {
-        String sql = "SELECT TOP 1 attempt_id, quiz_id, student_id, attempt_no,"
-                + " status, submitted_at, score_pct"
-                + " FROM QuizAttempt WHERE quiz_id = ? AND student_id = ?"
+        String sql = "SELECT TOP 1 attempt_id, quiz_id, student_id, attempt_no, "
+                + " status, started_at, deadline_at, submitted_at, score_pct "
+                + " FROM QuizAttempt "
+                + " WHERE quiz_id = ? AND student_id = ? "
                 + " ORDER BY attempt_no DESC";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -221,9 +239,17 @@ public class QuizDAO extends DBContext {
                 qa.setStudentId(rs.getInt("student_id"));
                 qa.setAttemptNo(rs.getInt("attempt_no"));
                 qa.setStatus(rs.getString("status"));
-                Timestamp ts = rs.getTimestamp("submitted_at");
-                qa.setSubmittedAt(ts == null ? null : ts.toLocalDateTime());
-                qa.setScorePct(rs.getObject("score_pct") == null ? null : rs.getDouble("score_pct"));
+
+                Timestamp tsStart = rs.getTimestamp("started_at");
+                Timestamp tsDeadline = rs.getTimestamp("deadline_at");
+                Timestamp tsSubmit = rs.getTimestamp("submitted_at");
+                qa.setStartedAt(tsStart == null ? null : tsStart.toLocalDateTime());
+                qa.setDeadlineAt(tsDeadline == null ? null : tsDeadline.toLocalDateTime());
+                qa.setSubmittedAt(tsSubmit == null ? null : tsSubmit.toLocalDateTime());
+
+                BigDecimal sc = rs.getBigDecimal("score_pct");
+                qa.setScorePct(sc == null ? null : sc.doubleValue());
+
                 return qa;
             }
         } catch (SQLException e) {
@@ -299,25 +325,37 @@ public class QuizDAO extends DBContext {
     }
 
     //for save draft
-    public int clearAnswersForAttempt(long attemptId) {
-        String sql = "DELETE FROM AttemptAnswer WHERE attempt_id = ?";
+    public int saveAnswer(long attemptId, int questionId, Integer chosenOptionId, String answerText) {
+        String update = "UPDATE AttemptAnswer "
+                + "SET chosen_option_id=?, answer_text=?, is_correct=NULL "
+                + "WHERE attempt_id=? AND question_id=?";
         try {
-            PreparedStatement st = connection.prepareStatement(sql);
-            st.setLong(1, attemptId);
-            return st.executeUpdate();
+            PreparedStatement st = connection.prepareStatement(update);
+            if (chosenOptionId == null) {
+                st.setNull(1, java.sql.Types.INTEGER);
+            } else {
+                st.setInt(1, chosenOptionId);
+            }
+            if (answerText == null) {
+                st.setNull(2, java.sql.Types.NVARCHAR);
+            } else {
+                st.setNString(2, answerText);
+            }
+            st.setLong(3, attemptId);
+            st.setInt(4, questionId);
+            int rows = st.executeUpdate();
+            if (rows > 0) {
+                return rows;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return 0;
         }
-    }
 
-    public void insertAnswer(long attemptId, int questionId,
-            Integer chosenOptionId, String answerText) {
-        String sql = "INSERT INTO AttemptAnswer"
-                + " (attempt_id, question_id, chosen_option_id, answer_text, is_correct) "
+        // Không có sẵn -> INSERT
+        String ins = "INSERT INTO AttemptAnswer(attempt_id, question_id, chosen_option_id, answer_text, is_correct) "
                 + "VALUES (?,?,?,?,NULL)";
         try {
-            PreparedStatement st = connection.prepareStatement(sql);
+            PreparedStatement st = connection.prepareStatement(ins);
             st.setLong(1, attemptId);
             st.setInt(2, questionId);
             if (chosenOptionId == null) {
@@ -325,19 +363,17 @@ public class QuizDAO extends DBContext {
             } else {
                 st.setInt(3, chosenOptionId);
             }
-
             if (answerText == null) {
                 st.setNull(4, java.sql.Types.NVARCHAR);
             } else {
                 st.setNString(4, answerText);
             }
-            st.executeUpdate();
-
+            return st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
-    //
 
     //for grade
     public int markCorrectnessForMCQ(long attemptId) {
@@ -374,11 +410,11 @@ public class QuizDAO extends DBContext {
     }
 
     public int[] countCorrectAndTotal(long attemptId) {
-        String sql
-                = "SELECT "
-                + "  SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) AS correct_cnt, "
-                + "  COUNT(*) AS total_cnt "
-                + "FROM AttemptAnswer WHERE attempt_id = ?";
+        String sql = "SELECT SUM(CASE WHEN aa.is_correct = 1 THEN 1 ELSE 0 END) AS correct_cnt,"
+                + " COUNT(*) AS total_cnt "
+                + " FROM QuizAttemptQuestion aq LEFT JOIN "
+                + " AttemptAnswer aa ON aa.attempt_id = aq.attempt_id AND aa.question_id = aq.question_id "
+                + "WHERE aq.attempt_id = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setLong(1, attemptId);
@@ -404,6 +440,23 @@ public class QuizDAO extends DBContext {
             return st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();;
+            return -1;
+        }
+    }
+
+    public int markSubmittedTimeout(long attemptId, double scorePct) {
+        String sql = "UPDATE QuizAttempt "
+                + " SET status='submitted', score_pct=?, "
+                + " submitted_at = ISNULL(deadline_at, GETDATE()) "
+                + " WHERE attempt_id=? AND status='draft' "
+                + " AND deadline_at IS NOT NULL AND GETDATE() > deadline_at";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setDouble(1, scorePct);
+            st.setLong(2, attemptId);
+            return st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
             return -1;
         }
     }
@@ -439,6 +492,7 @@ public class QuizDAO extends DBContext {
         }
         return null;
     }
+//end tuanta
 
     public boolean updateQuiz(int quizId, String title, Integer attemptsAllowed, java.math.BigDecimal passingScorePct, Integer pickCount) {
         String sql = "UPDATE Quiz SET title = ?, attempts_allowed = ?, passing_score_pct = ?, pick_count = ? WHERE quiz_id = ?";
@@ -484,5 +538,4 @@ public class QuizDAO extends DBContext {
     }
 }
 //
-//end tuanta
 

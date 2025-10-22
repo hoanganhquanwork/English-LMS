@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import model.dto.CoursePageDTO;
 import model.dto.DiscussionDTO;
@@ -176,25 +178,60 @@ public class CoursePageControllerServlet extends HttpServlet {
                 QuizDTO quiz = quizService.getQuizById(quizId);
                 request.setAttribute("quiz", quiz);
 
+                boolean isGraded = (quiz != null && quiz.getPassingScorePct() != null);
                 QuizAttemptDTO lastAttempt = quizService.findLatestAttempt(quizId, studentId);
+                QuizAttemptDTO attempt = null;
+                String quizView;
                 if (lastAttempt == null) {
-                    request.setAttribute("quizView", "intro");
+                    quizView = "intro";
                 } else if ("draft".equalsIgnoreCase(lastAttempt.getStatus())) {
-                    QuizAttemptDTO draft = quizService.loadAttempt(lastAttempt.getAttemptId());
-                    request.setAttribute("attempt", draft);
-                    request.setAttribute("quizView", "doing");
+                    attempt = quizService.loadAttempt(lastAttempt.getAttemptId());
+                    //load nếu timeout thì status của attemp sẽ tự chuyển thành submit
+                    if (attempt != null && "submitted".equalsIgnoreCase(attempt.getStatus())) {
+                        quizView = "result";
+                    } else {
+                        quizView = "doing";
+                    }
 
-                } else if ("submitted".equalsIgnoreCase(lastAttempt.getStatus())) {
-                    request.setAttribute("attempt", lastAttempt);
-                    request.setAttribute("quizView", "result");
+                } else {
+                    //submited
+                    attempt = lastAttempt;
+                    quizView = "result";
                 }
+                request.setAttribute("attempt", attempt);
+                request.setAttribute("quizView", quizView);
 
                 Double bestScore = quizService.getBestScore(quizId, studentId);
                 request.setAttribute("bestScore", bestScore);
                 QuizAttemptDTO latestSubmitted = quizService.findLatestSubmittedAttempt(quizId, studentId);
-                request.setAttribute("latestSubmittedId", latestSubmitted.getAttemptId());
-                System.out.println(bestScore);
-                System.out.println(latestSubmitted.getAttemptId());
+                //dung cho quiz dang practice
+                request.setAttribute("latestSubmittedId",
+                        (latestSubmitted != null ? latestSubmitted.getAttemptId() : null));
+
+                //kiểm tra pass chưa cho quiz grade
+                Double passing = quiz.getPassingScorePct();
+                boolean hasPassed = isGraded && passing != null
+                        && bestScore != null
+                        && bestScore >= passing;
+
+                boolean cooldownActive = false;
+                if (isGraded && !hasPassed && latestSubmitted != null && latestSubmitted.getSubmittedAt() != null) {
+                    LocalDateTime submittedAt = latestSubmitted.getSubmittedAt();
+                    LocalDateTime retryAt = submittedAt.plusHours(1);
+                    LocalDateTime now = LocalDateTime.now();
+                    if (now.isBefore(retryAt)) {
+                        cooldownActive = true;
+                        DateTimeFormatter format = DateTimeFormatter.ofPattern(("HH:mm dd/MM/yyyy"));
+                        String retryAtDisplay = retryAt.format(format);
+                        request.setAttribute("retryAtDisplay", retryAtDisplay);
+                    }
+                }
+
+                boolean isLocked = isGraded && (hasPassed || cooldownActive);
+                request.setAttribute("isGraded", isGraded);
+                request.setAttribute("isLocked", isLocked);
+                request.setAttribute("hasPassed", hasPassed);
+                request.setAttribute("cooldownActive", cooldownActive);
 
             } else if ("discussion".equalsIgnoreCase(item.getItemType())) {
                 DiscussionDTO discussion = discussionService.getDiscussionByModuleItemId(item.getModuleItemId());
