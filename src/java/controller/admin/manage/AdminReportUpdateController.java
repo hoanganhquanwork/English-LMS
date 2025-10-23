@@ -36,6 +36,6 @@ public class AdminReportUpdateController extends HttpServlet {
             request.getSession().setAttribute("flash", "⚠️ Cập nhật thất bại, vui lòng thử lại!");
         }
 
-        response.sendRedirect(request.getContextPath() + "/admin/report-list");
+        response.sendRedirect(request.getContextPath() + "/admin/report-detail?id="+ reportId);
     }
 }

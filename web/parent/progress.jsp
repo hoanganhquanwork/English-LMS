@@ -173,43 +173,7 @@
                         </div>
                     </div>
 
-                    <div class="analytics-card">
-                        <h4>Điểm số theo kỹ năng</h4>
-                        <div class="skill-scores">
-                            <div class="skill-item">
-                                <span class="skill-name">Listening</span>
-                                <div class="skill-bar">
-                                    <div class="skill-fill" style="width: 85%"></div>
-                                </div>
-                                <span class="skill-score">8.5</span>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-name">Reading</span>
-                                <div class="skill-bar">
-                                    <div class="skill-fill" style="width: 90%"></div>
-                                </div>
-                                <span class="skill-score">9.0</span>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-name">Writing</span>
-                                <div class="skill-bar">
-                                    <div class="skill-fill" style="width: 75%"></div>
-                                </div>
-                                <span class="skill-score">7.5</span>
-                            </div>
-                            <div class="skill-item">
-                                <span class="skill-name">Speaking</span>
-                                <div class="skill-bar">
-                                    <div class="skill-fill" style="width: 80%"></div>
-                                </div>
-                                <span class="skill-score">8.0</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            </section>
-
-          
             </section>
         </main>
 
