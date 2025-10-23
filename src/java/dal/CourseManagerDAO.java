@@ -10,7 +10,7 @@ import model.entity.Users;
 
 public class CourseManagerDAO extends DBContext {
 
-    public List<Course> getFilteredCourses(String status, String keyword, String sort) {
+    public List<Course> getFilteredCourses(String status, String keyword, String sort, int categoryId) {
         List<Course> list = new ArrayList<>();
 
         String sql
@@ -34,7 +34,9 @@ public class CourseManagerDAO extends DBContext {
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (c.title LIKE ? OR u.full_name LIKE ?) ";
         }
-
+        if (categoryId > 0) {
+            sql += "AND c.category_id=? ";
+        }
         sql += "ORDER BY c.created_at " + ("oldest".equalsIgnoreCase(sort) ? "ASC " : "DESC ");
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -47,7 +49,9 @@ public class CourseManagerDAO extends DBContext {
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
             }
-
+            if (categoryId > 0) {
+                ps.setInt(idx++, categoryId);
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapCourseFromResultSet(rs));
@@ -60,7 +64,7 @@ public class CourseManagerDAO extends DBContext {
         return list;
     }
 
-    public List<Course> getFilteredCoursesForPublish(String status, String keyword, String sort) {
+    public List<Course> getFilteredCoursesForPublish(String status, String keyword, String sort, int categoryId) {
         List<Course> list = new ArrayList<>();
 
         String sql
@@ -84,6 +88,9 @@ public class CourseManagerDAO extends DBContext {
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (c.title LIKE ? OR u.full_name LIKE ?) ";
         }
+        if (categoryId > 0) {
+            sql += "AND c.category_id=? ";
+        }
 
         sql += "ORDER BY c.created_at " + ("oldest".equalsIgnoreCase(sort) ? "ASC " : "DESC ");
 
@@ -97,7 +104,9 @@ public class CourseManagerDAO extends DBContext {
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
             }
-
+            if (categoryId > 0) {
+                ps.setInt(idx++, categoryId);
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapCourseFromResultSet(rs));

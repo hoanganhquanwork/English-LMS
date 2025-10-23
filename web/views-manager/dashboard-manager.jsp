@@ -72,7 +72,7 @@
                             <table class="table">
                                 <thead><tr><th>Course</th><th>Instructor</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
                                 <tbody>
-                                    <c:forEach var="c" items="${approvedRejected}">
+                                    <c:forEach var="c" items="${approvedRejected}" varStatus="loop">
                                         <tr>
                                             <td>${c.title}</td>
                                             <td>${c.createdBy.user.fullName}</td>
@@ -131,7 +131,7 @@
                             <table class="table">
                                 <thead><tr><th>Course</th><th>Instructor</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
                                 <tbody>
-                                    <c:forEach var="c" items="${publishedUnpublished}">
+                                    <c:forEach var="c" items="${publishedUnpublished}" varStatus="loop">
                                         <tr>
                                             <td>${c.title}</td>
                                             <td>${c.createdBy.user.fullName}</td>

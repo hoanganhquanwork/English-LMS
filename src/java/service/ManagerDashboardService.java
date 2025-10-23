@@ -7,6 +7,7 @@ package service;
 import dal.CourseManagerDAO;
 import dal.RevenueDAO;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import model.dto.RevenueReportDTO;
 import model.entity.Course;
@@ -39,6 +40,9 @@ public class ManagerDashboardService {
 
     public List<RevenueReportDTO> getMonthlyRevenue(int year) {
         List<RevenueReportDTO> reports = rDao.getMonthlyReport(year);
+        if (reports == null) {
+            reports = new ArrayList<>();
+        }
         fillMissingMonths(reports, year);
         return reports;
     }
@@ -48,11 +52,11 @@ public class ManagerDashboardService {
     }
 
     public List<Course> getApprovedOrRejectedCourses() {
-        return cDao.getFilteredCourses(null, null, "newest");
+        return cDao.getFilteredCourses(null, null, "newest", 0);
     }
 
     public List<Course> getPublishedOrUnpublishedCourses() {
-        return cDao.getFilteredCoursesForPublish(null, null, "newest");
+        return cDao.getFilteredCoursesForPublish(null, null, "newest", 0);
     }
 
     private void fillMissingMonths(List<RevenueReportDTO> reports, int year) {

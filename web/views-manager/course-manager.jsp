@@ -26,7 +26,7 @@
                     <div class="alert alert-danger">${sessionScope.errorMessage}</div>
                     <c:remove var="errorMessage" scope="session"/>
                 </c:if>
-                    
+
                 <div class="filter-panel">
                     <form method="get" action="coursemanager" class="filter-form">
                         <div class="filter-grid">
@@ -52,6 +52,19 @@
                                     <option value="oldest" ${sort == 'oldest' ? 'selected' : ''}>Cũ nhất</option>
                                 </select>
                             </div>
+
+                            <div class="filter-group">
+                                <label for="category">Danh mục</label>
+                                <select name="categoryId" id="category">
+                                    <option value="0" ${categoryId == 0 ? 'selected' : ''}>Tất cả</option>
+                                    <c:forEach var="cat" items="${categoryList}">
+                                        <option value="${cat.categoryId}" ${categoryId == cat.categoryId ? 'selected' : ''}>
+                                            ${cat.name}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
 
                             <div class="filter-actions">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Lọc</button>
@@ -98,7 +111,7 @@
                                         </div>
                                     </div>
                                 </td>
-
+                                
                                 <td>
                                     <div class="teacher-info">
                                         <img src="${course.createdBy.user.profilePicture != null ? course.createdBy.user.profilePicture : '/views-manager/icon/default.png'}" class="avatar">

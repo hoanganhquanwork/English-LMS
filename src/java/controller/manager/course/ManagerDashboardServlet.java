@@ -73,7 +73,7 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     Users manager = (Users) (session != null ? session.getAttribute("user") : null);
 
     if (manager == null || !"Manager".equalsIgnoreCase(manager.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/login");
+        response.sendRedirect(request.getContextPath() + "/loginIternal");
         return;
     }
 

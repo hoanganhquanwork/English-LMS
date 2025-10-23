@@ -17,7 +17,7 @@ public class CourseManagerService {
         this.dao = new CourseManagerDAO();
     }
 
-    public List<Course> getFilteredCourses(String status, String keyword, String sort) {
+    public List<Course> getFilteredCourses(String status, String keyword, String sort, String categoryIdString) {
         if (status == null || status.isEmpty()) {
             status = "all";
         }
@@ -27,8 +27,16 @@ public class CourseManagerService {
         if (keyword == null) {
             keyword = "";
         }
+        int categoryId = 0;
+        try {
+            if (categoryIdString != null && !categoryIdString.isEmpty()) {
+                categoryId = Integer.parseInt(categoryIdString);
+            }
+        } catch (Exception e) {
+            categoryId = 0;
+        }
 
-        return dao.getFilteredCourses(status, keyword, sort);
+        return dao.getFilteredCourses(status, keyword, sort, categoryId);
     }
 
     public String handleManagerAction(String action, String[] courseIds, String reason,
@@ -54,7 +62,7 @@ public class CourseManagerService {
         }
     }
 
-    public List<Course> getFilterPublishCourse(String status, String keyword, String sort) {
+    public List<Course> getFilterPublishCourse(String status, String keyword, String sort, String categoryIdString) {
         if (status == null || status.isEmpty()) {
             status = "all";
         }
@@ -64,7 +72,15 @@ public class CourseManagerService {
         if (keyword == null) {
             keyword = "";
         }
-        return dao.getFilteredCoursesForPublish(status, keyword, sort);
+        int categoryId = 0;
+        try {
+            if (categoryIdString != null && !categoryIdString.isEmpty()) {
+                categoryId = Integer.parseInt(categoryIdString);
+            }
+        } catch (Exception e) {
+            categoryId = 0;
+        }
+        return dao.getFilteredCoursesForPublish(status, keyword, sort, categoryId);
     }
 
     public String handlePublishAction(String action, String[] courseIds, String dateStr) {
@@ -334,8 +350,8 @@ public class CourseManagerService {
 
         return null;
     }
-    
-     public String performAction(String action, int courseId, String reason, BigDecimal price, LocalDateTime publishDate, int managerId) {
+
+    public String performAction(String action, int courseId, String reason, BigDecimal price, LocalDateTime publishDate, int managerId) {
         String validation = validateManagerAction(action, courseId, reason, price, publishDate);
         if (validation != null) {
             return validation;

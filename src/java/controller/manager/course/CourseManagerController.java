@@ -15,12 +15,15 @@ import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import model.entity.Category;
 import model.entity.Users;
+import service.CategoryService;
 
 @WebServlet(name = "CourseManagerServlet", urlPatterns = {"/coursemanager"})
 public class CourseManagerController extends HttpServlet {
 
     private final CourseManagerService courseService = new CourseManagerService();
+    private final CategoryService caService = new CategoryService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,18 +32,30 @@ public class CourseManagerController extends HttpServlet {
         String status = request.getParameter("status");
         String keyword = request.getParameter("keyword");
         String sort = request.getParameter("sort");
-
+        String categoryParam = request.getParameter("categoryId");
         if (status == null) {
             status = "all";
-        }
-        if (sort == null) {
-            sort = "newest";
         }
         if (keyword == null) {
             keyword = "";
         }
+        if (sort == null) {
+            sort = "newest";
+        }
+        if (categoryParam == null) {
+            categoryParam = "0";
+        }
 
-        List<Course> courseList = courseService.getFilteredCourses(status, keyword, sort);
+        int categoryId = 0;
+        try {
+            if (categoryParam != null && !categoryParam.isEmpty()) {
+                categoryId = Integer.parseInt(categoryParam);
+            }
+        } catch (NumberFormatException e) {
+            categoryId = 0;
+        }
+
+        List<Course> courseList = courseService.getFilteredCourses(status, keyword, sort, categoryParam);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -62,13 +77,16 @@ public class CourseManagerController extends HttpServlet {
             request.setAttribute("errorMessage", "Không tìm thấy khóa học nào khớp với từ khóa: " + keyword);
         }
 
+        List<Category> cate = caService.getAllCategories();
+
         request.setAttribute("courseList", courseList);
         request.setAttribute("createdDateList", createdDateList);
         request.setAttribute("createdTimeList", createdTimeList);
         request.setAttribute("status", status);
         request.setAttribute("keyword", keyword);
         request.setAttribute("sort", sort);
-
+        request.setAttribute("categoryId", categoryId);
+        request.setAttribute("categoryList", cate);
         request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
     }
 

@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import model.entity.Category;
 import model.entity.Course;
+import service.CategoryService;
 import service.CourseManagerService;
 
 /**
@@ -27,6 +29,7 @@ import service.CourseManagerService;
 public class CoursePublishController extends HttpServlet {
 
     private CourseManagerService courseService = new CourseManagerService();
+    private final CategoryService caService = new CategoryService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -72,7 +75,7 @@ public class CoursePublishController extends HttpServlet {
         String status = request.getParameter("status");
         String keyword = request.getParameter("keyword");
         String sort = request.getParameter("sort");
-
+        String categoryParam = request.getParameter("categoryId");
         if (status == null) {
             status = "all";
         }
@@ -80,8 +83,20 @@ public class CoursePublishController extends HttpServlet {
             sort = "newest";
         }
 
-        List<Course> courseList = courseService.getFilterPublishCourse(status, keyword, sort);
+        if (categoryParam == null) {
+            categoryParam = "0";
+        }
+        int categoryId = 0;
+        try {
+            if (categoryParam != null && !categoryParam.isEmpty()) {
+                categoryId = Integer.parseInt(categoryParam);
+            }
+        } catch (NumberFormatException e) {
+            categoryId = 0;
+        }
 
+        List<Course> courseList = courseService.getFilterPublishCourse(status, keyword, sort, categoryParam);
+        List<Category> cate = caService.getAllCategories();
         DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter tf = DateTimeFormatter.ofPattern("HH:mm");
         List<String> createdDateList = new ArrayList<>();
@@ -103,6 +118,8 @@ public class CoursePublishController extends HttpServlet {
         request.setAttribute("status", status);
         request.setAttribute("keyword", keyword);
         request.setAttribute("sort", sort);
+        request.setAttribute("categoryId", categoryId);
+        request.setAttribute("categoryList", cate);
         request.setAttribute("message", request.getSession().getAttribute("message"));
         request.setAttribute("errorMessage", request.getSession().getAttribute("errorMessage"));
         request.getSession().removeAttribute("message");
