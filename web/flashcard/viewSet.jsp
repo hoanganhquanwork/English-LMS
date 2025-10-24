@@ -7,10 +7,11 @@
         <a href="dashboard?action=listSets" class="nav-btn">⌂</a>
     </div>
     <title>View Flashcard Set</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard-styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard-styles.css?v=22">
 </head>
 <body>
     <div class="container">
+
 
         <!-- Set header -->
         <div class="create-content">
@@ -18,13 +19,21 @@
                 <h1 class="create-title">${set.title}</h1>
                 <p class="create-subtitle">${set.description}</p>
             </div>
-
+            <c:if test="${not empty error}">
+                <div class="error-box">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    ${error}
+                </div>
+            </c:if>
             <div class="set-actionsset">
                 <c:if test="${set.studentId == sessionScope.user.userId}">
                     <a href="set?action=editSetForm&setId=${set.setId}" class="create-btn">Edit</a>
                     <a href="set?action=deleteSet&setId=${set.setId}" class="add-card-btn"
                        onclick="return confirm('Delete this set?')">Delete</a>
                 </c:if>
+                <a href="flashcard-study?setId=${set.setId}" class="study-btn">
+                    <i class="fa fa-play"></i> Học Flashcard
+                </a>
             </div>
 
         </div>

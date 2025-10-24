@@ -828,3 +828,87 @@ body {
         margin-right: 0;
     }
 }
+
+.error-box {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin: 20px auto;
+    text-align: center;
+    font-weight: 500;
+    max-width: 800px;
+}
+.study-btn {
+    background: #10b981;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 10px;
+    transition: 0.2s;
+}
+.study-btn:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+/* === Khối chứa các nút hành động === */
+.set-actionsset {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 25px 0;
+}
+
+/* === Style chung cho tất cả nút === */
+.set-actionsset a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+
+/* ✏️ Nút Edit */
+.set-actionsset .create-btn {
+    background: #4f46e5;       /* tím đậm */
+    color: #fff;
+}
+.set-actionsset .create-btn:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+}
+
+/* 🗑️ Nút Delete */
+.set-actionsset .add-card-btn {
+    background: #ef4444;       /* đỏ tươi */
+    color: #fff;
+}
+.set-actionsset .add-card-btn:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+/* ▶️ Nút Học Flashcard */
+.set-actionsset .study-btn {
+    background: #10b981;       /* xanh ngọc */
+    color: #fff;
+}
+.set-actionsset .study-btn:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+/* Tinh chỉnh icon */
+.set-actionsset a i {
+    font-size: 0.9rem;
+}
