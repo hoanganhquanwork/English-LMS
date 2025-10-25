@@ -14,11 +14,6 @@
         </a>
 
         <div class="header-actions">
-            <a href="notifications.html" class="notification-bell">
-                <span class="bell-icon">🔔</span>
-                <span class="notification-badge">2</span>
-            </a>
-
             <div class="user-dropdown">
                 <button class="avatar-btn" onclick="toggleUserDropdown()">
                     <img src="${pageContext.request.contextPath}/${sessionScope.user.profilePicture == null ? 'image/avatar/avatar_0.png' :sessionScope.user.profilePicture}" 
@@ -42,7 +37,7 @@
                class="<%= "dashboard".equals(currentPage) ? "active" : "" %>">Dashboard</a>
             <a href="${pageContext.request.contextPath}/parentlinkstudent"
                class="<%= "children".equals(currentPage) ? "active" : "" %>">Quản lý con</a>
-            <a href="${pageContext.request.contextPath}/parent/progress.jsp"
+            <a href="${pageContext.request.contextPath}/parent/progress"
                class="<%= "progress".equals(currentPage) ? "active" : "" %>">Tiến độ học tập</a>
             <a href="${pageContext.request.contextPath}/parent/approvals"
                class="<%= "approvals".equals(currentPage) ? "active" : "" %>">Phê duyệt</a>

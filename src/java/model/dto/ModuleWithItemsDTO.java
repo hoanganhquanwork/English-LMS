@@ -18,6 +18,8 @@ public class ModuleWithItemsDTO {
     private String description;
     private int orderIndex;
     private List<ModuleItemViewDTO> items;
+    private double progressPct;
+    private Double avgScorePct;
 
     public int getModuleId() {
         return moduleId;
@@ -65,6 +67,22 @@ public class ModuleWithItemsDTO {
 
     public void setItems(List<ModuleItemViewDTO> items) {
         this.items = items;
+    }
+
+    public double getProgressPct() {
+        return progressPct;
+    }
+
+    public void setProgressPct(double progressPct) {
+        this.progressPct = progressPct;
+    }
+
+    public Double getAvgScorePct() {
+        return avgScorePct;
+    }
+
+    public void setAvgScorePct(Double avgScorePct) {
+        this.avgScorePct = avgScorePct;
     }
 
 }

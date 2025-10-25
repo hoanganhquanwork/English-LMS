@@ -1,8 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="java.text.DecimalFormat" %>
+<%
+    DecimalFormat df1 = new DecimalFormat("0");
+    request.setAttribute("df1", df1);
+%>
 
 <%
-    // Đặt currentPage để làm nổi bật menu "Tiến độ học tập"
     request.setAttribute("currentPage", "progress");
 %>
 
@@ -12,7 +17,10 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Tiến độ học tập | LinguaTrack</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
+       
     </head>
     <body>
         <%@ include file="parent_header.jsp" %>
@@ -23,164 +31,138 @@
                 <p class="lead">Theo dõi chi tiết quá trình học tập và thành tích của con em.</p>
             </div>
 
-            <!-- Child Selector -->
             <div class="child-selector">
-                <label>Chọn con để xem tiến độ:</label>
-                <select id="childSelect" class="input" onchange="switchChild()">
-                    <option value="an">Nguyễn Văn An (12 tuổi)</option>
-                    <option value="ly">Nguyễn Thị Ly (15 tuổi)</option>
-                    <option value="bao">Nguyễn Văn Bảo (10 tuổi)</option>
+                <label class="form-label">Chọn con để xem tiến độ:</label>
+                <select id="childSelect" class="form-select w-auto" onchange="location = this.value;">
+                    <c:forEach var="ch" items="${children}">
+                        <option value="${pageContext.request.contextPath}/parent/progress?studentId=${ch.userId}"
+                                <c:if test="${ch.userId == selectedStudentId}">selected</c:if>>
+                            ${ch.fullName}
+                        </option>
+                    </c:forEach>
                 </select>
             </div>
 
-            <!-- Progress Overview -->
             <div class="progress-overview">
                 <div class="overview-card">
                     <div class="card-icon">📚</div>
                     <div class="card-content">
-                        <h3>3</h3>
+                        <h3>${overview.activeCourses}</h3>
                         <p>Khóa học đang học</p>
-                    </div>
-                </div>
-                <div class="overview-card">
-                    <div class="card-icon">⏱️</div>
-                    <div class="card-content">
-                        <h3>24h</h3>
-                        <p>Tổng thời gian học</p>
                     </div>
                 </div>
                 <div class="overview-card">
                     <div class="card-icon">🎯</div>
                     <div class="card-content">
-                        <h3>85%</h3>
+                        <h3>${overview.avgProgress}%</h3>
                         <p>Tiến độ trung bình</p>
                     </div>
                 </div>
                 <div class="overview-card">
                     <div class="card-icon">🏆</div>
                     <div class="card-content">
-                        <h3>2</h3>
-                        <p>Chứng chỉ đã đạt</p>
+                        <h3>${overview.completedCourses}</h3>
+                        <p>Khóa học đã hoàn thành</p>
                     </div>
                 </div>
+                
             </div>
 
-            <!-- Course Progress -->
-            <section class="progress-section">
+            <!-- Danh sách tiến độ khóa học -->
+            <section class="progress-section mb-5">
                 <h3>Tiến độ từng khóa học</h3>
 
-                <div class="course-progress-list">
-                    <div class="course-progress-item">
-                        <div class="course-header">
-                            <div class="course-info">
-                                <h4>IELTS 6.5+ Intensive</h4>
-                                <p class="course-meta">Bắt đầu: 15/01/2025 • Giáo viên: Ms. Sarah Johnson</p>
-                            </div>
-                            <span class="status-badge pending">Đang học</span>
-                        </div>
+                <c:choose>
+                    <c:when test="${empty courses}">
+                        <div class="alert alert-info mt-3">Học sinh chưa tham gia khóa học nào.</div>
+                    </c:when>
 
-                        <div class="progress-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Tiến độ tổng</span>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 75%"></div>
+                    <c:otherwise>
+                        <div class="course-progress-list">
+                            <c:forEach var="c" items="${courses}">
+                                <div class="course-progress-item mb-4">
+                                    <div class="course-header">
+                                        <div class="course-info">
+                                            <h4>${c.courseTitle}</h4>
+                                        </div>
+                                        <span class="status-badge ${c.progressPctRequired >= 100 ? 'active' : 'pending'}">
+                                            ${c.progressPctRequired >= 100 ? 'Hoàn thành' : 'Đang học'}
+                                        </span>
+                                    </div>
+
+                                    <div class="row align-items-center mt-3" style ="padding-left: 15px;">
+                                        <!-- Thanh tiến độ -->
+                                        <div class="col-md-6">
+                                            <div class="progress-bar" style="background: ghostwhite">
+                                                <div class="progress-fill" data-width="${c.progressPctRequired}"></div>
+                                            </div>
+                                            <div class="progress-text mt-1">
+                                                <span>${df1.format(c.progressPctRequired)}% hoàn thành</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Số lượng bài -->
+                                        <div class="col-md-2 stat-item">
+                                            <span class="stat-label">Hoàn thành:</span>
+                                            <span class="stat-value">${c.completedItems}/${c.totalItems}</span>
+                                        </div>
+
+                                        <div class="col-md-2 stat-item">
+                                            <span class="stat-label">Bắt buộc:</span>
+                                            <span class="stat-value">${c.requiredCompleted}/${c.requiredItems}</span>
+                                        </div>
+
+                                        <div class="col-md-2 stat-item">
+                                            <span class="stat-label">📊 Điểm TB:</span>
+                                            <span class="stat-value">
+                                                <c:choose>
+                                                    <c:when test="${c.avgScorePct != null}">
+                                                        <c:choose>
+                                                            <c:when test="${c.avgScorePct >= 80}">
+                                                                <span style="color: #28a745;">${df1.format(c.avgScorePct)}%</span>
+                                                            </c:when>
+                                                            <c:when test="${c.avgScorePct >= 60}">
+                                                                <span style="color: #ffc107;">${df1.format(c.avgScorePct)}%</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span style="color: #dc3545;">${df1.format(c.avgScorePct)}%</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span style="color: #6c757d;">Chưa có điểm</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-end mt-3">
+                                        <a href="${pageContext.request.contextPath}/parent/progress_detail?courseId=${c.courseId}&studentId=${selectedStudentId}" 
+                                           class="btn btn-sm btn-outline-primary" style="border-radius: 15px;">
+                                            <i class="bi bi-eye"></i> Xem chi tiết
+                                        </a>
+                                    </div>
                                 </div>
-                                <span class="stat-value">75%</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Bài học hoàn thành</span>
-                                <span class="stat-value">12/16</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Quiz đã làm</span>
-                                <span class="stat-value">8/12</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Điểm trung bình</span>
-                                <span class="stat-value">8.5/10</span>
-                            </div>
+                            </c:forEach>
                         </div>
-
-                        <div class="recent-activities">
-                            <h5>Hoạt động gần đây</h5>
-                            <div class="activity-list">
-                                <div class="activity-item">
-                                    <span class="activity-time">2h trước</span>
-                                    <span class="activity-desc">Hoàn thành bài học "Speaking Part 2"</span>
-                                    <span class="activity-score">9/10</span>
-                                </div>
-                                <div class="activity-item">
-                                    <span class="activity-time">1 ngày trước</span>
-                                    <span class="activity-desc">Làm quiz "Grammar Review"</span>
-                                    <span class="activity-score">8/10</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="course-progress-item">
-                        <div class="course-header">
-                            <div class="course-info">
-                                <h4>Tiếng Anh cơ bản A1-A2</h4>
-                                <p class="course-meta">Bắt đầu: 10/12/2024 • Giáo viên: Ms. Linda Smith</p>
-                            </div>
-                            <span class="status-badge active">Hoàn thành</span>
-                        </div>
-
-                        <div class="progress-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Tiến độ tổng</span>
-                                <div class="progress-bar">
-                                    <div class="progress-fill completed" style="width: 100%"></div>
-                                </div>
-                                <span class="stat-value">100%</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Điểm cuối khóa</span>
-                                <span class="stat-value">9.2/10</span>
-                            </div>
-
-                            <div class="stat-item">
-                                <span class="stat-label">Chứng chỉ</span>
-                                <span class="stat-value">✓ Đã nhận</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Learning Analytics -->
-            <section class="analytics-section">
-                <h3>Phân tích học tập</h3>
-
-                <div class="analytics-grid">
-                    <div class="analytics-card">
-                        <h4>Thời gian học theo tuần</h4>
-                        <div class="chart-placeholder">
-                            <div class="chart-bars">
-                                <div class="chart-bar" style="height: 60%"><span>T2</span></div>
-                                <div class="chart-bar" style="height: 80%"><span>T3</span></div>
-                                <div class="chart-bar" style="height: 40%"><span>T4</span></div>
-                                <div class="chart-bar" style="height: 90%"><span>T5</span></div>
-                                <div class="chart-bar" style="height: 70%"><span>T6</span></div>
-                                <div class="chart-bar" style="height: 30%"><span>T7</span></div>
-                                <div class="chart-bar" style="height: 20%"><span>CN</span></div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+                    </c:otherwise>
+                </c:choose>
             </section>
         </main>
 
         <jsp:include page="/footer.jsp" />
-
-       
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const progressFills = document.querySelectorAll('.progress-fill');
+                progressFills.forEach(function(fill) {
+                    const width = fill.getAttribute('data-width');
+                    if (width) {
+                        fill.style.width = width + '%';
+                    }
+                });
+            });
+        </script>
     </body>
-    </html>
-
-
+</html>

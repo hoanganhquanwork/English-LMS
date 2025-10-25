@@ -53,8 +53,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Ngày sinh</label>
-                                    <input type="date" class="form-control" name="date_of_birth" 
-                                           value="${user.dateOfBirth}"/>
+                                    <input type="text" class="form-control" value="${user.dateOfBirth}" name="date_of_birth"/>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Giới tính</label>
