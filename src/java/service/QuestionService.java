@@ -11,12 +11,14 @@ import java.util.Map;
 import model.entity.Question;
 import model.entity.QuestionOption;
 import model.dto.QuestionDTO;
+import model.entity.QuestionTextKey;
 
 /**
  *
  * @author Lenovo
  */
 public class QuestionService {
+
     private QuestionDAO questionDAO = new QuestionDAO();
 
     public boolean addQuestionWithOptions(Question question, List<QuestionOption> options) {
@@ -35,7 +37,23 @@ public class QuestionService {
             return false;
         }
     }
-     public Map<Question, List<QuestionOption>> getLessonQuestionsMap(int lessonId) {
+    
+    public boolean addQuestionWithTextKey(Question question, QuestionTextKey textKey) {
+        try {
+            int questionId = questionDAO.insertQuestion(question);
+            if (questionId != -1 && textKey != null) {
+                textKey.setQuestionId(questionId);
+                questionDAO.insertTextAnswer(textKey);
+            }
+            return true;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi thêm câu hỏi dạng text: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public Map<Question, List<QuestionOption>> getLessonQuestionsMap(int lessonId) {
         Map<Question, List<QuestionOption>> result = new LinkedHashMap<>();
         try {
             List<Question> questions = questionDAO.getQuestionsByLesson(lessonId);
@@ -48,7 +66,8 @@ public class QuestionService {
         }
         return result;
     }
-        public boolean deleteQuestion(int questionId) {
+
+    public boolean deleteQuestion(int questionId) {
         try {
             return questionDAO.deleteQuestion(questionId);
         } catch (Exception e) {
@@ -56,8 +75,22 @@ public class QuestionService {
             return false;
         }
     }
-        
-           public boolean updateQuestionWithOptions(Question question, List<QuestionOption> options) {
+     public List<Question> getDraftQuestionsByInstructor(int instructorId) {
+        return questionDAO.getDraftQuestionsByInstructor(instructorId);
+    }
+//
+//    public Map<Question, List<QuestionOption>> getQuestionsWithOptionsByModule(int moduleId) {
+//        Map<Question, List<QuestionOption>> map = new LinkedHashMap<>();
+//        List<Question> questions = questionDAO.getQuestionsByModule(moduleId);
+//
+//        for (Question q : questions) {
+//            List<QuestionOption> opts = questionDAO.getOptionsByQuestion(q.getQuestionId());
+//            map.put(q, opts);
+//        }
+//        return map;
+//    }
+
+    public boolean updateQuestionWithOptions(Question question, List<QuestionOption> options) {
         try {
             return questionDAO.updateQuestionWithOptions(question, options);
         } catch (Exception e) {
@@ -65,9 +98,6 @@ public class QuestionService {
             return false;
         }
     }
-
-
-
 
     public List<QuestionDTO> getQuestionByLessonId(int lessonId) {
         if (lessonId <= 0) {
@@ -82,14 +112,27 @@ public class QuestionService {
         }
         return questionDAO.isCorrectOption(questionId, optionId);
     }
-    
-    public boolean isCorrectTextAnswer(int questionId, String answer){
+
+    public boolean isCorrectTextAnswer(int questionId, String answer) {
         if (questionId <= 0 || answer.isBlank()) {
             throw new IllegalArgumentException("Tham số không hợp lệ");
         }
         return questionDAO.isCorrectTextAnswer(questionId, answer);
     }
-    
-    
+
+    // Get all questions by instructor
+//    public List<Question> getQuestionsByInstructor(int instructorId) {
+//        return questionDAO.getQuestionsByInstructor(instructorId);
+//    }
+//
+//    // Get questions by instructor and topic
+//    public List<Question> getQuestionsByInstructorAndTopic(int instructorId, int topicId) {
+//        return questionDAO.getQuestionsByInstructorAndTopic(instructorId, topicId);
+//    }
+//
+//    // Get draft questions by instructor
+//    public List<Question> getDraftQuestionsByInstructor(int instructorId) {
+//        return questionDAO.getDraftQuestionsByInstructor(instructorId);
+//    }
 
 }

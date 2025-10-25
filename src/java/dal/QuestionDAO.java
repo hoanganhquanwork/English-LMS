@@ -5,6 +5,8 @@
 package dal;
 
 import model.entity.Question;
+import model.entity.Topic;
+import model.entity.InstructorProfile;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import model.dto.QuestionDTO;
 import model.dto.QuestionOptionDTO;
 import model.dto.QuestionTextKeyDTO;
 import model.entity.QuestionOption;
+import model.entity.QuestionTextKey;
 
 /**
  *
@@ -20,18 +23,26 @@ import model.entity.QuestionOption;
 public class QuestionDAO extends DBContext {
 
     public int insertQuestion(Question q) {
-        String sql = "INSERT INTO Question (module_id, lesson_id, content, type, explanation) "
-                + "OUTPUT INSERTED.question_id VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Question (lesson_id, content, media_url, type, explanation, status, topic_id, created_by) "
+                + "OUTPUT INSERTED.question_id VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, q.getModuleId());
             if (q.getLessonId() != null) {
-                ps.setInt(2, q.getLessonId());
+                ps.setInt(1, q.getLessonId());
             } else {
-                ps.setNull(2, Types.INTEGER);
+                ps.setNull(1, Types.INTEGER);
             }
-            ps.setString(3, q.getContent());
+            ps.setString(2, q.getContent());
+            ps.setString(3, q.getMediaUrl());
             ps.setString(4, q.getType());
             ps.setString(5, q.getExplanation());
+            ps.setString(6, q.getStatus());
+            if (q.getTopicId() != null) {
+                ps.setInt(7, q.getTopicId());
+            } else {
+                ps.setNull(7, Types.INTEGER);
+            }
+             ps.setInt(8, q.getCreatedBy().getUser().getUserId()); 
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -54,28 +65,38 @@ public class QuestionDAO extends DBContext {
         }
     }
 
-    public List<Question> getQuestionsByModule(int moduleId) {
-        List<Question> list = new ArrayList<>();
-        String sql = "SELECT * FROM Question WHERE module_id = ?";
+    public void insertTextAnswer(QuestionTextKey key) {
+        String sql = "INSERT INTO QuestionTextKey (question_id, answer_text) VALUES (?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, moduleId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Question q = new Question();
-                q.setQuestionId(rs.getInt("question_id"));
-                q.setModuleId(rs.getInt("module_id"));
-                q.setLessonId(rs.getObject("lesson_id") != null ? rs.getInt("lesson_id") : null);
-                q.setContent(rs.getString("content"));
-                q.setType(rs.getString("type"));
-                q.setExplanation(rs.getString("explanation"));
-                list.add(q);
-            }
+            ps.setInt(1, key.getQuestionId());
+            ps.setString(2, key.getAnswerText());
+            ps.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy danh sách câu hỏi theo module: " + e.getMessage());
+            System.err.println(" Lỗi khi thêm đáp án text: " + e.getMessage());
         }
-        return list;
     }
 
+//    public List<Question> getQuestionsByModule(int moduleId) {
+//        List<Question> list = new ArrayList<>();
+//        String sql = "SELECT * FROM Question WHERE module_id = ?";
+//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+//            ps.setInt(1, moduleId);
+//            ResultSet rs = ps.executeQuery();
+//            while (rs.next()) {
+//                Question q = new Question();
+//                q.setQuestionId(rs.getInt("question_id"));
+//                q.setModuleId(rs.getInt("module_id"));
+//                q.setLessonId(rs.getObject("lesson_id") != null ? rs.getInt("lesson_id") : null);
+//                q.setContent(rs.getString("content"));
+//                q.setType(rs.getString("type"));
+//                q.setExplanation(rs.getString("explanation"));
+//                list.add(q);
+//            }
+//        } catch (SQLException e) {
+//            System.err.println("Lỗi khi lấy danh sách câu hỏi theo module: " + e.getMessage());
+//        }
+//        return list;
+//    }
     public List<QuestionOption> getOptionsByQuestion(int questionId) {
         List<QuestionOption> list = new ArrayList<>();
         String sql = "SELECT * FROM QuestionOption WHERE question_id = ?";
@@ -106,7 +127,6 @@ public class QuestionDAO extends DBContext {
             while (rs.next()) {
                 Question q = new Question();
                 q.setQuestionId(rs.getInt("question_id"));
-                q.setModuleId(rs.getInt("module_id"));
                 q.setLessonId(rs.getObject("lesson_id") != null ? rs.getInt("lesson_id") : null);
                 q.setContent(rs.getString("content"));
                 q.setType(rs.getString("type"));
@@ -371,6 +391,28 @@ public class QuestionDAO extends DBContext {
 
     private String normalize(String s) {
         return (s == null) ? "" : s.trim().toLowerCase();
+    }
+    
+     public List<Question> getDraftQuestionsByInstructor(int instructorId) {
+        List<Question> list = new ArrayList<>();
+        String sql = "SELECT * FROM Question WHERE status = 'draft' AND created_by = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, instructorId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Question q = new Question();
+                q.setQuestionId(rs.getInt("question_id"));
+                q.setContent(rs.getString("content"));
+                q.setType(rs.getString("type"));
+                q.setExplanation(rs.getString("explanation"));
+                q.setTopicId(rs.getObject("topic_id") != null ? rs.getInt("topic_id") : null);
+                q.setStatus(rs.getString("status"));
+                list.add(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 }

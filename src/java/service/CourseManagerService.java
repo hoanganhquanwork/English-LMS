@@ -125,4 +125,7 @@ public class CourseManagerService {
     public void autoPublishIfDue() {
         dao.autoPublishIfDue();
     }
+      public String getRejectionReason(int courseId) {
+        return dao.getRejectReasonByCourseId(courseId);
+    }
 }

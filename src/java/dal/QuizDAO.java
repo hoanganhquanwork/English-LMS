@@ -24,37 +24,62 @@ public class QuizDAO extends DBContext {
 
     private QuestionDAO questionDAO = new QuestionDAO();
 
-    //anth
-    public boolean insertQuiz(Quiz quiz) throws SQLException {
-        String sql = "INSERT INTO Quiz (quiz_id, title, attempts_allowed, passing_score_pct, pick_count) VALUES (?, ?, ?, ?, ?)";
+    public boolean insertQuiz(Quiz quiz) {
+        String sql = "INSERT INTO Quiz (quiz_id, title, attempts_allowed, passing_score_pct, pick_count) "
+                + "VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, quiz.getQuizId());
             ps.setString(2, quiz.getTitle());
-            if (quiz.getAttemptsAllowed() != null) ps.setInt(3, quiz.getAttemptsAllowed());
-            else ps.setNull(3, Types.INTEGER);
-            if (quiz.getPassingScorePct() != null) ps.setBigDecimal(4, quiz.getPassingScorePct());
-            else ps.setNull(4, Types.DECIMAL);
-            if (quiz.getPickCount() != null) ps.setInt(5, quiz.getPickCount());
-            else ps.setNull(5, Types.INTEGER);
+
+            // attempts_allowed
+            if (quiz.getAttemptsAllowed() != null) {
+                ps.setInt(3, quiz.getAttemptsAllowed());
+            } else {
+                ps.setNull(3, Types.INTEGER);
+            }
+
+            // passing_score_pct
+            if (quiz.getPassingScorePct() != null) {
+                ps.setDouble(4, quiz.getPassingScorePct());
+            } else {
+                ps.setNull(4, Types.DECIMAL);
+            }
+
+            // pick_count
+            if (quiz.getPickCount() != null) {
+                ps.setInt(5, quiz.getPickCount());
+            } else {
+                ps.setNull(5, Types.INTEGER);
+            }
+
             return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
-    public List<Integer> getQuestionIdsByModules(List<Integer> moduleIds) throws SQLException {
-        if (moduleIds.isEmpty()) return Collections.emptyList();
-        String inClause = String.join(",", moduleIds.stream().map(String::valueOf).toArray(String[]::new));
-        String sql = "SELECT question_id FROM Question WHERE module_id IN (" + inClause + ")";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            List<Integer> list = new ArrayList<>();
-            while (rs.next()) list.add(rs.getInt("question_id"));
-            return list;
+    public Quiz getQuiz(int quizId) {
+        String sql = "SELECT * FROM Quiz WHERE quiz_id = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setInt(1, quizId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                Quiz q = new Quiz();
+                q.setQuizId(rs.getInt("quiz_id"));
+                q.setTitle(rs.getString("title"));
+                q.setAttemptsAllowed((Integer) rs.getObject("attempts_allowed"));
+                q.setPassingScorePct(rs.getObject("passing_score_pct") == null ? null : rs.getDouble("passing_score_pct"));
+                q.setPickCount((Integer) rs.getObject("pick_count"));
+                return q;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     //
-
-
     //tuanta
     public QuizDTO getQuizById(int quizId) {
         String sql = "SELECT q.quiz_id, q.title, q.attempts_allowed, q.passing_score_pct, q.pick_count, mi.module_id "
@@ -414,7 +439,50 @@ public class QuizDAO extends DBContext {
         }
         return null;
     }
+
+    public boolean updateQuiz(int quizId, String title, Integer attemptsAllowed, java.math.BigDecimal passingScorePct, Integer pickCount) {
+        String sql = "UPDATE Quiz SET title = ?, attempts_allowed = ?, passing_score_pct = ?, pick_count = ? WHERE quiz_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, title);
+
+            if (attemptsAllowed != null) {
+                ps.setInt(2, attemptsAllowed);
+            } else {
+                ps.setNull(2, Types.INTEGER);
+            }
+
+            if (passingScorePct != null) {
+                ps.setBigDecimal(3, passingScorePct);
+            } else {
+                ps.setNull(3, Types.DECIMAL);
+            }
+
+            if (pickCount != null) {
+                ps.setInt(4, pickCount);
+            } else {
+                ps.setNull(4, Types.INTEGER);
+            }
+
+            ps.setInt(5, quizId);
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteQuiz(int quizId) {
+        String sql = "DELETE FROM Quiz WHERE quiz_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, quizId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
-    //
-    //end tuanta
+//
+//end tuanta
 

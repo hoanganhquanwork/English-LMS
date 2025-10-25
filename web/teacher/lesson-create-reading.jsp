@@ -22,20 +22,21 @@
                     statusbar: false,
                     height: 400,
                     menubar: false,
-                    plugins: 'lists link image media table code',
+                    plugins: 'lists link image media table code fontsize',
                     toolbar:
-                            'undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | code',
+                            'undo redo | bold italic underline | fontsize | alignleft aligncenter alignright | bullist numlist | link image media table | code',
+                    fontsize_formats: '8pt 10pt 12pt 14pt 16pt 18pt 20pt 24pt 28pt 32pt 36pt',
                     content_style: `
-                body {
-                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                  font-size: 15px;
-                  line-height: 1.6;
-                  color: #2c3e50;
-                  background-color: #fafafa;
-                  padding: 16px;
-                  border-radius: 8px;
-                }
-            `,
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              font-size: 15px;
+              line-height: 1.6;
+              color: #2c3e50;
+              background-color: #fafafa;
+              padding: 16px;
+              border-radius: 8px;
+            }
+        `,
                     setup: function (editor) {
                         editor.on('change keyup', function () {
                             editor.save(); // cập nhật lại textarea
@@ -44,6 +45,7 @@
                 });
             });
         </script>
+
 
 
     </head>
@@ -115,6 +117,13 @@
                                                style="text-decoration: none; color: inherit;">
                                                 <i class="fas fa-question-circle" style="color: #9b59b6;"></i>
                                                 Quiz #${item.moduleItemId}
+                                            </a>
+                                        </c:when>
+                                         <c:when test="${item.itemType == 'assignment'}">
+                                            <a href="updateAssignment?courseId=${param.courseId}&moduleId=${h.key.moduleId}&assignmentId=${item.moduleItemId}"
+                                               style="text-decoration: none; color: inherit;">
+                                                <i class="fas fa-tasks" style="color: #27ae60;"></i>
+                                                Assignment #${item.moduleItemId}
                                             </a>
                                         </c:when>
                                     </c:choose>

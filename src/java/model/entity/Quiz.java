@@ -4,7 +4,7 @@
  */
 package model.entity;
 
-import java.math.BigDecimal;
+
 
 /**
  *
@@ -15,14 +15,14 @@ public class Quiz {
     private int quizId;                
     private String title;             
     private Integer attemptsAllowed;  
-    private BigDecimal passingScorePct; 
+    private Double passingScorePct; 
     private Integer pickCount;         
 
   
     public Quiz() {
     }
 
-    public Quiz(int quizId, String title, Integer attemptsAllowed, BigDecimal passingScorePct, Integer pickCount) {
+    public Quiz(int quizId, String title, Integer attemptsAllowed, Double passingScorePct, Integer pickCount) {
         this.quizId = quizId;
         this.title = title;
         this.attemptsAllowed = attemptsAllowed;
@@ -30,6 +30,7 @@ public class Quiz {
         this.pickCount = pickCount;
     }
 
+    
     // ===== Getters & Setters =====
     public int getQuizId() {
         return quizId;
@@ -55,14 +56,15 @@ public class Quiz {
         this.attemptsAllowed = attemptsAllowed;
     }
 
-    public BigDecimal getPassingScorePct() {
+    public Double getPassingScorePct() {
         return passingScorePct;
     }
 
-    public void setPassingScorePct(BigDecimal passingScorePct) {
+    public void setPassingScorePct(Double passingScorePct) {
         this.passingScorePct = passingScorePct;
     }
 
+   
     public Integer getPickCount() {
         return pickCount;
     }

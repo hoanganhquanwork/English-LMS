@@ -10,5 +10,6 @@
       <nav class="admin-menu">
         <a class="admin-link" href="instructorDashboard">Dashboard</a>
         <a class="admin-link" href="manage">Courses</a>
+        <a class="admin-link" href="questions">Questions</a>
       </nav>
     </aside>

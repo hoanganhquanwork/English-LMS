@@ -10,8 +10,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import model.entity.Course;
+import model.entity.Module;
 import service.CourseService;
+import service.ModuleService;
 
 /**
  *
@@ -37,13 +40,16 @@ public class ManageQuestionServlet extends HttpServlet {
     }
 
     private CourseService courseService = new CourseService();
+    private final ModuleService moduleService = new ModuleService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int courseId = Integer.parseInt(request.getParameter("courseId"));
         Course course = courseService.getCourseById(courseId);
+        Map<Module, Integer> moduleQuestionMap = moduleService.getModulesWithQuestionCount(courseId);
         request.setAttribute("course", course);
+        request.setAttribute("moduleQuestionMap", moduleQuestionMap);
         request.getRequestDispatcher("teacher/questions.jsp").forward(request, response);
     }
 
@@ -53,11 +59,6 @@ public class ManageQuestionServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

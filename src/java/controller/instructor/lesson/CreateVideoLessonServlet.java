@@ -56,7 +56,7 @@ public class CreateVideoLessonServlet extends HttpServlet {
             Lesson lesson = new Lesson();
             lesson.setTitle(title);
             lesson.setContentType("video");
-            lesson.setVideoUrl(YouTubeApiClient.toEmbedUrl(videoId));
+            lesson.setVideoUrl(videoId);
             lesson.setDurationSec(durationSec);
             lesson.setTextContent(null);
 

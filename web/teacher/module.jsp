@@ -148,6 +148,9 @@
                                                 <a href="createQuiz?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
                                                     <i class="fas fa-question-circle"></i> Bài quiz
                                                 </a>
+                                                <a href="manageAssignment?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
+                                                    <i class="fas fa-tasks"></i> Bài assign
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
