@@ -352,17 +352,17 @@ public class CourseDetailDAO extends DBContext {
         return instructor;
     }
 
-    public List<QuizDTO> getQuizzesWithQuestions(int courseId) {
+   public List<QuizDTO> getQuizzesWithQuestions(int courseId) {
     List<QuizDTO> quizzes = new ArrayList<>();
 
     String sql = "SELECT qz.quiz_id, mi.module_item_id, qz.title, qz.attempts_allowed, "
-            + "qz.passing_score_pct, qz.pick_count, "
+            + "qz.passing_score_pct, qz.pick_count, qz.time_limit_min, "  
             + "qu.question_id, qu.content AS question_content, qu.media_url, qu.type, qu.explanation, "
             + "qo.option_id, qo.content AS option_content, qo.is_correct "
             + "FROM Quiz qz "
             + "JOIN ModuleItem mi ON qz.quiz_id = mi.module_item_id "
             + "JOIN Module m ON mi.module_id = m.module_id "
-            + "LEFT JOIN ModuleQuestions mq ON mq.module_id = m.module_id "  // ✅ sửa đúng join
+            + "LEFT JOIN ModuleQuestions mq ON mq.module_id = m.module_id "
             + "LEFT JOIN Question qu ON mq.question_id = qu.question_id "
             + "LEFT JOIN QuestionOption qo ON qo.question_id = qu.question_id "
             + "WHERE m.course_id = ? "
@@ -380,7 +380,6 @@ public class CourseDetailDAO extends DBContext {
         while (rs.next()) {
             int quizId = rs.getInt("quiz_id");
 
-            // Khi sang quiz mới → tạo quiz mới
             if (quizId != lastQuizId) {
                 currentQuiz = new QuizDTO();
                 currentQuiz.setQuizId(quizId);
@@ -391,9 +390,12 @@ public class CourseDetailDAO extends DBContext {
                 BigDecimal passScore = rs.getBigDecimal("passing_score_pct");
                 currentQuiz.setPassingScorePct(passScore != null ? passScore.doubleValue() : null);
                 currentQuiz.setPickCount((Integer) rs.getObject("pick_count"));
-                currentQuiz.setBank(new ArrayList<>());
 
+                currentQuiz.setTimeLimitMin((Integer) rs.getObject("time_limit_min"));
+
+                currentQuiz.setBank(new ArrayList<>());
                 quizzes.add(currentQuiz);
+
                 lastQuizId = quizId;
                 lastQuestionId = -1;
             }
@@ -428,4 +430,5 @@ public class CourseDetailDAO extends DBContext {
 
     return quizzes;
 }
+
 }

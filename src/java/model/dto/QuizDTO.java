@@ -18,6 +18,7 @@ public class QuizDTO {
     private Integer attemptsAllowed;
     private Double passingScorePct;
     private Integer pickCount;
+    private Integer timeLimitMin;
     private List<QuestionDTO> bank;
 
     public int getQuizId() {
@@ -68,6 +69,14 @@ public class QuizDTO {
         this.pickCount = pickCount;
     }
 
+    public Integer getTimeLimitMin() {
+        return timeLimitMin;
+    }
+
+    public void setTimeLimitMin(Integer timeLimitMin) {
+        this.timeLimitMin = timeLimitMin;
+    }
+
     public List<QuestionDTO> getBank() {
         return bank;
     }
@@ -75,6 +84,5 @@ public class QuizDTO {
     public void setBank(List<QuestionDTO> bank) {
         this.bank = bank;
     }
-    
-    
+
 }

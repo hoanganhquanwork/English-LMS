@@ -7,7 +7,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Chi tiết khóa học - Manager Dashboard</title>
-        <link rel="stylesheet" href="<c:url value='/css/manager-detail.css?v=322' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-detail.css?v=323432' />">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     </head>
     <body class="dashboard">
@@ -107,40 +107,42 @@
                         <button class="price-inline-btn" title="Cập nhật giá"><i class="fa fa-save"></i></button>
                     </form>
                 </div>
+                <div class = "course-overview">
+                    <section class="course-stats">
+                        <h3>Tổng quan khóa học</h3>
+                        <ul>
+                            <li>Modules: ${stats.moduleCount != null ? stats.moduleCount : 0}</li>
+                            <li>Bài học: ${stats.lessonCount != null ? stats.lessonCount : 0}</li>
+                            <li>Quiz: ${stats.quizCount != null ? stats.quizCount : 0}</li>
+                            <li>Assignment: ${stats.assignmentCount != null ? stats.assignmentCount : 0}</li>
+                            <li>Discussion: ${stats.discussionCount != null ? stats.discussionCount : 0}</li>
+                            <li><strong>Tổng nội dung:</strong>
+                                ${(stats.lessonCount != null ? stats.lessonCount : 0)
+                                  + (stats.quizCount != null ? stats.quizCount : 0)
+                                  + (stats.assignmentCount != null ? stats.assignmentCount : 0)
+                                  + (stats.discussionCount != null ? stats.discussionCount : 0)}
+                            </li>
+                        </ul>
+                    </section>
 
-                <section class="course-stats">
-                    <h3>Tổng quan khóa học</h3>
-                    <ul>
-                        <li>Modules: ${stats.moduleCount != null ? stats.moduleCount : 0}</li>
-                        <li>Bài học: ${stats.lessonCount != null ? stats.lessonCount : 0}</li>
-                        <li>Quiz: ${stats.quizCount != null ? stats.quizCount : 0}</li>
-                        <li>Assignment: ${stats.assignmentCount != null ? stats.assignmentCount : 0}</li>
-                        <li>Discussion: ${stats.discussionCount != null ? stats.discussionCount : 0}</li>
-                        <li><strong>Tổng nội dung:</strong>
-                            ${(stats.lessonCount != null ? stats.lessonCount : 0)
-                              + (stats.quizCount != null ? stats.quizCount : 0)
-                              + (stats.assignmentCount != null ? stats.assignmentCount : 0)
-                              + (stats.discussionCount != null ? stats.discussionCount : 0)}
-                        </li>
-                    </ul>
-                </section>
+                    <section class="course-instructor">
+                        <h3>Giảng viên phụ trách</h3>
+                        <c:choose>
+                            <c:when test="${not empty instructor and not empty instructor.user}">
+                                <div class="instructor-card">
+                                    <p><strong>Họ tên:</strong> ${instructor.user.fullName}</p>
+                                    <p><strong>Email:</strong> ${instructor.user.email}</p>
+                                    <p><strong>Chuyên môn:</strong> ${empty instructor.expertise ? 'Chưa cập nhật' : instructor.expertise}</p>
+                                    <p><strong>Giới thiệu:</strong> ${empty instructor.bio ? 'Không có mô tả' : instructor.bio}</p>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <p class="empty">Chưa có thông tin giảng viên.</p>
+                            </c:otherwise>
+                        </c:choose>
+                    </section>
+                </div>
 
-                <section class="course-instructor">
-                    <h3>Giảng viên phụ trách</h3>
-                    <c:choose>
-                        <c:when test="${not empty instructor and not empty instructor.user}">
-                            <div class="instructor-card">
-                                <p><strong>Họ tên:</strong> ${instructor.user.fullName}</p>
-                                <p><strong>Email:</strong> ${instructor.user.email}</p>
-                                <p><strong>Chuyên môn:</strong> ${empty instructor.expertise ? 'Chưa cập nhật' : instructor.expertise}</p>
-                                <p><strong>Giới thiệu:</strong> ${empty instructor.bio ? 'Không có mô tả' : instructor.bio}</p>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            <p class="empty">Chưa có thông tin giảng viên.</p>
-                        </c:otherwise>
-                    </c:choose>
-                </section>
 
                 <section class="course-outline">
                     <h3>Chương trình học</h3>
@@ -200,9 +202,49 @@
                                                                         </c:if>
                                                                         <div class="question-item">
                                                                             <strong>Q${q.questionId}:</strong> ${q.content}
+
                                                                             <c:if test="${not empty q.mediaUrl}">
-                                                                                <p><a href="${q.mediaUrl}" target="_blank"><i class="fa fa-link"></i> Tệp / hình ảnh liên quan</a></p>
+                                                                                <c:set var="fixedUrl" value="${fn:replace(q.mediaUrl, 'watch?v=', 'embed/')}" />
+
+                                                                                <div class="q-media">
+                                                                                    <c:choose>
+
+                                                                                        <c:when test="${fn:contains(fixedUrl, 'youtube.com/embed')}">
+                                                                                            <div class="youtube-container">
+                                                                                                <iframe class="youtube-embed"
+                                                                                                        src="${fixedUrl}"
+                                                                                                        frameborder="0"
+                                                                                                        allowfullscreen
+                                                                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                                                                                </iframe>
+                                                                                            </div>
+                                                                                        </c:when>
+
+                                                                                        <c:when test="${fn:endsWith(q.mediaUrl, '.jpg') 
+                                                                                                        or fn:endsWith(q.mediaUrl, '.jpeg') 
+                                                                                                        or fn:endsWith(q.mediaUrl, '.png') 
+                                                                                                        or fn:endsWith(q.mediaUrl, '.gif')}">
+                                                                                                <img src="${q.mediaUrl}" alt="Hình minh họa" class="media-img">
+                                                                                        </c:when>
+
+                                                                                        <c:when test="${fn:endsWith(q.mediaUrl, '.mp4') 
+                                                                                                        or fn:endsWith(q.mediaUrl, '.webm') 
+                                                                                                        or fn:endsWith(q.mediaUrl, '.mov')}">
+                                                                                                <video controls class="media-video">
+                                                                                                    <source src="${q.mediaUrl}" type="video/mp4">
+                                                                                                </video>
+                                                                                        </c:when>
+
+                                                                                        <c:otherwise>
+                                                                                            <a href="${q.mediaUrl}" target="_blank">
+                                                                                                ${q.mediaUrl}
+                                                                                            </a>
+                                                                                        </c:otherwise>
+
+                                                                                    </c:choose>
+                                                                                </div>
                                                                             </c:if>
+
                                                                             <c:if test="${not empty q.options}">
                                                                                 <div class="option-list">
                                                                                     <h6>Các lựa chọn:</h6>
@@ -236,48 +278,10 @@
                                                         </c:if>
 
                                                         <c:if test="${i.itemType eq 'quiz'}">
-                                                            <p>Số lần làm: ${i.attemptsAllowed}</p>
+                                                            <p><strong>Giới hạn thời gian:</strong> 
+                                                                ${quiz.timeLimitMin != null ? quiz.timeLimitMin + " phút" : "Không giới hạn"}</p>
                                                             <p>Tỉ lệ qua: ${i.quizPassingPct}%</p>
                                                             <p>Số câu chọn ngẫu nhiên: ${i.pickCount}</p>
-                                                            <c:forEach var="quiz" items="${quizzes}">
-                                                                <c:if test="${quiz.quizId == i.itemId}">
-                                                                    <div class="quiz-bank">
-                                                                        <h5>Ngân hàng câu hỏi:</h5>
-                                                                        <c:forEach var="q" items="${quiz.bank}">
-                                                                            <div class="question-item">
-                                                                                <strong>Q${q.questionId}:</strong> ${q.content}
-                                                                                <c:if test="${not empty q.mediaUrl}">
-                                                                                    <p><a href="${q.mediaUrl}" target="_blank"><i class="fa fa-link"></i> Tệp / hình ảnh liên quan</a></p>
-                                                                                </c:if>
-                                                                                <c:if test="${not empty q.options}">
-                                                                                    <div class="option-list">
-                                                                                        <h6>Các lựa chọn:</h6>
-                                                                                        <c:forEach var="opt" items="${q.options}">
-                                                                                            <div class="option ${opt.isCorrect ? 'correct' : ''}">
-                                                                                                <i class="fa ${opt.isCorrect ? 'fa-check-circle text-success' : 'fa-circle'}"></i>
-                                                                                                ${opt.content}
-                                                                                            </div>
-                                                                                        </c:forEach>
-                                                                                    </div>
-                                                                                </c:if>
-                                                                                <c:if test="${not empty q.answers}">
-                                                                                    <div class="answer-list">
-                                                                                        <h6>Đáp án mẫu:</h6>
-                                                                                        <ul>
-                                                                                            <c:forEach var="ans" items="${q.answers}">
-                                                                                                <li>${ans.answerText}</li>
-                                                                                                </c:forEach>
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                </c:if>
-                                                                                <c:if test="${not empty q.explanation}">
-                                                                                    <div class="muted"><em>Giải thích:</em> ${q.explanation}</div>
-                                                                                </c:if>
-                                                                            </div>
-                                                                        </c:forEach>
-                                                                    </div>
-                                                                </c:if>
-                                                            </c:forEach>
                                                         </c:if>
 
                                                         <c:if test="${i.itemType eq 'assignment'}">
@@ -292,46 +296,14 @@
                                                                     <div class="text-content"><h5>Nội dung bài tập:</h5>${i.assignmentContent}</div>
                                                                 </c:if>
                                                                 <c:if test="${not empty i.rubric}">
-                                                                    <div class="text-content"><h5>Rubric chấm điểm:</h5>${i.rubric}</div>
-                                                                </c:if>
-                                                                <c:if test="${not empty i.assignmentWorks}">
-                                                                    <div class="assignment-work">
-                                                                        <h5>Danh sách bài nộp mẫu:</h5>
-                                                                        <ul>
-                                                                            <c:forEach var="w" items="${i.assignmentWorks}">
-                                                                                <li>${w.title} (${w.submissionType}) - Điểm tối đa ${w.maxScore}</li>
-                                                                                </c:forEach>
-                                                                        </ul>
-                                                                    </div>
+                                                                    <div class="text-content"><h5>Tiêu chí chấm điểm:</h5>${i.rubric}</div>
                                                                 </c:if>
                                                             </div>
                                                         </c:if>
 
                                                         <c:if test="${i.itemType eq 'discussion'}">
                                                             <p>${i.discussionDescription}</p>
-                                                            <c:if test="${not empty i.discussionPosts}">
-                                                                <div class="discussion-section">
-                                                                    <h5>Danh sách bài viết:</h5>
-                                                                    <c:forEach var="p" items="${i.discussionPosts}">
-                                                                        <div class="post">
-                                                                            <p><strong>${p.fullName}</strong> (${p.role})</p>
-                                                                            <p>${p.content}</p>
-                                                                            <p class="muted">${p.createdAt}</p>
-                                                                            <c:if test="${not empty p.comments}">
-                                                                                <div class="comments">
-                                                                                    <h6><i class="fa fa-reply"></i> Bình luận:</h6>
-                                                                                    <c:forEach var="cmt" items="${p.comments}">
-                                                                                        <div class="comment">
-                                                                                            <p><strong>${cmt.fullName}</strong> (${cmt.role})</p>
-                                                                                            <p>${cmt.content}</p>
-                                                                                            <p class="muted">${cmt.createdAt}</p>
-                                                                                        </div>
-                                                                                    </c:forEach>
-                                                                                </div>
-                                                                            </c:if>
-                                                                        </div>
-                                                                    </c:forEach>
-                                                                </div>
+                                                            <c:if test="${not empty i.discussionPosts}">                                                      
                                                             </c:if>
                                                         </c:if>
                                                     </div>

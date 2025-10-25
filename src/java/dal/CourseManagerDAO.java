@@ -145,26 +145,63 @@ public class CourseManagerDAO extends DBContext {
         return null;
     }
 
-    public boolean updateCourseStatus(int id, String newStatus) {
-        String sql
-                = "UPDATE Course "
-                + "SET status = ?, "
-                + "    publish_at = CASE WHEN ? = 'publish' THEN GETDATE() ELSE publish_at END "
-                + "WHERE course_id = ?";
+ public boolean updateCourseStatus(int courseId, String newStatus) {
+    boolean success = false;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+    String sqlUpdateCourse =
+        "UPDATE Course "
+        + "SET status = ?, "
+        + "    publish_at = CASE WHEN ? = 'publish' THEN GETDATE() ELSE publish_at END "
+        + "WHERE course_id = ?";
+
+    String sqlAutoApproveQuestions =
+        "UPDATE q "
+        + "SET q.status = 'approved' "
+        + "FROM Question q "
+        + "JOIN Lesson l ON q.lesson_id = l.lesson_id "
+        + "JOIN ModuleItem mi ON l.lesson_id = mi.module_item_id "
+        + "JOIN Module m ON mi.module_id = m.module_id "
+        + "WHERE m.course_id = ? AND q.status = 'submitted'";
+
+    try {
+        connection.setAutoCommit(false);
+
+        try (PreparedStatement ps = connection.prepareStatement(sqlUpdateCourse)) {
             ps.setString(1, newStatus);
             ps.setString(2, newStatus);
-            ps.setInt(3, id);
-            int rows = ps.executeUpdate();
-            System.out.println("Updated course_id=" + id + " → " + newStatus + " (" + rows + " rows)");
-            return rows > 0;
+            ps.setInt(3, courseId);
+            int updatedCourses = ps.executeUpdate();
+            System.out.println("Updated Course " + courseId + " → " + newStatus + " (" + updatedCourses + " row)");
+        }
+
+        if ("approved".equalsIgnoreCase(newStatus)) {
+            try (PreparedStatement ps2 = connection.prepareStatement(sqlAutoApproveQuestions)) {
+                ps2.setInt(1, courseId);
+                int updatedQuestions = ps2.executeUpdate();
+                System.out.println("→ Auto-approved " + updatedQuestions + " questions for course #" + courseId);
+            }
+        }
+
+        connection.commit();
+        success = true;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        try {
+            connection.rollback();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    } finally {
+        try {
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
+    return success;
+}
     public boolean updateCoursePrice(int id, BigDecimal price) {
         String sql
                 = "UPDATE Course "

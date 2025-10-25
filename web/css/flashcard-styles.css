@@ -363,7 +363,7 @@ body {
     transition: transform 0.2s;
 }
 
-.toggle-input:checked + 
+.toggle-input:checked +
 
 .toggle-input:checked + .toggle-slider::before {
     transform: translateX(20px);
@@ -405,7 +405,7 @@ body {
 
 
 
-.play-btn, .shuffle-btn, .settings-btn, 
+.play-btn, .shuffle-btn, .settings-btn,
 
 .play-btn:hover, .shuffle-btn:hover, .settings-btn:hover, .fullscreen-btn:hover {
     background-color: #f5f5f5;
@@ -737,10 +737,11 @@ body {
     color: #666;
     border: 1px solid #e0e0e0;
     padding: 12px 24px;
-    border-radius: 20px;
+    border-radius: 10px;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s;
+    text-decoration: none;
 }
 
 .add-card-btn:hover {
@@ -764,6 +765,8 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
+    text-decoration: none;
+    margin-right: 0.7rem;
 }
 
 .create-btn:hover {
@@ -775,29 +778,29 @@ body {
     .flashcard-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .card-inputs {
         grid-template-columns: 1fr;
     }
-    
+
     .header {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .search-container {
         margin: 0;
         max-width: 100%;
     }
-    
-    
-    
+
+
+
     .navigation {
         flex-wrap: wrap;
         gap: 10px;
     }
-    
-    
+
+
 }
 
 
@@ -805,24 +808,24 @@ body {
     .container {
         padding: 10px;
     }
-    
+
     .flashcard-item {
         padding: 15px;
     }
-    
+
     .main-flashcard {
         padding: 20px;
     }
-    
+
     .flashcard-question {
         font-size: 20px;
     }
-    
+
     .card-entry {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .card-actions {
         flex-direction: row;
         margin-right: 0;
@@ -892,6 +895,7 @@ body {
 .set-actionsset .add-card-btn {
     background: #ef4444;       /* đỏ tươi */
     color: #fff;
+    text-decoration: none;
 }
 .set-actionsset .add-card-btn:hover {
     background: #dc2626;
@@ -911,4 +915,265 @@ body {
 /* Tinh chỉnh icon */
 .set-actionsset a i {
     font-size: 0.9rem;
+}
+.create-content{
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+/* ==== BỐ CỤC TỔNG THỂ ==== */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* ==== ICON HOME ==== */
+.header-left {
+    position: fixed;
+    top: 30px;       /* hạ thấp xuống một chút */
+    left: 30px;
+    z-index: 10;
+}
+
+.header-left .nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    background: #f3f4f6;
+    color: #4f46e5;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 20px;
+    transition: all 0.25s ease;
+}
+
+.header-left .nav-btn:hover {
+    background: #e0e7ff;
+    transform: translateY(-2px);
+}
+
+/* ==== CONTAINER ==== */
+.container {
+    max-width: 900px;
+    width: 90%;
+    margin-top: 80px;
+    text-align: center;
+}
+
+/* ==== PHẦN TIÊU ĐỀ ==== */
+.create-header {
+    margin-bottom: 25px;
+}
+
+.create-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.create-subtitle {
+    font-size: 16px;
+    color: #6b7280;
+}
+
+/* ==== NHÓM NÚT HÀNH ĐỘNG ==== */
+.set-actionsset {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin: 25px 0 35px;
+}
+
+.set-actionsset a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 26px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;       /* bỏ gạch chân */
+    border: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: all 0.25s ease;
+}
+.set-actions{
+    gap: 10px
+}
+
+/* ✏️ Nút Chỉnh sửa */
+.set-actionsset .create-btn {
+    background: #4f46e5;
+    color: #fff;
+    margin-right: 5px;
+    text-decoration: none
+}
+.set-actionsset .create-btn:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+    text-decoration: none
+}
+
+/* 🗑️ Nút Xóa */
+.set-actionsset .add-card-btn {
+    background: #ef4444;
+    color: #fff;
+   
+}
+.set-actionsset .add-card-btn:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+/* ▶️ Nút Học */
+.set-actionsset .study-btn {
+    background: #10b981;
+    color: #fff;
+}
+.set-actionsset .study-btn:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+/* ==== DANH SÁCH FLASHCARD ==== */
+.terms-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.terms-header {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-bar select {
+    padding: 8px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.sort-bar select:hover {
+    border-color: #4f46e5;
+}
+
+/* ==== FLASHCARD ITEM ==== */
+.terms-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.terms-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.term-item {
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+
+.term-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.term-label {
+    background: #4f46e5;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.term-content-row {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.term-col {
+    flex: 1;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: left;
+}
+
+.term-title {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: #4f46e5;
+    margin-bottom: 6px;
+}
+
+.term-text {
+    font-size: 16px;
+    color: #111827;
+}
+
+/* ==== EMPTY STATE ==== */
+.empty-text {
+    color: #6b7280;
+    font-size: 15px;
+    margin-top: 25px;
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 768px) {
+    .term-content-row {
+        flex-direction: column;
+    }
+
+    .set-actionsset {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .terms-header-row {
+        flex-direction: column;
+        gap: 10px;
+    }
 }

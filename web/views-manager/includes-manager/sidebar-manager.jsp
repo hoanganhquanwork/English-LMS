@@ -17,6 +17,11 @@
             <i class="fas fa-book"></i> Quản lý khóa học
         </a>
 
+        <a href="cate-topic"
+           class="${pageContext.request.requestURI.contains('/cate-topic') ? 'active' : ''}">
+           <i class="fa fa-layer-group"></i> Quản lý chủ đề và danh mục
+        </a>
+
         <a href="revenue-report"
            class="${pageContext.request.requestURI.contains('/revenue-report') ? 'active' : ''}">
             <i class="fas fa-chart-bar"></i> Báo cáo

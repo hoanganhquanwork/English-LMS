@@ -113,7 +113,6 @@ public class CourseManagerController extends HttpServlet {
 
         String[] courseIds = request.getParameterValues("courseIds");
         if (courseIds == null) {
-            // một số trường hợp chỉ gửi 1 id thay vì nhiều id
             String idStr = request.getParameter("courseId");
             if (idStr != null && !idStr.isBlank()) {
                 courseIds = new String[]{idStr};

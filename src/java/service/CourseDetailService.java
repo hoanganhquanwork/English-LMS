@@ -93,11 +93,6 @@ public class CourseDetailService {
                         item.setAttachmentUrl(detail.getAttachmentUrl());
                         item.setRubric(detail.getRubric());
                     }
-
-                    List<AssignmentWorkDTO> works = dao.getAssignmentWorks(item.getItemId());
-                    if (works != null && !works.isEmpty()) {
-                        item.setAssignmentWorks(works);
-                    }
                 }
             }
 

@@ -16,7 +16,7 @@
 <div class="container">
     <header class="header">
         <div class="header-left">
-            <a href="set?action=listSets" class="nav-btn">⌂</a>
+            <a href="set?action=listSets" class="nav-btn"> <i class="fa fa-home"></i></a>
         </div>
     </header>
 
