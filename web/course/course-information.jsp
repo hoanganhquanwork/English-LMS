@@ -118,7 +118,7 @@
                                     <form method="get" action="${pageContext.request.contextPath}/coursePage?courseId=${course.courseId}">
                                         <input type="hidden" name="courseId" value="${course.courseId}">
                                         <button type="submit" class="btn btn-success w-100 fw-semibold">
-                                            <i class="bi bi-play-circle me-1"></i> Tiếp tục học
+                                            <i class="bi bi-play-circle me-1"></i> Vào khóa học
                                         </button>
                                     </form>
                                 </c:when>

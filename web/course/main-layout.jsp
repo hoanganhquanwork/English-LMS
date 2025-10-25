@@ -204,6 +204,34 @@
                 color: #007bff;
             }
 
+            .dic-btn{
+                width:48px;
+                height:48px;
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                border-radius:50%;
+                border:0;
+                cursor:pointer;
+                color:#fff;
+                background:#0d6efd;
+                box-shadow:0 10px 24px rgba(13,110,253,.35);
+            }
+
+            .dic-fab{
+                position: fixed;
+                right: 16px;
+                bottom: 16px;
+                z-index: 2000;
+            }
+
+            .offcanvas-backdrop.show {
+                opacity:.35;
+                backdrop-filter: blur(2px);
+            }
+
+
+
         </style>
     </head>
     <body>
@@ -230,7 +258,8 @@
                             <c:if test="${sessionScope.user.role == 'Student'}">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
-                                </c:if>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/studentVocab">Từ điển của tôi</a></li>
+                            </c:if>
                             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
                         </ul>
 
@@ -742,7 +771,7 @@
                                     <p>
                                         Số câu hỏi: 
                                         <c:choose>
-                                            <c:when test="${not empty quiz.pickCount}">${quiz.pickCount}</c:when>
+                                            <c:when test="${not empty quiz.pickCount}"><strong>${quiz.pickCount}</strong></c:when>
                                             <c:otherwise>--</c:otherwise>
                                         </c:choose>
                                     </p>
@@ -883,11 +912,82 @@
                 </c:if>
 
                 <hr>
-                <div class="text-end">
-                    <a href="${pageContext.request.contextPath}/coursePage?itemId=${activeItemId+1}&courseId=${cp.course.courseId}" 
-                       class="btn btn-outline-primary go-to-next-item text-decoration-none ">
-                        Đi tới mục tiếp theo
-                    </a>
+                <div>
+                    <div class="text-end">
+                        <!--Nút mở panel (góc phải-dưới)--> 
+                        <button
+                            class="btn btn-primary rounded-circle d-inline-flex align-items-center justify-content-center
+                            position-fixed bottom-0 end-0 m-3 shadow"
+                            style="width:48px;height:48px;z-index:1080"
+                            data-bs-toggle="offcanvas" data-bs-target="#dictPanel" aria-controls="dictPanel" title="Dictionary">
+                            <i class="bi bi-search text-white"></i>
+                        </button>
+
+                        <!--Panel bên phải--> 
+                        <div class="offcanvas offcanvas-end" tabindex="-1" id="dictPanel"
+                             aria-labelledby="dictPanelLabel" style="--bs-offcanvas-width:420px">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="dictPanelLabel">Từ điển Tiếng Anh</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+
+                            <div class="offcanvas-body">
+                                <form id="search-box" class="input-group mb-3">
+                                    <input id="search-input" class="form-control" placeholder="Nhập từ vựng cần tra">
+                                    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                                </form>
+
+                                <p class="errTxt text-danger fw-semibold d-none"></p>
+
+                                <div class="word-details card shadow-sm d-none">
+                                    <div class="card-body text-start">
+                                        <div class="d-flex gap-2 justify-content-between flex-wrap">
+                                            <div>
+                                                <h2 id="word-txt" class="h2 mb-0"></h2>
+                                                <p class="mb-0 text-secondary">
+                                                    <span id="type-txt"></span>
+                                                    <span id="phonetic-txt" class="ms-1"></span>
+                                                </p>
+                                            </div>
+                                            <button id="sound-btn" type="button"
+                                                    class="btn btn-outline-success btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
+                                                    style="width:38px;height:38px" title="Play">
+                                                <i class="bi bi-volume-up"></i>
+                                            </button>
+                                        </div>
+
+                                        <p id="definition-txt"class="mt-3 mb-2">definition</p>
+
+                                        <div id="example-elem"  class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Examples</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+                                        <div id="synonyms-elem" class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Synonyms</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+                                        <div id="antonyms-elem" class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Antonyms</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+
+                                        <form id="save-word-form" method="post" action="${pageContext.request.contextPath}/studentVocab" class="mt-4">
+                                            <input type="hidden" name="word" id="input-word">
+                                            <input type="hidden" name="phonetic" id="input-phonetic">
+                                            <input type="hidden" name="audioUrl" id="input-audio-url">
+                                            <input type="hidden" name="partOfSpeech" id="input-part-of-speech">
+                                            <input type="hidden" name="definition" id="input-definition">
+                                            <input type="hidden" name="example" id="input-example">
+                                            <input type="hidden" name="synonyms" id="input-synonyms">
+                                            <input type="hidden" name="antonyms" id="input-antonyms">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="bi bi-bookmark-check"></i> Lưu từ vựng
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </main>
 
@@ -901,6 +1001,7 @@
     <!--Youtube API-->
     <script src="https://www.youtube.com/iframe_api"></script>
 
+    <script src="${pageContext.request.contextPath}/js/dictionary.js"></script>
     <script>
                                                         tinymce.init({
                                                             selector: '#userReply',
@@ -1023,7 +1124,6 @@
                                                             }
                                                         }
 
-
                                                         //for video youtube api
                                                         let ytPlayer;
 
@@ -1055,5 +1155,37 @@
                                                                 credentials: 'include'
                                                             });
                                                         };
+
+                                                        //Save vocab
+                                                        const formEl = document.getElementById("save-word-form");
+                                                        formEl.addEventListener('submit', async (e) => {
+                                                            e.preventDefault();
+                                                            const fd = new FormData(formEl);
+
+                                                            try {
+                                                                const res = await fetch(formEl.action, {
+                                                                    method: 'POST',
+                                                                    body: fd,
+                                                                    credentials: 'include'
+                                                                });
+
+                                                                let data = {};
+                                                                try {
+                                                                    data = await res.json();
+                                                                } catch (_) {
+                                                                }
+
+                                                                if (!res.ok || data.success === false) {
+                                                                    alert('Từ vựng đã được thêm trước đó');
+                                                                    return;
+                                                                }
+                                                                alert('Đã lưu từ vựng!');
+                                                            } catch (err) {
+                                                                console.error(err);
+                                                                alert('Có lỗi mạng khi lưu.');
+                                                            }
+                                                        });
+
+
     </script>
 </html>
