@@ -111,9 +111,7 @@
                 color: white
             }
             .go-to-next-item {
-                position: fixed;
                 bottom: 20px;
-                right: 20px;
                 padding: 10px 20px;
                 font-size: 1rem;
                 text-decoration: none;
@@ -206,6 +204,34 @@
                 color: #007bff;
             }
 
+            .dic-btn{
+                width:48px;
+                height:48px;
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                border-radius:50%;
+                border:0;
+                cursor:pointer;
+                color:#fff;
+                background:#0d6efd;
+                box-shadow:0 10px 24px rgba(13,110,253,.35);
+            }
+
+            .dic-fab{
+                position: fixed;
+                right: 16px;
+                bottom: 16px;
+                z-index: 2000;
+            }
+
+            .offcanvas-backdrop.show {
+                opacity:.35;
+                backdrop-filter: blur(2px);
+            }
+
+
+
         </style>
     </head>
     <body>
@@ -232,7 +258,8 @@
                             <c:if test="${sessionScope.user.role == 'Student'}">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
-                                </c:if>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/studentVocab">Từ điển của tôi</a></li>
+                            </c:if>
                             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
                         </ul>
 
@@ -269,8 +296,8 @@
                                                 aria-controls="module-${m.moduleId}"
                                                 aria-expanded="${expand}">
                                             <span>
-                                                <span class="ms-1 fw-bold text-dark">Module ${m.orderIndex}:</span>
-                                                <span class="ms-1 fw-bold text-dark">${m.title}</span>
+                                                <span class="ms-1 fw-semibold text-bolddark">Module ${m.orderIndex}:</span>
+                                                <span class="ms-1 fw-semibold text-dark">${m.title}</span>
                                             </span>
                                             <i class="bi bi-chevron-down"></i>
                                         </button>
@@ -314,10 +341,7 @@
 
             <!--Content--> 
             <main class="flex-fill p-4">
-                <a href="${pageContext.request.contextPath}/coursePage?itemId=${activeItemId+1}&courseId=${cp.course.courseId}" 
-                   class="btn btn-outline-primary go-to-next-item text-decoration-none">
-                    Đi tới mục tiếp theo
-                </a>
+
 
                 <!--For lesson-->
 
@@ -708,132 +732,266 @@
                 <!--For quiz-->
 
                 <c:if test="${requestScope.selectedItemType == 'quiz'}">
-                    <c:set var="quiz" value="${requestScope.quiz}" />
-                    <c:set var="quizView" value="${requestScope.quizView}" />
-                    <c:set var="attempt" value="${requestScope.attempt}" />
-                    <c:set var="bestScore" value="${requestScope.bestScore}" />
-
+                    <c:set var="quiz"             value="${requestScope.quiz}" />
+                    <c:set var="isGraded"         value="${requestScope.isGraded}" />
+                    <c:set var="quizView"         value="${requestScope.quizView}" />
+                    <c:set var="attempt"          value="${requestScope.attempt}" />
+                    <c:set var="bestScore"        value="${requestScope.bestScore}" />
+                    <c:set var="latestSubmittedId" value="${requestScope.latestSubmittedId}" />
+                    <c:set var="hasPassed"        value="${requestScope.hasPassed}" />
+                    <c:set var="isLocked"         value="${requestScope.isLocked}" />
+                    <c:set var="cooldownActive"   value="${requestScope.cooldownActive}" />
+                    <c:set var="retryAtDisplay"   value="${requestScope.retryAtDisplay}" />
+                    <p style="red">${requestScope.errorMessage}</p>
                     <div class="custom-container">
+                        <!-- Tiêu đề -->
                         <h1 class="fw-bold mb-4">
-                            <c:if test="${not empty quiz.title}">Quiz: ${quiz.title}</c:if>
-                            </h1>
+                            <c:choose>
+                                <c:when test="${not empty quiz and not empty quiz.title}">
+                                    Quiz: ${quiz.title}
+                                </c:when>
+                                <c:otherwise>Quiz</c:otherwise>
+                            </c:choose>
+                        </h1>
 
-                            <div class="p-4 rounded-4" style="background:#eef4ff;">
-                                <div class="row align-items-center">
-                                    <!-- Mô tả (trái) -->
-                                    <div class="col-md-9">
-                                        <div class="fw-bold mb-2">Thông tin mô tả</div>
-
-                                        <p>
-                                            Bạn cần đạt được
-                                        <c:choose>
-                                            <c:when test="${empty quiz.passingScorePct}">--</c:when>
-                                            <c:otherwise><c:out value="${quiz.passingScorePct}" />%</c:otherwise>
-                                        </c:choose>
-                                        để hoàn thành bài quiz
-                                    </p>
-
+                        <!-- Thông tin tổng quan -->
+                        <div class="p-4 rounded-4" style="background:#eef4ff;">
+                            <div class="row align-items-center">
+                                <div class="col-md-9">
+                                    <div class="fw-bold mb-2">Thông tin mô tả</div>
                                     <p>
-                                        Số lượng câu hỏi trong bài quiz: ${quiz.pickCount} câu                                
-                                    </p>
-
-                                    <p>
-                                        Trạng thái:
+                                        Yêu cầu đạt:
                                         <c:choose>
-                                            <c:when test="${attempt != null}">
-                                                <c:out value="${attempt.status == 'submitted' ? 'Đã nộp' : 'Bản nháp'}" />
+                                            <c:when test="${isGraded and not empty quiz.passingScorePct}">
+                                                <strong>${quiz.passingScorePct}%</strong>
                                             </c:when>
-                                            <c:otherwise>Chưa làm</c:otherwise>
+                                            <c:otherwise>--</c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                    <p>
+                                        Số câu hỏi: 
+                                        <c:choose>
+                                            <c:when test="${not empty quiz.pickCount}"><strong>${quiz.pickCount}</strong></c:when>
+                                            <c:otherwise>--</c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                    <p>
+                                        Trạng thái hiện tại:
+                                        <c:choose>
+                                            <c:when test="${empty attempt}">Chưa làm</c:when>
+                                            <c:when test="${attempt.status == 'submitted'}">Đã nộp</c:when>
+                                            <c:otherwise>Bản nháp</c:otherwise>
                                         </c:choose>
                                     </p>
 
-                                    <c:if test="${attempt != null && attempt.submittedAt != null}">
-                                        <p>Thời gian: ${attempt.submittedAt}</p>
-                                    </c:if>
                                 </div>
 
-                                <!-- Nút (phải) -->
                                 <div class="col-md-3 text-md-end mt-3 mt-md-0">
                                     <c:choose>
-                                        <c:when test="${quizView == 'intro' || attempt == null}">
-                                            <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
-                                                <input type="hidden" name="courseId" value="${cp.course.courseId}">
-                                                <input type="hidden" name="itemId" value="${activeItemId}">
-                                                <button class="btn btn-primary px-4">Bắt đầu</button>
-                                            </form>
-                                        </c:when>
 
-                                        <c:when test="${attempt != null && attempt.status == 'submitted'}">
+                                        <c:when test="${quizView == 'intro'}">
                                             <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
                                                 <input type="hidden" name="courseId" value="${cp.course.courseId}">
-                                                <input type="hidden" name="itemId" value="${activeItemId}">
-                                                <button class="btn btn-primary px-4">
-                                                    <i class="bi bi-arrow-clockwise me-1"></i>Làm lại
+                                                <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                <button class="btn btn-primary px-4" ${isLocked ? 'disabled' : ''}>
+                                                    Bắt đầu
                                                 </button>
                                             </form>
                                         </c:when>
 
-                                        <c:otherwise>
+                                        <c:when test="${quizView == 'doing'}">
                                             <a href="${pageContext.request.contextPath}/doQuiz?attemptId=${attempt.attemptId}&courseId=${cp.course.courseId}&itemId=${activeItemId}"
-                                               class="btn btn-primary px-4">Tiếp tục</a>
+                                               class="btn btn-primary px-4 ${isLocked ? 'disabled' : ''}">
+                                                Tiếp tục
+                                            </a>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                                                <c:if test="${not isGraded and not empty latestSubmittedId}">
+                                                    <a class="btn btn-outline-primary"
+                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${requestScope.latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
+                                                        Xem kết quả gần nhất
+                                                    </a>
+                                                </c:if>
+
+                                                <c:choose>
+                                                    <c:when test="${isGraded}">
+                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                            <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                                            <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                            <button class="btn btn-primary px-4" 
+                                                                    ${ (hasPassed or isLocked) ? 'disabled' : '' }>
+                                                                <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
+                                                            </button>
+                                                        </form>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                            <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                                            <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                            <button class="btn btn-primary px-4">
+                                                                <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
+                                                            </button>
+                                                        </form>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
                                         </c:otherwise>
+
                                     </c:choose>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-3">
-                            <c:choose>
-                                <c:when test="${bestScore >= quiz.passingScorePct}">
-                                    <div class="p-4 rounded-4 bg-success-subtle ">
-                                    </c:when>
-
-                                    <c:otherwise>
-                                        <div class="p-4 rounded-4 bg-danger-subtle">
-                                        </c:otherwise>
-                                    </c:choose>
-
+                        <c:if test="${isGraded}">
+                            <div class="mt-3">
+                                <div class="p-4 rounded-4
+                                     ${not empty bestScore and not empty quiz.passingScorePct and bestScore >= quiz.passingScorePct 
+                                       ? 'bg-success-subtle' : 'bg-danger-subtle'}">
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                                         <div>
                                             <div class="fw-bold mb-1">Kết quả của bạn</div>
-
                                             <div class="small text-muted">
-                                                Điểm cao nhất (ghi nhận):
+                                                Điểm cao nhất:
                                                 <span class="fw-semibold
-                                                      ${bestScore >= quiz.passingScorePct ? 'text-success' : 'text-danger'}">
-                                                    <c:choose>
-                                                        <c:when test="${not empty bestScore}">
-                                                            ${bestScore}%
-                                                        </c:when>
-                                                        <c:otherwise>--</c:otherwise>
-                                                    </c:choose>
+                                                      ${not empty bestScore and not empty quiz.passingScorePct and bestScore >= quiz.passingScorePct 
+                                                        ? 'text-success' : 'text-danger'}">
+                                                      <c:choose>
+                                                          <c:when test="${not empty bestScore}">${bestScore}%</c:when>
+                                                          <c:otherwise>--</c:otherwise>
+                                                      </c:choose>
                                                 </span>
                                             </div>
                                         </div>
 
+                                        <c:if test="${isGraded}">
+                                            <c:if test="${hasPassed}">
+                                                <div class="text-end">
+                                                    <div class="alert alert-success my-2">
+                                                        <i class="bi bi-check-circle me-2"></i>
+                                                        Bạn đã đạt yêu cầu
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="${!hasPassed and cooldownActive}">
+                                                <div class="alert alert-warning my-2">
+                                                    <i class="bi bi-hourglass-split me-2"></i>
+                                                    Bạn chưa đạt. Lần làm tiếp theo lúc: <strong>${retryAtDisplay}</strong>
+                                                </div>
+                                            </c:if>
+                                        </c:if>
+
                                         <div class="text-md-end">
-                                            <c:choose>
-                                                <c:when test="${not empty latestSubmittedId}">
-                                                    <a class="btn btn-outline-primary"
-                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
-                                                        Xem kết quả gần nhất
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <button class="btn btn-outline-secondary" disabled>Chưa có bài nộp nào</button>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <c:if test="${not isGraded}">
+                                                <c:choose>
+                                                    <c:when test="${not empty latestSubmittedId }">
+                                                        <a class="btn btn-outline-primary"
+                                                           href="${pageContext.request.contextPath}/doQuiz?attemptId=${latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
+                                                            Xem bài đã nộp
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button class="btn btn-outline-secondary" disabled>Chưa có bài nộp</button>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
                                         </div>
                                     </div>
-                                </div> 
+                                </div>
+                            </div>
+                        </c:if>
+
+                        <c:if test="${!isGraded}">
+                            <div class="alert alert-info mt-3">
+                                Chế độ ôn tập: không giới hạn thời gian, có thể làm lại nhiều lần. 
+                            </div>
+                        </c:if>
+                    </div>
+
+                </c:if>
+
+                <hr>
+                <div>
+                    <div class="text-end">
+                        <!--Nút mở panel (góc phải-dưới)--> 
+                        <button
+                            class="btn btn-primary rounded-circle d-inline-flex align-items-center justify-content-center
+                            position-fixed bottom-0 end-0 m-3 shadow"
+                            style="width:48px;height:48px;z-index:1080"
+                            data-bs-toggle="offcanvas" data-bs-target="#dictPanel" aria-controls="dictPanel" title="Dictionary">
+                            <i class="bi bi-search text-white"></i>
+                        </button>
+
+                        <!--Panel bên phải--> 
+                        <div class="offcanvas offcanvas-end" tabindex="-1" id="dictPanel"
+                             aria-labelledby="dictPanelLabel" style="--bs-offcanvas-width:420px">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="dictPanelLabel">Từ điển Tiếng Anh</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
 
-                        </div>
-                    </c:if>
+                            <div class="offcanvas-body">
+                                <form id="search-box" class="input-group mb-3">
+                                    <input id="search-input" class="form-control" placeholder="Nhập từ vựng cần tra">
+                                    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                                </form>
 
+                                <p class="errTxt text-danger fw-semibold d-none"></p>
+
+                                <div class="word-details card shadow-sm d-none">
+                                    <div class="card-body text-start">
+                                        <div class="d-flex gap-2 justify-content-between flex-wrap">
+                                            <div>
+                                                <h2 id="word-txt" class="h2 mb-0"></h2>
+                                                <p class="mb-0 text-secondary">
+                                                    <span id="type-txt"></span>
+                                                    <span id="phonetic-txt" class="ms-1"></span>
+                                                </p>
+                                            </div>
+                                            <button id="sound-btn" type="button"
+                                                    class="btn btn-outline-success btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
+                                                    style="width:38px;height:38px" title="Play">
+                                                <i class="bi bi-volume-up"></i>
+                                            </button>
+                                        </div>
+
+                                        <p id="definition-txt"class="mt-3 mb-2">definition</p>
+
+                                        <div id="example-elem"  class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Examples</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+                                        <div id="synonyms-elem" class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Synonyms</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+                                        <div id="antonyms-elem" class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Antonyms</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+
+                                        <form id="save-word-form" method="post" action="${pageContext.request.contextPath}/studentVocab" class="mt-4">
+                                            <input type="hidden" name="word" id="input-word">
+                                            <input type="hidden" name="phonetic" id="input-phonetic">
+                                            <input type="hidden" name="audioUrl" id="input-audio-url">
+                                            <input type="hidden" name="partOfSpeech" id="input-part-of-speech">
+                                            <input type="hidden" name="definition" id="input-definition">
+                                            <input type="hidden" name="example" id="input-example">
+                                            <input type="hidden" name="synonyms" id="input-synonyms">
+                                            <input type="hidden" name="antonyms" id="input-antonyms">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="bi bi-bookmark-check"></i> Lưu từ vựng
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </main>
 
-            <!--<hr class="custom-hr">-->
+
         </div>
 
     </body>
@@ -843,6 +1001,7 @@
     <!--Youtube API-->
     <script src="https://www.youtube.com/iframe_api"></script>
 
+    <script src="${pageContext.request.contextPath}/js/dictionary.js"></script>
     <script>
                                                         tinymce.init({
                                                             selector: '#userReply',
@@ -965,7 +1124,6 @@
                                                             }
                                                         }
 
-
                                                         //for video youtube api
                                                         let ytPlayer;
 
@@ -997,5 +1155,37 @@
                                                                 credentials: 'include'
                                                             });
                                                         };
+
+                                                        //Save vocab
+                                                        const formEl = document.getElementById("save-word-form");
+                                                        formEl.addEventListener('submit', async (e) => {
+                                                            e.preventDefault();
+                                                            const fd = new FormData(formEl);
+
+                                                            try {
+                                                                const res = await fetch(formEl.action, {
+                                                                    method: 'POST',
+                                                                    body: fd,
+                                                                    credentials: 'include'
+                                                                });
+
+                                                                let data = {};
+                                                                try {
+                                                                    data = await res.json();
+                                                                } catch (_) {
+                                                                }
+
+                                                                if (!res.ok || data.success === false) {
+                                                                    alert('Từ vựng đã được thêm trước đó');
+                                                                    return;
+                                                                }
+                                                                alert('Đã lưu từ vựng!');
+                                                            } catch (err) {
+                                                                console.error(err);
+                                                                alert('Có lỗi mạng khi lưu.');
+                                                            }
+                                                        });
+
+
     </script>
 </html>

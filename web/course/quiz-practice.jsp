@@ -39,39 +39,26 @@
                     </a>
                     <h5 class="mb-0">${quiz.title}</h5>
                 </div>
-                <div class="text-muted small">Lần làm quiz thứ #${attempt.attemptNo}</div>
             </div>
         </header>
 
         <main class="container my-4">
 
             <!-- banner after submit -->
-            <c:if test="${attempt.status == 'submitted'}">
-                <c:set var="pass" value="${quiz.passingScorePct != null && attempt.scorePct >= quiz.passingScorePct}" />
-                <div class="alert ${pass ? 'alert-success' : 'alert-danger'} d-flex justify-content-between">
+            <c:if test="${attempt.status == 'submitted'}">      
+                <div class="d-flex flex-row justify-content-between bg-body-secondary p-3 rounded-3">
                     <div>
                         <strong>Điểm của bạn: ${attempt.scorePct}%</strong>
-                        <c:if test="${quiz.passingScorePct != null}">
-                            <span class="ms-2">Để pass quizz bạn cần đạt được tối thiểu ${quiz.passingScorePct}%.</span>
-                        </c:if>
+                    </div>     
+                    <div>
+                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                            <input type="hidden" name="courseId" value="${courseId}">
+                            <input type="hidden" name="itemId" value="${itemId}">
+                            <button class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
+                            </button>
+                        </form>
                     </div>
-                    <c:choose>
-                        <c:when test="${pass}">
-                            <a class="btn btn-primary"
-                               href="${pageContext.request.contextPath}/coursePage?courseId=${courseId}&itemId=${itemId+1}">
-                                Bài học tiếp theo →
-                            </a>
-                        </c:when>
-                        <c:otherwise>
-                            <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
-                                <input type="hidden" name="courseId" value="${courseId}">
-                                <input type="hidden" name="itemId" value="${itemId}">
-                                <button class="btn btn-outline-primary">
-                                    <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
-                                </button>
-                            </form>
-                        </c:otherwise>
-                    </c:choose>
                 </div>
             </c:if>
 
@@ -87,7 +74,6 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
                                     <div class="fw-semibold">${st.count}. ${aq.question.content}</div>
-                                    <span class="badge text-bg-light">${100/quiz.pickCount} point</span>
                                 </div>
 
                                 <!-- MCQ single -->
@@ -137,25 +123,24 @@
                     </c:forEach>
 
                     <div class="d-flex justify-content-start gap-2 border-top pt-3">
-                        <button type="submit" name="action" value="submit" class="btn btn-primary">Submit</button>
-                        <button type="submit" name="action" value="save"   class="btn btn-outline-primary">Save draft</button>
+                        <button type="submit" name="action" value="submit" class="btn btn-primary">Nộp</button>
+                        <button type="submit" name="action" value="save"   class="btn btn-outline-primary">Lưu bài</button>
                     </div>
                 </form>
             </c:if>
 
-            <!-- SAU KHI SUBMIT: review từng câu (đánh dấu đúng/sai + explanation) -->
+            <!--submit-->
             <c:if test="${attempt.status == 'submitted'}">
                 <c:forEach var="aq" items="${attempt.questions}" varStatus="st">
                     <c:set var="chosen" value="${null}" />
                     <c:forEach var="ans" items="${attempt.answers}">
                         <c:if test="${ans.questionId == aq.question.questionId}">
-                            <c:set var="chosen" value="${ans.optionId}" />
+                            <c:set var="chosen" value="${ans.chosenOptionId}" />
                         </c:if>
                     </c:forEach>
 
                     <div class="mt-4">
                         <div class="fw-semibold">${st.count}. ${aq.question.content}</div>
-                        <!--<div class="small text-muted">${100/quiz.pickCount} point</div>-->
 
                         <c:if test="${aq.question.type == 'mcq_single'}">
                             <div class="mt-2">
@@ -192,6 +177,13 @@
                                     <span class="fw-semibold">Your answer:</span>
                                     <c:out value="${empty textVal ? '(no answer)' : textVal}"/>
                                 </span>
+                            </div>
+                        </c:if>
+                        
+                        <c:if test="${not empty aq.question.explanation}">
+                            <div class="alert alert-secondary small mt-2 mb-0">
+                                <span class="fw-semibold">Giải thích:</span>
+                                <c:out value="${aq.question.explanation}"/>
                             </div>
                         </c:if>
                     </div>

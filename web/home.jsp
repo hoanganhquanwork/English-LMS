@@ -45,8 +45,8 @@
 
                 <div class="row g-4">
                     <c:forEach var="c" items="${requestScope.popularCourses}" >
-                        <div class="col-12 col-md-6 col-lg-3">
-                            <a href="${pageContext.request.contextPath}/course?id=${c.courseId}"
+                        <div class="col-12 col-md-6 col-lg-3 ">
+                            <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}"
                                class="card card-course h-100 text-decoration-none text-dark">
                                 <img src="${pageContext.request.contextPath}/${c.thumbnail}" class="card-img-top" alt="${c.title}">
                                 <div class="card-body">
@@ -80,7 +80,7 @@
                 <div class="row g-4">
                     <c:forEach var="c" items="${requestScope.newCourses}">
                         <div class="col-12 col-md-6 col-lg-3">
-                            <a href="${pageContext.request.contextPath}/course?id=${c.courseId}"
+                            <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}"
                                class="card card-course h-100 text-decoration-none text-dark">
                                 <img src="${pageContext.request.contextPath}/${c.thumbnail}" class="card-img-top" alt="${c.title}">
                                 <div class="card-body">
@@ -182,9 +182,9 @@
                 </div>
             </div>
         </section>
-        <header>
+        <footer>
             <jsp:include page="footer.jsp"/>
-        </header>
+        </footer>
 
     </body>
 </html>

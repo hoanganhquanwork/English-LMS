@@ -15,9 +15,9 @@ public class QuizDTO {
     private int quizId;
     private Integer moduleId;
     private String title;
-    private Integer attemptsAllowed;
     private Double passingScorePct;
     private Integer pickCount;
+    private Integer timeLimitMin;
     private List<QuestionDTO> bank;
 
     public int getQuizId() {
@@ -44,14 +44,6 @@ public class QuizDTO {
         this.title = title;
     }
 
-    public Integer getAttemptsAllowed() {
-        return attemptsAllowed;
-    }
-
-    public void setAttemptsAllowed(Integer attemptsAllowed) {
-        this.attemptsAllowed = attemptsAllowed;
-    }
-
     public Double getPassingScorePct() {
         return passingScorePct;
     }
@@ -68,6 +60,14 @@ public class QuizDTO {
         this.pickCount = pickCount;
     }
 
+    public Integer getTimeLimitMin() {
+        return timeLimitMin;
+    }
+
+    public void setTimeLimitMin(Integer timeLimitMin) {
+        this.timeLimitMin = timeLimitMin;
+    }
+
     public List<QuestionDTO> getBank() {
         return bank;
     }
@@ -75,6 +75,7 @@ public class QuizDTO {
     public void setBank(List<QuestionDTO> bank) {
         this.bank = bank;
     }
+
     
     
 }
