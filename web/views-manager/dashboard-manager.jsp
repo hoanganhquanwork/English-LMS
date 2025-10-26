@@ -27,7 +27,12 @@
                 </div>
                 <div class="card">
                     <div class="icon green"><i class="fa fa-coins"></i></div>
-                    <div><div class="meta">Revenue (30d)</div><div class="value">₫ ${totalRevenue}</div></div>
+                    <div>
+                        <div class="meta">Revenue (30d)</div>
+                        <div class="value">
+                            <fmt:formatNumber value="${totalRevenue}" type="number" maxFractionDigits="0" />
+                        </div>
+                    </div>
                 </div>
                 <div class="card">
                     <div class="icon orange"><i class="fa fa-user-tie"></i></div>

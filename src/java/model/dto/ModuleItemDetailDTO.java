@@ -16,13 +16,16 @@ public class ModuleItemDetailDTO {
     private String videoUrl;
     private String textContent;
     private int durationSec;
+    private List<QuestionDTO> lessonQuestions;
+
 
     // QUIZ
+
     private String quizTitle;
     private Integer attemptsAllowed;
     private Double quizPassingPct;
     private Integer pickCount;
-    private List<QuestionDTO> quizQuestions;
+    private Integer timeLimitMin;
 
     // ASSIGNMENT
     private String assignmentTitle;
@@ -43,7 +46,6 @@ public class ModuleItemDetailDTO {
     private List<AssignmentWorkDTO> assignmentWorks;
 
     // ================== GETTERS & SETTERS ==================
-
     public int getModuleId() {
         return moduleId;
     }
@@ -156,14 +158,6 @@ public class ModuleItemDetailDTO {
         this.pickCount = pickCount;
     }
 
-    public List<QuestionDTO> getQuizQuestions() {
-        return quizQuestions;
-    }
-
-    public void setQuizQuestions(List<QuestionDTO> quizQuestions) {
-        this.quizQuestions = quizQuestions;
-    }
-
     public String getAssignmentTitle() {
         return assignmentTitle;
     }
@@ -258,5 +252,20 @@ public class ModuleItemDetailDTO {
 
     public void setAssignmentWorks(List<AssignmentWorkDTO> assignmentWorks) {
         this.assignmentWorks = assignmentWorks;
+    }
+
+    public Integer getTimeLimitMin() {
+        return timeLimitMin;
+    }
+
+    public void setTimeLimitMin(Integer timeLimitMin) {
+        this.timeLimitMin = timeLimitMin;
+    }
+    public List<QuestionDTO> getLessonQuestions() {
+        return lessonQuestions;
+    }
+
+    public void setLessonQuestions(List<QuestionDTO> lessonQuestions) {
+        this.lessonQuestions = lessonQuestions;
     }
 }

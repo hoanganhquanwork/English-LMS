@@ -79,12 +79,10 @@ public class CourseDetailController extends HttpServlet {
 
             Map<String, Object> data = dService.getCourseDetail(courseId);
             if (data == null || data.containsKey("error")) {
-                request.setAttribute("errorMessage",
-                        data != null ? data.get("error") : "Không thể tải dữ liệu khóa học.");
+                request.setAttribute("errorMessage", data != null ? data.get("error") : "Không thể tải dữ liệu khóa học.");
                 request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
                 return;
             }
-            List<QuizDTO> quizzes = dService.getQuizzesWithQuestions(courseId);
 
             List<QuestionDTO> questions = (List<QuestionDTO>) data.get("questions");
             if (questions != null) {
@@ -94,18 +92,18 @@ public class CourseDetailController extends HttpServlet {
                 }
             }
 
-            String createdDate = "";
-            if (course.getCreatedAt() != null) {
-                createdDate = course.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            }
             request.setAttribute("course", course);
             request.setAttribute("modules", data.get("modules"));
             request.setAttribute("items", data.get("items"));
             request.setAttribute("stats", data.get("stats"));
-            request.setAttribute("quizzes", quizzes);
+            request.setAttribute("quizzes", data.get("quizzes"));
             request.setAttribute("questions", questions);
             request.setAttribute("instructor", data.get("instructor"));
-            request.setAttribute("createdDate", createdDate);
+
+            if (course.getCreatedAt() != null) {
+                request.setAttribute("createdDate",
+                        course.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            }
 
             request.getRequestDispatcher("/views-manager/course-detail.jsp").forward(request, response);
 

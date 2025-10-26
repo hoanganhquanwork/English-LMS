@@ -1,17 +1,17 @@
 package service;
 
 import dal.CourseDetailDAO;
+import dal.QuestionDAO;
 import java.util.*;
-import model.dto.AssignmentWorkDTO;
-import model.entity.InstructorProfile;
-import model.dto.ModuleItemDetailDTO;
-import model.dto.QuestionDTO;
-import model.dto.QuizDTO;
+import model.dto.*;
+import model.entity.*;
+import service.QuestionManagerService;
 import model.entity.Module;
 
 public class CourseDetailService {
 
     private final CourseDetailDAO dao = new CourseDetailDAO();
+    private final QuestionManagerService qService = new QuestionManagerService();
 
     public boolean isCourseValid(int courseId) {
         return courseId > 0 && dao.isCourseValid(courseId);
@@ -20,42 +20,38 @@ public class CourseDetailService {
     public Map<String, Object> getCourseDetail(int courseId) {
         Map<String, Object> data = new HashMap<>();
 
-        if (courseId <= 0) {
-            data.put("error", "Mã khóa học không hợp lệ.");
-            return data;
-        }
-        if (!dao.isCourseValid(courseId)) {
-            data.put("error", "Khóa học không tồn tại hoặc đã bị xóa.");
-            return data;
-        }
-
         try {
+            if (courseId <= 0) {
+                data.put("error", "Mã khóa học không hợp lệ.");
+                return data;
+            }
+            if (!dao.isCourseValid(courseId)) {
+                data.put("error", "Khóa học không tồn tại hoặc đã bị xóa.");
+                return data;
+            }
 
             List<Module> modules = dao.getModules(courseId);
             List<ModuleItemDetailDTO> items = dao.getModuleItems(courseId);
+            List<QuestionDTO> questions = dao.getQuestionsByLesson(courseId);
+            List<QuizDTO> quizzes = dao.getQuizzesWithQuestions(courseId);
+            Map<String, Object> stats = dao.getStatistics(courseId);
+            InstructorProfile instructor = dao.getInstructorInfo(courseId);
+
             if (modules == null) {
                 modules = new ArrayList<>();
             }
             if (items == null) {
                 items = new ArrayList<>();
             }
-
-            List<QuestionDTO> questions = dao.getQuestionsByLesson(courseId);
             if (questions == null) {
                 questions = new ArrayList<>();
             }
-
-            List<QuizDTO> quizzes = dao.getQuizzesWithQuestions(courseId);
             if (quizzes == null) {
                 quizzes = new ArrayList<>();
             }
-
-            Map<String, Object> stats = dao.getStatistics(courseId);
             if (stats == null) {
                 stats = new HashMap<>();
             }
-
-            InstructorProfile instructor = dao.getInstructorInfo(courseId);
             if (instructor == null) {
                 instructor = new InstructorProfile();
             }
@@ -66,53 +62,57 @@ public class CourseDetailService {
                         && item.getVideoUrl() != null
                         && item.getVideoUrl().contains("watch?v=")) {
                     item.setVideoUrl(item.getVideoUrl().replace("watch?v=", "embed/"));
+                    List<QuestionDTO> lessonQuestions = dao.getQuestionsByLesson(courseId);
+                    item.setLessonQuestions(lessonQuestions); 
                 }
             }
 
+            Map<Integer, QuizDTO> quizMap = new HashMap<>();
+            for (QuizDTO qz : quizzes) {
+                quizMap.put(qz.getQuizId(), qz);
+            }
+
             for (ModuleItemDetailDTO item : items) {
-                if ("quiz".equalsIgnoreCase(item.getItemType())) {
-                    for (QuizDTO qz : quizzes) {
-                        if (qz.getQuizId() == item.getItemId()) {
-                            item.setQuizQuestions(qz.getBank());
-                            break;
-                        }
+                String type = item.getItemType();
+
+                if ("quiz".equalsIgnoreCase(type)) {
+                    QuizDTO quiz = quizMap.get(item.getItemId());
+                    if (quiz != null) {
+                        item.setQuizTitle(quiz.getTitle());
+                        item.setQuizPassingPct(quiz.getPassingScorePct());
+                        item.setPickCount(quiz.getPickCount());
+                        item.setAttemptsAllowed(quiz.getAttemptsAllowed());
+                        item.setTimeLimitMin(quiz.getTimeLimitMin());
                     }
                 }
-            }
 
-            for (ModuleItemDetailDTO item : items) {
-                if ("assignment".equalsIgnoreCase(item.getItemType())) {
-                    AssignmentWorkDTO detail = dao.getAssignmentDetail(item.getItemId());
-                    if (detail != null) {
-                        item.setAssignmentTitle(detail.getTitle());
-                        item.setSubmissionType(detail.getSubmissionType());
-                        item.setMaxScore(detail.getMaxScore());
-                        item.setAssignmentPassingPct(detail.getPassingScorePct());
-                        item.setAssignmentContent(detail.getContent());
-                        item.setAssignmentInstructions(detail.getInstructions());
-                        item.setAttachmentUrl(detail.getAttachmentUrl());
-                        item.setRubric(detail.getRubric());
+                if ("assignment".equalsIgnoreCase(type) && item.getAssignmentTitle() == null) {
+                    AssignmentWorkDTO a = dao.getAssignmentDetail(item.getItemId());
+                    if (a != null) {
+                        item.setAssignmentTitle(a.getTitle());
+                        item.setAssignmentContent(a.getContent());
+                        item.setAssignmentInstructions(a.getInstructions());
+                        item.setSubmissionType(a.getSubmissionType());
+                        item.setAttachmentUrl(a.getAttachmentUrl());
+                        item.setRubric(a.getRubric());
+                        item.setAssignmentPassingPct(a.getPassingScorePct());
+                        item.setMaxScore(a.getMaxScore());
                     }
                 }
             }
 
             data.put("modules", modules);
             data.put("items", items);
-            data.put("questions", questions);
             data.put("quizzes", quizzes);
             data.put("stats", stats);
             data.put("instructor", instructor);
+            data.put("questions", questions);
 
         } catch (Exception e) {
             e.printStackTrace();
-            data.put("error", "Lỗi khi tải dữ liệu chi tiết khóa học: " + e.getMessage());
+            data.put("error", "Đã xảy ra lỗi khi tải dữ liệu chi tiết khóa học.");
         }
 
         return data;
     }
-
-    public List<QuizDTO> getQuizzesWithQuestions(int courseId) {
-        return dao.getQuizzesWithQuestions(courseId);
-    }
-
 }

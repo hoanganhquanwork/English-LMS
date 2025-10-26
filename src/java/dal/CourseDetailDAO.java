@@ -54,29 +54,30 @@ public class CourseDetailDAO extends DBContext {
         return list;
     }
 
-    public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
-        List<ModuleItemDetailDTO> list = new ArrayList<>();
+   public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
+    List<ModuleItemDetailDTO> list = new ArrayList<>();
 
-        String sql = "SELECT "
-                + " mi.module_item_id, mi.item_type, mi.order_index, "
-                + " m.module_id, m.title AS module_title, "
-                + " l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec, "
-                + " q.title AS quiz_title, q.attempts_allowed, q.passing_score_pct AS quiz_pass_pct, q.pick_count, "
-                + " a.assignment_id, a.title AS assignment_title, a.submission_type, "
-                + " a.max_score, a.passing_score_pct AS assign_pass_pct, "
-                + " d.title AS discussion_title, d.description AS discussion_desc "
-                + "FROM ModuleItem mi "
-                + "JOIN Module m ON mi.module_id = m.module_id "
-                + "LEFT JOIN Lesson l ON mi.module_item_id = l.lesson_id "
-                + "LEFT JOIN Quiz q ON mi.module_item_id = q.quiz_id "
-                + "LEFT JOIN Assignment a ON mi.module_item_id = a.assignment_id "
-                + "LEFT JOIN Discussion d ON mi.module_item_id = d.discussion_id "
-                + "WHERE m.course_id = ? "
-                + "ORDER BY m.order_index, mi.order_index";
+    String sql = "SELECT "
+            + " mi.module_item_id, mi.item_type, mi.order_index, "
+            + " m.module_id, m.title AS module_title, "
+            + " l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec, "
+            + " q.title AS quiz_title, q.attempts_allowed, q.passing_score_pct AS quiz_pass_pct, "
+            + " q.pick_count, q.time_limit_min, " 
+            + " a.assignment_id, a.title AS assignment_title, a.submission_type, "
+            + " a.max_score, a.passing_score_pct AS assign_pass_pct, "
+            + " d.title AS discussion_title, d.description AS discussion_desc "
+            + "FROM ModuleItem mi "
+            + "JOIN Module m ON mi.module_id = m.module_id "
+            + "LEFT JOIN Lesson l ON mi.module_item_id = l.lesson_id "
+            + "LEFT JOIN Quiz q ON mi.module_item_id = q.quiz_id "
+            + "LEFT JOIN Assignment a ON mi.module_item_id = a.assignment_id "
+            + "LEFT JOIN Discussion d ON mi.module_item_id = d.discussion_id "
+            + "WHERE m.course_id = ? "
+            + "ORDER BY m.order_index, mi.order_index";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, courseId);
-            ResultSet rs = ps.executeQuery();
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, courseId);
+        try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 ModuleItemDetailDTO dto = new ModuleItemDetailDTO();
                 dto.setModuleId(rs.getInt("module_id"));
@@ -86,6 +87,7 @@ public class CourseDetailDAO extends DBContext {
                 dto.setOrderIndex(rs.getInt("order_index"));
 
                 String type = rs.getString("item_type");
+
                 if ("lesson".equalsIgnoreCase(type)) {
                     dto.setLessonTitle(rs.getString("lesson_title"));
                     dto.setContentType(rs.getString("content_type"));
@@ -93,14 +95,21 @@ public class CourseDetailDAO extends DBContext {
                     dto.setTextContent(rs.getString("text_content"));
                     Object dur = rs.getObject("duration_sec");
                     dto.setDurationSec(dur != null ? rs.getInt("duration_sec") : 0);
-                } else if ("quiz".equalsIgnoreCase(type)) {
+                }
+
+                else if ("quiz".equalsIgnoreCase(type)) {
                     dto.setQuizTitle(rs.getString("quiz_title"));
                     dto.setAttemptsAllowed((Integer) rs.getObject("attempts_allowed"));
+
                     Object quizPass = rs.getObject("quiz_pass_pct");
                     dto.setQuizPassingPct(quizPass instanceof BigDecimal
                             ? ((BigDecimal) quizPass).doubleValue() : null);
+
                     dto.setPickCount((Integer) rs.getObject("pick_count"));
-                } else if ("assignment".equalsIgnoreCase(type)) {
+                    dto.setTimeLimitMin((Integer) rs.getObject("time_limit_min")); 
+                }
+
+                else if ("assignment".equalsIgnoreCase(type)) {
                     AssignmentWorkDTO assignment = getAssignmentDetail(rs.getInt("assignment_id"));
                     if (assignment != null) {
                         dto.setAssignmentTitle(assignment.getTitle());
@@ -112,18 +121,24 @@ public class CourseDetailDAO extends DBContext {
                         dto.setAttachmentUrl(assignment.getAttachmentUrl());
                         dto.setRubric(assignment.getRubric());
                     }
-                } else if ("discussion".equalsIgnoreCase(type)) {
+                }
+
+                else if ("discussion".equalsIgnoreCase(type)) {
                     dto.setDiscussionTitle(rs.getString("discussion_title"));
                     dto.setDiscussionDescription(rs.getString("discussion_desc"));
                     dto.setDiscussionPosts(getDiscussionPosts(dto.getItemId()));
                 }
+
                 list.add(dto);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return list;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+
+    return list;
+}
+
 
     public AssignmentWorkDTO getAssignmentDetail(int assignmentId) {
         AssignmentWorkDTO dto = null;
@@ -155,33 +170,7 @@ public class CourseDetailDAO extends DBContext {
         return dto;
     }
 
-    public List<AssignmentWorkDTO> getAssignmentWorks(int assignmentId) {
-        List<AssignmentWorkDTO> list = new ArrayList<>();
-        String sql = "SELECT a.assignment_id, a.title, a.submission_type, "
-                + "a.max_score, a.passing_score_pct "
-                + "FROM Assignment a "
-                + "WHERE a.assignment_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, assignmentId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                AssignmentWorkDTO dto = new AssignmentWorkDTO();
-                dto.setAssignmentId(rs.getInt("assignment_id"));
-                dto.setTitle(rs.getString("title"));
-                dto.setSubmissionType(rs.getString("submission_type"));
-                Object maxScore = rs.getObject("max_score");
-                dto.setMaxScore(maxScore instanceof BigDecimal
-                        ? ((BigDecimal) maxScore).doubleValue() : 0);
-                Object passPct = rs.getObject("passing_score_pct");
-                dto.setPassingScorePct(passPct instanceof BigDecimal
-                        ? ((BigDecimal) passPct).doubleValue() : null);
-                list.add(dto);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
+    
 
     public List<DiscussionPostDTO> getDiscussionPosts(int discussionId) {
         List<DiscussionPostDTO> posts = new ArrayList<>();

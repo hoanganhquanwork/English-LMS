@@ -16,15 +16,17 @@
         <main class="main-content">
             <div class="container course-container">
 
-                <a href="coursemanager" class="back-btn"><i class="fa fa-arrow-left"></i> Quay lại danh sách</a>
+                <a href="coursemanager" class="back-btn">
+                    <i class="fa fa-arrow-left"></i> Quay lại danh sách
+                </a>
 
                 <c:if test="${not empty sessionScope.message}">
                     <div class="alert alert-success">${sessionScope.message}</div>
-                    <c:remove var="message" scope="session"/>
+                    <c:remove var="message" scope="session" />
                 </c:if>
                 <c:if test="${not empty sessionScope.errorMessage}">
                     <div class="alert alert-danger">${sessionScope.errorMessage}</div>
-                    <c:remove var="errorMessage" scope="session"/>
+                    <c:remove var="errorMessage" scope="session" />
                 </c:if>
 
                 <div class="course-detail-header">
@@ -33,18 +35,21 @@
                         <p class="course-desc">
                             <c:out value="${empty course.description ? 'Chưa có mô tả.' : course.description}" />
                         </p>
-                        <p class="muted"><i class="fa fa-calendar"></i> Ngày tạo: 
+                        <p class="muted">
+                            <i class="fa fa-calendar"></i> Ngày tạo:
                             <c:out value="${empty createdDate ? 'Không xác định' : createdDate}" />
                         </p>
                     </div>
 
                     <div class="course-meta">
-                        <p><strong>Trạng thái:</strong>
+                        <p>
+                            <strong>Trạng thái:</strong>
                             <span class="status-badge ${course.status}">
                                 <c:out value="${empty course.status ? 'unknown' : course.status}" />
                             </span>
                         </p>
-                        <p><strong>Giá:</strong>
+                        <p>
+                            <strong>Giá:</strong>
                             <c:choose>
                                 <c:when test="${course.price != null}">
                                     <fmt:formatNumber value="${course.price}" type="currency" currencySymbol="₫" />
@@ -103,11 +108,15 @@
                     <form method="post" action="coursedetail" class="inline-form">
                         <input type="hidden" name="action" value="updatePrice">
                         <input type="hidden" name="courseId" value="${course.courseId}">
-                        <input type="number" name="price" value="${course.price != null ? course.price : 0}" min="0" step="1000" class="price-inline-input">
-                        <button class="price-inline-btn" title="Cập nhật giá"><i class="fa fa-save"></i></button>
+                        <input type="number" name="price" value="${course.price != null ? course.price : 0}" 
+                               min="0" step="1000" class="price-inline-input">
+                        <button class="price-inline-btn" title="Cập nhật giá">
+                            <i class="fa fa-save"></i>
+                        </button>
                     </form>
                 </div>
-                <div class = "course-overview">
+
+                <div class="course-overview">
                     <section class="course-stats">
                         <h3>Tổng quan khóa học</h3>
                         <ul>
@@ -142,7 +151,6 @@
                         </c:choose>
                     </section>
                 </div>
-
 
                 <section class="course-outline">
                     <h3>Chương trình học</h3>
@@ -180,8 +188,8 @@
                                                         </h4>
                                                         <i class="fa fa-chevron-down toggle-icon"></i>
                                                     </div>
-
                                                     <div class="item-detail" style="display:none;">
+
                                                         <c:if test="${i.itemType eq 'lesson'}">
                                                             <p><strong>Loại nội dung:</strong> ${i.contentType}</p>
                                                             <c:if test="${not empty i.videoUrl}">
@@ -278,12 +286,17 @@
                                                         </c:if>
 
                                                         <c:if test="${i.itemType eq 'quiz'}">
-                                                            <p><strong>Giới hạn thời gian:</strong> 
-                                                                ${quiz.timeLimitMin != null ? quiz.timeLimitMin + " phút" : "Không giới hạn"}</p>
+                                                            <p><strong>Giới hạn thời gian:</strong>
+                                                                <c:choose>
+                                                                    <c:when test="${i.timeLimitMin != null}">
+                                                                        <c:out value="${i.timeLimitMin}" /> phút
+                                                                    </c:when>
+                                                                    <c:otherwise>Không giới hạn</c:otherwise>
+                                                                </c:choose>
+                                                            </p>
                                                             <p>Tỉ lệ qua: ${i.quizPassingPct}%</p>
                                                             <p>Số câu chọn ngẫu nhiên: ${i.pickCount}</p>
                                                         </c:if>
-
                                                         <c:if test="${i.itemType eq 'assignment'}">
                                                             <div class="assignment-detail">
                                                                 <p><strong>Hình thức nộp:</strong> ${i.submissionType}</p>
@@ -300,11 +313,8 @@
                                                                 </c:if>
                                                             </div>
                                                         </c:if>
-
                                                         <c:if test="${i.itemType eq 'discussion'}">
                                                             <p>${i.discussionDescription}</p>
-                                                            <c:if test="${not empty i.discussionPosts}">                                                      
-                                                            </c:if>
                                                         </c:if>
                                                     </div>
                                                 </div>
@@ -352,25 +362,29 @@
             </div>
         </div>
 
-        <div id="imageModal" class="modal" style="display:none;">
-            <div class="modal-content image-viewer">
-                <span class="close-btn" onclick="closeImageModal()">&times;</span>
-                <div id="imageContainer" class="image-gallery"></div>
-            </div>
-        </div>
-
         <script>
-            function toggleModule(header) {
-                const content = header.nextElementSibling;
-                const icon = header.querySelector("i");
-                const isOpen = content.style.display === "block";
-                document.querySelectorAll('.module-lessons').forEach(el => el.style.display = "none");
-                document.querySelectorAll('.module-header i').forEach(i => i.classList.replace("fa-chevron-up", "fa-chevron-down"));
-                if (!isOpen) {
-                    content.style.display = "block";
-                    icon.classList.replace("fa-chevron-down", "fa-chevron-up");
+            function toggleModule(h) {
+                const c = h.nextElementSibling;
+                const i = h.querySelector("i");
+                const open = c.style.display === "block";
+                document.querySelectorAll('.module-lessons').forEach(e => e.style.display = "none");
+                document.querySelectorAll('.module-header i').forEach(e => e.classList.replace("fa-chevron-up", "fa-chevron-down"));
+                if (!open) {
+                    c.style.display = "block";
+                    i.classList.replace("fa-chevron-down", "fa-chevron-up");
                 }
             }
+
+            function toggleItem(h) {
+                const d = h.nextElementSibling;
+                const i = h.querySelector(".fa-chevron-down, .fa-chevron-up");
+                const open = d.style.display === "block";
+                h.parentElement.parentElement.querySelectorAll(".item-detail").forEach(e => e.style.display = "none");
+                h.parentElement.parentElement.querySelectorAll(".item-header i.fa-chevron-up").forEach(e => e.classList.replace("fa-chevron-up", "fa-chevron-down"));
+                d.style.display = open ? "none" : "block";
+                i.classList.replace(open ? "fa-chevron-up" : "fa-chevron-down", open ? "fa-chevron-down" : "fa-chevron-up");
+            }
+
             function openRejectModal(id) {
                 document.getElementById('rejectModal').style.display = 'flex';
                 document.getElementById('rejectCourseId').value = id;
@@ -385,52 +399,6 @@
             function closeScheduleModal() {
                 document.getElementById('scheduleModal').style.display = 'none';
             }
-
-            function openImageModal(mediaUrls) {
-                const modal = document.getElementById("imageModal");
-                const container = document.getElementById("imageContainer");
-                container.innerHTML = "";
-                const urls = mediaUrls.split(",");
-                urls.forEach(u => {
-                    const url = u.trim();
-                    if (url.match(/\.(jpg|jpeg|png|gif)$/i)) {
-                        const img = document.createElement("img");
-                        img.src = url;
-                        img.className = "modal-image";
-                        container.appendChild(img);
-                    } else {
-                        const link = document.createElement("a");
-                        link.href = url;
-                        link.target = "_blank";
-                        link.textContent = url.split("/").pop();
-                        container.appendChild(link);
-                    }
-                });
-                modal.style.display = "flex";
-            }
-            function closeImageModal() {
-                document.getElementById("imageModal").style.display = "none";
-            }
-
-            function toggleItem(header) {
-                const detail = header.nextElementSibling;
-                const icon = header.querySelector(".fa-chevron-down, .fa-chevron-up");
-                const isOpen = detail.style.display === "block";
-                header.parentElement.parentElement.querySelectorAll(".item-detail").forEach(el => {
-                    el.style.display = "none";
-                });
-                header.parentElement.parentElement.querySelectorAll(".item-header i.fa-chevron-up").forEach(el => {
-                    el.classList.replace("fa-chevron-up", "fa-chevron-down");
-                });
-                if (isOpen) {
-                    detail.style.display = "none";
-                    icon.classList.replace("fa-chevron-up", "fa-chevron-down");
-                } else {
-                    detail.style.display = "block";
-                    icon.classList.replace("fa-chevron-down", "fa-chevron-up");
-                }
-            }
         </script>
-
     </body>
 </html>
