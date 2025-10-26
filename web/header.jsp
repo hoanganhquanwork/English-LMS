@@ -24,7 +24,7 @@
                                                                            alt="hi" height="28" class="me-3"></a>
                     <a href="${pageContext.request.contextPath}/courseSearching" class="nav-link me-3">Khám phá</a>
                     <c:if test="${sessionScope.user != null}">
-                        <a href="#" class="nav-link me-3">Khóa học của tôi</a>
+                        <a href="${pageContext.request.contextPath}/myLearning" class="nav-link me-3">Khóa học của tôi</a>
                     </c:if>
                 </div>
 

@@ -221,7 +221,7 @@
                                                             <form action="${pageContext.request.contextPath}/coursePage" method="get" style="display:inline;">
                                                                 <input type="hidden" name="courseId" value="${c.course.courseId}">
                                                                 <button class="btn btn-sm btn-success">
-                                                                    Xem chi tiết
+                                                                    Vào khóa học
                                                                 </button>
                                                             </form>
                                                         </c:when>
