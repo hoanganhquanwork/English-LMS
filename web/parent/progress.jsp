@@ -20,7 +20,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
-       
+
     </head>
     <body>
         <%@ include file="parent_header.jsp" %>
@@ -65,7 +65,7 @@
                         <p>Khóa học đã hoàn thành</p>
                     </div>
                 </div>
-                
+
             </div>
 
             <!-- Danh sách tiến độ khóa học -->
@@ -142,7 +142,11 @@
                                            class="btn btn-sm btn-outline-primary" style="border-radius: 15px;">
                                             <i class="bi bi-eye"></i> Xem chi tiết
                                         </a>
+                                            <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}" class="btn primary" target="_blank">
+                                            📖 Xem thông tin khóa học
+                                        </a>
                                     </div>
+                                   
                                 </div>
                             </c:forEach>
                         </div>
@@ -152,11 +156,11 @@
         </main>
 
         <jsp:include page="/footer.jsp" />
-        
+
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const progressFills = document.querySelectorAll('.progress-fill');
-                progressFills.forEach(function(fill) {
+                progressFills.forEach(function (fill) {
                     const width = fill.getAttribute('data-width');
                     if (width) {
                         fill.style.width = width + '%';

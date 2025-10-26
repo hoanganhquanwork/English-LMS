@@ -39,4 +39,5 @@ public class ParentProgressService {
         data.put("avgProgress", Math.round(avgProgress * 10.0) / 10.0);
         return data;
     }
+
 }

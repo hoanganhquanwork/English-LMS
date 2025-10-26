@@ -10,7 +10,7 @@ public class ParentProgressDAO extends DBContext {
     // Lấy danh sách con
     public List<Users> getChildrenByParent(int parentId) {
         List<Users> list = new ArrayList<>();
-        String sql = "SELECT u.user_id, u.full_name FROM StudentProfile s "
+        String sql = "SELECT u.user_id, u.full_name, u.email FROM StudentProfile s "
                    + "JOIN Users u ON s.user_id = u.user_id WHERE s.parent_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, parentId);
@@ -19,6 +19,7 @@ public class ParentProgressDAO extends DBContext {
                 Users u = new Users();
                 u.setUserId(rs.getInt("user_id"));
                 u.setFullName(rs.getString("full_name"));
+                u.setEmail(rs.getString("email"));
                 list.add(u);
             }
         } catch (Exception e) {
@@ -159,6 +160,7 @@ public class ParentProgressDAO extends DBContext {
         }
         return null;
     }
+
     
    
 }

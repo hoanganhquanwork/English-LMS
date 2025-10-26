@@ -48,29 +48,29 @@
                         <p>Bài học hoàn thành</p>
                     </div>
                 </div>
-                 <div class="overview-card">
-                     <div class="card-icon">✅</div>
-                     <div class="card-content">
-                         <h3>${coursePage.completedRequired} / ${coursePage.totalRequired}</h3>
-                         <p>Bài học bắt buộc</p>
-                     </div>
-                 </div>
-                 <div class="overview-card">
-                     <div class="card-icon">📊</div>
-                     <div class="card-content">
-                         <h3>
-                             <c:choose>
-                                 <c:when test="${coursePage.avgScorePct != null}">
-                                     ${fn:substringBefore(coursePage.avgScorePct, ".")}/100
-                                 </c:when>
-                                 <c:otherwise>
-                                     Chưa có điểm
-                                 </c:otherwise>
-                             </c:choose>
-                         </h3>
-                         <p>Điểm trung bình</p>
-                     </div>
-                 </div>
+                <div class="overview-card">
+                    <div class="card-icon">✅</div>
+                    <div class="card-content">
+                        <h3>${coursePage.completedRequired} / ${coursePage.totalRequired}</h3>
+                        <p>Bài học bắt buộc</p>
+                    </div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-content">
+                        <h3>
+                            <c:choose>
+                                <c:when test="${coursePage.avgScorePct != null}">
+                                    ${fn:substringBefore(coursePage.avgScorePct, ".")}/100
+                                </c:when>
+                                <c:otherwise>
+                                    Chưa có điểm
+                                </c:otherwise>
+                            </c:choose>
+                        </h3>
+                        <p>Điểm trung bình</p>
+                    </div>
+                </div>
 
             </div>
 
@@ -98,12 +98,11 @@
                                     <div class="lesson-status">
                                         <c:choose>
                                             <c:when test="${i.status == 'completed'}">
+                                                <c:if test="${i.scorePct != null}">
+                                                    <span class="lesson-score">Điểm: ${i.scorePct}/100 </span>
+                                                </c:if>
                                                 <i class="bi bi-check-circle-fill text-success"></i>
                                                 <span>Đã hoàn thành</span>
-
-                                                <c:if test="${i.scorePct != null}">
-                                                    <span class="lesson-score">Điểm: ${i.scorePct}/100</span>
-                                                </c:if>
                                             </c:when>
                                             <c:otherwise>
                                                 <i class="bi bi-circle text-muted"></i>
@@ -121,7 +120,7 @@
         </main>
 
         <jsp:include page="/footer.jsp" />
-        
-       
+
+
     </body>
 </html>

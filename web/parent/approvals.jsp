@@ -66,7 +66,7 @@
             <c:otherwise>
                 <div class="approval-grid">
                     <c:forEach var="req" items="${requests}">
-                        <div class="approval-card ${req.status}">
+                        <div class="approval-card ${req.status}" style = "padding: 20px">
                             <div class="card-header">
                                 <div class="student-info">
                                     <c:choose>

@@ -33,7 +33,7 @@
 
     <div class="container navigation-bar">
         <nav class="nav">
-            <a href="dashboard.html"
+            <a href="${pageContext.request.contextPath}/parent/dashboard"
                class="<%= "dashboard".equals(currentPage) ? "active" : "" %>">Dashboard</a>
             <a href="${pageContext.request.contextPath}/parentlinkstudent"
                class="<%= "children".equals(currentPage) ? "active" : "" %>">Quản lý con</a>
