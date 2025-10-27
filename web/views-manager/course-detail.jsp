@@ -306,6 +306,15 @@
                                                                 <p><strong>Điểm tối đa:</strong> ${i.maxScore}</p>
                                                                 <p><strong>Tỉ lệ qua:</strong> ${i.assignmentPassingPct}%</p>
                                                                 <c:if test="${not empty i.assignmentInstructions}">
+                                                                    <c:if test="${not empty item.attachmentUrl}">
+                                                                        <p> Tệp đính kèm:
+                                                                            <a href="${item.attachmentUrl}" 
+                                                                               target="_blank" 
+                                                                               class="btn btn-outline">
+                                                                                Xem / Tải tệp Word
+                                                                            </a>
+                                                                        </p>
+                                                                    </c:if>
                                                                     <div class="text-content"><h5>Hướng dẫn:</h5>${i.assignmentInstructions}</div>
                                                                 </c:if>
                                                                 <c:if test="${not empty i.assignmentContent}">

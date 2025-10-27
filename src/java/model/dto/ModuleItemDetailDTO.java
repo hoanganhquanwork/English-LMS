@@ -40,7 +40,6 @@ public class ModuleItemDetailDTO {
     // DISCUSSION
     private String discussionTitle;
     private String discussionDescription;
-    private List<DiscussionPostDTO> discussionPosts;
 
     // Có thể giữ nếu Assignment có subWorks (không bắt buộc)
     private List<AssignmentWorkDTO> assignmentWorks;
@@ -237,15 +236,6 @@ public class ModuleItemDetailDTO {
     public void setDiscussionDescription(String discussionDescription) {
         this.discussionDescription = discussionDescription;
     }
-
-    public List<DiscussionPostDTO> getDiscussionPosts() {
-        return discussionPosts;
-    }
-
-    public void setDiscussionPosts(List<DiscussionPostDTO> discussionPosts) {
-        this.discussionPosts = discussionPosts;
-    }
-
     public List<AssignmentWorkDTO> getAssignmentWorks() {
         return assignmentWorks;
     }

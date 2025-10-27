@@ -54,7 +54,7 @@ public class CourseDetailDAO extends DBContext {
         return list;
     }
 
-   public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
+public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
     List<ModuleItemDetailDTO> list = new ArrayList<>();
 
     String sql = "SELECT "
@@ -62,7 +62,7 @@ public class CourseDetailDAO extends DBContext {
             + " m.module_id, m.title AS module_title, "
             + " l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec, "
             + " q.title AS quiz_title, q.attempts_allowed, q.passing_score_pct AS quiz_pass_pct, "
-            + " q.pick_count, q.time_limit_min, " 
+            + " q.pick_count, q.time_limit_min, "
             + " a.assignment_id, a.title AS assignment_title, a.submission_type, "
             + " a.max_score, a.passing_score_pct AS assign_pass_pct, "
             + " d.title AS discussion_title, d.description AS discussion_desc "
@@ -77,9 +77,11 @@ public class CourseDetailDAO extends DBContext {
 
     try (PreparedStatement ps = connection.prepareStatement(sql)) {
         ps.setInt(1, courseId);
+
         try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 ModuleItemDetailDTO dto = new ModuleItemDetailDTO();
+
                 dto.setModuleId(rs.getInt("module_id"));
                 dto.setModuleTitle(rs.getString("module_title"));
                 dto.setItemId(rs.getInt("module_item_id"));
@@ -93,52 +95,77 @@ public class CourseDetailDAO extends DBContext {
                     dto.setContentType(rs.getString("content_type"));
                     dto.setVideoUrl(rs.getString("video_url"));
                     dto.setTextContent(rs.getString("text_content"));
-                    Object dur = rs.getObject("duration_sec");
-                    dto.setDurationSec(dur != null ? rs.getInt("duration_sec") : 0);
+
+                    Object durObj = rs.getObject("duration_sec");
+                    if (durObj != null) {
+                        dto.setDurationSec(rs.getInt("duration_sec"));
+                    } else {
+                        dto.setDurationSec(0);
+                    }
+
+                    dto.setLessonQuestions(null);
                 }
 
                 else if ("quiz".equalsIgnoreCase(type)) {
                     dto.setQuizTitle(rs.getString("quiz_title"));
-                    dto.setAttemptsAllowed((Integer) rs.getObject("attempts_allowed"));
 
-                    Object quizPass = rs.getObject("quiz_pass_pct");
-                    dto.setQuizPassingPct(quizPass instanceof BigDecimal
-                            ? ((BigDecimal) quizPass).doubleValue() : null);
+                    Object attempts = rs.getObject("attempts_allowed");
+                    if (attempts != null) {
+                        dto.setAttemptsAllowed(rs.getInt("attempts_allowed"));
+                    }
 
-                    dto.setPickCount((Integer) rs.getObject("pick_count"));
-                    dto.setTimeLimitMin((Integer) rs.getObject("time_limit_min")); 
+                    Object passPct = rs.getObject("quiz_pass_pct");
+                    if (passPct instanceof BigDecimal) {
+                        dto.setQuizPassingPct(((BigDecimal) passPct).doubleValue());
+                    }
+
+                    Object pickCount = rs.getObject("pick_count");
+                    if (pickCount != null) {
+                        dto.setPickCount(rs.getInt("pick_count"));
+                    }
+
+                    Object timeLimit = rs.getObject("time_limit_min");
+                    if (timeLimit != null) {
+                        dto.setTimeLimitMin(rs.getInt("time_limit_min"));
+                    }
                 }
 
                 else if ("assignment".equalsIgnoreCase(type)) {
-                    AssignmentWorkDTO assignment = getAssignmentDetail(rs.getInt("assignment_id"));
-                    if (assignment != null) {
-                        dto.setAssignmentTitle(assignment.getTitle());
-                        dto.setSubmissionType(assignment.getSubmissionType());
-                        dto.setMaxScore(assignment.getMaxScore());
-                        dto.setAssignmentPassingPct(assignment.getPassingScorePct());
-                        dto.setAssignmentContent(assignment.getContent());
-                        dto.setAssignmentInstructions(assignment.getInstructions());
-                        dto.setAttachmentUrl(assignment.getAttachmentUrl());
-                        dto.setRubric(assignment.getRubric());
+                    dto.setAssignmentTitle(rs.getString("assignment_title"));
+                    dto.setSubmissionType(rs.getString("submission_type"));
+
+                    Object maxScore = rs.getObject("max_score");
+                    if (maxScore != null) {
+                        dto.setMaxScore(rs.getDouble("max_score"));
                     }
+
+                    Object assignPass = rs.getObject("assign_pass_pct");
+                    if (assignPass instanceof BigDecimal) {
+                        dto.setAssignmentPassingPct(((BigDecimal) assignPass).doubleValue());
+                    }
+
+                    dto.setAssignmentContent(null);
+                    dto.setAssignmentInstructions(null);
+                    dto.setAttachmentUrl(null);
+                    dto.setRubric(null);
+                    dto.setAssignmentWorks(null);
                 }
 
                 else if ("discussion".equalsIgnoreCase(type)) {
                     dto.setDiscussionTitle(rs.getString("discussion_title"));
                     dto.setDiscussionDescription(rs.getString("discussion_desc"));
-                    dto.setDiscussionPosts(getDiscussionPosts(dto.getItemId()));
                 }
 
                 list.add(dto);
             }
         }
+
     } catch (SQLException e) {
         e.printStackTrace();
     }
 
     return list;
 }
-
 
     public AssignmentWorkDTO getAssignmentDetail(int assignmentId) {
         AssignmentWorkDTO dto = null;

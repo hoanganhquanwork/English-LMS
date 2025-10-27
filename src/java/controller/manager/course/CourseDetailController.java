@@ -159,6 +159,7 @@ public class CourseDetailController extends HttpServlet {
             String priceStr = request.getParameter("price");
 
             BigDecimal price = (priceStr != null && !priceStr.isEmpty()) ? new BigDecimal(priceStr) : null;
+            
             LocalDateTime publishDate = (publishDateStr != null && !publishDateStr.isEmpty())
                     ? LocalDate.parse(publishDateStr).atStartOfDay() : null;
 

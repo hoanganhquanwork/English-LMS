@@ -451,7 +451,6 @@ body.dashboard {
     margin-top: auto;
 }
 
-/* ====== Responsive ====== */
 @media (max-width: 768px) {
     .course-overview {
         flex-direction: column;
@@ -461,7 +460,6 @@ body.dashboard {
         width: 100%;
     }
 }
-/* ===== Outline Section ===== */
 .course-outline {
     background: var(--panel);
     border: 1px solid var(--border);
