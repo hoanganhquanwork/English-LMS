@@ -16,18 +16,22 @@ public class Lesson {
     private String videoUrl;
     private int durationSec;
     private String textContent;
+     private String videoScript;
 
     public Lesson() {
     }
 
-    public Lesson(int moduleItemId, String title, String contentType, String videoUrl, int durationSec, String textContent) {
+    public Lesson(int moduleItemId, String title, String contentType, String videoUrl, int durationSec, String textContent, String videoScript) {
         this.moduleItemId = moduleItemId;
         this.title = title;
         this.contentType = contentType;
         this.videoUrl = videoUrl;
         this.durationSec = durationSec;
         this.textContent = textContent;
+        this.videoScript = videoScript;
     }
+
+  
 
     public int getModuleItemId() {
         return moduleItemId;
@@ -76,5 +80,15 @@ public class Lesson {
     public void setTextContent(String textContent) {
         this.textContent = textContent;
     }
+
+    public String getVideoScript() {
+        return videoScript;
+    }
+
+    public void setVideoScript(String videoScript) {
+        this.videoScript = videoScript;
+    }
+    
+    
     
 }

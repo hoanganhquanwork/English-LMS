@@ -179,4 +179,52 @@ public class ProgressDAO extends DBContext {
         }
     }
 
+    public int updateBestAssignmentScore(int studentId, int moduleItemId, double newScorePct, boolean passed) {
+        String sql = """
+        UPDATE Progress
+        SET 
+           
+            score_pct = CASE 
+                            WHEN score_pct IS NULL OR ? > score_pct THEN ? 
+                            ELSE score_pct 
+                        END,
+            
+          
+            status = CASE 
+                        WHEN ? = 1 THEN 'completed' 
+                        ELSE status 
+                     END,
+            
+           
+            completed_at = CASE 
+                              WHEN ? = 1 AND completed_at IS NULL THEN GETDATE() 
+                              ELSE completed_at 
+                           END,
+
+            updated_at = GETDATE()
+        WHERE student_id = ? AND module_item_id = ?
+    """;
+
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            int i = 1;
+            st.setDouble(i++, newScorePct);
+            st.setDouble(i++, newScorePct);
+            st.setInt(i++, passed ? 1 : 0);
+            st.setInt(i++, passed ? 1 : 0);
+            st.setInt(i++, studentId);
+            st.setInt(i++, moduleItemId);
+
+            int rows = st.executeUpdate();
+
+            if (rows == 0) {
+                System.out.println(" Progress chưa tồn tại cho assignment " + moduleItemId);
+            }
+
+            return rows;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
 }

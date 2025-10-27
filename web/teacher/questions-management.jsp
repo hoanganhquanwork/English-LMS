@@ -1,8 +1,4 @@
-<%-- 
-    Document   : questions-management
-    Created on : Dec 27, 2024
-    Author     : Lenovo
---%>
+
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -16,6 +12,7 @@
         <link rel="stylesheet" href="css/styles.css">
         <link rel="stylesheet" href="css/course-students.css">
         <link rel="stylesheet" href="css/course-content.css">
+        <link rel="stylesheet" href="css/teacher-questions.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
             .container {
@@ -253,6 +250,15 @@
                 background: #2980b9;
             }
 
+            .btn-warning {
+                background: #f39c12;
+                color: white;
+            }
+
+            .btn-warning:hover {
+                background: #e67e22;
+            }
+
             /* Add Question Form */
             .add-question-form {
                 background: white;
@@ -328,28 +334,28 @@
                     flex-direction: column;
                     gap: 15px;
                 }
-                
+
                 .filter-row {
                     flex-direction: column;
                     align-items: stretch;
                 }
-                
+
                 .filter-group {
                     width: 100%;
                 }
-                
+
                 .filter-select {
                     min-width: auto;
                 }
-                
+
                 .form-row {
                     flex-direction: column;
                 }
-                
+
                 .action-buttons {
                     flex-wrap: wrap;
                 }
-                
+
                 .btn {
                     font-size: 11px;
                     padding: 4px 8px;
@@ -903,8 +909,12 @@
             }
 
             @keyframes fadeIn {
-                from { opacity: 0; }
-                to { opacity: 1; }
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
             }
 
             @keyframes slideInUp {
@@ -915,6 +925,243 @@
                 to {
                     opacity: 1;
                     transform: translateY(0);
+                }
+            }
+
+            /* Simple Pagination Styles */
+            .pagination-container {
+                display: flex;
+                justify-content: center;
+                margin: 20px 0;
+            }
+
+            .pagination-form {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .pagination-btn {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            .pagination-btn:hover {
+                background: #f5f5f5;
+            }
+
+            .pagination-btn.active {
+                background: #007bff;
+                color: #fff;
+                border-color: #007bff;
+            }
+
+            .pagination-info {
+                margin-left: 10px;
+                color: #666;
+                font-size: 14px;
+            }
+
+            /* AI Button Styles */
+            .btn-ai {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-ai:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+
+            /* AI Modal Styles */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                animation: fadeIn 0.3s ease;
+            }
+
+            .ai-modal-content {
+                background-color: #fefefe;
+                margin: 5% auto;
+                padding: 0;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 600px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                animation: slideIn 0.3s ease;
+            }
+
+            .modal-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 20px 30px;
+                border-radius: 12px 12px 0 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .modal-header h3 {
+                margin: 0;
+                font-size: 20px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .close {
+                color: white;
+                font-size: 28px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: opacity 0.3s ease;
+            }
+
+            .close:hover {
+                opacity: 0.7;
+            }
+
+            .modal-body {
+                padding: 30px;
+            }
+
+            /* AI Form Styles - Vertical Layout */
+            .ai-form-row {
+                margin-bottom: 20px;
+            }
+
+            .ai-form-row:last-child {
+                margin-bottom: 0;
+            }
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .form-group label {
+                font-weight: 600;
+                color: #2c3e50;
+                font-size: 14px;
+            }
+
+            .form-group select,
+            .form-group input,
+            .form-group textarea {
+                padding: 12px 15px;
+                border: 2px solid #e9ecef;
+                border-radius: 8px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                background-color: #fff;
+            }
+
+            .form-group select:focus,
+            .form-group input:focus,
+            .form-group textarea:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+
+            .form-group textarea {
+                resize: vertical;
+                min-height: 80px;
+                font-family: inherit;
+            }
+
+            .modal-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 15px;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #e9ecef;
+            }
+
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+                transform: translateY(-1px);
+            }
+
+            /* Animations */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .ai-modal-content {
+                    width: 95%;
+                    margin: 10% auto;
+                }
+
+                .modal-header {
+                    padding: 15px 20px;
+                }
+
+                .modal-body {
+                    padding: 20px;
+                }
+
+                .modal-actions {
+                    flex-direction: column;
+                }
+
+                .modal-actions button {
+                    width: 100%;
                 }
             }
         </style>
@@ -943,7 +1190,7 @@
         <div class="container">
             <!-- Sidebar -->
             <jsp:include page="sidebar.jsp" />
-            
+
             <div class="questions-management-container">
                 <!-- Page Header -->
                 <div class="page-header">
@@ -958,6 +1205,9 @@
                     </button>
                     <button class="tab-button" onclick="showTab('questions')">
                         Câu hỏi
+                    </button>
+                    <button class="tab-button" onclick="showTab('submitted-questions')">
+                        Câu hỏi đã tạo
                     </button>
                 </div>
 
@@ -1001,20 +1251,20 @@
                             </thead>
                             <tbody>
                                 <c:choose>
-                                    <c:when test="${not empty filteredQuestions}">
-                                        <c:forEach var="question" items="${filteredQuestions}">
+                                    <c:when test="${not empty approvedQuestionMap}">
+                                        <c:forEach var="entry" items="${approvedQuestionMap}">
                                             <tr>
-                                                <td>${question.questionId}</td>
+                                                <td>${entry.key.questionId}</td>
                                                 <td>
-                                                    <div class="question-content" title="${question.content}">
-                                                        ${fn:substring(question.content, 0, 50)}...
+                                                    <div class="question-content" title="${entry.key.content}">
+                                                        ${fn:substring(entry.key.content, 0, 50)}...
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${question.topicId != null}">
+                                                        <c:when test="${entry.key.topicId != null}">
                                                             <c:forEach var="topic" items="${topics}">
-                                                                <c:if test="${topic.topicId == question.topicId}">
+                                                                <c:if test="${topic.topicId == entry.key.topicId}">
                                                                     ${topic.name}
                                                                 </c:if>
                                                             </c:forEach>
@@ -1024,34 +1274,32 @@
                                                 </td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${question.type == 'mcq_single'}">Trắc nghiệm</c:when>
-                                                        <c:when test="${question.type == 'text'}">Tự luận</c:when>
-                                                        <c:otherwise>${question.type}</c:otherwise>
+                                                        <c:when test="${entry.key.type == 'mcq_single'}">Trắc nghiệm</c:when>
+                                                        <c:when test="${entry.key.type == 'text'}">Tự luận</c:when>
                                                     </c:choose>
                                                 </td>
                                                 <td>
-                                                    <span class="status-badge status-${question.status}">
-                                                        <c:choose>
-                                                            <c:when test="${question.status == 'draft'}">Nháp</c:when>
-                                                            <c:when test="${question.status == 'submitted'}">Đã gửi</c:when>
-                                                            <c:when test="${question.status == 'approved'}">Đã duyệt</c:when>
-                                                            <c:when test="${question.status == 'rejected'}">Từ chối</c:when>
-                                                            <c:otherwise>${question.status}</c:otherwise>
-                                                        </c:choose>
-                                                    </span>
+                                                    <span class="status-badge status-approved">Đã duyệt</span>
                                                 </td>
                                                 <td>
-                                                    <div class="action-buttons">
-                                                        <a href="#" class="btn btn-view">
-                                                            <i class="fas fa-eye"></i> Xem
-                                                        </a>
-                                                         <a href="#" class="btn btn-edit" onclick="openEditModal(${question.questionId}, '${fn:escapeXml(question.content)}', '${question.type}', '${question.topicId}', '${question.status}', '${fn:escapeXml(question.explanation)}')">
-                                                             <i class="fas fa-edit"></i> Sửa
-                                                         </a>
-                                                        <a href="#" class="btn btn-delete">
-                                                            <i class="fas fa-trash"></i> Xóa
-                                                        </a>
-                                                    </div>
+                                                    <a href="#"
+                                                       class="btn btn-view"
+                                                       data-id="${entry.key.questionId}"
+                                                       data-content="${fn:escapeXml(entry.key.content)}"
+                                                       data-type="${entry.key.type}"
+                                                       data-explanation="${fn:escapeXml(entry.key.explanation)}"
+                                                       data-file="${entry.key.mediaUrl}"
+                                                       data-topic="<c:forEach var='topic' items='${topics}'><c:if test='${topic.topicId == entry.key.topicId}'>${topic.name}</c:if></c:forEach>"
+                                                       data-status="${entry.key.status}"
+                                                       <c:if test="${entry.key.type == 'mcq_single'}">
+                                                           data-options="<c:forEach var='opt' items='${entry.value}' varStatus='loop'>${fn:escapeXml(opt.content)}|${opt.correct ? 'true' : 'false'}${!loop.last ? ',' : ''}</c:forEach>"
+                                                       </c:if>
+                                                       <c:if test="${entry.key.type == 'text'}">
+                                                           data-answer="${entry.value}"
+                                                       </c:if>
+                                                       onclick="openViewQuestion(this)">
+                                                        <i class="fas fa-eye"></i> Xem
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -1100,9 +1348,16 @@
                                                         <a href="#" class="btn btn-view">
                                                             <i class="fas fa-eye"></i> Xem
                                                         </a>
-                                                         <a href="#" class="btn btn-edit" onclick="openEditModal(${question.questionId}, '${fn:escapeXml(question.content)}', '${question.type}', '${question.topicId}', '${question.status}', '${fn:escapeXml(question.explanation)}')">
-                                                             <i class="fas fa-edit"></i> Sửa
-                                                         </a>
+                                                        <a href="#" class="btn btn-edit" 
+                                                           data-id="${question.questionId}"
+                                                           data-content="${fn:escapeXml(question.content)}"
+                                                           data-type="${question.type}"
+                                                           data-topic-id="${question.topicId}"
+                                                           data-status="${question.status}"
+                                                           data-explanation="${fn:escapeXml(question.explanation)}"
+                                                           onclick="openEditModal(this)">
+                                                            <i class="fas fa-edit"></i> Sửa
+                                                        </a>
                                                         <a href="#" class="btn btn-delete">
                                                             <i class="fas fa-trash"></i> Xóa
                                                         </a>
@@ -1115,6 +1370,33 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Pagination for All Questions -->
+                    <c:if test="${requestScope.totalPages > 1}">
+                        <div class="pagination-container">
+                            <form action="${pageContext.request.contextPath}/questions" method="get" class="pagination-form">
+                                <input type="hidden" name="tab" value="all-questions">
+                                <input type="hidden" name="statusFilter" value="${param.statusFilter}">
+                                <input type="hidden" name="topicFilter" value="${param.topicFilter}">
+                                <input type="hidden" name="keyword" value="${param.keyword}">
+
+                                <c:if test="${requestScope.page > 1}">
+                                    <button type="submit" name="page" value="${requestScope.page-1}" class="pagination-btn pagination-nav">«</button>
+                                </c:if>
+
+                                <c:forEach begin="1" end="${requestScope.totalPages}" var="i">
+                                    <button type="submit" name="page" value="${i}"
+                                            class="pagination-btn ${i==requestScope.page ? 'active' : ''}">${i}</button>
+                                </c:forEach>
+
+                                <c:if test="${requestScope.page < requestScope.totalPages}">
+                                    <button type="submit" name="page" value="${requestScope.page+1}" class="pagination-btn pagination-nav">»</button>
+                                </c:if>
+
+                                <span class="pagination-info">Trang ${requestScope.page} / ${requestScope.totalPages}</span>
+                            </form>
+                        </div>
+                    </c:if>
                 </div>
 
                 <!-- Questions Tab -->
@@ -1131,7 +1413,7 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <!-- Draft Questions Table -->
                     <div class="table-container">
                         <table class="questions-table">
@@ -1150,23 +1432,23 @@
                             </thead>
                             <tbody>
                                 <c:choose>
-                                    <c:when test="${not empty draftQuestions}">
-                                        <c:forEach var="question" items="${draftQuestions}">
+                                    <c:when test="${not empty draftQuestionMap}">
+                                        <c:forEach var="entry" items="${draftQuestionMap}">
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" class="question-checkbox" value="${question.questionId}" onchange="updateSelectAll()">
+                                                    <input type="checkbox" class="question-checkbox" value="${entry.key.questionId}" onchange="updateSelectAll()">
                                                 </td>
-                                                <td>${question.questionId}</td>
+                                                <td>${entry.key.questionId}</td>
                                                 <td>
-                                                    <div class="question-content" title="${question.content}">
-                                                        ${fn:substring(question.content, 0, 50)}
+                                                    <div class="question-content" title="${entry.key.content}">
+                                                        ${fn:substring(entry.key.content, 0, 50)}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${question.topicId != null}">
+                                                        <c:when test="${entry.key.topicId != null}">
                                                             <c:forEach var="topic" items="${topics}">
-                                                                <c:if test="${topic.topicId == question.topicId}">
+                                                                <c:if test="${topic.topicId == entry.key.topicId}">
                                                                     ${topic.name}
                                                                 </c:if>
                                                             </c:forEach>
@@ -1176,31 +1458,52 @@
                                                 </td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${question.type == 'mcq_single'}">Trắc nghiệm</c:when>
-                                                        <c:when test="${question.type == 'text'}">Tự luận</c:when>
-                                                        <c:otherwise>${question.type}</c:otherwise>
+                                                        <c:when test="${entry.key.type == 'mcq_single'}">Trắc nghiệm</c:when>
+                                                        <c:when test="${entry.key.type == 'text'}">Tự luận</c:when>
+                                                        <c:otherwise>${entry.key.type}</c:otherwise>
                                                     </c:choose>
                                                 </td>
                                                 <td>
-                                                    <span class="status-badge status-${question.status}">
+                                                    <span class="status-badge status-${entry.key.status}">
                                                         <c:choose>
-                                                            <c:when test="${question.status == 'draft'}">Nháp</c:when>
-                                                            <c:when test="${question.status == 'submitted'}">Đã gửi</c:when>
-                                                            <c:when test="${question.status == 'approved'}">Đã duyệt</c:when>
-                                                            <c:when test="${question.status == 'rejected'}">Từ chối</c:when>
-                                                            <c:otherwise>${question.status}</c:otherwise>
+                                                            <c:when test="${entry.key.status == 'draft'}">Nháp</c:when>
+                                                            <c:when test="${entry.key.status == 'submitted'}">Đã gửi</c:when>
+                                                            <c:when test="${entry.key.status == 'approved'}">Đã duyệt</c:when>
+                                                            <c:when test="${entry.key.status == 'rejected'}">Từ chối</c:when>
+                                                            <c:otherwise>${entry.key.status}</c:otherwise>
                                                         </c:choose>
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div class="action-buttons">
-                                                       
-                                                         <a href="#" class="btn btn-edit" onclick="openEditModal(${question.questionId}, '${fn:escapeXml(question.content)}', '${question.type}', '${question.topicId}', '${question.status}', '${fn:escapeXml(question.explanation)}')">
-                                                             <i class="fas fa-edit"></i> Sửa
-                                                         </a>
-                                                        <a href="#" class="btn btn-delete">
-                                                            <i class="fas fa-trash"></i> Xóa
+                                                    <a href="#"
+                                                       class="btn btn-edit"
+                                                       data-id="${entry.key.questionId}"
+                                                       data-content="${fn:escapeXml(entry.key.content)}"
+                                                       data-type="${entry.key.type}"
+                                                       data-explanation="${fn:escapeXml(entry.key.explanation)}"
+                                                       data-file="${entry.key.mediaUrl}"
+                                                       <c:choose>
+                                                           <c:when test="${entry.key.type == 'mcq_single'}">
+                                                               data-options="<c:forEach var='opt' items='${entry.value}' varStatus='st'>${fn:escapeXml(opt.content)}|${opt.correct ? 'true' : 'false'}${!st.last ? ',' : ''}</c:forEach>"                                                             
+                                                           </c:when>
+                                                           <c:when test="${entry.key.type == 'text'}">
+                                                               data-answer="${fn:escapeXml(entry.value)}"
+                                                           </c:when>
+                                                       </c:choose>
+                                                       onclick="openEditModal(this)">
+                                                        <i class="fas fa-edit"></i> Sửa
+                                                    </a>
+                                                    <c:if test="${entry.key.status == 'rejected'}">
+                                                        <a href="#" 
+                                                           class="btn btn-warning"
+                                                           data-rejection-reason="${fn:escapeXml(entry.key.reviewComment)}"
+                                                           onclick="openRejectionReasonModal(this)">
+                                                            <i class="fas fa-exclamation-triangle"></i> Xem lý do
                                                         </a>
+                                                    </c:if>
+                                                    <a href="deleteQuestion?questionId=${entry.key.questionId}" class="btn btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');">
+                                                        <i class="fas fa-trash"></i> Xóa
+                                                    </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -1218,6 +1521,33 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Pagination for Draft Questions -->
+                    <c:if test="${requestScope.draftTotalPages > 1}">
+                        <div class="pagination-container">
+                            <form action="${pageContext.request.contextPath}/questions" method="get" class="pagination-form">
+                                <input type="hidden" name="tab" value="questions">
+                                <input type="hidden" name="statusFilter" value="${param.statusFilter}">
+                                <input type="hidden" name="topicFilter" value="${param.topicFilter}">
+                                <input type="hidden" name="keyword" value="${param.keyword}">
+
+                                <c:if test="${requestScope.draftPage > 1}">
+                                    <button type="submit" name="draftPage" value="${requestScope.draftPage-1}" class="pagination-btn pagination-nav">«</button>
+                                </c:if>
+
+                                <c:forEach begin="1" end="${requestScope.draftTotalPages}" var="i">
+                                    <button type="submit" name="draftPage" value="${i}"
+                                            class="pagination-btn ${i==requestScope.draftPage ? 'active' : ''}">${i}</button>
+                                </c:forEach>
+
+                                <c:if test="${requestScope.draftPage < requestScope.draftTotalPages}">
+                                    <button type="submit" name="draftPage" value="${requestScope.draftPage+1}" class="pagination-btn pagination-nav">»</button>
+                                </c:if>
+
+                                <span class="pagination-info">Trang ${requestScope.draftPage} / ${requestScope.draftTotalPages}</span>
+                            </form>
+                        </div>
+                    </c:if>
 
                     <!-- Add Questions Form -->
                     <div class="add-questions-form">
@@ -1246,10 +1576,165 @@
                                         </div>
                                     </div>
                                 </div>
+                                <button type="button" class="btn btn-ai" onclick="openAIModal()">
+                                    <i class="fas fa-robot"></i> Thêm câu hỏi bằng AI
+                                </button>
                                 <button type="submit" class="btn btn-success">Lưu tất cả</button>
                             </div>
                         </form>
                     </div>
+                </div>
+
+                <!-- Submitted Questions Tab -->
+                <div id="submitted-questions" class="tab-content">
+                    <!-- Filter Section -->
+                    <div class="filter-section">
+                        <form method="GET" action="questions">
+                            <input type="hidden" name="tab" value="submitted-questions">
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label class="filter-label">Lọc theo trạng thái:</label>
+                                    <select name="statusFilter" class="filter-select">
+                                        <option value="">Tất cả trạng thái</option>
+                                        <option value="submitted" ${selectedStatus == 'submitted' ? 'selected' : ''}>Đã gửi</option>
+                                        <option value="approved" ${selectedStatus == 'approved' ? 'selected' : ''}>Đã duyệt</option>
+                                        <option value="rejected" ${selectedStatus == 'rejected' ? 'selected' : ''}>Từ chối</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label class="filter-label">Lọc theo chủ đề:</label>
+                                    <select name="topicFilter" class="filter-select">
+                                        <option value="">Tất cả chủ đề</option>
+                                        <c:forEach var="topic" items="${topics}">
+                                            <option value="${topic.topicId}" ${selectedTopic == topic.topicId ? 'selected' : ''}>
+                                                ${topic.name}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                                <button type="submit" class="filter-button">
+                                    <i class="fas fa-filter"></i> Lọc
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Submitted Questions Table -->
+                    <div class="table-container">
+                        <table class="questions-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nội dung câu hỏi</th>
+                                    <th>Chủ đề</th>
+                                    <th>Loại</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:choose>
+                                    <c:when test="${not empty submittedQuestions}">
+                                        <c:forEach var="entry" items="${submittedQuestions}">
+                                            <tr>
+                                                <td>${entry.key.questionId}</td>
+                                                <td>
+                                                    <div class="question-content" title="${entry.key.content}">
+                                                        ${fn:substring(entry.key.content, 0, 50)}...
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${entry.key.topicId != null}">
+                                                            <c:forEach var="topic" items="${topics}">
+                                                                <c:if test="${topic.topicId == entry.key.topicId}">
+                                                                    ${topic.name}
+                                                                </c:if>
+                                                            </c:forEach>
+                                                        </c:when>
+                                                        <c:otherwise>Không có</c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${entry.key.type == 'mcq_single'}">Trắc nghiệm</c:when>
+                                                        <c:when test="${entry.key.type == 'text'}">Tự luận</c:when>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    <span class="status-badge status-${entry.key.status}">
+                                                        <c:choose>
+                                                            <c:when test="${entry.key.status == 'submitted'}">Đã gửi</c:when>
+                                                            <c:when test="${entry.key.status == 'approved'}">Đã duyệt</c:when>
+                                                            <c:when test="${entry.key.status == 'rejected'}">Từ chối</c:when>
+                                                        </c:choose>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <a href="#"
+                                                           class="btn btn-view"
+                                                           data-id="${entry.key.questionId}"
+                                                           data-content="${fn:escapeXml(entry.key.content)}"
+                                                           data-type="${entry.key.type}"
+                                                           data-explanation="${fn:escapeXml(entry.key.explanation)}"
+                                                           data-file="${entry.key.mediaUrl}"
+                                                           data-topic="<c:forEach var='topic' items='${topics}'><c:if test='${topic.topicId == entry.key.topicId}'>${topic.name}</c:if></c:forEach>"
+                                                           data-status="${entry.key.status}"
+                                                           <c:if test="${entry.key.type == 'mcq_single'}">
+                                                               data-options="<c:forEach var='opt' items='${entry.value}' varStatus='loop'>${fn:escapeXml(opt.content)}|${opt.correct ? 'true' : 'false'}${!loop.last ? ',' : ''}</c:forEach>"
+                                                           </c:if>
+                                                           <c:if test="${entry.key.type == 'text'}">
+                                                               data-answer="${entry.value}"
+                                                           </c:if>
+                                                           onclick="openViewQuestion(this)">
+                                                            <i class="fas fa-eye"></i> Xem
+                                                        </a>
+
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <tr>
+                                            <td colspan="7" class="empty-state">
+                                                <i class="fas fa-inbox"></i>
+                                                <p>Chưa có câu hỏi nào được submit</p>
+                                            </td>
+                                        </tr>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination for Submitted Questions -->
+                    <c:if test="${requestScope.submittedTotalPages > 1}">
+                        <div class="pagination-container">
+                            <form action="${pageContext.request.contextPath}/questions" method="get" class="pagination-form">
+                                <input type="hidden" name="tab" value="submitted-questions">
+                                <input type="hidden" name="statusFilter" value="${param.statusFilter}">
+                                <input type="hidden" name="topicFilter" value="${param.topicFilter}">
+                                <input type="hidden" name="keyword" value="${param.keyword}">
+
+                                <c:if test="${requestScope.submittedPage > 1}">
+                                    <button type="submit" name="submittedPage" value="${requestScope.submittedPage-1}" class="pagination-btn pagination-nav">«</button>
+                                </c:if>
+
+                                <c:forEach begin="1" end="${requestScope.submittedTotalPages}" var="i">
+                                    <button type="submit" name="submittedPage" value="${i}"
+                                            class="pagination-btn ${i==requestScope.submittedPage ? 'active' : ''}">${i}</button>
+                                </c:forEach>
+
+                                <c:if test="${requestScope.submittedPage < requestScope.submittedTotalPages}">
+                                    <button type="submit" name="submittedPage" value="${requestScope.submittedPage+1}" class="pagination-btn pagination-nav">»</button>
+                                </c:if>
+
+                                <span class="pagination-info">Trang ${requestScope.submittedPage} / ${requestScope.submittedTotalPages}</span>
+                            </form>
+                        </div>
+                    </c:if>
                 </div>
             </div>
         </div>
@@ -1257,39 +1742,39 @@
         <!-- Edit Question Modal -->
         <div id="editQuestionModal" class="modal">
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h2 class="modal-title">Chỉnh sửa câu hỏi</h2>
                     <button class="close-btn" onclick="closeEditModal()">&times;</button>
                 </div>
-                <div class="modal-body">
-                    <form id="editQuestionForm">
+                <form id="editQuestionForm" action="updateQuestion" method="post"  enctype="multipart/form-data">
+                    <div class="modal-body">
+
                         <input type="hidden" id="editQuestionId" name="questionId">
-                        
+                        <input type="hidden" id="editQuestionType" name="type">
+
+                        <div id="editFilePreview" class="file-upload-group" style="display:none;">
+                            <label class="form-label">File đính kèm</label>
+                            <div id="filePreviewContainer"></div>
+
+                            <div class="form-group" style="margin-top:10px;">
+                                <button type="button" id="deleteFileBtn" class="delete-file-btn" onclick="toggleDeleteFile()">
+                                    <i class="fas fa-trash"></i> Xóa file hiện có
+                                </button>
+                                <input type="hidden" id="deleteFileHidden" name="deleteFile" value="false">
+                            </div>
+                        </div>
+                        <div class="file-upload-group">
+                            <label class="form-label">Chọn file mới (nếu muốn thay thế)</label>
+                            <input type="file" id="editNewFile" name="newFile" accept="image/*,audio/*">
+                        </div>
                         <div class="form-group">
                             <label class="form-label">Nội dung câu hỏi *</label>
                             <textarea id="editQuestionContent" name="content" class="form-textarea" placeholder="Nhập nội dung câu hỏi..." required></textarea>
                         </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label">Chủ đề</label>
-                                <select id="editQuestionTopic" name="topicId" class="form-select">
-                                    <option value="">Chọn chủ đề</option>
-                                    <c:forEach var="topic" items="${topics}">
-                                        <option value="${topic.topicId}">${topic.name}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Loại câu hỏi *</label>
-                                <select id="editQuestionType" name="type" class="form-select" required>
-                                    <option value="">Chọn loại</option>
-                                    <option value="mcq_single">Trắc nghiệm</option>
-                                    <option value="text">Tự luận</option>
-                                </select>
-                            </div>
-                        </div>
-                        
+
+
+
                         <!-- MCQ Options (shown when type is mcq_single) -->
                         <div id="editMcqOptions" class="form-group" style="display: none;">
                             <label class="form-label">Các phương án trả lời</label>
@@ -1300,37 +1785,96 @@
                                 <i class="fas fa-plus"></i> Thêm phương án
                             </button>
                         </div>
-                        
+
                         <!-- Text Answer (shown when type is text) -->
                         <div id="editTextAnswer" class="form-group" style="display: none;">
                             <label class="form-label">Đáp án đúng *</label>
                             <textarea id="editCorrectAnswer" name="correctAnswer" class="form-textarea" placeholder="Nhập đáp án đúng..."></textarea>
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">Giải thích đáp án</label>
                             <textarea id="editQuestionExplanation" name="explanation" class="form-textarea" placeholder="Nhập giải thích cho đáp án..."></textarea>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Trạng thái</label>
-                            <select id="editQuestionStatus" name="status" class="form-select">
-                                <option value="draft">Nháp</option>
-                                <option value="submitted">Đã gửi</option>
-                                <option value="approved">Đã duyệt</option>
-                                <option value="rejected">Từ chối</option>
-                            </select>
-                        </div>
-                    </form>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-cancel" onclick="closeEditModal()">Hủy</button>
+                        <button type="submit" class="btn-save">Lưu thay đổi</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <div id="topicModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Chọn chủ đề cho câu hỏi</h2>
+                    <button type="button" class="close-btn" onclick="closeTopicModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Chủ đề:</label>
+                        <select id="topicSelect" class="form-select">
+                            <option value="">-- Chọn chủ đề --</option>
+                            <c:forEach var="topic" items="${topics}">
+                                <option value="${topic.topicId}">${topic.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <p id="selectedCount">Chưa chọn câu hỏi nào</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Hủy</button>
-                    <button type="button" class="btn-save" onclick="saveEditedQuestion()">Lưu thay đổi</button>
+                    <button type="button" class="btn-cancel" onclick="closeTopicModal()">Hủy</button>
+                    <button type="button" class="btn-save" onclick="submitAssignTopic()">Gán chủ đề</button>
                 </div>
             </div>
         </div>
 
+        <form id="assignTopicForm" action="assignTopic" method="post">
+            <input type="hidden" name="questionIds" id="hiddenQuestionIds">
+            <input type="hidden" name="topicId" id="hiddenTopicId">
+        </form>
+        <form id="submitQuestionsForm" action="submitQuestions" method="post">
+            <input type="hidden" name="questionIds" id="submitQuestionIds">
+        </form>
+
+        <!-- Rejection Reason Modal -->
+        <div id="rejectionReasonModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <i class="fas fa-exclamation-triangle" style="color: #e74c3c; margin-right: 10px;"></i>
+                        Lý do từ chối câu hỏi
+                    </h2>
+                    <button class="close-btn" onclick="closeRejectionReasonModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="rejection-reason-content">
+                        <div class="rejection-icon">
+                            <i class="fas fa-times-circle" style="font-size: 48px; color: #e74c3c; margin-bottom: 20px;"></i>
+                        </div>
+                        <div class="rejection-text">
+                            <p style="font-size: 16px; line-height: 1.6; color: #2c3e50; margin: 0;">
+                                <span id="rejectionReasonText">Đang tải lý do từ chối...</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeRejectionReasonModal()">Đóng</button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="aiResultContainer" style="margin-top: 20px;"></div>
+
         <script>
+
             let questionCount = 0;
 
             function showTab(tabName) {
@@ -1339,20 +1883,114 @@
                 tabContents.forEach(content => {
                     content.classList.remove('active');
                 });
-                
+
                 // Remove active class from all tab buttons
                 const tabButtons = document.querySelectorAll('.tab-button');
                 tabButtons.forEach(button => {
                     button.classList.remove('active');
                 });
-                
+
                 // Show selected tab content
                 document.getElementById(tabName).classList.add('active');
-                
+
                 // Add active class to clicked button
                 event.target.classList.add('active');
             }
 
+            function generateAIQuestions(event) {
+                event.preventDefault();
+                var topic = document.getElementById("aiTopic").value;
+                var count = document.getElementById("aiCount").value;
+                var type = document.getElementById("aiType").value;
+                var resultContainer = document.getElementById("aiResultContainer");
+
+                // Hiện thông báo đang tạo
+                resultContainer.innerHTML =
+                        '<div style="color: #555; display:flex; align-items:center; gap:10px;">'
+                        + '<i class="fas fa-spinner fa-spin"></i>'
+                        + '<span>⏳ Đang tạo câu hỏi bằng AI, vui lòng chờ trong giây lát...</span>'
+                        + '</div>';
+                var submitBtn = document.querySelector("#aiForm button[type='submit']");
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo...';
+
+                fetch("generateQuestionAI", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                    body: "topicId=" + encodeURIComponent(topic)
+                            + "&count=" + count
+                            + "&type=" + type
+                })
+                        .then(function (res) {
+                            return res.json();
+                        })
+                        .then(function (data) {
+                            const list = document.getElementById("questionsList");
+                            const empty = list.querySelector(".empty-questions");
+                            if (empty)
+                                empty.remove();
+
+                            for (var i = 0; i < data.length; i++) {
+                                var q = data[i];
+                                questionCount++;
+
+                                // tạo HTML giống addQuestion
+                                let html = '';
+                                html += '<div class="question-form" id="question-' + questionCount + '">';
+                                html += '  <div class="question-header">';
+                                html += '    <div class="question-number">Câu ' + questionCount + '.</div>';
+                                html += '    <button type="button" class="delete-question-btn" onclick="deleteQuestion(' + questionCount + ')">';
+                                html += '      <i class="fas fa-trash"></i>';
+                                html += '    </button>';
+                                html += '  </div>';
+                                html += '  <div class="question-content">';
+                                html += '    <input type="hidden" name="questionType' + questionCount + '" value="' + (q.type === "mcq" ? "mcq_single" : "text") + '">';
+                                html += '    <div class="question-input-group">';
+                                html += '      <textarea name="questionText' + questionCount + '" class="question-input" required>'
+                                        + q.content + '</textarea>';
+                                html += '    </div>';
+
+                                if (q.type === "mcq" && q.options) {
+                                    html += '  <div class="answer-options">';
+                                    for (var j = 0; j < q.options.length; j++) {
+                                        var opt = q.options[j];
+                                        html += '    <div class="answer-option">';
+                                        html += '      <input type="checkbox" name="correct' + questionCount + '" value="' + (j + 1) + '" '
+                                                + (opt.isCorrect ? "checked" : "") + '>';
+                                        html += '      <input type="text" name="optionContent' + questionCount + '_' + (j + 1) + '" '
+                                                + 'class="answer-input" value="' + opt.content + '">';
+                                        html += '      <button type="button" class="remove-option-btn" onclick="removeOption(this)"><i class="fas fa-trash"></i></button>';
+                                        html += '    </div>';
+                                    }
+                                    html += '  </div>';
+                                } else if (q.type === "text" && q.textKey) {
+                                    html += '  <div class="answer-group">';
+                                    html += '    <label>Đáp án đúng:</label>';
+                                    html += '    <textarea name="correctAnswer' + questionCount + '" class="answer-input" required>'
+                                            + q.textKey.answerText + '</textarea>';
+                                    html += '  </div>';
+                                }
+
+                                html += '  <div class="explanation-group">';
+                                html += '    <textarea name="explanation' + questionCount + '" class="explanation-input">'
+                                        + (q.explanation ? q.explanation : '') + '</textarea>';
+                                html += '  </div>';
+                                html += '</div></div>';
+
+                                list.insertAdjacentHTML("beforeend", html);
+                            }
+
+                            // Hiển thị thông báo nhỏ
+                            resultContainer.innerHTML =
+                                    '<div style="color: green; display:flex; align-items:center; gap:10px;">'
+                                    + '<i class="fas fa-check-circle"></i>'
+                                    + '<span>✅ Đã thêm ' + data.length + ' câu hỏi từ AI vào form thành công!</span>'
+                                    + '</div>';
+
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-magic"></i> Sinh câu hỏi bằng AI';
+                        });
+            }
             // Dropdown functions
             function toggleDropdown() {
                 const dropdown = document.getElementById('questionTypeDropdown');
@@ -1382,7 +2020,7 @@
                 let html = "";
                 for (let i = 1; i <= 4; i++) {
                     html += '<div class="answer-option">';
-                    html += '    <input type="checkbox" name="correct' + questionNumber + '" value="' + i + '" ';
+                    html += '    <input type="radio" name="correct' + questionNumber + '" value="' + i + '" ';
                     html += '        id="correct-' + questionNumber + '-' + i + '" class="correct-answer-checkbox">';
                     html += '    <label for="correct-' + questionNumber + '-' + i + '" class="correct-answer-label">';
                     html += '        <i class="fas fa-check"></i>';
@@ -1437,9 +2075,11 @@
                 html += '        <div class="file-upload-group">';
                 html += '            <label class="file-upload-label" for="file' + questionCount + '">Đính kèm file (tùy chọn)</label>';
                 html += '            <input type="file" id="file' + questionCount + '" name="file' + questionCount + '" ';
-                html += '                class="file-upload-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.mp3,.wav,.m4a,.aac">';
+//                html += '                class="file-upload-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.mp3,.wav,.m4a,.aac">';
+                html += '                class="file-upload-input" accept="image/*,audio/*">';
                 html += '            <div class="file-info">';
-                html += '                Hỗ trợ: PDF, Word, Text, hình ảnh (JPG, PNG, GIF), video (MP4, AVI, MOV, WMV), âm thanh (MP3, WAV, M4A, AAC)';
+//                html += '                Hỗ trợ: PDF, Word, Text, hình ảnh (JPG, PNG, GIF), video (MP4, AVI, MOV, WMV), âm thanh (MP3, WAV, M4A, AAC)';
+                html += '                Hỗ trợ: Hình ảnh (JPG, PNG, GIF...) và Âm thanh (MP3, WAV, M4A, AAC)';
                 html += '            </div>';
                 html += '        </div>';
 
@@ -1463,7 +2103,7 @@
             }
 
             function removeOption(button) {
-                // Tìm div cha có class .answer-option và xóa nó
+                
                 var optionDiv = button.closest(".answer-option");
                 if (optionDiv) {
                     optionDiv.remove();
@@ -1547,67 +2187,122 @@
                 list.insertAdjacentHTML("beforeend", html);
             }
 
-            // Modal functions
-            function openEditModal(questionId, content, type, topicId, status, explanation) {
-                const modal = document.getElementById('editQuestionModal');
-                const form = document.getElementById('editQuestionForm');
-                
-                // Populate form fields
-                document.getElementById('editQuestionId').value = questionId;
-                document.getElementById('editQuestionContent').value = content;
-                document.getElementById('editQuestionType').value = type;
-                document.getElementById('editQuestionTopic').value = topicId || '';
-                document.getElementById('editQuestionStatus').value = status;
-                document.getElementById('editQuestionExplanation').value = explanation || '';
-                
-                // Show/hide appropriate sections based on question type
-                toggleEditQuestionType(type);
-                
-                // Show modal
-                modal.classList.add('show');
-                modal.style.display = 'flex';
+            function openEditModal(button) {
+                var id = button.getAttribute("data-id");
+                var content = button.getAttribute("data-content") || "";
+                var type = button.getAttribute("data-type") || "";
+                var explanation = button.getAttribute("data-explanation") || "";
+                var optionsStr = button.getAttribute("data-options") || "";
+                var answer = button.getAttribute("data-answer") || "";
+                var fileUrl = button.getAttribute("data-file") || "";
+
+                document.getElementById("editQuestionId").value = id;
+                document.getElementById("editQuestionContent").value = content;
+                document.getElementById("editQuestionExplanation").value = explanation;
+                document.getElementById("editQuestionType").value = type;
+
+                var mcqOptions = document.getElementById("editMcqOptions");
+                var textAnswer = document.getElementById("editTextAnswer");
+                var optionsContainer = document.getElementById("editAnswerOptions");
+                optionsContainer.innerHTML = "";
+                if (type === "mcq_single") {
+                    mcqOptions.style.display = "block";
+                    textAnswer.style.display = "none";
+
+                    if (optionsStr && optionsStr.trim() !== "") {
+                        var pairs = optionsStr.split(",");
+                        for (var i = 0; i < pairs.length; i++) {
+                            var p = pairs[i].split("|");
+                            if (!p[0])
+                                continue;
+                            var optText = p[0];
+                            var correct = (p[1] === "true");
+                            var div = document.createElement("div");
+                            div.className = "answer-option";
+                            var optionId = 'editCorrect-' + i;
+                            div.innerHTML =
+                                    '<input type="radio" name="correct" value="' + i + '" id="' + optionId + '" class="correct-answer-checkbox" ' + (correct ? "checked" : "") + '>' +
+                                    '<label for="' + optionId + '" class="correct-answer-label"><i class="fas fa-check"></i></label>' +
+                                    '<input type="text" name="optionContent_' + (i + 1) + '" class="answer-input" value="' + optText + '">';
+                            optionsContainer.appendChild(div);
+                        }
+                    } else {
+                        // 4 option mặc định
+                        for (var i = 0; i < 4; i++) {
+                            var div = document.createElement("div");
+                            div.className = "answer-option";
+                            var optionId = 'editCorrect-' + i;
+                            div.innerHTML =
+                                    '<input type="radio" name="correct" value="' + i + '" id="' + optionId + '" class="correct-answer-checkbox">' +
+                                    '<label for="' + optionId + '" class="correct-answer-label"><i class="fas fa-check"></i></label>' +
+                                    '<input type="text" name="optionContent_' + (i + 1) + '" class="answer-input" placeholder="Nhập phương án ' + (i + 1) + '">';
+                            optionsContainer.appendChild(div);
+                        }
+                    }
+                } else if (type === "text") {
+                    mcqOptions.style.display = "none";
+                    textAnswer.style.display = "block";
+                    document.getElementById("editCorrectAnswer").value = answer;
+                } else {
+                    mcqOptions.style.display = "none";
+                    textAnswer.style.display = "none";
+                }
+                var previewWrapper = document.getElementById("editFilePreview");
+                var previewContainer = document.getElementById("filePreviewContainer");
+
+                if (fileUrl && fileUrl.trim() !== "") {
+                    previewWrapper.style.display = "block";
+
+                    // Lấy đuôi file (extension)
+                    var extension = fileUrl.split('.').pop().toLowerCase();
+
+                    // Xác định loại media
+                    var isImage = ["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(extension);
+                    var isAudio = ["mp3", "wav", "m4a", "aac", "ogg"].includes(extension);
+
+                    if (isImage) {
+                        var html = "";
+                        html += '<img src="' + fileUrl + '" alt="Ảnh đính kèm" ';
+                        html += 'style="max-width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">';
+                        previewContainer.innerHTML = html;
+                    } else if (isAudio) {
+                        var html = "";
+                        html += '<audio controls style="width:100%;">';
+                        html += '<source src="' + fileUrl + '" type="audio/mpeg">';
+                        html += 'Trình duyệt của bạn không hỗ trợ phát âm thanh.';
+                        html += '</audio>';
+                        previewContainer.innerHTML = html;
+                    } else {
+                        previewContainer.innerHTML = '<p>Không thể hiển thị loại file này.</p>';
+                    }
+                } else {
+                    previewWrapper.style.display = "none";
+                    previewContainer.innerHTML = "";
+                }
+                var modal = document.getElementById("editQuestionModal");
+                modal.classList.add("show");
+                modal.style.display = "flex";
             }
-            
+
+
             function closeEditModal() {
                 const modal = document.getElementById('editQuestionModal');
                 modal.classList.remove('show');
                 modal.style.display = 'none';
+
+                modal.querySelectorAll("input, textarea, select, button").forEach(el => {
+                    el.disabled = false;
+                });
+                document.querySelector("#editQuestionForm .btn-save").style.display = "inline-block";
+                const cancelBtn = document.querySelector("#editQuestionForm .btn-cancel");
+                cancelBtn.textContent = "Hủy";
             }
-            
-            function toggleEditQuestionType(type) {
-                const mcqOptions = document.getElementById('editMcqOptions');
-                const textAnswer = document.getElementById('editTextAnswer');
-                
-                if (type === 'mcq_single') {
-                    mcqOptions.style.display = 'block';
-                    textAnswer.style.display = 'none';
-                    // Load existing options if any
-                    loadEditOptions();
-                } else if (type === 'text') {
-                    mcqOptions.style.display = 'none';
-                    textAnswer.style.display = 'block';
-                } else {
-                    mcqOptions.style.display = 'none';
-                    textAnswer.style.display = 'none';
-                }
-            }
-            
-            function loadEditOptions() {
-                // This would typically load existing options from the database
-                // For now, we'll add some default options
-                const optionsContainer = document.getElementById('editAnswerOptions');
-                optionsContainer.innerHTML = '';
-                
-                // Add 4 default options
-                for (let i = 1; i <= 4; i++) {
-                    addEditOption();
-                }
-            }
-            
+
+
             function addEditOption() {
                 const optionsContainer = document.getElementById('editAnswerOptions');
                 const optionCount = optionsContainer.children.length + 1;
-                
+
                 const optionDiv = document.createElement('div');
                 optionDiv.className = 'answer-option';
                 optionDiv.innerHTML = `
@@ -1622,82 +2317,56 @@
                         <i class="fas fa-trash"></i>
                     </button>
                 `;
-                
+
                 optionsContainer.appendChild(optionDiv);
             }
-            
+
             function removeEditOption(button) {
                 const optionDiv = button.closest('.answer-option');
                 if (optionDiv) {
                     optionDiv.remove();
                 }
             }
-            
-            function saveEditedQuestion() {
-                const form = document.getElementById('editQuestionForm');
-                const formData = new FormData(form);
-                
-                // Validate form
-                const content = document.getElementById('editQuestionContent').value.trim();
-                const type = document.getElementById('editQuestionType').value;
-                
-                if (!content) {
-                    alert('Vui lòng nhập nội dung câu hỏi!');
-                    return;
-                }
-                
-                if (!type) {
-                    alert('Vui lòng chọn loại câu hỏi!');
-                    return;
-                }
-                
-                // For MCQ questions, validate that at least one option is provided
-                if (type === 'mcq_single') {
-                    const options = document.querySelectorAll('#editAnswerOptions .answer-input');
-                    let hasContent = false;
-                    options.forEach(option => {
-                        if (option.value.trim()) {
-                            hasContent = true;
-                        }
-                    });
-                    
-                    if (!hasContent) {
-                        alert('Vui lòng nhập ít nhất một phương án trả lời!');
-                        return;
+
+            function toggleDeleteFile() {
+                const deleteBtn = document.getElementById('deleteFileBtn');
+                const deleteHidden = document.getElementById('deleteFileHidden');
+                const filePreview = document.getElementById('editFilePreview');
+                const filePreviewContainer = document.getElementById('filePreviewContainer');
+
+                if (deleteHidden.value === 'false') {
+                    // First click - show confirmation (don't hide preview yet)
+                    deleteBtn.innerHTML = '<i class="fas fa-check"></i> Xác nhận xóa';
+                    deleteBtn.classList.add('confirmed');
+                    deleteHidden.value = 'true';
+                } else {
+                    // Second click - actually confirm deletion and hide preview
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Xóa file hiện có';
+                    deleteBtn.classList.remove('confirmed');
+                    deleteHidden.value = 'false';
+
+                    // Hide file preview when actually confirmed for deletion
+                    if (filePreviewContainer) {
+                        filePreviewContainer.style.display = 'none';
                     }
                 }
-                
-                // For text questions, validate correct answer
-                if (type === 'text') {
-                    const correctAnswer = document.getElementById('editCorrectAnswer').value.trim();
-                    if (!correctAnswer) {
-                        alert('Vui lòng nhập đáp án đúng!');
-                        return;
-                    }
-                }
-                
-                // Here you would typically send the data to the server
-                // For now, we'll just show a success message
-                alert('Câu hỏi đã được cập nhật thành công!');
-                closeEditModal();
-                
-                // Reload the page to show updated data
-                // window.location.reload();
             }
-            
+
+
+
             // Close modal when clicking outside
-            window.onclick = function(event) {
+            window.onclick = function (event) {
                 const modal = document.getElementById('editQuestionModal');
                 if (event.target === modal) {
                     closeEditModal();
                 }
             };
-            
+
             // Handle question type change in modal
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 const typeSelect = document.getElementById('editQuestionType');
                 if (typeSelect) {
-                    typeSelect.addEventListener('change', function() {
+                    typeSelect.addEventListener('change', function () {
                         toggleEditQuestionType(this.value);
                     });
                 }
@@ -1707,17 +2376,17 @@
             function toggleAllCheckboxes() {
                 const selectAll = document.getElementById('selectAll');
                 const checkboxes = document.querySelectorAll('.question-checkbox');
-                
+
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = selectAll.checked;
                 });
             }
-            
+
             function updateSelectAll() {
                 const selectAll = document.getElementById('selectAll');
                 const checkboxes = document.querySelectorAll('.question-checkbox');
                 const checkedBoxes = document.querySelectorAll('.question-checkbox:checked');
-                
+
                 if (checkedBoxes.length === 0) {
                     selectAll.checked = false;
                     selectAll.indeterminate = false;
@@ -1729,105 +2398,321 @@
                     selectAll.indeterminate = true;
                 }
             }
-            
-            // Button actions
-            function selectTopic() {
-                const selectedQuestions = getSelectedQuestions();
-                if (selectedQuestions.length === 0) {
-                    alert('Vui lòng chọn ít nhất một câu hỏi!');
-                    return;
-                }
-                
-                // Create topic selection modal
-                const topicModal = document.createElement('div');
-                topicModal.className = 'modal';
-                topicModal.id = 'topicModal';
-                topicModal.innerHTML = `
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2 class="modal-title">Chọn chủ đề cho câu hỏi</h2>
-                            <button class="close-btn" onclick="closeTopicModal()">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label class="form-label">Chọn chủ đề:</label>
-                                <select id="topicSelect" class="form-select">
-                                    <option value="">Chọn chủ đề</option>
-                                    <c:forEach var="topic" items="${topics}">
-                                        <option value="${topic.topicId}">${topic.name}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                            <p>Đã chọn ${selectedQuestions.length} câu hỏi</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn-cancel" onclick="closeTopicModal()">Hủy</button>
-                            <button type="button" class="btn-save" onclick="assignTopic()">Gán chủ đề</button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(topicModal);
-                topicModal.classList.add('show');
-                topicModal.style.display = 'flex';
-            }
-            
-            function closeTopicModal() {
-                const modal = document.getElementById('topicModal');
-                if (modal) {
-                    modal.remove();
-                }
-            }
-            
+
+
+
+
             function assignTopic() {
                 const topicId = document.getElementById('topicSelect').value;
                 const selectedQuestions = getSelectedQuestions();
-                
+
                 if (!topicId) {
                     alert('Vui lòng chọn chủ đề!');
                     return;
                 }
-                
+
                 if (selectedQuestions.length === 0) {
                     alert('Không có câu hỏi nào được chọn!');
                     return;
                 }
-                
+
                 // Here you would typically send the data to the server
                 alert(`Đã gán chủ đề cho ${selectedQuestions.length} câu hỏi!`);
                 closeTopicModal();
-                
+
                 // Uncheck all checkboxes
                 document.querySelectorAll('.question-checkbox').forEach(cb => cb.checked = false);
                 document.getElementById('selectAll').checked = false;
             }
-            
+
             function submitSelected() {
-                const selectedQuestions = getSelectedQuestions();
-                if (selectedQuestions.length === 0) {
+                const selected = getSelectedQuestions();
+                if (selected.length === 0) {
                     alert('Vui lòng chọn ít nhất một câu hỏi!');
                     return;
                 }
-                
-                if (confirm(`Bạn có chắc chắn muốn submit ${selectedQuestions.length} câu hỏi đã chọn?`)) {
-                    // Here you would typically send the data to the server
-                    alert(`Đã submit ${selectedQuestions.length} câu hỏi thành công!`);
-                    
-                    // Uncheck all checkboxes
-                    document.querySelectorAll('.question-checkbox').forEach(cb => cb.checked = false);
-                    document.getElementById('selectAll').checked = false;
+
+                // Lấy toàn bộ hàng <tr> trong bảng để kiểm tra topic
+                const rows = document.querySelectorAll('.questions-table tbody tr');
+                let hasMissingTopic = false;
+                let noTopicIds = [];
+
+                selected.forEach(id => {
+                    rows.forEach(row => {
+                        const idCell = row.querySelector('td:nth-child(2)');
+                        if (idCell && idCell.textContent.trim() === id) {
+                            const topicCell = row.querySelector('td:nth-child(4)');
+                            if (topicCell && topicCell.textContent.includes("Không có")) {
+                                hasMissingTopic = true;
+                                noTopicIds.push(id);
+                            }
+                        }
+                    });
+                });
+
+                if (hasMissingTopic) {
+                    alert("❌ Không thể submit!\nCác câu hỏi sau chưa có chủ đề:\n" + noTopicIds.join(", "));
+                    return;
+                }
+
+                if (confirm(`Bạn có chắc chắn muốn submit ${selected.length} câu hỏi?`)) {
+                    document.getElementById('submitQuestionIds').value = selected.join(",");
+                    document.getElementById('submitQuestionsForm').submit();
                 }
             }
-            
+
+            // Initialize page
+            document.addEventListener('DOMContentLoaded', function () {
+                console.log('Questions management page loaded');
+            });
+            document.addEventListener('DOMContentLoaded', function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                const activeTab = urlParams.get('tab');
+
+                if (activeTab === 'questions') {
+                    showTab('questions');
+                } else if (activeTab === 'submitted-questions') {
+                    showTab('submitted-questions');
+                } else {
+                    showTab('question-bank');
+                }
+            });
+
             function getSelectedQuestions() {
                 const checkboxes = document.querySelectorAll('.question-checkbox:checked');
                 return Array.from(checkboxes).map(cb => cb.value);
             }
 
-            // Initialize page
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log('Questions management page loaded');
+// Mở modal (chỉ thay đổi hiển thị, không tạo HTML)
+            function selectTopic() {
+                const selected = getSelectedQuestions();
+                if (selected.length === 0) {
+                    alert('Vui lòng chọn ít nhất một câu hỏi!');
+                    return;
+                }
+                document.getElementById('topicModal').classList.add('show');
+                document.getElementById('topicModal').style.display = 'flex';
+                document.getElementById('selectedCount').textContent = `Đã chọn ${selected.length} câu hỏi`;
+            }
+
+            function closeTopicModal() {
+                const modal = document.getElementById('topicModal');
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+
+// Submit form (không AJAX)
+            function submitAssignTopic() {
+                const topicId = document.getElementById('topicSelect').value;
+                const selectedQuestions = getSelectedQuestions();
+
+                if (!topicId) {
+                    alert("Vui lòng chọn chủ đề!");
+                    return;
+                }
+
+                if (selectedQuestions.length === 0) {
+                    alert("Không có câu hỏi nào được chọn!");
+                    return;
+                }
+
+                document.getElementById("hiddenTopicId").value = topicId;
+                document.getElementById("hiddenQuestionIds").value = selectedQuestions.join(",");
+                document.getElementById("assignTopicForm").submit();
+            }
+
+            function openViewQuestion(button) {
+                const id = button.getAttribute("data-id");
+                const content = button.getAttribute("data-content") || "";
+                const type = button.getAttribute("data-type") || "";
+                const explanation = button.getAttribute("data-explanation") || "";
+                const fileUrl = button.getAttribute("data-file") || "";
+                const topicName = button.getAttribute("data-topic") || "Không có";
+                const status = button.getAttribute("data-status") || "";
+                const optionsStr = button.getAttribute("data-options") || "";
+                const answerText = button.getAttribute("data-answer") || "";
+
+                const modal = document.getElementById("editQuestionModal");
+                modal.classList.add("show");
+                modal.style.display = "flex";
+
+                // Gán nội dung
+                document.getElementById("editQuestionId").value = id;
+                document.getElementById("editQuestionContent").value = content;
+                document.getElementById("editQuestionExplanation").value = explanation;
+                document.getElementById("editQuestionType").value = type;
+
+                const mcqOptions = document.getElementById("editMcqOptions");
+                const textAnswer = document.getElementById("editTextAnswer");
+                const optionsContainer = document.getElementById("editAnswerOptions");
+                optionsContainer.innerHTML = "";
+
+                if (type === "mcq_single") {
+                    mcqOptions.style.display = "block";
+                    textAnswer.style.display = "none";
+
+                    if (optionsStr.trim() !== "") {
+                        const pairs = optionsStr.split(",");
+                        pairs.forEach(function (p, index) {
+                            const parts = p.split("|");
+                            const optText = parts[0];
+                            const isCorrect = parts[1] === "true";
+
+                            var html = "";
+                            html += '<div class="answer-option">';
+                            html += '<input type="radio" disabled ' + (isCorrect ? "checked" : "") + '>';
+                            html += '<input type="text" class="answer-input" value="' + optText + '" disabled ';
+                            html += 'style="background:' + (isCorrect ? '#d4edda' : 'white') + ';">';
+                            if (isCorrect) {
+                                html += '<span style="color:green;font-weight:500;">✔</span>';
+                            }
+                            html += '</div>';
+
+                            optionsContainer.innerHTML += html;
+                        });
+                    }
+                } else if (type === "text") {
+                    mcqOptions.style.display = "none";
+                    textAnswer.style.display = "block";
+                    document.getElementById("editCorrectAnswer").value = answerText;
+                } else {
+                    mcqOptions.style.display = "none";
+                    textAnswer.style.display = "none";
+                }
+
+                // Hiển thị file nếu có
+                const previewWrapper = document.getElementById("editFilePreview");
+                const previewContainer = document.getElementById("filePreviewContainer");
+
+                if (fileUrl && fileUrl.trim() !== "") {
+                    previewWrapper.style.display = "block";
+                    const ext = fileUrl.split('.').pop().toLowerCase();
+
+                    var fileHtml = "";
+                    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
+                        fileHtml += '<img src="' + fileUrl + '" style="max-width:100%;border-radius:8px;">';
+                    } else if (["mp3", "wav", "m4a", "aac"].includes(ext)) {
+                        fileHtml += '<audio controls style="width:100%;">';
+                        fileHtml += '<source src="' + fileUrl + '" type="audio/mpeg">';
+                        fileHtml += '</audio>';
+                    } else {
+                        fileHtml += '<p>Không thể xem trước loại file này.</p>';
+                    }
+                    previewContainer.innerHTML = fileHtml;
+                } else {
+                    previewWrapper.style.display = "none";
+                    previewContainer.innerHTML = "";
+                }
+
+                // Khóa input (readonly mode)
+                modal.querySelectorAll("input, textarea, select, button").forEach(function (el) {
+                    if (el.type !== "button" && el.type !== "hidden") {
+                        el.disabled = true;
+                    }
+                });
+
+                document.querySelector("#editQuestionForm .btn-save").style.display = "none";
+                const cancelBtn = document.querySelector("#editQuestionForm .btn-cancel");
+                cancelBtn.textContent = "Đóng";
+            }
+
+            function openRejectionReasonModal(button) {
+                const rejectionReason = button.getAttribute("data-rejection-reason") || "Không có lý do cụ thể được cung cấp.";
+
+                document.getElementById("rejectionReasonText").textContent = rejectionReason;
+
+                const modal = document.getElementById("rejectionReasonModal");
+                modal.classList.add("show");
+                modal.style.display = "flex";
+            }
+
+            function closeRejectionReasonModal() {
+                const modal = document.getElementById("rejectionReasonModal");
+                modal.classList.remove("show");
+                modal.style.display = "none";
+            }
+
+            // Close rejection modal when clicking outside
+            window.addEventListener('click', function (event) {
+                const modal = document.getElementById('rejectionReasonModal');
+                if (event.target === modal) {
+                    closeRejectionReasonModal();
+                }
             });
+
+            // AI Modal Functions
+            function openAIModal() {
+                document.getElementById('aiModal').style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            }
+
+            function closeAIModal() {
+                document.getElementById('aiModal').style.display = 'none';
+                document.body.style.overflow = 'auto'; // Restore scrolling
+                // Reset form
+                document.getElementById('aiForm').reset();
+            }
+
+            // Close AI modal when clicking outside
+            window.addEventListener('click', function (event) {
+                const aiModal = document.getElementById('aiModal');
+                if (event.target === aiModal) {
+                    closeAIModal();
+                }
+            });
+
+//        
+
         </script>
+
+        <!-- AI Question Generation Modal -->
+        <div id="aiModal" class="modal">
+            <div class="modal-content ai-modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-robot"></i> Tạo câu hỏi tự động bằng AI (Gemini)</h3>
+                    <span class="close" onclick="closeAIModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="aiForm" onsubmit="generateAIQuestions(event)">
+                        <div class="ai-form-row">
+                            <div class="form-group">
+                                <label for="aiTopic">Chủ đề:</label>
+                                <select id="aiTopic" name="topicId" required>
+                                    <option value="">-- Chọn chủ đề --</option>
+                                    <c:forEach var="topic" items="${topics}">
+                                        <option value="${topic.name}">${topic.name}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="ai-form-row">
+                            <div class="form-group">
+                                <label for="aiCount">Số lượng câu hỏi:</label>
+                                <input type="number" id="aiCount" name="count" min="1" max="5" value="3" required>
+                            </div>
+                        </div>
+
+                        <div class="ai-form-row">
+                            <div class="form-group">
+                                <label for="aiType">Dạng câu hỏi:</label>
+                                <select id="aiType" name="type" required>
+                                    <option value="mcq">Trắc nghiệm</option>
+                                    <option value="text">Tự luận</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="aiResultContainer" style="margin-top: 20px;"></div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closeAIModal()">Hủy</button>
+                            <button type="submit" class="btn btn-ai">
+                                <i class="fas fa-magic"></i> Sinh câu hỏi bằng AI
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

@@ -76,27 +76,52 @@ public class QuestionDAO extends DBContext {
         }
     }
 
-//    public List<Question> getQuestionsByModule(int moduleId) {
-//        List<Question> list = new ArrayList<>();
-//        String sql = "SELECT * FROM Question WHERE module_id = ?";
-//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-//            ps.setInt(1, moduleId);
-//            ResultSet rs = ps.executeQuery();
-//            while (rs.next()) {
-//                Question q = new Question();
-//                q.setQuestionId(rs.getInt("question_id"));
-//                q.setModuleId(rs.getInt("module_id"));
-//                q.setLessonId(rs.getObject("lesson_id") != null ? rs.getInt("lesson_id") : null);
-//                q.setContent(rs.getString("content"));
-//                q.setType(rs.getString("type"));
-//                q.setExplanation(rs.getString("explanation"));
-//                list.add(q);
-//            }
-//        } catch (SQLException e) {
-//            System.err.println("Lỗi khi lấy danh sách câu hỏi theo module: " + e.getMessage());
-//        }
-//        return list;
-//    }
+    public int addQuestionsToModule(int moduleId, List<Integer> questionIds) {
+        String checkSQL = "SELECT COUNT(*) FROM ModuleQuestions WHERE module_id = ? AND question_id = ?";
+        String insertSQL = "INSERT INTO ModuleQuestions (module_id, question_id) VALUES (?, ?)";
+        int successCount = 0;
+
+        try {
+            connection.setAutoCommit(false); // mở transaction
+
+            for (int qid : questionIds) {
+                // 1️⃣ kiểm tra trùng
+                try (PreparedStatement checkStmt = connection.prepareStatement(checkSQL)) {
+                    checkStmt.setInt(1, moduleId);
+                    checkStmt.setInt(2, qid);
+                    ResultSet rs = checkStmt.executeQuery();
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        continue; // bỏ qua nếu đã tồn tại
+                    }
+                }
+
+                // 2️⃣ thêm mới
+                try (PreparedStatement insertStmt = connection.prepareStatement(insertSQL)) {
+                    insertStmt.setInt(1, moduleId);
+                    insertStmt.setInt(2, qid);
+                    successCount += insertStmt.executeUpdate();
+                }
+            }
+
+            connection.commit(); // commit nếu không lỗi
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                connection.rollback(); // rollback khi lỗi
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return successCount;
+    }
+
     public List<QuestionOption> getOptionsByQuestion(int questionId) {
         List<QuestionOption> list = new ArrayList<>();
         String sql = "SELECT * FROM QuestionOption WHERE question_id = ?";
@@ -118,24 +143,70 @@ public class QuestionDAO extends DBContext {
         return list;
     }
 
+    public String getAnswerByQuestionId(int questionId) {
+        String sql = "SELECT answer_text FROM QuestionTextKey WHERE question_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, questionId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("answer_text");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Không có đáp án
+    }
+
+    public boolean submitQuestions(List<Integer> questionIds) {
+        if (questionIds == null || questionIds.isEmpty()) {
+            return false;
+        }
+
+        String sql = "UPDATE Question SET status = 'submitted' WHERE question_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            for (int id : questionIds) {
+                ps.setInt(1, id);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<Question> getQuestionsByLesson(int lessonId) {
         List<Question> list = new ArrayList<>();
-        String sql = "SELECT * FROM Question WHERE lesson_id = ?";
+        String sql = """
+        SELECT * FROM Question
+        WHERE lesson_id = ?
+        ORDER BY question_id DESC
+    """;
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, lessonId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Question q = new Question();
                 q.setQuestionId(rs.getInt("question_id"));
-                q.setLessonId(rs.getObject("lesson_id") != null ? rs.getInt("lesson_id") : null);
+                q.setLessonId(rs.getInt("lesson_id"));
                 q.setContent(rs.getString("content"));
                 q.setType(rs.getString("type"));
                 q.setExplanation(rs.getString("explanation"));
+                q.setStatus(rs.getString("status"));
+                q.setMediaUrl(rs.getString("media_url"));
+                q.setReviewComment(rs.getString("review_comment"));
                 list.add(q);
             }
         } catch (SQLException e) {
-            System.err.println(" Lỗi getQuestionsByLesson: " + e.getMessage());
+            System.err.println(" Lỗi khi lấy câu hỏi theo lesson: " + e.getMessage());
         }
+
         return list;
     }
 
@@ -176,7 +247,7 @@ public class QuestionDAO extends DBContext {
     }
 
     public boolean updateQuestionWithOptions(Question q, List<QuestionOption> options) {
-        String updateQuestion = "UPDATE Question SET content = ?, explanation = ? WHERE question_id = ?";
+        String updateQuestion = "UPDATE Question SET content = ?, explanation = ?, media_url = ? WHERE question_id = ?";
         String deleteOldOptions = "DELETE FROM QuestionOption WHERE question_id = ?";
         String insertOption = "INSERT INTO QuestionOption (question_id, content, is_correct) VALUES (?, ?, ?)";
 
@@ -186,7 +257,8 @@ public class QuestionDAO extends DBContext {
             try (PreparedStatement ps = connection.prepareStatement(updateQuestion)) {
                 ps.setString(1, q.getContent());
                 ps.setString(2, q.getExplanation());
-                ps.setInt(3, q.getQuestionId());
+                ps.setString(3, q.getMediaUrl());
+                ps.setInt(4, q.getQuestionId());
                 ps.executeUpdate();
             }
 
@@ -222,6 +294,79 @@ public class QuestionDAO extends DBContext {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public boolean updateQuestionWithTextAnswer(Question q, String answerText) {
+        String updateQuestion = "UPDATE Question SET content = ?, explanation = ?, media_url = ?  WHERE question_id = ?";
+        String updateAnswer = "UPDATE QuestionTextKey SET answer_text = ? WHERE question_id = ?";
+        String insertAnswer = "INSERT INTO QuestionTextKey (question_id, answer_text) VALUES (?, ?)";
+
+        try {
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement ps = connection.prepareStatement(updateQuestion)) {
+                ps.setString(1, q.getContent());
+                ps.setString(2, q.getExplanation());
+                ps.setString(3, q.getMediaUrl());
+                ps.setInt(4, q.getQuestionId());
+                ps.executeUpdate();
+            }
+
+            int updatedRows;
+            try (PreparedStatement ps = connection.prepareStatement(updateAnswer)) {
+                ps.setString(1, answerText);
+                ps.setInt(2, q.getQuestionId());
+                updatedRows = ps.executeUpdate();
+            }
+
+            if (updatedRows == 0) {
+                try (PreparedStatement ps = connection.prepareStatement(insertAnswer)) {
+                    ps.setInt(1, q.getQuestionId());
+                    ps.setString(2, answerText);
+                    ps.executeUpdate();
+                }
+            }
+
+            connection.commit();
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void assignTopicToQuestions(int topicId, List<Integer> questionIds) {
+        if (questionIds == null || questionIds.isEmpty()) {
+            return;
+        }
+
+        String sql = "UPDATE Question SET topic_id = ? WHERE question_id = ?";
+
+        try (
+                PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            for (Integer qid : questionIds) {
+                ps.setInt(1, topicId);
+                ps.setInt(2, qid);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -388,11 +533,19 @@ public class QuestionDAO extends DBContext {
         return (s == null) ? "" : s.trim().toLowerCase();
     }
 
-    public List<Question> getDraftQuestionsByInstructor(int instructorId) {
+    public List<Question> getDraftQuestionsByInstructorPaged(int instructorId, int offset, int pageSize) {
         List<Question> list = new ArrayList<>();
-        String sql = "SELECT * FROM Question WHERE status = 'draft' AND created_by = ?";
+        String sql = """
+        SELECT * FROM Question 
+        WHERE status IN ('draft', 'rejected') 
+          AND created_by = ?
+        ORDER BY question_id DESC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, instructorId);
+            ps.setInt(2, offset);
+            ps.setInt(3, pageSize);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Question q = new Question();
@@ -402,6 +555,8 @@ public class QuestionDAO extends DBContext {
                 q.setExplanation(rs.getString("explanation"));
                 q.setTopicId(rs.getObject("topic_id") != null ? rs.getInt("topic_id") : null);
                 q.setStatus(rs.getString("status"));
+                q.setMediaUrl(rs.getString("media_url"));
+                q.setReviewComment(rs.getString("review_comment"));
                 list.add(q);
             }
         } catch (SQLException e) {
@@ -410,4 +565,200 @@ public class QuestionDAO extends DBContext {
         return list;
     }
 
+    public int countDraftQuestionsByInstructor(int instructorId) {
+        String sql = "SELECT COUNT(*) FROM Question WHERE status IN ('draft', 'rejected') AND created_by = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, instructorId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean removeQuestionFromModule(int moduleId, int questionId) {
+        String sql = "DELETE FROM ModuleQuestions WHERE module_id = ? AND question_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, moduleId);
+            ps.setInt(2, questionId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public int countSubmittedQuestions(int instructorId, String statusFilter, String topicFilter) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) FROM Question WHERE created_by = ? AND status IN ('submitted','approved')"
+        );
+
+        if (statusFilter != null && !statusFilter.isEmpty()) {
+            sql.append(" AND status = ?");
+        }
+        if (topicFilter != null && !topicFilter.isEmpty()) {
+            sql.append(" AND topic_id = ?");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+            ps.setInt(index++, instructorId);
+
+            if (statusFilter != null && !statusFilter.isEmpty()) {
+                ps.setString(index++, statusFilter);
+            }
+            if (topicFilter != null && !topicFilter.isEmpty()) {
+                ps.setInt(index++, Integer.parseInt(topicFilter));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Question> getSubmittedQuestionsPaged(int instructorId, String statusFilter, String topicFilter, int offset, int pageSize) {
+        List<Question> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT * FROM Question WHERE created_by = ? AND status IN ('submitted','approved')"
+        );
+
+        if (statusFilter != null && !statusFilter.isEmpty()) {
+            sql.append(" AND status = ?");
+        }
+        if (topicFilter != null && !topicFilter.isEmpty()) {
+            sql.append(" AND topic_id = ?");
+        }
+
+        sql.append(" ORDER BY question_id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+            ps.setInt(index++, instructorId);
+
+            if (statusFilter != null && !statusFilter.isEmpty()) {
+                ps.setString(index++, statusFilter);
+            }
+            if (topicFilter != null && !topicFilter.isEmpty()) {
+                ps.setInt(index++, Integer.parseInt(topicFilter));
+            }
+
+            ps.setInt(index++, offset);
+            ps.setInt(index++, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Question q = new Question();
+                q.setQuestionId(rs.getInt("question_id"));
+                q.setContent(rs.getString("content"));
+                q.setType(rs.getString("type"));
+                q.setExplanation(rs.getString("explanation"));
+                q.setTopicId(rs.getObject("topic_id") != null ? rs.getInt("topic_id") : null);
+                q.setStatus(rs.getString("status"));
+                q.setMediaUrl(rs.getString("media_url"));
+                list.add(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int countApprovedQuestions(String topicFilter) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Question WHERE status = 'approved'");
+        if (topicFilter != null && !topicFilter.isEmpty()) {
+            sql.append(" AND topic_id = ?");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+            if (topicFilter != null && !topicFilter.isEmpty()) {
+                ps.setInt(index++, Integer.parseInt(topicFilter));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Question> getApprovedQuestionsPaged(String topicFilter, int offset, int pageSize) {
+        List<Question> list = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM Question WHERE status = 'approved'");
+        if (topicFilter != null && !topicFilter.isEmpty()) {
+            sql.append(" AND topic_id = ?");
+        }
+        sql.append(" ORDER BY question_id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+            if (topicFilter != null && !topicFilter.isEmpty()) {
+                ps.setInt(index++, Integer.parseInt(topicFilter));
+            }
+
+            ps.setInt(index++, offset);
+            ps.setInt(index++, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Question q = new Question();
+                q.setQuestionId(rs.getInt("question_id"));
+                q.setContent(rs.getString("content"));
+                q.setType(rs.getString("type"));
+                q.setExplanation(rs.getString("explanation"));
+                q.setTopicId(rs.getObject("topic_id") != null ? rs.getInt("topic_id") : null);
+                q.setStatus(rs.getString("status"));
+                q.setMediaUrl(rs.getString("media_url"));
+                list.add(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Question> getQuestionsByModule(int moduleId) {
+        List<Question> list = new ArrayList<>();
+
+        String sql = """
+        SELECT q.*
+        FROM ModuleQuestions mq
+        JOIN Question q ON mq.question_id = q.question_id
+        WHERE mq.module_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, moduleId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Question q = new Question();
+                q.setQuestionId(rs.getInt("question_id"));
+                q.setContent(rs.getString("content"));
+                q.setType(rs.getString("type"));
+                q.setExplanation(rs.getString("explanation"));
+                q.setTopicId(rs.getObject("topic_id") != null ? rs.getInt("topic_id") : null);
+                q.setStatus(rs.getString("status"));
+                q.setMediaUrl(rs.getString("media_url"));
+                list.add(q);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

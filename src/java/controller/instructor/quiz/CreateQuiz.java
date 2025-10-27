@@ -81,21 +81,22 @@ public class CreateQuiz extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-          try {
+        try {
             int courseId = Integer.parseInt(request.getParameter("courseId"));
             int moduleId = Integer.parseInt(request.getParameter("moduleId"));
             String title = request.getParameter("title");
 
-            String attemptsStr = request.getParameter("attempts");
+         
             String scoreStr = request.getParameter("passingScore");
             String pickStr = request.getParameter("pickCount");
+            String timeStr = request.getParameter("time_limit");
 
-            Integer attempts = (attemptsStr == null || attemptsStr.isEmpty()) ? null : Integer.parseInt(attemptsStr);
+           
             Double score = (scoreStr == null || scoreStr.isEmpty()) ? null : Double.parseDouble(scoreStr);
             Integer pick = (pickStr == null || pickStr.isEmpty()) ? null : Integer.parseInt(pickStr);
+            Integer timeLimit = (timeStr == null || timeStr.isEmpty()) ? null : Integer.parseInt(timeStr);
 
-         
-            int newQuizId = quizService.createQuiz(moduleId, title, attempts, score, pick);
+            int newQuizId = quizService.createQuiz(moduleId, title, score, pick, timeLimit);
 
             if (newQuizId != -1) {
                 response.sendRedirect("updateQuiz?courseId=" + courseId + "&moduleId=" + moduleId + "&quizId=" + newQuizId);

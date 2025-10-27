@@ -111,24 +111,26 @@
                             <input id="title" name="title" type="text" placeholder="Nhập tiêu đề quiz" required>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="attempts_allowed">Số lần thử cho phép</label>
-                                <input id="attempts_allowed" name="attempts_allowed" type="number" 
-                                       placeholder="Để trống = không giới hạn" min="1">
-                            </div>
+
+                          
                             <div class="form-group">
                                 <label for="passing_score_pct">Điểm đạt (%)</label>
                                 <input id="passing_score_pct" name="passing_score_pct" type="number" 
                                        placeholder="Để trống = chỉ ôn tập" min="0" max="100" step="0.01">
                             </div>
-                        </div>
+
 
                         <div class="form-group">
                             <label for="pick_count">Số câu hỏi</label>
                             <input id="pick_count" name="pick_count" type="number" 
                                    placeholder="Để trống = lấy hết pool" min="1">
                         </div>
+                        <div class="form-group">
+                                <label for="time_limit">Thời gian làm bài (phút)</label>
+                                <input id="time_limit" name="time_limit" type="number" 
+                                       
+                                       placeholder="Để trống = không giới hạn thời gian" min="1">
+                            </div>
                
 
                         <div class="actions">
@@ -197,14 +199,7 @@
                     return false;
                 }
 
-                // Validate attempts_allowed
-                if (attemptsAllowed && (parseInt(attemptsAllowed) < 1)) {
-                    e.preventDefault();
-                    alert('Số lần thử phải lớn hơn 0');
-                    document.getElementById('attempts_allowed').focus();
-                    return false;
-                }
-
+              
                 // Validate passing_score_pct
                 if (passingScore && (parseFloat(passingScore) < 0 || parseFloat(passingScore) > 100)) {
                     e.preventDefault();

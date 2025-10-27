@@ -25,40 +25,43 @@ public class QuizDAO extends DBContext {
 
     private QuestionDAO questionDAO = new QuestionDAO();
 
-    public boolean insertQuiz(Quiz quiz) {
-        String sql = "INSERT INTO Quiz (quiz_id, title, attempts_allowed, passing_score_pct, pick_count) "
-                + "VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, quiz.getQuizId());
-            ps.setString(2, quiz.getTitle());
+ public boolean insertQuiz(Quiz quiz) {
+    String sql = """
+        INSERT INTO Quiz (quiz_id, title, passing_score_pct, pick_count, time_limit_min)
+        VALUES (?, ?, ?, ?, ?)
+    """;
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, quiz.getQuizId());
+        ps.setString(2, quiz.getTitle());
 
-            // attempts_allowed
-            if (quiz.getAttemptsAllowed() != null) {
-                ps.setInt(3, quiz.getAttemptsAllowed());
-            } else {
-                ps.setNull(3, Types.INTEGER);
-            }
-
-            // passing_score_pct
-            if (quiz.getPassingScorePct() != null) {
-                ps.setDouble(4, quiz.getPassingScorePct());
-            } else {
-                ps.setNull(4, Types.DECIMAL);
-            }
-
-            // pick_count
-            if (quiz.getPickCount() != null) {
-                ps.setInt(5, quiz.getPickCount());
-            } else {
-                ps.setNull(5, Types.INTEGER);
-            }
-
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+      
+        // passing_score_pct
+        if (quiz.getPassingScorePct() != null) {
+            ps.setDouble(3, quiz.getPassingScorePct());
+        } else {
+            ps.setNull(3, Types.DECIMAL);
         }
-        return false;
+
+        // pick_count
+        if (quiz.getPickCount() != null) {
+            ps.setInt(4, quiz.getPickCount());
+        } else {
+            ps.setNull(4, Types.INTEGER);
+        }
+
+        // time_limit_min
+        if (quiz.getTimeLimitMin() != null) {
+            ps.setInt(5, quiz.getTimeLimitMin());
+        } else {
+            ps.setNull(5, Types.INTEGER);
+        }
+
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return false;
+}
 
     public Quiz getQuiz(int quizId) {
         String sql = "SELECT * FROM Quiz WHERE quiz_id = ?";
@@ -68,10 +71,10 @@ public class QuizDAO extends DBContext {
             if (rs.next()) {
                 Quiz q = new Quiz();
                 q.setQuizId(rs.getInt("quiz_id"));
-                q.setTitle(rs.getString("title"));
-                q.setAttemptsAllowed((Integer) rs.getObject("attempts_allowed"));
+                q.setTitle(rs.getString("title"));          
                 q.setPassingScorePct(rs.getObject("passing_score_pct") == null ? null : rs.getDouble("passing_score_pct"));
                 q.setPickCount((Integer) rs.getObject("pick_count"));
+                q.setTimeLimitMin((Integer) rs.getObject("time_limit_min")); 
                 return q;
             }
         } catch (SQLException e) {
@@ -494,37 +497,44 @@ public class QuizDAO extends DBContext {
     }
 //end tuanta
 
-    public boolean updateQuiz(int quizId, String title, Integer attemptsAllowed, java.math.BigDecimal passingScorePct, Integer pickCount) {
-        String sql = "UPDATE Quiz SET title = ?, attempts_allowed = ?, passing_score_pct = ?, pick_count = ? WHERE quiz_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, title);
+    public boolean updateQuiz(Quiz q) {
+    String sql = """
+        UPDATE Quiz 
+        SET title = ?, passing_score_pct = ?, 
+            pick_count = ?, time_limit_min = ?
+        WHERE quiz_id = ?
+    """;
 
-            if (attemptsAllowed != null) {
-                ps.setInt(2, attemptsAllowed);
-            } else {
-                ps.setNull(2, Types.INTEGER);
-            }
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, q.getTitle());
 
-            if (passingScorePct != null) {
-                ps.setBigDecimal(3, passingScorePct);
-            } else {
-                ps.setNull(3, Types.DECIMAL);
-            }
 
-            if (pickCount != null) {
-                ps.setInt(4, pickCount);
-            } else {
-                ps.setNull(4, Types.INTEGER);
-            }
-
-            ps.setInt(5, quizId);
-
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (q.getPassingScorePct() != null) {
+            ps.setDouble(2, q.getPassingScorePct());
+        } else {
+            ps.setNull(2, Types.DECIMAL);
         }
+
+        if (q.getPickCount() != null) {
+            ps.setInt(3, q.getPickCount());
+        } else {
+            ps.setNull(3, Types.INTEGER);
+        }
+
+        if (q.getTimeLimitMin() != null) {
+            ps.setInt(4, q.getTimeLimitMin());
+        } else {
+            ps.setNull(4, Types.INTEGER);
+        }
+
+        ps.setInt(5, q.getQuizId());
+
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
         return false;
     }
+}
 
     public boolean deleteQuiz(int quizId) {
         String sql = "DELETE FROM Quiz WHERE quiz_id = ?";

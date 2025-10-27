@@ -4,6 +4,8 @@
  */
 package controller.instructor.assignment;
 
+import dal.ModuleItemDAO;
+import dal.RubricCriterionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,6 +22,7 @@ import service.ModuleItemService;
 import service.ModuleService;
 import java.io.*;
 import jakarta.servlet.http.*;
+import model.entity.RubricCriterion;
 
 /**
  *
@@ -69,10 +72,13 @@ public class UpdateAssignment extends HttpServlet {
             Map<model.entity.Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
 
             Assignment a = aservice.getAssignmentById(assignmentId);
-            request.setAttribute("courseId", courseId);
-            request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
+            List<RubricCriterion> rubricList = new RubricCriterionDAO().getByAssignmentId(assignmentId);
+
             request.setAttribute("assignment", a);
+            request.setAttribute("rubricList", rubricList);
+            request.setAttribute("moduleId", moduleId);
+            request.setAttribute("courseId", courseId);
+            request.setAttribute("moduleList", list);
             request.setAttribute("content", courseContent);
             request.getRequestDispatcher("teacher/update-assignment.jsp").forward(request, response);
 
@@ -80,12 +86,12 @@ public class UpdateAssignment extends HttpServlet {
             throw new ServletException(e);
         }
     }
+    private final ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
 
-   
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       request.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
 
         try {
             int assignmentId = Integer.parseInt(request.getParameter("assignmentId"));
@@ -96,30 +102,35 @@ public class UpdateAssignment extends HttpServlet {
             String content = request.getParameter("content");
             String instructions = request.getParameter("description");
             String submissionType = request.getParameter("submissionType");
-            String rubric = request.getParameter("gradingCriteria");
-            double maxScore = Double.parseDouble(request.getParameter("maxScore"));
+            double maxScore = 100.0;
             String passStr = request.getParameter("passingScorePct");
             Double passing = (passStr == null || passStr.isEmpty()) ? null : Double.parseDouble(passStr);
+            boolean isAiGradeAllowed = "true".equals(request.getParameter("aiGrading"));
+            String promptSummary = request.getParameter("promptSummary");
 
-            // Upload file
+            // File upload
             Part filePart = request.getPart("attachments");
-            String fileUrl = null;
+            String fileUrl;
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = new File(filePart.getSubmittedFileName()).getName();
                 String uploadPath = request.getServletContext().getRealPath("/uploads/assignment/");
                 File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
-
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
                 filePart.write(uploadPath + File.separator + fileName);
                 fileUrl = "uploads/assignment/" + fileName;
             } else {
-               
-                Assignment old = aservice.getAssignmentById(assignmentId);
-                fileUrl = old.getAttachmentUrl();
+                fileUrl = aservice.getAssignmentById(assignmentId).getAttachmentUrl();
             }
 
+            // Rubric fields
+            String[] nos = request.getParameterValues("criterion_no");
+            String[] guidances = request.getParameterValues("guidance");
+            String[] weights = request.getParameterValues("weight");
+
             Assignment a = new Assignment();
-            a.setAssignmentId(assignmentId);
+            a.setAssignmentId(moduleItemDAO.getModuleItemById(assignmentId));
             a.setTitle(title);
             a.setContent(content);
             a.setInstructions(instructions);
@@ -127,17 +138,23 @@ public class UpdateAssignment extends HttpServlet {
             a.setAttachmentUrl(fileUrl);
             a.setMaxScore(maxScore);
             a.setPassingScorePct(passing);
-            a.setRubric(rubric);
+            a.setAiGradeAllowed(isAiGradeAllowed);
+            a.setPromptSummary(promptSummary);
 
-            boolean success = aservice.updateAssignment(a);
+            boolean success = aservice.updateAssignment(a, nos, guidances, weights);
+
             if (success) {
-                 response.sendRedirect("updateAssignment?courseId=" + courseId + "&moduleId=" + moduleId + "&assignmentId=" + assignmentId);
+                response.sendRedirect("updateAssignment?courseId=" + courseId
+                        + "&moduleId=" + moduleId + "&assignmentId=" + assignmentId);
+            } else {
+                request.setAttribute("error", "Không thể cập nhật Assignment.");
+                request.getRequestDispatcher("teacher/update-assignment.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi khi cập nhật assignment: " + e.getMessage());
-            request.getRequestDispatcher("instructor/update-assignment.jsp").forward(request, response);
+            request.setAttribute("error", "Lỗi khi cập nhật Assignment: " + e.getMessage());
+            request.getRequestDispatcher("teacher/update-assignment.jsp").forward(request, response);
         }
     }
 
