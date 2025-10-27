@@ -6,18 +6,28 @@ public class FlashcardSet {
     private String title;
     private String description;
     private int termCount; 
+    private String status;
     private String authorUsername;
 
     public FlashcardSet() {
     }
 
-    public FlashcardSet(int setId, int studentId, String title, String description, int termCount, String authorUsername) {
+    public FlashcardSet(int setId, int studentId, String title, String description, int termCount, String status, String authorUsername) {
         this.setId = setId;
         this.studentId = studentId;
         this.title = title;
         this.description = description;
         this.termCount = termCount;
+        this.status = status;
         this.authorUsername = authorUsername;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getSetId() {
@@ -67,6 +77,4 @@ public class FlashcardSet {
     public void setAuthorUsername(String authorUsername) {
         this.authorUsername = authorUsername;
     }
-    
-    
 }

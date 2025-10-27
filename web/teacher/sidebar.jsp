@@ -5,16 +5,22 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<<<<<<< HEAD
+=======
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+>>>>>>> main
   <aside class="card admin-card admin-sidebar">
       <h4>Instructor</h4>
       <nav class="admin-menu">
         <a class="admin-link" href="instructorDashboard">Dashboard</a>
         <a class="admin-link" href="manage">Courses</a>
         <a class="admin-link" href="questions">Questions</a>
+<<<<<<< HEAD
+      </nav>
+=======
         <a class="admin-link" href="gradeListServlet">Chấm Assignment</a>
       </nav>
       
@@ -37,4 +43,5 @@
             </a>
         </div>
     </div>
+>>>>>>> main
     </aside>

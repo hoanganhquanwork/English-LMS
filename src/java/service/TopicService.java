@@ -24,4 +24,3 @@ public class TopicService {
         return topicDAO.getTopicById(topicId);
     }
 }
-

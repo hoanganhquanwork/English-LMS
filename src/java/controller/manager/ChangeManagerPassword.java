@@ -93,7 +93,7 @@ public class ChangeManagerPassword extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect("login-internal");
+            response.sendRedirect("loginInternal");
             return;
         }
 

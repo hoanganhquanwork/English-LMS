@@ -132,9 +132,9 @@ body {
     padding: 32px;
     min-height: 100vh;
 }
-.container {
-    max-width: 100%;
-    margin: 0 auto;
+.btwn-success{
+    
+    
 }
 
 /* --------------------------------
@@ -798,6 +798,7 @@ body {
     background: #d1d5db;
 }
 
+
 /* Hiệu ứng mở */
 @keyframes fadeIn {
     from {
@@ -904,7 +905,10 @@ body {
     justify-content: flex-end;
     gap: 12px;
 }
-
+.btwn-success{
+    background: var(--success);
+    color: #ffffff
+}
 .modal-buttons .btn {
     padding: 8px 16px;
     border-radius: var(--radius);

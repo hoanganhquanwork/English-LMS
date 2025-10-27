@@ -15,12 +15,16 @@ import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import model.entity.Category;
 import model.entity.Users;
+import service.CategoryService;
 
 @WebServlet(name = "CourseManagerServlet", urlPatterns = {"/coursemanager"})
 public class CourseManagerController extends HttpServlet {
 
     private final CourseManagerService courseService = new CourseManagerService();
+    private final CategoryService caService = new CategoryService();
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,18 +33,30 @@ public class CourseManagerController extends HttpServlet {
         String status = request.getParameter("status");
         String keyword = request.getParameter("keyword");
         String sort = request.getParameter("sort");
-
+        String categoryParam = request.getParameter("categoryId");
         if (status == null) {
             status = "all";
-        }
-        if (sort == null) {
-            sort = "newest";
         }
         if (keyword == null) {
             keyword = "";
         }
-        
-        List<Course> courseList = courseService.getFilteredCourses(status, keyword, sort);
+        if (sort == null) {
+            sort = "newest";
+        }
+        if (categoryParam == null) {
+            categoryParam = "0";
+        }
+
+        int categoryId = 0;
+        try {
+            if (categoryParam != null && !categoryParam.isEmpty()) {
+                categoryId = Integer.parseInt(categoryParam);
+            }
+        } catch (NumberFormatException e) {
+            categoryId = 0;
+        }
+
+        List<Course> courseList = courseService.getFilteredCourses(status, keyword, sort, categoryParam);
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -62,13 +78,16 @@ public class CourseManagerController extends HttpServlet {
             request.setAttribute("errorMessage", "Không tìm thấy khóa học nào khớp với từ khóa: " + keyword);
         }
 
+        List<Category> cate = caService.getAllCategories();
+
         request.setAttribute("courseList", courseList);
         request.setAttribute("createdDateList", createdDateList);
         request.setAttribute("createdTimeList", createdTimeList);
         request.setAttribute("status", status);
         request.setAttribute("keyword", keyword);
         request.setAttribute("sort", sort);
-
+        request.setAttribute("categoryId", categoryId);
+        request.setAttribute("categoryList", cate);
         request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
     }
 
@@ -77,20 +96,6 @@ public class CourseManagerController extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        String action = request.getParameter("action");
-        if (action == null || action.trim().isEmpty()) {
-            response.sendRedirect("coursemanager");
-            return;
-        }
-
-        String status = request.getParameter("status");
-        String keyword = request.getParameter("keyword");
-        String sort = request.getParameter("sort");
-
-        String redirectUrl = "coursemanager?status=" + (status != null ? status : "all")
-                + "&keyword=" + (keyword != null ? URLEncoder.encode(keyword, "UTF-8") : "")
-                + "&sort=" + (sort != null ? sort : "newest");
-
         Users manager = (Users) session.getAttribute("user");
         if (manager == null) {
             session.setAttribute("errorMessage", "Vui lòng đăng nhập để tiếp tục.");
@@ -98,96 +103,45 @@ public class CourseManagerController extends HttpServlet {
             return;
         }
 
-        try {
-            switch (action) {
-                case "approve":
-                case "bulkApprove": {
-                    String[] courseIds = request.getParameterValues("courseIds");
-                    if (courseIds == null || courseIds.length == 0) {
-                        session.setAttribute("errorMessage", "Vui lòng chọn ít nhất một khóa học!");
-                        break;
-                    }
-                    for (String id : courseIds) {
-                        courseService.updateCourseStatus(Integer.parseInt(id), "approved");
-                    }
-                    session.setAttribute("message", "Đã duyệt thành công " + courseIds.length + " khóa học.");
-                    break;
-                }
+        String action = request.getParameter("action");
+        String status = request.getParameter("status");
+        String keyword = request.getParameter("keyword");
+        String sort = request.getParameter("sort");
 
-                case "reject": {
-                    String idStr = request.getParameter("courseIds");
-                    String reason = request.getParameter("rejectReason");
-
-                    if (idStr == null || idStr.isBlank()) {
-                        session.setAttribute("errorMessage", "Thiếu mã khóa học để từ chối!");
-                        break;
-                    }
-                    if (reason == null || reason.trim().isEmpty()) {
-                        session.setAttribute("errorMessage", "Vui lòng nhập lý do từ chối.");
-                        break;
-                    }
-                    
-                    int courseId = Integer.parseInt(idStr);
-                    boolean success = courseService.rejectCourseWithReason(courseId, manager.getUserId(), reason);
-                    if (success) {
-                        session.setAttribute("message", "Đã từ chối khóa học thành công!");
-                    } else {
-                        session.setAttribute("errorMessage", "Không thể cập nhật lý do từ chối.");
-                    }
-                    break;
-                }
-
-                case "bulkReject": {
-                    String reason = request.getParameter("rejectReason");
-                    String idsRaw = request.getParameter("courseIds");
-
-                    if (reason == null || reason.trim().isEmpty()) {
-                        session.setAttribute("errorMessage", "Vui lòng nhập lý do từ chối.");
-                        break;
-                    }
-                    if (idsRaw == null || idsRaw.isBlank()) {
-                        session.setAttribute("errorMessage", "Không tìm thấy danh sách khóa học để từ chối.");
-                        break;
-                    }
-
-                    String[] courseIds = idsRaw.split(",");
-                    boolean allSuccess = true;
-                    for (String id : courseIds) {
-                        if (!courseService.rejectCourseWithReason(Integer.parseInt(id), manager.getUserId(), reason)) {
-                            allSuccess = false;
-                        }
-                    }
-
-                    if (allSuccess) {
-                        session.setAttribute("message", "Đã từ chối " + courseIds.length + " khóa học.");
-                    } else {
-                        session.setAttribute("errorMessage", "Một số khóa học bị lỗi khi cập nhật lý do.");
-                    }
-                    break;
-                }
-
-                case "setPrice": {
-                    int courseId = Integer.parseInt(request.getParameter("courseId"));
-                    BigDecimal price = new BigDecimal(request.getParameter("price"));
-                    if (price.compareTo(BigDecimal.ZERO) < 0) {
-                        session.setAttribute("errorMessage", "Giá không được nhỏ hơn 0.");
-                        break;
-                    }
-
-                    courseService.updateCoursePrice(courseId, price);
-                    session.setAttribute("message", "Cập nhật giá thành công!");
-                    break;
-                }
-
-                default: {
-                    session.setAttribute("errorMessage", "Hành động không hợp lệ.");
-                    break;
-                }
+        String redirectUrl = "coursemanager?status=" + (status != null ? status : "all")
+                + "&keyword=" + (keyword != null ? URLEncoder.encode(keyword, "UTF-8") : "")
+                + "&sort=" + (sort != null ? sort : "newest");
+        String[] courseIds = request.getParameterValues("courseIds");
+        if (courseIds == null) {
+            String idStr = request.getParameter("courseId");
+            if (idStr != null && !idStr.isBlank()) {
+                courseIds = new String[]{idStr};
             }
+        }
 
+        String reason = request.getParameter("rejectReason");
+        String priceStr = request.getParameter("price");
+        BigDecimal price = null;
+        if (priceStr != null && !priceStr.isBlank()) {
+            try {
+                price = new BigDecimal(priceStr);
+            } catch (NumberFormatException e) {
+                session.setAttribute("errorMessage", "Giá không hợp lệ.");
+                response.sendRedirect(redirectUrl);
+                return;
+            }
+        }
+
+        try {
+            String resultMessage = courseService.handleManagerAction(action, courseIds, reason, price, manager);
+            if (resultMessage.startsWith("Đã") || resultMessage.contains("thành công")) {
+                session.setAttribute("message", resultMessage);
+            } else {
+                session.setAttribute("errorMessage", resultMessage);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            session.setAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý yêu cầu: " + e.getMessage());
+            session.setAttribute("errorMessage", "Đã xảy ra lỗi khi xử lý: " + e.getMessage());
         }
 
         response.sendRedirect(redirectUrl);

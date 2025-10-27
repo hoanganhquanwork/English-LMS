@@ -73,8 +73,4 @@ public class Review {
     public void setEditedAt(Timestamp editedAt) {
         this.editedAt = editedAt;
     }
-
-    
-    
-    
 }

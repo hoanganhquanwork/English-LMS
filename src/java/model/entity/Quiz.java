@@ -4,21 +4,18 @@
  */
 package model.entity;
 
-
-
 /**
  *
  * @author Lenovo
  */
 public class Quiz {
-    
-    private int quizId;                
-    private String title;             
-    private Double passingScorePct; 
-    private Integer pickCount;    
-     private Integer timeLimitMin;     
 
-  
+    private int quizId;
+    private String title;
+    private Double passingScorePct;
+    private Integer pickCount;
+    private Integer timeLimitMin;
+
     public Quiz() {
     }
 
@@ -30,10 +27,6 @@ public class Quiz {
         this.timeLimitMin = timeLimitMin;
     }
 
-  
-
-
-    
     // ===== Getters & Setters =====
     public int getQuizId() {
         return quizId;
@@ -51,7 +44,6 @@ public class Quiz {
         this.title = title;
     }
 
-
     public Double getPassingScorePct() {
         return passingScorePct;
     }
@@ -60,7 +52,6 @@ public class Quiz {
         this.passingScorePct = passingScorePct;
     }
 
-   
     public Integer getPickCount() {
         return pickCount;
     }
@@ -76,5 +67,4 @@ public class Quiz {
     public void setTimeLimitMin(Integer timeLimitMin) {
         this.timeLimitMin = timeLimitMin;
     }
-    
 }

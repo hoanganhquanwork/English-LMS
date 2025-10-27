@@ -15,7 +15,8 @@ public class CoursePageDTO {
 
     private Course course;
     private List<ModuleWithItemsDTO> modules;
-    //Quan
+    
+    // Quan
     private double progressPct;
     private int completedItems;
     private int totalItems;
@@ -47,22 +48,6 @@ public class CoursePageDTO {
         this.totalItems = totalItems;
     }
 
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
-        this.course = course;
-    }
-
-    public List<ModuleWithItemsDTO> getModules() {
-        return modules;
-    }
-
-    public void setModules(List<ModuleWithItemsDTO> modules) {
-        this.modules = modules;
-    }
-
     public int getTotalRequired() {
         return totalRequired;
     }
@@ -87,4 +72,19 @@ public class CoursePageDTO {
         this.avgScorePct = avgScorePct;
     }
 
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public List<ModuleWithItemsDTO> getModules() {
+        return modules;
+    }
+
+    public void setModules(List<ModuleWithItemsDTO> modules) {
+        this.modules = modules;
+    }
 }

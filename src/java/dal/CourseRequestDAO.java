@@ -28,9 +28,7 @@ public class CourseRequestDAO extends DBContext {
     private ParentProfileDAO pdao = new ParentProfileDAO();
 
     public boolean insertSaveCourseRequest(int studentId, int courseId, String note) {
-        String sql = "INSERT INTO CourseRequests "
-                + " (student_id, course_id, status, note) "
-                + "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO CourseRequests (student_id, course_id, status, note) VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);
@@ -45,13 +43,13 @@ public class CourseRequestDAO extends DBContext {
     }
 
     public boolean isRequestExist(int studentId, int courseId) {
-        String sql = "SELECT 1 FROM CourseRequests WHERE student_id = ? AND course_id = ? ";
+        String sql = "SELECT 1 FROM CourseRequests WHERE student_id = ? AND course_id = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);
             st.setInt(2, courseId);
             ResultSet rs = st.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return true;
             }
         } catch (SQLException e) {
@@ -60,8 +58,7 @@ public class CourseRequestDAO extends DBContext {
         return false;
     }
 
-    public List<CourseRequest> searchCourseRequest(
-            int studentId, String status, String sort, String keyword, int page, int pageSize) {
+    public List<CourseRequest> searchCourseRequest(int studentId, String status, String sort, String keyword, int page, int pageSize) {
         StringBuilder sql = new StringBuilder("SELECT cr.request_id, cr.student_id, "
                 + " cr.course_id, cr.parent_id, cr.status, "
                 + " cr.note, cr.created_at, cr.decided_at, "
@@ -69,14 +66,10 @@ public class CourseRequestDAO extends DBContext {
                 + "FROM CourseRequests cr JOIN Course c ON c.course_id = cr.course_id "
                 + " WHERE 1=1");
 
-        if (page < 1) {
-            page = 1;
-        }
-        if (pageSize < 1) {
-            pageSize = 10;
-        }
-        List<Object> parameters = new ArrayList<>();
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 10;
 
+        List<Object> parameters = new ArrayList<>();
         sql.append(" AND cr.student_id = ? ");
         parameters.add(studentId);
 
@@ -152,12 +145,9 @@ public class CourseRequestDAO extends DBContext {
         return courseList;
     }
 
-    public int countCourseRequest(
-            int studentId, String status, String keyword) {
+    public int countCourseRequest(int studentId, String status, String keyword) {
         StringBuilder sql = new StringBuilder(
-                "SELECT COUNT(*) "
-                + "FROM CourseRequests cr JOIN Course c ON c.course_id = cr.course_id "
-                + "WHERE 1=1"
+                "SELECT COUNT(*) FROM CourseRequests cr JOIN Course c ON c.course_id = cr.course_id WHERE 1=1"
         );
 
         List<Object> parameter = new ArrayList<>();
@@ -186,12 +176,9 @@ public class CourseRequestDAO extends DBContext {
         return 0;
     }
 
-//    From student
     public boolean sendCourseRequest(int requestId, int studentId, int parentId) {
-        String sql = "UPDATE CourseRequests SET status='pending', parent_id=?, "
-                + " decided_at = NULL, note = ?  "
+        String sql = "UPDATE CourseRequests SET status='pending', parent_id=?, decided_at=NULL, note=? "
                 + "WHERE request_id=? AND student_id=? AND status IN ('saved','rejected','canceled')";
-
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             String defaultMessage = "Yêu cầu đang đợi phụ huynh duyệt";
@@ -207,8 +194,8 @@ public class CourseRequestDAO extends DBContext {
     }
 
     public boolean cancelRequest(int requestId, int studentId, String note) {
-        String sql = "UPDATE CourseRequests  SET status='canceled', decided_at=GETDATE(),"
-                + "  note = NULLIF(?, N'')  WHERE request_id=? AND student_id=? AND status IN ('pending','unpaid') ";
+        String sql = "UPDATE CourseRequests SET status='canceled', decided_at=GETDATE(), note=NULLIF(?, N'') "
+                + "WHERE request_id=? AND student_id=? AND status IN ('pending','unpaid')";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             if (note == null) {
@@ -225,10 +212,9 @@ public class CourseRequestDAO extends DBContext {
         }
     }
 
-    //for unlink
     public boolean cancelAllPendingAndUnpaidByStudent(int studentId, String note) {
-        String sql = "UPDATE CourseRequests SET status='canceled', parent_id = NULL, "
-                + " decided_at=GETDATE(), note = ? WHERE student_id=? AND status IN ('pending','unpaid')";
+        String sql = "UPDATE CourseRequests SET status='canceled', parent_id=NULL, decided_at=GETDATE(), note=? "
+                + "WHERE student_id=? AND status IN ('pending','unpaid')";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setString(1, note);
@@ -241,8 +227,7 @@ public class CourseRequestDAO extends DBContext {
     }
 
     public boolean detachParentFromHistory(int studentId) {
-        String sql = "UPDATE CourseRequests SET parent_id=NULL "
-                + "WHERE student_id=? AND status IN ('rejected','canceled','saved')";
+        String sql = "UPDATE CourseRequests SET parent_id=NULL WHERE student_id=? AND status IN ('rejected','canceled','saved')";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);
@@ -257,19 +242,18 @@ public class CourseRequestDAO extends DBContext {
     public List<CourseRequest> getRequestsByParentAndStatus(int parentId, String status) {
         List<CourseRequest> list = new ArrayList<>();
         String sql = """
-        SELECT 
-            r.request_id, r.student_id, r.course_id, r.status, 
-            r.note, r.created_at, r.decided_at,
-            c.title AS course_title, c.price AS course_price,
-            u.full_name AS student_name, u.profile_picture, u.email, u.phone,
-            s.grade_level, s.institution, s.address
-        FROM CourseRequests r
-        JOIN Course c ON r.course_id = c.course_id
-        JOIN StudentProfile s ON r.student_id = s.user_id
-        JOIN Users u ON s.user_id = u.user_id
-        WHERE r.parent_id = ? AND r.status = ?
-        ORDER BY r.created_at DESC
-    """;
+            SELECT r.request_id, r.student_id, r.course_id, r.status, 
+                   r.note, r.created_at, r.decided_at,
+                   c.title AS course_title, c.price AS course_price,
+                   u.full_name AS student_name, u.profile_picture, u.email, u.phone,
+                   s.grade_level, s.institution, s.address
+            FROM CourseRequests r
+            JOIN Course c ON r.course_id = c.course_id
+            JOIN StudentProfile s ON r.student_id = s.user_id
+            JOIN Users u ON s.user_id = u.user_id
+            WHERE r.parent_id = ? AND r.status = ?
+            ORDER BY r.created_at DESC
+        """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, parentId);
@@ -282,8 +266,8 @@ public class CourseRequestDAO extends DBContext {
                 req.setRequestId(rs.getInt("request_id"));
                 req.setStatus(rs.getString("status"));
                 req.setNote(rs.getString("note"));
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
                 req.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 req.setFormattedCreatedAt(req.getCreatedAt().format(formatter));
 
@@ -294,18 +278,12 @@ public class CourseRequestDAO extends DBContext {
                     req.setFormattedDecidedAt(decidedAt.format(formatter));
                 }
 
-                if (decided != null) {
-                    req.setDecidedAt(decided.toLocalDateTime());
-                }
-
-                // --- Map Course ---
                 Course c = new Course();
                 c.setCourseId(rs.getInt("course_id"));
                 c.setTitle(rs.getString("course_title"));
                 c.setPrice(rs.getBigDecimal("course_price"));
                 req.setCourse(c);
 
-                // --- Map Student + User ---
                 Users u = new Users();
                 u.setUserId(rs.getInt("student_id"));
                 u.setFullName(rs.getString("student_name"));
@@ -366,16 +344,11 @@ public class CourseRequestDAO extends DBContext {
     }
 
     public void updateNoteForRequest(int requestId, String note) {
-        String sql = """
-        UPDATE CourseRequests
-        SET note = ?, decided_at = GETDATE()
-        WHERE request_id = ?
-    """;
+        String sql = "UPDATE CourseRequests SET note = ?, decided_at = GETDATE() WHERE request_id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, note);
             ps.setInt(2, requestId);
-
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -384,14 +357,13 @@ public class CourseRequestDAO extends DBContext {
 
     public CourseRequest getById(int requestId) {
         String sql = """
-        SELECT 
-            r.request_id, r.student_id, r.course_id, r.parent_id,
-            r.status, r.note, r.created_at, r.decided_at,
-            c.title AS course_title, c.price AS course_price
-        FROM CourseRequests r
-        JOIN Course c ON r.course_id = c.course_id
-        WHERE r.request_id = ?
-    """;
+            SELECT r.request_id, r.student_id, r.course_id, r.parent_id,
+                   r.status, r.note, r.created_at, r.decided_at,
+                   c.title AS course_title, c.price AS course_price
+            FROM CourseRequests r
+            JOIN Course c ON r.course_id = c.course_id
+            WHERE r.request_id = ?
+        """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, requestId);
@@ -412,19 +384,16 @@ public class CourseRequestDAO extends DBContext {
                         req.setDecidedAt(decidedAt.toLocalDateTime());
                     }
 
-                    // --- Map Course ---
                     Course c = new Course();
                     c.setCourseId(rs.getInt("course_id"));
                     c.setTitle(rs.getString("course_title"));
                     c.setPrice(rs.getBigDecimal("course_price"));
                     req.setCourse(c);
 
-                    // --- Map Student ---
                     StudentProfile s = new StudentProfile();
                     s.setUserId(rs.getInt("student_id"));
                     req.setStudent(s);
 
-                    // --- Map Parent (nếu có) ---
                     if (rs.getObject("parent_id") != null) {
                         ParentProfile p = new ParentProfile();
                         p.setUserId(rs.getInt("parent_id"));
@@ -440,5 +409,4 @@ public class CourseRequestDAO extends DBContext {
 
         return null;
     }
-
 }

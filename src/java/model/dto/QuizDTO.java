@@ -75,7 +75,4 @@ public class QuizDTO {
     public void setBank(List<QuestionDTO> bank) {
         this.bank = bank;
     }
-
-    
-    
 }

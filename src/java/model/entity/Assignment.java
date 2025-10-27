@@ -18,13 +18,15 @@ public class Assignment {
     private String attachmentUrl;
     private double maxScore;
     private Double passingScorePct; // có thể null
-     private String promptSummary;
-    private boolean isAiGradeAllowed; 
+    private String promptSummary;
+    private boolean isAiGradeAllowed;
 
     public Assignment() {
     }
 
-    public Assignment(ModuleItem assignmentId, String title, String content, String instructions, String submissionType, String attachmentUrl, double maxScore, Double passingScorePct, String promptSummary, boolean isAiGradeAllowed) {
+    public Assignment(ModuleItem assignmentId, String title, String content, String instructions,
+                      String submissionType, String attachmentUrl, double maxScore,
+                      Double passingScorePct, String promptSummary, boolean isAiGradeAllowed) {
         this.assignmentId = assignmentId;
         this.title = title;
         this.content = content;
@@ -37,8 +39,6 @@ public class Assignment {
         this.isAiGradeAllowed = isAiGradeAllowed;
     }
 
-
-
     public ModuleItem getAssignmentId() {
         return assignmentId;
     }
@@ -46,7 +46,6 @@ public class Assignment {
     public void setAssignmentId(ModuleItem assignmentId) {
         this.assignmentId = assignmentId;
     }
-
 
     public String getTitle() {
         return title;
@@ -120,8 +119,6 @@ public class Assignment {
         this.isAiGradeAllowed = isAiGradeAllowed;
     }
 
-    
-    
     public boolean isAiGradeAllowed() {
         return isAiGradeAllowed;
     }
@@ -129,5 +126,4 @@ public class Assignment {
     public void setAiGradeAllowed(boolean isAiGradeAllowed) {
         this.isAiGradeAllowed = isAiGradeAllowed;
     }
-    
 }

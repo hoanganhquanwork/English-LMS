@@ -123,15 +123,29 @@
                                 <input id="title" name="title" type="text" value="${requestScope.quiz.title}" required>
                             </div>
 
+<<<<<<< HEAD
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="attempts_allowed">Số lần thử cho phép</label>
+                                    <input id="attempts_allowed" name="attempts_allowed" type="number" 
+                                           value="${requestScope.quiz.attemptsAllowed != null ? requestScope.quiz.attemptsAllowed : ''}"
+                                           placeholder="Để trống = không giới hạn" min="1">
+                                </div>
+=======
                           
                            
+>>>>>>> main
                                 <div class="form-group">
                                     <label for="passing_score_pct">Điểm đạt (%)</label>
                                     <input id="passing_score_pct" name="passing_score_pct" type="number" 
                                            value="${requestScope.quiz.passingScorePct != null ? requestScope.quiz.passingScorePct : ''}"
                                            placeholder="Để trống = chỉ ôn tập" min="0" max="100" step="0.01">
                                 </div>
+<<<<<<< HEAD
+                            </div>
+=======
                       
+>>>>>>> main
 
                             <div class="form-group">
                                 <label for="pick_count">Số câu hỏi</label>
@@ -140,6 +154,8 @@
                                        placeholder="Để trống = lấy hết pool" min="1">
                             </div>
 
+<<<<<<< HEAD
+=======
                             <div class="form-group">
                                 <label for="time_limit">Thời gian làm bài (phút)</label>
                                 <input id="time_limit" name="time_limit" type="number" 
@@ -147,6 +163,7 @@
                                        placeholder="Để trống = không giới hạn thời gian" min="1">
                             </div>
 
+>>>>>>> main
 
                             <div class="actions" style="margin-top: 20px;">
                                 <a class="btn btn-secondary" href="manageModule?courseId=${param.courseId}">
@@ -214,7 +231,10 @@
                 const attemptsAllowed = document.getElementById('attempts_allowed').value;
                 const passingScore = document.getElementById('passing_score_pct').value;
                 const pickCount = document.getElementById('pick_count').value;
+<<<<<<< HEAD
+=======
                 const timeLimit = document.getElementById('time_limit').value;
+>>>>>>> main
 
                 if (!title) {
                     e.preventDefault();
@@ -246,6 +266,8 @@
                     document.getElementById('pick_count').focus();
                     return false;
                 }
+<<<<<<< HEAD
+=======
 
                 // Validate time_limit
                 if (timeLimit && (parseInt(timeLimit) < 1)) {
@@ -254,6 +276,7 @@
                     document.getElementById('time_limit').focus();
                     return false;
                 }
+>>>>>>> main
             });
 
             document.addEventListener('click', function (event) {

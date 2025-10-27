@@ -84,5 +84,4 @@ public class ModuleWithItemsDTO {
     public void setAvgScorePct(Double avgScorePct) {
         this.avgScorePct = avgScorePct;
     }
-
 }

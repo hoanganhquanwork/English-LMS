@@ -127,7 +127,11 @@
 
                                         <th>Trạng thái</th>
                                         <th>Ngày tham gia</th>
+<<<<<<< HEAD
+                                        <th>Hành động</th>
+=======
                                         
+>>>>>>> main
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -159,7 +163,17 @@
                                                 </c:choose>
                                             </td>
                                             <td><fmt:formatDate value="${h.enrolledAt}" pattern="dd/MM/yyyy"/></td>
+<<<<<<< HEAD
+                                            <td>
+                                                <div class="action-buttons">
+                                                    <button class="btn-icon" title="Xem chi tiết">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+=======
                                            
+>>>>>>> main
                                         </tr>
                                     </c:forEach>
 
