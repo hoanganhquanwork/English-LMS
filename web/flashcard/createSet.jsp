@@ -10,7 +10,9 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Tạo Flashcard Set Mới</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard-styles.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard-styles.css?v=32">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
     </head>
     <body>
         <div class="container">
@@ -47,7 +49,13 @@
                                       rows="4">${fn:escapeXml(param.description)}</textarea>
                         </div>
                     </div>
-
+                    <div class="input-group">
+                        <label class="input-label" for="status">Visibility</label>
+                        <select id="status" name="status" class="status-select">
+                            <option value="private" selected> Private (Chỉ mình tôi)</option>
+                            <option value="public">Public (Mọi người đều xem được)</option>
+                        </select>
+                    </div>
                     <div id="flashcardList" class="flashcard-entries">
                         <c:forEach begin="0" end="1" varStatus="st">
                             <div class="card-entry" data-index="${st.index}">
@@ -65,13 +73,13 @@
                                     </div>
                                 </div>
                                 <div class="card-actions">
-                                    <button class="remove-card-btn" type="button" onclick="removeCard(this)">🗑️</button>
+                                    <button class="remove-card-btn" type="button" onclick="removeCard(this)"><i class="fa fa-trash">️</i></button>
                                 </div>
                             </div>
                         </c:forEach>
                     </div>
 
-   
+
                     <div class="add-card-section">
                         <button class="add-card-btn" type="button" id="addCardBtn">Add a card</button>
                     </div>

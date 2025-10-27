@@ -39,7 +39,8 @@
             .btn-home:hover {
                 background-color: var(--brand-dark, #3730a3);
             }
-            .ai-form input, .ai-form textarea {
+            .ai-form input,
+            .ai-form textarea {
                 width: 100%;
                 border: 1px solid #ccc;
                 border-radius: 8px;
@@ -61,6 +62,21 @@
             }
             .ai-form button:hover {
                 background-color: var(--brand-dark, #3730a3);
+            }
+            .status-select {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin: 10px 0 20px 0;
+            }
+            .status-select label {
+                font-size: 0.95rem;
+                color: #333;
+                cursor: pointer;
+            }
+            .status-select input[type="radio"] {
+                transform: scale(1.1);
+                margin-right: 6px;
             }
             .alert {
                 margin-top: 16px;
@@ -109,31 +125,55 @@
             .btn-nav:hover {
                 background-color: var(--brand-dark, #3730a3);
             }
+            .status-select {
+                display: flex;
+                gap: 20px;
+                align-items: center; 
+            }
+
+            .status-select label {
+                display: flex;
+                align-items: center; 
+                gap: 6px;
+                font-weight: 500;
+                color: var(--text, #1f2937);
+                cursor: pointer;
+                user-select: none;
+            }
+
+            .status-select input[type="radio"] {
+                transform: translateY(1px); 
+            }
         </style>
     </head>
 
     <body>
         <main class="main-content">
             <div class="ai-container">
-
                 <div class="ai-header">
                     <a href="<c:url value='/dashboard'/>" class="btn-home"><i class="fa fa-home"></i></a>
-                    <h2> Tạo Flashcard bằng AI</h2>
+                    <h2>Tạo Flashcard bằng AI</h2>
                 </div>
+
                 <form action="${pageContext.request.contextPath}/flashcard-ai" method="post" class="ai-form">
                     <input type="text" name="set_title" placeholder="Nhập tên bộ flashcard (VD: English Tenses)" required>
-                    <textarea name="prompt" rows="6"
-                              placeholder="Nhập chủ đề hoặc nội dung để AI tạo flashcards..." required></textarea>
+                    <textarea name="prompt" rows="6" placeholder="Nhập chủ đề hoặc nội dung để AI tạo flashcards..." required></textarea>
+
+                    <div class="status-select">
+                        <label><input type="radio" name="status" value="public" checked> Công khai</label>
+                        <label><input type="radio" name="status" value="private"> Riêng tư</label>
+                    </div>
+
                     <button type="submit">Tạo Flashcard bằng AI</button>
                 </form>
+
                 <c:if test="${not empty message}">
                     <div class="alert success">${message}</div>
-
                     <div class="ai-actions">
-                        <a href="<c:url value='/dashboard?action=listSets'/>" class="btn-nav"> Quay lại danh sách Set</a>
+                        <a href="<c:url value='/dashboard?action=listSets'/>" class="btn-nav">Quay lại danh sách Set</a>
                         <c:if test="${not empty setId}">
                             <a href="<c:url value='/dashboard?action=viewSet&setId=${setId}'/>" class="btn-nav">
-                                 Xem bộ vừa tạo
+                                Xem bộ vừa tạo
                             </a>
                         </c:if>
                     </div>

@@ -6,14 +6,15 @@ import java.util.List;
 import model.entity.FlashcardSet;
 
 public class FlashcardSetDAO extends DBContext {
-
-    public int insertFlashcardSetReturnId(FlashcardSet set) {
-        String sql = "INSERT INTO FlashcardSets(student_id, title, description) VALUES (?,?,?)";
+    
+public int insertFlashcardSetReturnId(FlashcardSet set) {
+        String sql = "INSERT INTO FlashcardSets(student_id, title, description, status) VALUES (?,?,?,?)";
         try {
             PreparedStatement stm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setInt(1, set.getStudentId());
             stm.setString(2, set.getTitle());
             stm.setString(3, set.getDescription());
+            stm.setString(4, set.getStatus() != null ? set.getStatus() : "private");
             stm.executeUpdate();
 
             ResultSet rs = stm.getGeneratedKeys();
@@ -28,13 +29,14 @@ public class FlashcardSetDAO extends DBContext {
 
     public List<FlashcardSet> getSetsByStudent(int studentId) {
         List<FlashcardSet> list = new ArrayList<>();
-        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, "
-                + "       COUNT(c.card_id) AS termCount, u.username AS authorUsername "
+        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, s.status, "
+                + "COUNT(c.card_id) AS termCount, u.username AS authorUsername "
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "JOIN Users u ON s.student_id = u.user_id "
                 + "WHERE s.student_id = ? "
-                + "GROUP BY s.set_id, s.student_id, s.title, s.description, u.username ORDER BY s.set_id DESC";
+                + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
+                + "ORDER BY s.set_id DESC";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, studentId);
@@ -46,6 +48,7 @@ public class FlashcardSetDAO extends DBContext {
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getInt("termCount"),
+                        rs.getString("status"),
                         rs.getString("authorUsername")
                 ));
             }
@@ -57,13 +60,13 @@ public class FlashcardSetDAO extends DBContext {
 
     public FlashcardSet getSetById(int setId) {
         FlashcardSet set = null;
-        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, "
-                + "       COUNT(c.card_id) AS termCount, u.username AS authorUsername "
+        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, s.status, "
+                + "COUNT(c.card_id) AS termCount, u.username AS authorUsername "
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "JOIN Users u ON s.student_id = u.user_id "
                 + "WHERE s.set_id = ? "
-                + "GROUP BY s.set_id, s.student_id, s.title, s.description, u.username";
+                + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, setId);
@@ -75,6 +78,7 @@ public class FlashcardSetDAO extends DBContext {
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getInt("termCount"),
+                        rs.getString("status"),
                         rs.getString("authorUsername")
                 );
             }
@@ -84,13 +88,14 @@ public class FlashcardSetDAO extends DBContext {
         return set;
     }
 
-    public void updateSet(int setId, String title, String description) {
-        String sql = "UPDATE FlashcardSets SET title=?, description=? WHERE set_id=?";
+    public void updateSet(int setId, String title, String description, String status) {
+        String sql = "UPDATE FlashcardSets SET title=?, description=?, status=?, updated_at=GETDATE() WHERE set_id=?";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setString(1, title);
             stm.setString(2, description);
-            stm.setInt(3, setId);
+            stm.setString(3, status);
+            stm.setInt(4, setId);
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,14 +118,15 @@ public class FlashcardSetDAO extends DBContext {
         }
     }
 
-    public List<FlashcardSet> getAllSets() {
+      public List<FlashcardSet> getAllSets() {
         List<FlashcardSet> list = new ArrayList<>();
-        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, "
-                + "       COUNT(c.card_id) AS termCount, u.username AS authorUsername "
+        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, s.status, "
+                + "COUNT(c.card_id) AS termCount, u.username AS authorUsername "
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "JOIN Users u ON s.student_id = u.user_id "
-                + "GROUP BY s.set_id, s.student_id, s.title, s.description, u.username ORDER BY s.set_id DESC";
+                + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
+                + "ORDER BY s.set_id DESC";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
@@ -131,6 +137,7 @@ public class FlashcardSetDAO extends DBContext {
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getInt("termCount"),
+                        rs.getString("status"),
                         rs.getString("authorUsername")
                 ));
             }
@@ -142,17 +149,16 @@ public class FlashcardSetDAO extends DBContext {
 
     public List<FlashcardSet> searchMySets(int studentId, String keyword) {
         List<FlashcardSet> list = new ArrayList<>();
-        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, "
-                + "       COUNT(c.card_id) AS termCount, u.username AS authorUsername "
+        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, s.status, "
+                + "COUNT(c.card_id) AS termCount, u.username AS authorUsername "
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "JOIN Users u ON s.student_id = u.user_id "
                 + "WHERE s.student_id=? "
                 + "  AND (s.title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? "
                 + "       OR COALESCE(s.description,'') COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?) "
-                + "GROUP BY s.set_id, s.student_id, s.title, s.description, u.username "
+                + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
                 + "ORDER BY s.set_id DESC";
-
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, studentId);
@@ -167,6 +173,7 @@ public class FlashcardSetDAO extends DBContext {
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getInt("termCount"),
+                        rs.getString("status"),
                         rs.getString("authorUsername")
                 ));
             }
@@ -178,15 +185,16 @@ public class FlashcardSetDAO extends DBContext {
 
     public List<FlashcardSet> searchAllSets(String keyword) {
         List<FlashcardSet> list = new ArrayList<>();
-        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, COUNT(c.card_id) AS termCount, "
+        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, s.status, COUNT(c.card_id) AS termCount, "
                 + "u.username AS authorUsername "
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "LEFT JOIN Users u ON s.student_id = u.user_id "
-                + "WHERE s.title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? "
-                + "   OR COALESCE(s.description,'') COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? "
-                + "GROUP BY s.set_id, s.student_id, s.title, s.description, u.username ORDER BY s.set_id DESC";
-
+                + "WHERE s.status <> 'private' "
+                + "  AND (s.title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? "
+                + "       OR COALESCE(s.description,'') COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?) "
+                + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
+                + "ORDER BY s.set_id DESC";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             String kw = "%" + keyword + "%";
@@ -200,6 +208,7 @@ public class FlashcardSetDAO extends DBContext {
                         rs.getString("title"),
                         rs.getString("description"),
                         rs.getInt("termCount"),
+                        rs.getString("status"),
                         rs.getString("authorUsername")
                 ));
             }
@@ -208,7 +217,8 @@ public class FlashcardSetDAO extends DBContext {
         }
         return list;
     }
-     public List<FlashcardSet> searchAllSetsByName(String keyword, String sortType) {
+
+    public List<FlashcardSet> searchAllSetsByName(String keyword, String sortType) {
         List<FlashcardSet> list = new ArrayList<>();
         String orderClause = "ORDER BY s.set_id DESC";
         if ("oldest".equalsIgnoreCase(sortType)) {
@@ -219,35 +229,35 @@ public class FlashcardSetDAO extends DBContext {
             orderClause = "ORDER BY s.title DESC";
         }
 
-        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, COUNT(f.card_id) AS termCount, "
-                + " u.username AS authorName "
-                + "From FlashcardSets s "
+        String sql = "SELECT s.set_id, s.student_id, s.title, s.description, s.status, COUNT(f.card_id) AS termCount, "
+                + "u.username AS authorName "
+                + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards f ON s.set_id = f.set_id "
                 + "LEFT JOIN Users u ON s.student_id = u.user_id "
-                + "WHERE (s.title LIKE ? OR s.description like ? OR u.username LIKE ?) "
-                + "GROUP BY s.set_id, s.student_id, s.title, s.description, u.username "
+                + "WHERE s.status <> 'private' "
+                + "  AND (s.title LIKE ? OR s.description LIKE ? OR u.username LIKE ?) "
+                + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
                 + orderClause;
-
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             String kw = "%" + keyword + "%";
             ps.setString(1, kw);
             ps.setString(2, kw);
             ps.setString(3, kw);
-            
             ResultSet rs = ps.executeQuery();
-            
-            while(rs.next()){
-            list.add(new FlashcardSet(rs.getInt("set_id"), 
-                    rs.getInt("student_id"), 
-                    rs.getString("title"), 
-          rs.getString("description"), 
-                    rs.getInt("termCount"), 
-                    rs.getString("authorName")));
+            while (rs.next()) {
+                list.add(new FlashcardSet(
+                        rs.getInt("set_id"),
+                        rs.getInt("student_id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getInt("termCount"),
+                        rs.getString("status"),
+                        rs.getString("authorName")
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
     }
-
 }

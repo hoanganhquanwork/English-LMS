@@ -13,36 +13,32 @@ import model.entity.FlashcardSet;
  * @author LENOVO
  */
 import dal.FlashcardDAO;
+import dal.FlashcardManagerDAO;
 import java.util.List;
 
 public class FlashcardManagerService {
     
-    private final FlashcardDAO fDao = new FlashcardDAO();
-    private final FlashcardSetDAO fsDAO = new FlashcardSetDAO();
-    
-    public List<FlashcardSet> getAllSet(String keyword, String sortType) {
-        if (keyword == null) {
-            keyword = "";
-        }
-        if (sortType == null) {
-            sortType = "newest";
-        }
-        return fsDAO.searchAllSetsByName(keyword, sortType);
-    }
-    
-    public FlashcardSet getFlashcardSetById(int setId) {
-        return fsDAO.getSetById(setId);
+   
+    private final FlashcardManagerDAO setDAO = new FlashcardManagerDAO();
+    private final FlashcardDAO cardDAO = new FlashcardDAO();
+
+    public List<FlashcardSet> getAllSets(String keyword, String sortType) {
+        return setDAO.getAllSets(keyword, sortType);
     }
 
-    public List<Flashcard> getAllFlashcardById(int setId) {
-        return fDao.getCardsBySet(setId);
+    public FlashcardSet getSetById(int setId) {
+        return setDAO.getSetById(setId);
     }
 
-    public void deleteFlashcard(int cardId) {
-        fDao.deleteCard(cardId);
+    public List<Flashcard> getCardsBySet(int setId) {
+        return cardDAO.getCardsBySet(setId);
     }
 
-    public void deleteFlashcardSet(int setId) {
-        fsDAO.deleteSet(setId);
+    public boolean hideSet(int setId) {
+        return setDAO.hideSet(setId);
+    }
+
+    public boolean activateSet(int setId) {
+        return setDAO.activateSet(setId);
     }
 }

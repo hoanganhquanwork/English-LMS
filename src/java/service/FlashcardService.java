@@ -7,6 +7,7 @@ import model.entity.Flashcard;
 import model.entity.FlashcardSet;
 
 public class FlashcardService {
+
     private FlashcardSetDAO setDAO = new FlashcardSetDAO();
     private FlashcardDAO cardDAO = new FlashcardDAO();
 
@@ -23,8 +24,8 @@ public class FlashcardService {
         return setDAO.getSetById(setId);
     }
 
-    public void updateSet(int setId, String title, String description) {
-        setDAO.updateSet(setId, title, description);
+    public void updateSet(int setId, String title, String description, String status) {
+        setDAO.updateSet(setId, title, description, status);
     }
 
     public void deleteSet(int setId) {
@@ -33,6 +34,18 @@ public class FlashcardService {
 
     public List<FlashcardSet> searchMySets(int studentId, String keyword) {
         return setDAO.searchMySets(studentId, keyword);
+    }
+
+    public List<FlashcardSet> getAllSets() {
+        return setDAO.getAllSets();
+    }
+
+    public List<FlashcardSet> searchAllSets(String keyword) {
+        return setDAO.searchAllSets(keyword);
+    }
+
+    public List<FlashcardSet> searchAllSetsByName(String keyword, String sortType) {
+        return setDAO.searchAllSetsByName(keyword, sortType);
     }
 
     // --- Flashcard ---
@@ -58,35 +71,44 @@ public class FlashcardService {
         cardDAO.deleteCard(cardId);
     }
 
-    public List<FlashcardSet> getAllSets() {
-       return setDAO.getAllSets();
-    }
-
-    public List<FlashcardSet> searchAllSets(String trim) {
-        return setDAO.searchAllSets(trim);
-    }
     // --- Authorization ---
-
-public boolean canEditSet(int setId, int studentId) {
-    FlashcardSet set = getSetById(setId);
-    return set != null && set.getStudentId() == studentId;
-}
-
-public boolean updateSetIfOwner(int setId, int studentId, String title, String description) {
-    if (canEditSet(setId, studentId)) {
-        updateSet(setId, title, description);
-        return true;
+    public boolean canEditSet(int setId, int studentId) {
+        FlashcardSet set = getSetById(setId);
+        return set != null && set.getStudentId() == studentId;
     }
-    return false;
-}
 
-public boolean deleteSetIfOwner(int setId, int studentId) {
-    if (canEditSet(setId, studentId)) {
-        deleteSet(setId);
-        return true;
+    public boolean updateSetIfOwner(int setId, int studentId, String title, String description, String status) {
+        if (canEditSet(setId, studentId)) {
+            updateSet(setId, title, description, status);
+            return true;
+        }
+        return false;
     }
-    return false;
-}
 
-}
+    public boolean deleteSetIfOwner(int setId, int studentId) {
+        if (canEditSet(setId, studentId)) {
+            deleteSet(setId);
+            return true;
+        }
+        return false;
+    }
 
+    // --- Extra (toggle visibility) ---
+    public boolean makeSetPublic(int setId, int studentId) {
+        FlashcardSet set = getSetById(setId);
+        if (set != null && set.getStudentId() == studentId) {
+            updateSet(setId, set.getTitle(), set.getDescription(), "public");
+            return true;
+        }
+        return false;
+    }
+
+    public boolean makeSetPrivate(int setId, int studentId) {
+        FlashcardSet set = getSetById(setId);
+        if (set != null && set.getStudentId() == studentId) {
+            updateSet(setId, set.getTitle(), set.getDescription(), "private");
+            return true;
+        }
+        return false;
+    }
+}

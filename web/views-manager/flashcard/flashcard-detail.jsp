@@ -6,29 +6,61 @@
   <meta charset="UTF-8">
   <title>Chi tiết Flashcard - EnglishLMS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
- <link rel="stylesheet" href="<c:url value='/css/manager-flashcard.css?v=2712' />">
+  <link rel="stylesheet" href="<c:url value='/css/manager-flashcard.css?v=2712' />">
 </head>
 
 <body>
-  <<jsp:include page="../includes-manager/sidebar-manager.jsp" />
+  <jsp:include page="../includes-manager/sidebar-manager.jsp" />
+
   <main>
     <div class="header-detail">
-      <h2>${set.title}</h2>
       <div>
         <a href="manager-flashcard" class="btn btn-back"><i class="fa fa-arrow-left"></i> Quay lại</a>
+      </div>
 
-        <form action="flashcard-detail" method="post" style="display:inline;">
-          <input type="hidden" name="action" value="deleteSet">
-          <input type="hidden" name="setId" value="${set.setId}">
-          <button type="submit" class="btn btn-delete-set">🗑 Xóa bộ này</button>
-        </form>
+      <div class="header-info">
+        <h2>${set.title}</h2>
+        <p style="color:#6b7280;">${set.description}</p>
+
+        <div class="status-display">
+          <span style="font-weight:600;">Trạng thái:</span>
+          <c:choose>
+            <c:when test="${set.status eq 'public'}">
+              <span class="badge badge-public"><i class="fa fa-globe"></i> Public</span>
+            </c:when>
+            <c:when test="${set.status eq 'inactive'}">
+              <span class="badge badge-inactive"><i class="fa fa-eye-slash"></i> Inactive</span>
+            </c:when>
+            <c:otherwise>
+              <span class="badge badge-private"><i class="fa fa-lock"></i> Private</span>
+            </c:otherwise>
+          </c:choose>
+        </div>
+
+        <div class="action-group" style="margin-top:10px;">
+          <c:choose>
+            <c:when test="${set.status eq 'public'}">
+              <form  action="flashcard-detail" method="post" style="display:inline;">
+                <input type="hidden" name="action" value="hideSet">
+                <input type="hidden" name="setId" value="${set.setId}">
+                <button type="submit" class="btn btn-hide"><i class="fa fa-eye-slash"></i> Ẩn bộ này</button>
+              </form>
+            </c:when>
+            <c:when test="${set.status eq 'inactive'}">
+              <form action="flashcard-detail" method="post" style="display:inline;">
+                <input type="hidden" name="action" value="activateSet">
+                <input type="hidden" name="setId" value="${set.setId}">
+                <button type="submit" class="btn btn-show"><i class="fa fa-rotate-right"></i> Hiển thị lại</button>
+              </form>
+            </c:when>
+          </c:choose>
+        </div>
       </div>
     </div>
 
     <div class="flashcard-list">
-      <c:forEach var="card" items="${cards}">
+      <c:forEach var="card" items="${cards}" varStatus="st">
         <div class="flashcard-item">
-          <input type="checkbox" class="checkbox" />
           <div class="flashcard-content">
             <div class="term-box">
               <div class="term-title">TERM:</div>
@@ -39,13 +71,6 @@
               <div class="definition-text">${card.backText}</div>
             </div>
           </div>
-
-          <form action="flashcard-detail" method="post" style="display:inline;">
-            <input type="hidden" name="action" value="deleteCard">
-            <input type="hidden" name="cardId" value="${card.cardId}">
-            <input type="hidden" name="setId" value="${set.setId}">
-            <button type="submit" class="btn-delete"><i class="fas fa-trash"></i></button>
-          </form>
         </div>
       </c:forEach>
 
@@ -55,42 +80,5 @@
     </div>
   </main>
 
-  <div id="cardModal" class="modal" style="display:none;">
-    <div class="modal-content">
-      <h3 id="cardModalTitle">Xóa thẻ?</h3>
-      <p>Bạn có chắc chắn muốn xóa thẻ này không?</p>
-      <div class="modal-buttons">
-        <button class="btn-delete" onclick="confirmDeleteCard()">Xóa</button>
-        <button class="btn btn-back" onclick="closeModal()">Hủy</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="setModal" class="modal" style="display:none;">
-    <div class="modal-content">
-      <h3>Xóa bộ Flashcard này?</h3>
-      <p>Tất cả các thẻ trong bộ này sẽ bị xóa. Bạn có chắc không?</p>
-      <div class="modal-buttons">
-        <button class="btn-delete" onclick="confirmDeleteSet()">Xóa</button>
-        <button class="btn btn-back" onclick="closeModal()">Hủy</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let currentCard = "";
-    function openDeleteCard(name) {
-      currentCard = name;
-      document.getElementById("cardModalTitle").textContent = 'Xóa "' + name + '"?';
-      document.getElementById("cardModal").style.display = "flex";
-    }
-    function openDeleteSet() {
-      document.getElementById("setModal").style.display = "flex";
-    }
-    function closeModal() {
-      document.getElementById("cardModal").style.display = "none";
-      document.getElementById("setModal").style.display = "none";
-    }
-  </script>
 </body>
 </html>

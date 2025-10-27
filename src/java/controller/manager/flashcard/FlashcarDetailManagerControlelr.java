@@ -57,29 +57,29 @@ public class FlashcarDetailManagerControlelr extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+       @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
             String idParam = request.getParameter("setId");
             if (idParam == null || idParam.isEmpty()) {
-                response.sendRedirect("flashcard-manager");
+                response.sendRedirect("manager-flashcard");
                 return;
             }
 
             int setId = Integer.parseInt(idParam);
-
-            FlashcardSet set = service.getFlashcardSetById(setId);
-            List<Flashcard> cards = service.getAllFlashcardById(setId);
+            FlashcardSet set = service.getSetById(setId);
+            List<Flashcard> cards = service.getCardsBySet(setId);
 
             if (set == null) {
                 request.setAttribute("error", "Không tìm thấy bộ flashcard này.");
                 request.getRequestDispatcher("/views-manager/flashcard/manager-flashcard.jsp").forward(request, response);
                 return;
-            }  request.setAttribute("set", set);
-            request.setAttribute("cards", cards);
+            }
 
+            request.setAttribute("set", set);
+            request.setAttribute("cards", cards);
             request.getRequestDispatcher("/views-manager/flashcard/flashcard-detail.jsp").forward(request, response);
 
         } catch (Exception e) {
@@ -102,21 +102,15 @@ public class FlashcarDetailManagerControlelr extends HttpServlet {
 
         try {
             String action = request.getParameter("action");
+            int setId = Integer.parseInt(request.getParameter("setId"));
 
-            if ("deleteCard".equalsIgnoreCase(action)) {
-                int cardId = Integer.parseInt(request.getParameter("cardId"));
-                int setId = Integer.parseInt(request.getParameter("setId"));
-                service.deleteFlashcard(cardId);
-                response.sendRedirect("flashcard-detail?setId=" + setId);
-            } 
-            else if ("deleteSet".equalsIgnoreCase(action)) {
-                int setId = Integer.parseInt(request.getParameter("setId"));
-                service.deleteFlashcardSet(setId);
-                response.sendRedirect("manager-flashcard");
-            } 
-            else {
-                doGet(request, response);
+            if ("hideSet".equalsIgnoreCase(action)) {
+                service.hideSet(setId);
+            } else if ("activateSet".equalsIgnoreCase(action)) {
+                service.activateSet(setId);
             }
+
+            response.sendRedirect("flashcard-detail?setId=" + setId);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,6 +118,8 @@ public class FlashcarDetailManagerControlelr extends HttpServlet {
             doGet(request, response);
         }
     }
+
+
 
     /** 
      * Returns a short description of the servlet.

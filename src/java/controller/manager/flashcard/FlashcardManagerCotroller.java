@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller.manager.flashcard;
 
 import java.io.IOException;
@@ -20,55 +19,71 @@ import service.FlashcardManagerService;
  *
  * @author LENOVO
  */
-@WebServlet(name="FlashcardManagerCotroller", urlPatterns={"/manager-flashcard"})
+@WebServlet(name = "FlashcardManagerCotroller", urlPatterns = {"/manager-flashcard"})
 public class FlashcardManagerCotroller extends HttpServlet {
+
     private final FlashcardManagerService service = new FlashcardManagerService();
 
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet FlashcardManagerCotroller</title>");  
+            out.println("<title>Servlet FlashcardManagerCotroller</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet FlashcardManagerCotroller at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet FlashcardManagerCotroller at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-  @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
+            String action = request.getParameter("action");
             String keyword = request.getParameter("keyword");
             String sortType = request.getParameter("sort");
+            if (keyword == null) {
+                keyword = "";
+            }
+            if (sortType == null) {
+                sortType = "newest";
+            }
+            if ("hide".equalsIgnoreCase(action)) {
+                int setId = Integer.parseInt(request.getParameter("setId"));
+                boolean ok = service.hideSet(setId);
+                request.setAttribute("message", ok ? "Đã tạm ẩn flashcard set." : "Không thể ẩn flashcard set.");
+            } else if ("activate".equalsIgnoreCase(action)) {
+                int setId = Integer.parseInt(request.getParameter("setId"));
+                boolean ok = service.activateSet(setId);
+                request.setAttribute("message", ok ? "Đã khôi phục flashcard set." : "Không thể khôi phục flashcard set.");
+            }
 
-            if (keyword == null) keyword = "";
-            if (sortType == null) sortType = "newest";
-
-            List<FlashcardSet> sets = service.getAllSet(keyword, sortType);
-
+            List<FlashcardSet> sets = service.getAllSets(keyword, sortType);
             request.setAttribute("sets", sets);
             request.setAttribute("keyword", keyword);
             request.setAttribute("sortType", sortType);
@@ -82,37 +97,41 @@ public class FlashcardManagerCotroller extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-@Override
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
             String action = request.getParameter("action");
 
-            if ("deleteSet".equalsIgnoreCase(action)) {
+            if ("hide".equalsIgnoreCase(action)) {
                 int setId = Integer.parseInt(request.getParameter("setId"));
-                service.deleteFlashcardSet(setId);
-                response.sendRedirect("manager-flashcard");
-            } else {
-                doGet(request, response);
+                service.hideSet(setId);
+            } else if ("activate".equalsIgnoreCase(action)) {
+                int setId = Integer.parseInt(request.getParameter("setId"));
+                service.activateSet(setId);
             }
+
+            response.sendRedirect("manager-flashcard");
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Không thể xóa flashcard set.");
+            request.setAttribute("error", "Không thể thực hiện thao tác.");
             doGet(request, response);
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

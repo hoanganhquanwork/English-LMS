@@ -65,7 +65,6 @@ public class FlashcardAIServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        // Lấy setId nếu có (từ createSet.jsp truyền qua)
         String setId = req.getParameter("setId");
         req.setAttribute("setId", setId);
         req.getRequestDispatcher("/flashcard/flashcard-ai.jsp").forward(req, resp);
@@ -86,25 +85,26 @@ public class FlashcardAIServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
 
-        String title = req.getParameter("set_title");
-        String prompt = req.getParameter("prompt");
-
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             resp.sendRedirect(req.getContextPath() + "/auth/login.jsp");
             return;
         }
+
         Users user = (Users) session.getAttribute("user");
         int studentId = user.getUserId();
 
-        // ✅ Tạo mới hoàn toàn — không cần setId
-        List<Flashcard> cards = service.generateAndSave(prompt, null, studentId, title);
+        String title = req.getParameter("set_title");
+        String prompt = req.getParameter("prompt");
+        String status = req.getParameter("status"); // 👈 lấy public/private
+
+        List<Flashcard> cards = service.generateAndSave(prompt, null, studentId, title, status);
 
         if (cards == null || cards.isEmpty()) {
-            req.setAttribute("error", "❌ AI không thể tạo flashcard. Hãy thử mô tả khác!");
+            req.setAttribute("error", "AI không thể tạo flashcard. Hãy thử mô tả khác.");
         } else {
             int newSetId = cards.get(0).getSetId();
-            req.setAttribute("message", "✅ Đã tạo bộ flashcard \"" + title + "\" gồm " + cards.size() + " thẻ!");
+            req.setAttribute("message", "Đã tạo bộ flashcard \"" + title + "\" gồm " + cards.size() + " thẻ.");
             req.setAttribute("generatedCards", cards);
             req.setAttribute("setId", newSetId);
         }

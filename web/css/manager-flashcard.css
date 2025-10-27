@@ -370,3 +370,112 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+.status-display {
+  margin-top: 6px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.badge-public {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.badge-inactive {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-private {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.btn-hide {
+  background-color: var(--warning, #f59e0b);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-hide:hover {
+  background-color: #d97706;
+}
+
+.btn-show {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+
+/* Optional hover highlight cho flashcard */
+.flashcard-item:hover {
+  background: #f9fafb;
+  transform: translateY(-2px);
+  transition: 0.2s;
+}
+/* ===============================
+   ⚙️ Flashcard Set Status Section
+================================= */
+.status-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  font-size: 15px;
+  color: var(--text, #1f2937);
+  background-color: var(--panel, #fff);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #4f46e5 50%),
+                    linear-gradient(135deg, #4f46e5 50%, transparent 50%);
+  background-position: calc(100% - 20px) center, calc(100% - 15px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.status-select:hover {
+  border-color: var(--brand, #4f46e5);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.status-select:focus {
+  border-color: var(--brand, #4f46e5);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.input-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text, #1f2937);
+  margin-bottom: 6px;
+}
+
+/* 💡 Optional: highlight theo trạng thái */
+.status-select option[value="private"] {
+  color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+.status-select option[value="public"] {
+  color: #16a34a;
+  background-color: #f0fdf4;
+}

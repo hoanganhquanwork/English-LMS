@@ -14,26 +14,28 @@ public class GeminiUtils {
     private static final String API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY;
 
+  
     public static List<Flashcard> generateFlashcards(String prompt, int setId) {
         List<Flashcard> list = new ArrayList<>();
 
-        try {
-            // Tạo prompt rõ ràng cho Gemini
-            String fullPrompt = "Bạn là hệ thống tạo flashcard học tiếng Anh. "
-                    + "Hãy tạo tối đa 10 flashcard từ nội dung hoặc chủ đề sau. "
-                    + "Trả kết quả JSON duy nhất, gồm các đối tượng {front, back}. "
-                    + "Ví dụ: [{\"front\":\"Present Simple\",\"back\":\"Diễn tả thói quen\"}]. "
-                    + "Không thêm bất kỳ văn bản nào ngoài JSON.\n\n"
-                    + "Nội dung: " + prompt;
+        if (prompt == null || prompt.trim().isEmpty()) {
+            return list;
+        }
 
-            // JSON gửi lên Gemini
+        try {
+            String fullPrompt =
+                    "Bạn là hệ thống tạo flashcard học tiếng Anh. "
+                    + "Hãy tạo tối đa 10 flashcard ngắn gọn, mỗi thẻ gồm 'front' và 'back'. "
+                    + "Trả về duy nhất JSON mảng dạng [{\"front\":\"...\",\"back\":\"...\"}] "
+                    + "và không thêm bất kỳ văn bản nào khác.\n\n"
+                    + "Chủ đề: " + prompt.trim();
+
             JSONObject body = new JSONObject()
                     .put("contents", new JSONArray()
                             .put(new JSONObject()
                                     .put("parts", new JSONArray()
                                             .put(new JSONObject().put("text", fullPrompt)))));
 
-            // Gửi request
             HttpURLConnection conn = (HttpURLConnection) new URL(API_URL).openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
@@ -43,7 +45,6 @@ public class GeminiUtils {
                 os.write(body.toString().getBytes(StandardCharsets.UTF_8));
             }
 
-            // Đọc phản hồi
             StringBuilder response = new StringBuilder();
             try (BufferedReader br = new BufferedReader(
                     new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
@@ -51,16 +52,14 @@ public class GeminiUtils {
                 while ((line = br.readLine()) != null) response.append(line);
             }
 
-            // Parse phản hồi
             JSONObject res = new JSONObject(response.toString());
             String text = res.getJSONArray("candidates")
                     .getJSONObject(0)
                     .getJSONObject("content")
                     .getJSONArray("parts")
                     .getJSONObject(0)
-                    .getString("text");
+                    .optString("text", "");
 
-            // Nếu model trả về có ```json ```
             if (text.startsWith("```")) {
                 text = text.replaceAll("```json", "").replaceAll("```", "").trim();
             }
@@ -70,6 +69,7 @@ public class GeminiUtils {
                 JSONObject c = arr.getJSONObject(i);
                 String front = c.optString("front", "").trim();
                 String back = c.optString("back", "").trim();
+
                 if (!front.isEmpty() && !back.isEmpty()) {
                     list.add(new Flashcard(setId, front, back));
                 }
