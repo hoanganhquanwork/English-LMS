@@ -23,7 +23,7 @@ public class QuestionManagerDAO extends DBContext {
                 + "JOIN Users u ON q.created_by = u.user_id "
                 + "LEFT JOIN Topics t ON q.topic_id = t.topic_id "
                 + "WHERE q.status <> 'draft' "
-                + "AND q.topic_id IS NOT NULL ";;
+                + "AND q.topic_id IS NOT NULL ";
 
         if (!"all".equalsIgnoreCase(status)) {
             sql += "AND q.status = ? ";

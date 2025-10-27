@@ -7,7 +7,7 @@
         <meta charset="UTF-8" />
         <title>Ngân hàng câu hỏi — EnglishLMS Manager</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-        <link rel="stylesheet" href="<c:url value='/css/manager-question.css?v=54' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-question.css?v=554' />">
     </head>
     <body>
         <<jsp:include page="../includes-manager/sidebar-manager.jsp" />
@@ -257,8 +257,6 @@
                             .then(html => {
                                 suggestBox.innerHTML = html;
                                 suggestBox.style.display = 'block';
-
-                                // Gán sự kiện click cho từng item
                                 suggestBox.querySelectorAll('.suggest-item').forEach(item => {
                                     item.addEventListener('click', () => {
                                         input.value = item.textContent;

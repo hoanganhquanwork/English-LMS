@@ -7,7 +7,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Chi tiết khóa học - Manager Dashboard</title>
-        <link rel="stylesheet" href="<c:url value='/css/manager-detail.css?v=323432' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-detail.css?v=3432' />">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     </head>
     <body class="dashboard">

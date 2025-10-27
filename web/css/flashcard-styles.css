@@ -1177,7 +1177,31 @@ body {
         gap: 10px;
     }
 }
+.input-group {
+  margin-bottom: 16px;
+}
 
+.input-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+.status-select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
+}
+
+.status-select:focus {
+  border-color: #4f46e5;
+  outline: none;
+}
 /* ===============================
    🗑️ Flashcard Remove Button
 ================================= */
@@ -1217,4 +1241,51 @@ body {
 .remove-card-btn:active {
   transform: translateY(0);
   box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+}
+.ai-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:12px 18px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:15px;
+  text-decoration:none;
+  border:1px solid transparent;
+  cursor:pointer;
+  /* dùng token nếu có, fallback nếu không */
+  color:#fff;
+  background:blue;
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+.ai-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(0,0,0,.10), 0 4px 10px rgba(79,70,229,.30);
+  filter:saturate(1.05);
+}
+
+.ai-btn:active{
+  transform:translateY(0);
+  box-shadow:0 3px 8px rgba(0,0,0,.08);
+}
+
+.ai-btn:focus{
+  outline:none;
+  box-shadow:0 0 0 3px rgba(79,70,229,.25), 0 6px 16px rgba(0,0,0,.10);
+}
+
+.ai-btn i{
+  font-size:16px; /* nếu có icon */
+}
+
+
+/* kích thước nhỏ hơn cho màn hình hẹp */
+@media (max-width: 640px){
+  .ai-btn{
+    padding:10px 14px;
+    font-size:14px;
+    border-radius:10px;
+  }
 }

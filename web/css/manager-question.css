@@ -632,7 +632,6 @@ textarea {
   border-radius: 8px;
   padding: 10px 20px;
 }
-
 /* Animation */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -679,4 +678,62 @@ textarea {
 .suggest-item.muted {
     color: #888;
     font-style: italic;
+}
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  margin-left: auto;
+  align-self: center;
+  border: 1px solid transparent;
+}
+
+/* ----- Trạng thái cụ thể ----- */
+.status-badge.submitted {
+   background: #e0e7ff;
+    color: #3730a3;
+}
+
+.status-badge.approved {
+  background-color: #dcfce7;   /* xanh lá nhạt */
+  color: #166534;
+  border-color: #86efac;
+}
+
+.status-badge.rejected {
+  background-color: #fee2e2;   /* đỏ nhạt */
+  color: #991b1b;
+  border-color: #fca5a5;
+}
+
+.status-badge.archived {
+ background: #fef9c3;
+    color: #92400e;
+}
+
+/* ----- Modal Header Layout ----- */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  color: #111827;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

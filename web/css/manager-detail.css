@@ -733,7 +733,32 @@ body.dashboard {
     color: var(--brand);
     margin-bottom: 10px;
 }
+#rejectModal textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  padding: 10px 14px;
+  font-size: 15px;
+  line-height: 1.5;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  color: #111827;
+  font-family: "Segoe UI", sans-serif;
+  outline: none;
+  transition: all 0.2s ease;
+}
 
+#rejectModal textarea::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+#rejectModal textarea:focus {
+  border-color: var(--brand, #4f46e5);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
 .question-item {
     background: #fff;
     border: 1px solid var(--border);

@@ -20,7 +20,7 @@ import service.FlashcardManagerService;
  * @author LENOVO
  */
 @WebServlet(name = "FlashcardManagerCotroller", urlPatterns = {"/manager-flashcard"})
-public class FlashcardManagerCotroller extends HttpServlet {
+public class FlashcardManagerController extends HttpServlet {
 
     private final FlashcardManagerService service = new FlashcardManagerService();
 
@@ -64,7 +64,6 @@ public class FlashcardManagerCotroller extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            String action = request.getParameter("action");
             String keyword = request.getParameter("keyword");
             String sortType = request.getParameter("sort");
             if (keyword == null) {
@@ -73,15 +72,6 @@ public class FlashcardManagerCotroller extends HttpServlet {
             if (sortType == null) {
                 sortType = "newest";
             }
-            if ("hide".equalsIgnoreCase(action)) {
-                int setId = Integer.parseInt(request.getParameter("setId"));
-                boolean ok = service.hideSet(setId);
-                request.setAttribute("message", ok ? "Đã tạm ẩn flashcard set." : "Không thể ẩn flashcard set.");
-            } else if ("activate".equalsIgnoreCase(action)) {
-                int setId = Integer.parseInt(request.getParameter("setId"));
-                boolean ok = service.activateSet(setId);
-                request.setAttribute("message", ok ? "Đã khôi phục flashcard set." : "Không thể khôi phục flashcard set.");
-            }
 
             List<FlashcardSet> sets = service.getAllSets(keyword, sortType);
             request.setAttribute("sets", sets);
@@ -89,7 +79,6 @@ public class FlashcardManagerCotroller extends HttpServlet {
             request.setAttribute("sortType", sortType);
 
             request.getRequestDispatcher("/views-manager/flashcard/manager-flashcard.jsp").forward(request, response);
-
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Không thể tải danh sách flashcard.");
