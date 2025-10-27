@@ -15,11 +15,14 @@
 
         <main class="main-content">
             <div class="container course-container">
-
-                <a href="coursemanager" class="back-btn">
-                    <i class="fa fa-arrow-left"></i> Quay lại danh sách
-                </a>
-
+                <div style="display: flex; gap: 1rem; margin-bottom: 3rem;">
+                    <a href="coursemanager" class="back-btn">
+                        <i class="fa fa-arrow-left"></i> Quay lại danh sách quản lí
+                    </a>
+                    <a href="coursepublish" class="back-btn">
+                        <i class="fa fa-arrow-left"></i> Quay lại danh sách Đăng khóa học
+                    </a>
+                </div>
                 <c:if test="${not empty sessionScope.message}">
                     <div class="alert alert-success">${sessionScope.message}</div>
                     <c:remove var="message" scope="session" />
