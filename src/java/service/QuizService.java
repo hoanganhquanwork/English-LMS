@@ -108,7 +108,7 @@ public class QuizService {
             if (quiz != null && quiz.getPassingScorePct() != null) {
                 double passing = quiz.getPassingScorePct();
                 boolean passed = scorePct >= passing;
-                progressDAO.updateBestQuizScore(studentId, quizId, scorePct, passed);
+                progressDAO.updateBestQuizOrAssigmentScore(studentId, quizId, scorePct, passed);
             }
         }
     }
@@ -217,7 +217,7 @@ public class QuizService {
         Double passing = quiz.getPassingScorePct();
         boolean passed = (passing != null) && (scorePct >= passing.doubleValue());
 
-        progressDAO.updateBestQuizScore(a.getStudentId(), a.getQuizId(), scorePct, passed);
+        progressDAO.updateBestQuizOrAssigmentScore(a.getStudentId(), a.getQuizId(), scorePct, passed);
 
     }
 
