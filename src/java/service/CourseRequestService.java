@@ -17,6 +17,31 @@ public class CourseRequestService {
 
     private CourseRequestDAO crdao = new CourseRequestDAO();
 
+    public boolean insertNewSaveRequest(int studentId, int courseId, String note) {
+        if (studentId < 0) {
+            throw new IllegalArgumentException("studentId không hợp lệ");
+        }
+        if (courseId < 0) {
+            throw new IllegalArgumentException("courseId không hợp lệ");
+        }
+        if(crdao.isRequestExist(studentId, courseId)){
+             throw new IllegalStateException("Bạn đã tạo yêu cầu cho khóa học này trước đó.");
+        }
+        
+        return crdao.insertSaveCourseRequest(studentId, courseId, note);
+    }
+    
+    public boolean checkExistRequest(int studentId, int courseId){
+        if (studentId < 0) {
+            throw new IllegalArgumentException("studentId không hợp lệ");
+        }
+        if (courseId < 0) {
+            throw new IllegalArgumentException("courseId không hợp lệ");
+        }
+        
+        return crdao.isRequestExist(studentId, courseId);
+    }
+
     public List<CourseRequest> getListCourseRequest(int studentId, String status,
             String sort, String keyword, int page, int pageSize) {
         if (studentId < 0) {
@@ -76,7 +101,7 @@ public class CourseRequestService {
         if (studentId < 0) {
             throw new IllegalArgumentException("studentId không hợp lệ");
         }
-        
+
         if (parentId < 0) {
             throw new IllegalArgumentException("parentId không hợp lệ");
         }

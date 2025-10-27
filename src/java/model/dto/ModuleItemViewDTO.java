@@ -16,12 +16,13 @@ public class ModuleItemViewDTO {
     private int orderIndex;
     private String title;
     private String status;
-
     //for lesson
     private String contentType;
     private Integer durationSec;
     private Integer durationMin;
-
+    private boolean isRequired;
+    private Double score_pct;
+    
     public int getModuleItemId() {
         return moduleItemId;
     }
@@ -92,6 +93,26 @@ public class ModuleItemViewDTO {
 
     public void setDurationMin(Integer durationMin) {
         this.durationMin = durationMin;
+    }
+
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+
+    public Double getScore_pct() {
+        return score_pct;
+    }
+
+    public Double getScorePct() {
+        return score_pct;
+    }
+
+    public void setScore_pct(Double score_pct) {
+        this.score_pct = score_pct;
     }
 
 }

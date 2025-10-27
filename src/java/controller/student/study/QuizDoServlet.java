@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.ZoneId;
 import model.dto.QuizAttemptDTO;
 import model.dto.QuizDTO;
 import model.entity.Users;
@@ -87,13 +88,38 @@ public class QuizDoServlet extends HttpServlet {
         if (attempt == null) {
             request.setAttribute("errorMessage", "Không xác được bài học hiện tại");
         }
+        if (attempt.getStudentId() != userId) {
+            request.setAttribute("errorMessage", "Bạn không có quyền truy cập bài quiz này");
+        }
         QuizDTO quiz = quizService.getQuizById(attempt.getQuizId());
+
+        Long timeNow = System.currentTimeMillis();
+        Long deadline = null;
+        Long remain = null;
+        if (attempt.getDeadlineAt() != null) {
+            deadline = attempt.getDeadlineAt().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            remain = Math.max(0L, deadline - timeNow);
+        }
+
+        boolean isGraded = (quiz.getPassingScorePct() != null);
+        boolean isSubmitted = "submitted".equalsIgnoreCase(attempt.getStatus());
+
         request.setAttribute("quiz", quiz);
         request.setAttribute("attempt", attempt);
         request.setAttribute("courseId", courseId);
         request.setAttribute("itemId", itemId);
 
-        request.getRequestDispatcher("/course/quiz-page.jsp").forward(request, response);
+        request.setAttribute("isGraded", isGraded);
+        request.setAttribute("isSubmitted", isSubmitted);
+        request.setAttribute("timeNow", timeNow);
+        request.setAttribute("deadlineTime", deadline);
+        request.setAttribute("remainTime", remain);
+        if (isGraded) {
+            request.getRequestDispatcher("/course/quiz-grade.jsp").forward(request, response);
+
+        } else {
+            request.getRequestDispatcher("/course/quiz-practice.jsp").forward(request, response);
+        }
 
     }
 
@@ -118,28 +144,57 @@ public class QuizDoServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
+
         Long attemptId = ParseUtil.parseLongOrNull(request.getParameter("attemptId"));
         Integer courseId = ParseUtil.parseIntOrNull(request.getParameter("courseId"));
         Integer itemId = ParseUtil.parseIntOrNull(request.getParameter("itemId"));
         String action = request.getParameter("action");
+
         if (courseId == null || itemId == null || attemptId == null) {
             request.setAttribute("errorMessage", "Không xác được bài học hiện tại");
         }
+        QuizAttemptDTO attempt = quizService.loadAttempt(attemptId);
+        //for practice quiz
+        QuizDTO quiz = quizService.getQuizById(attempt.getQuizId());
+        boolean isGraded = (quiz.getPassingScorePct() != null);
+        //
+        boolean isDraft = "draft".equalsIgnoreCase(attempt.getStatus());
         if ("save".equalsIgnoreCase(action)) {
-            quizService.saveDraftAnswer(attemptId, request.getParameterMap());
+            if (isDraft) {
+                quizService.saveDraftAnswer(attemptId, request.getParameterMap());
+            }
             response.sendRedirect(request.getContextPath()
-                    + "/doQuiz?attemptId=" + attemptId
-                    + "&courseId=" + courseId + "&itemId=" + itemId);
+                    + "/doQuiz?attemptId=" + attemptId + "&courseId=" + courseId + "&itemId=" + itemId);
             return;
         }
 
         if ("submit".equalsIgnoreCase(action)) {
-            quizService.gradeAndSubmitAttempt(attemptId, user.getUserId(), itemId, request.getParameterMap());
-            response.sendRedirect(request.getContextPath()
-                    + "/doQuiz?attemptId=" + attemptId
-                    + "&courseId=" + courseId + "&itemId=" + itemId);
+            //finalize thì không cần
+            if (!isDraft) {
+                if (isGraded) {
+                    response.sendRedirect(request.getContextPath()
+                            + "/coursePage?courseId=" + courseId + "&itemId=" + itemId);
+                } else {
+                    response.sendRedirect(request.getContextPath()
+                            + "/doQuiz?attemptId=" + attemptId
+                            + "&courseId=" + courseId + "&itemId=" + itemId);
+                }
+                return;
+            }
+
+            quizService.gradeAndSubmitAttempt(attemptId, request.getParameterMap());
+
+            if (isGraded) {
+                response.sendRedirect(request.getContextPath()
+                        + "/coursePage?courseId=" + courseId + "&itemId=" + itemId);
+            } else {
+                //quay ve hien thi ket qua
+                response.sendRedirect(request.getContextPath()
+                        + "/doQuiz?attemptId=" + attemptId
+                        + "&courseId=" + courseId + "&itemId=" + itemId);
+            }
         }
+
     }
 
     /**

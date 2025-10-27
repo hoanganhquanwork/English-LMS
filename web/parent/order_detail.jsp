@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%
-    request.setAttribute("currentPage", "payments");
+    request.setAttribute("currentPage", "orders");
 %>
 
 <%@ include file="parent_header.jsp" %>
@@ -12,7 +12,7 @@
 <main class="container">
     <div class="page-title">
         <h2>💳 Chi tiết đơn hàng #${order.orderId}</h2>
-        <p class="lead">Xem lại thông tin đơn hàng trước khi thanh toán.</p>
+        <p class="lead">Xem lại thông tin đơn hàng và các khóa học được chọn thanh toán.</p>
     </div>
 
     <div class="order-info-card">
@@ -102,7 +102,8 @@
     </c:if>
 </main>
 
-<footer class="footer">
-    <div class="container bottom">© 2025 LinguaTrack</div>
+
+<footer>
+        <jsp:include page="/footer.jsp" />
 </footer>
 

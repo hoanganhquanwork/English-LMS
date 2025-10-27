@@ -380,10 +380,8 @@ public class QuestionDAO extends DBContext {
             while (rs.next()) {
                 QuestionDTO question = new QuestionDTO();
                 question.setQuestionId(rs.getInt("question_id"));
-                question.setModuleId(rs.getInt("module_id"));
-                question.setLessonId(rs.getInt("lesson_id"));
+                question.setLessonId((Integer) rs.getObject("lesson_id"));
                 question.setContent(rs.getString("content"));
-                question.setMediaType(rs.getString("media_type"));
                 question.setMediaUrl(rs.getString("media_url"));
                 question.setType(rs.getString("type"));
                 question.setExplanation(rs.getString("explanation"));
@@ -404,19 +402,16 @@ public class QuestionDAO extends DBContext {
             st.setInt(1, questionId);
             try (ResultSet rs = st.executeQuery()) {
                 if (rs.next()) {
-                    QuestionDTO q = new QuestionDTO();
-                    q.setQuestionId(rs.getInt("question_id"));
-                    q.setModuleId(rs.getInt("module_id"));
-                    q.setLessonId(rs.getInt("lesson_id"));
-                    q.setContent(rs.getString("content"));
-                    q.setMediaType(rs.getString("media_type"));
-                    q.setMediaUrl(rs.getString("media_url"));
-                    q.setType(rs.getString("type"));
-                    q.setExplanation(rs.getString("explanation"));
-
-                    q.setOptions(getOptionsByQuestionId(q.getQuestionId()));
-                    q.setAnswers(getAnswersByQuestionId(q.getQuestionId()));
-                    return q;
+                    QuestionDTO question = new QuestionDTO();
+                    question.setQuestionId(rs.getInt("question_id"));
+                    question.setLessonId((Integer) rs.getObject("lesson_id"));
+                    question.setContent(rs.getString("content"));
+                    question.setMediaUrl(rs.getString("media_url"));
+                    question.setType(rs.getString("type"));
+                    question.setExplanation(rs.getString("explanation"));
+                    question.setOptions(getOptionsByQuestionId(question.getQuestionId()));  // Lấy các lựa chọn
+                    question.setAnswers(getAnswersByQuestionId(question.getQuestionId()));  // Lấy các câu trả lời kiểu text
+                    return question;
                 }
             }
         } catch (SQLException e) {
@@ -427,7 +422,10 @@ public class QuestionDAO extends DBContext {
 
     public List<QuestionDTO> getQuestionByModuleId(int moduleId) {
         List<QuestionDTO> listQuestion = new ArrayList<>();
-        String sql = "SELECT * FROM Question WHERE module_id = ?";
+        String sql = "SELECT q.question_id, q.lesson_id, q.content, q.media_url, "
+                + "q.type, q.explanation FROM ModuleQuestions mq "
+                + "JOIN Question q ON q.question_id = mq.question_id  "
+                + "WHERE mq.module_id = ? ORDER BY q.question_id DESC";
 
         try {
             PreparedStatement st = connection.prepareStatement(sql);
@@ -436,18 +434,13 @@ public class QuestionDAO extends DBContext {
                 while (rs.next()) {
                     QuestionDTO question = new QuestionDTO();
                     question.setQuestionId(rs.getInt("question_id"));
-                    question.setModuleId(rs.getInt("module_id"));
-                    question.setLessonId(rs.getInt("lesson_id"));
+                    question.setLessonId((Integer) rs.getObject("lesson_id"));
                     question.setContent(rs.getString("content"));
-                    question.setMediaType(rs.getString("media_type"));
                     question.setMediaUrl(rs.getString("media_url"));
                     question.setType(rs.getString("type"));
                     question.setExplanation(rs.getString("explanation"));
-
-                    question.setOptions(getOptionsByQuestionId(question.getQuestionId()));
-
-                    question.setAnswers(getAnswersByQuestionId(question.getQuestionId()));
-
+                    question.setOptions(getOptionsByQuestionId(question.getQuestionId()));  // Lấy các lựa chọn
+                    question.setAnswers(getAnswersByQuestionId(question.getQuestionId()));  // Lấy các câu trả lời kiểu text
                     listQuestion.add(question);
                 }
             }
@@ -467,6 +460,7 @@ public class QuestionDAO extends DBContext {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 QuestionOptionDTO option = new QuestionOptionDTO();
+                option.setQuestionId(rs.getInt("question_id"));
                 option.setOptionId(rs.getInt("option_id"));
                 option.setContent(rs.getString("content"));
                 option.setIsCorrect(rs.getBoolean("is_correct"));
@@ -486,6 +480,7 @@ public class QuestionDAO extends DBContext {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 QuestionTextKeyDTO answer = new QuestionTextKeyDTO();
+                answer.setQuestionId(rs.getInt("question_id"));
                 answer.setKeyId(rs.getInt("key_id"));
                 answer.setAnswerText(rs.getString("answer_text"));
                 answers.add(answer);

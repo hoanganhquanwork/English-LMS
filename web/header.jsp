@@ -24,7 +24,7 @@
                                                                            alt="hi" height="28" class="me-3"></a>
                     <a href="${pageContext.request.contextPath}/courseSearching" class="nav-link me-3">Khám phá</a>
                     <c:if test="${sessionScope.user != null}">
-                        <a href="#" class="nav-link me-3">Khóa học của tôi</a>
+                        <a href="${pageContext.request.contextPath}/myLearning" class="nav-link me-3">Khóa học của tôi</a>
                     </c:if>
                 </div>
 
@@ -67,7 +67,8 @@
                             <c:if test="${sessionScope.user.role == 'Student'}">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
-                                </c:if>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/studentVocab">Từ điển của tôi</a></li>
+                            </c:if>
 
                             <c:if test="${sessionScope.user.role == 'Parent'}">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/parent/profile">Thông tin cá nhân</a></li>
@@ -82,5 +83,5 @@
             </div>
         </header>
     </body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </html>

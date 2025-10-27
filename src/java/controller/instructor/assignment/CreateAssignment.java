@@ -63,7 +63,7 @@ public class CreateAssignment extends HttpServlet {
             boolean isAiGradeAllowed = "true".equals(request.getParameter("aiGrading"));
             String promptSummary = request.getParameter("promptSummary");
 
-            double maxScore = Double.parseDouble(request.getParameter("maxScore"));
+          
             String passingStr = request.getParameter("passingScorePct");
             Double passingScorePct = (passingStr == null || passingStr.isEmpty())
                     ? null : Double.parseDouble(passingStr);
@@ -97,7 +97,6 @@ public class CreateAssignment extends HttpServlet {
             a.setInstructions(instructions);
             a.setSubmissionType(submissionType);
             a.setAttachmentUrl(fileUrl);
-            a.setMaxScore(maxScore);
             a.setPassingScorePct(passingScorePct);         
             a.setAiGradeAllowed(isAiGradeAllowed);
             a.setPromptSummary(promptSummary);
@@ -110,7 +109,7 @@ public class CreateAssignment extends HttpServlet {
                 response.sendRedirect("updateAssignment?courseId=" + courseId + "&moduleId=" + moduleId + "&assignmentId=" + newId);
             } else {
                 request.setAttribute("error", "Không thể tạo Assignment mới. Vui lòng thử lại.");
-                request.getRequestDispatcher("instructor/create-assignment.jsp").forward(request, response);
+                request.getRequestDispatcher("teacher/create-assignment.jsp").forward(request, response);
             }
 
         } catch (Exception e) {

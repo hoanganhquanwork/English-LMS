@@ -66,7 +66,7 @@
             <c:otherwise>
                 <div class="approval-grid">
                     <c:forEach var="req" items="${requests}">
-                        <div class="approval-card ${req.status}">
+                        <div class="approval-card ${req.status}" style = "padding: 20px">
                             <div class="card-header">
                                 <div class="student-info">
                                     <c:choose>
@@ -168,12 +168,8 @@
     </section>
 </main>
 
-<footer class="footer">
-    <div class="container bottom">© 2025 LinguaTrack</div>
-</footer>
 
 <script>
-    // ✅ Hàm xác nhận duyệt / từ chối (có nhập lý do)
     function confirmAction(button, type) {
         let message = '';
         let requireReason = false;
@@ -201,3 +197,7 @@
         form.submit();
     }
 </script>
+
+<footer>
+        <jsp:include page="/footer.jsp" />
+</footer>
