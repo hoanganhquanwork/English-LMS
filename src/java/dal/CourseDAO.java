@@ -5,11 +5,9 @@ import java.util.List;
 import model.entity.Course;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class CourseDAO extends DBContext {
 
@@ -26,7 +24,7 @@ public class CourseDAO extends DBContext {
                 + "WHERE c.status = 'publish' AND c.publish_at IS NOT NULL "
         );
 
-        List<Object> params = new ArrayList();
+        List<Object> params = new ArrayList<>();
         if (keyWord != null && !keyWord.trim().isEmpty()) {
             sql.append(" AND (c.title LIKE ? OR c.description LIKE ?)");
             String kw = "%" + keyWord.trim() + "%";
@@ -247,7 +245,8 @@ public class CourseDAO extends DBContext {
         }
         return list;
     }
-    private CategoryDAO cdao = new CategoryDAO();
+
+    private final CategoryDAO cdao = new CategoryDAO();
 
     public int countLessonsByCourse(int courseId) {
         String sql = "SELECT COUNT(*) FROM Lessons WHERE course_id = ?";
@@ -263,7 +262,6 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    // Đếm số học viên đang active trong 1 khóa
     public int countStudentsByCourse(int courseId) {
         String sql = "SELECT COUNT(DISTINCT student_id) FROM Enrollments WHERE course_id = ? AND status='active'";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
@@ -318,7 +316,6 @@ public class CourseDAO extends DBContext {
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 return extractCourse(rs);
-
             }
         } catch (SQLException e) {
             System.out.println("getCourseById error: " + e.getMessage());
@@ -336,12 +333,12 @@ public class CourseDAO extends DBContext {
         c.setThumbnail(rs.getString("thumbnail"));
         c.setStatus(rs.getString("status"));
         c.setPrice(rs.getBigDecimal("price"));
-     
-    Timestamp createdAtTs = rs.getTimestamp("created_at");
-    Timestamp publishAtTs = rs.getTimestamp("publish_at");
 
-    c.setCreatedAt(createdAtTs != null ? createdAtTs.toLocalDateTime() : null);
-    c.setPublishAt(publishAtTs != null ? publishAtTs.toLocalDateTime() : null);
+        Timestamp createdAtTs = rs.getTimestamp("created_at");
+        Timestamp publishAtTs = rs.getTimestamp("publish_at");
+
+        c.setCreatedAt(createdAtTs != null ? createdAtTs.toLocalDateTime() : null);
+        c.setPublishAt(publishAtTs != null ? publishAtTs.toLocalDateTime() : null);
 
         c.setCategory(cdao.getCategoryById(rs.getInt("category_id")));
 
@@ -397,7 +394,8 @@ public class CourseDAO extends DBContext {
         }
         return false;
     }
-     public boolean updateCourseStatus(int courseId, String status) {
+
+    public boolean updateCourseStatus(int courseId, String status) {
         String sql = "UPDATE Course SET status = ?, publish_at = NULL WHERE course_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
@@ -409,5 +407,64 @@ public class CourseDAO extends DBContext {
         return false;
     }
 
-    
+    public String getCourseStatus(int courseId) {
+        String sql = "SELECT status FROM Course WHERE course_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, courseId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getString("status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean isEnrolled(int studentId, int courseId) {
+        String sql = "SELECT 1 FROM Enrollments WHERE student_id = ? AND course_id = ? "
+                + "AND status IN ('active','completed')";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            ResultSet rs = st.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public String getEnrollmentStatus(int studentId, int courseId) {
+        String sql = "SELECT status FROM Enrollments WHERE student_id = ? AND course_id = ?";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getString("status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean isCompletedEnrollment(int studentId, int courseId) {
+        String sql = "SELECT 1 FROM Enrollments "
+                + "WHERE student_id = ? AND course_id = ? AND status = 'completed'";
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            ResultSet rs = st.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

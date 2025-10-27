@@ -55,11 +55,14 @@ public class DeleteQuestion extends HttpServlet {
         try {
             boolean success = questionService.deleteQuestion(Integer.parseInt(questionId));
 
-            // Redirect về trang updateLesson sau khi xóa
-            response.sendRedirect("updateLesson?courseId=" + courseId
-                    + "&moduleId=" + moduleId
-                    + "&lessonId=" + lessonId
-                    );
+              if (lessonId != null) {
+                Integer module = (moduleId != null && !moduleId.isEmpty())
+                        ? Integer.parseInt(moduleId) : null;
+                response.sendRedirect("updateLesson?courseId=" + courseId
+                        + "&lessonId=" + lessonId + "&moduleId=" + module);
+            }else {
+            response.sendRedirect("questions?tab=questions");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

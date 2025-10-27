@@ -37,24 +37,12 @@ public class CourseDetailService {
             Map<String, Object> stats = dao.getStatistics(courseId);
             InstructorProfile instructor = dao.getInstructorInfo(courseId);
 
-            if (modules == null) {
-                modules = new ArrayList<>();
-            }
-            if (items == null) {
-                items = new ArrayList<>();
-            }
-            if (questions == null) {
-                questions = new ArrayList<>();
-            }
-            if (quizzes == null) {
-                quizzes = new ArrayList<>();
-            }
-            if (stats == null) {
-                stats = new HashMap<>();
-            }
-            if (instructor == null) {
-                instructor = new InstructorProfile();
-            }
+            if (modules == null) modules = new ArrayList<>();
+            if (items == null) items = new ArrayList<>();
+            if (questions == null) questions = new ArrayList<>();
+            if (quizzes == null) quizzes = new ArrayList<>();
+            if (stats == null) stats = new HashMap<>();
+            if (instructor == null) instructor = new InstructorProfile();
 
             for (ModuleItemDetailDTO item : items) {
                 if ("lesson".equalsIgnoreCase(item.getItemType())
@@ -63,7 +51,7 @@ public class CourseDetailService {
                         && item.getVideoUrl().contains("watch?v=")) {
                     item.setVideoUrl(item.getVideoUrl().replace("watch?v=", "embed/"));
                     List<QuestionDTO> lessonQuestions = dao.getQuestionsByLesson(courseId);
-                    item.setLessonQuestions(lessonQuestions); 
+                    item.setLessonQuestions(lessonQuestions);
                 }
             }
 
@@ -81,13 +69,12 @@ public class CourseDetailService {
                         item.setQuizTitle(quiz.getTitle());
                         item.setQuizPassingPct(quiz.getPassingScorePct());
                         item.setPickCount(quiz.getPickCount());
-                        item.setAttemptsAllowed(quiz.getAttemptsAllowed());
                         item.setTimeLimitMin(quiz.getTimeLimitMin());
                     }
                 }
 
                 if ("assignment".equalsIgnoreCase(type) && item.getAssignmentTitle() == null) {
-                    AssignmentWorkDTO a = dao.getAssignmentDetail(item.getItemId());
+                    AssignmentDetailDTO a = dao.getAssignmentDetail(item.getItemId());
                     if (a != null) {
                         item.setAssignmentTitle(a.getTitle());
                         item.setAssignmentContent(a.getContent());

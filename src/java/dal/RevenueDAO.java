@@ -62,7 +62,9 @@ public class RevenueDAO extends DBContext {
                 + "WHERE o.status = 'paid' AND p.status = 'captured' "
                 + "GROUP BY YEAR(o.paid_at) "
                 + "ORDER BY YEAR(o.paid_at) ";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 RevenueReportDTO dto = new RevenueReportDTO();
@@ -92,7 +94,8 @@ public class RevenueDAO extends DBContext {
                 + "GROUP BY YEAR(o.paid_at), MONTH(o.paid_at) "
                 + "ORDER BY YEAR(o.paid_at), MONTH(o.paid_at)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 RevenueReportDTO dto = new RevenueReportDTO();
@@ -121,7 +124,7 @@ public class RevenueDAO extends DBContext {
                 + "WHERE p.status = 'captured' "
                 + "AND o.status = 'paid' "
                 + "AND c.status = 'publish' "
-                + "AND p.captured_at  >= DATEADD(DAY, -?, GETDATE())";
+                + "AND p.captured_at >= DATEADD(DAY, -?, GETDATE())";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, days);

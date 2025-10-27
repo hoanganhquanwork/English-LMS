@@ -6,8 +6,8 @@ import java.util.List;
 import model.entity.FlashcardSet;
 
 public class FlashcardSetDAO extends DBContext {
-    
-public int insertFlashcardSetReturnId(FlashcardSet set) {
+
+    public int insertFlashcardSetReturnId(FlashcardSet set) {
         String sql = "INSERT INTO FlashcardSets(student_id, title, description, status) VALUES (?,?,?,?)";
         try {
             PreparedStatement stm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -118,7 +118,7 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
         }
     }
 
-      public List<FlashcardSet> getAllSets() {
+    public List<FlashcardSet> getAllSets() {
         List<FlashcardSet> list = new ArrayList<>();
         String sql = "SELECT s.set_id, s.student_id, s.title, s.description, s.status, "
                 + "COUNT(c.card_id) AS termCount, u.username AS authorUsername "
@@ -238,6 +238,7 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
                 + "  AND (s.title LIKE ? OR s.description LIKE ? OR u.username LIKE ?) "
                 + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
                 + orderClause;
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             String kw = "%" + keyword + "%";
             ps.setString(1, kw);

@@ -104,6 +104,45 @@
         <servlet-name>DeleteAssignment</servlet-name>
         <servlet-class>controller.instructor.assignment.DeleteAssignment</servlet-class>
     </servlet>
+<<<<<<< HEAD
+=======
+    <servlet>
+        <servlet-name>AssignTopicServlet</servlet-name>
+        <servlet-class>controller.instructor.question.AssignTopicServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SubmitQuestion</servlet-name>
+        <servlet-class>controller.instructor.question.SubmitQuestion</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddQuestionsToModule</servlet-name>
+        <servlet-class>controller.instructor.question.AddQuestionsToModule</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteQuestionFromModule</servlet-name>
+        <servlet-class>controller.instructor.question.DeleteQuestionFromModule</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GradeListServlet</servlet-name>
+        <servlet-class>controller.instructor.assignment.GradeListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GradeAssignment</servlet-name>
+        <servlet-class>controller.instructor.assignment.GradeAssignment</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherProfileServlet</servlet-name>
+        <servlet-class>controller.instructor.profile.TeacherProfileServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateTeacherProfileServlet</servlet-name>
+        <servlet-class>controller.instructor.profile.UpdateTeacherProfileServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateTeacherPictureProfileServlet</servlet-name>
+        <servlet-class>controller.instructor.profile.UpdateTeacherPictureProfileServlet</servlet-class>
+    </servlet>
+>>>>>>> main
     <servlet-mapping>
         <servlet-name>FlashcardDashboardController</servlet-name>
         <url-pattern>/dashboard</url-pattern>
@@ -228,4 +267,43 @@
         <servlet-name>DeleteAssignment</servlet-name>
         <url-pattern>/deleteAssignment</url-pattern>
     </servlet-mapping>
+<<<<<<< HEAD
+=======
+    <servlet-mapping>
+        <servlet-name>AssignTopicServlet</servlet-name>
+        <url-pattern>/assignTopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SubmitQuestion</servlet-name>
+        <url-pattern>/submitQuestions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddQuestionsToModule</servlet-name>
+        <url-pattern>/addQuestionsToModule</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteQuestionFromModule</servlet-name>
+        <url-pattern>/deleteQuestionFromModule</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GradeListServlet</servlet-name>
+        <url-pattern>/gradeListServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GradeAssignment</servlet-name>
+        <url-pattern>/gradeAssignment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherProfileServlet</servlet-name>
+        <url-pattern>/teacher-profile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateTeacherProfileServlet</servlet-name>
+        <url-pattern>/updateTeacherProfile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateTeacherPictureProfileServlet</servlet-name>
+        <url-pattern>/updateTeacherPictureProfile</url-pattern>
+    </servlet-mapping>
+>>>>>>> main
 </web-app>

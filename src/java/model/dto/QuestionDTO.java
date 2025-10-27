@@ -12,16 +12,14 @@ import java.util.List;
  */
 public class QuestionDTO {
 
-    private int questionId;      
-    private int moduleId;      
-    private int lessonId;       
-    private String content;   
-    private String mediaType;  
-    private String mediaUrl;    
-    private String type;         
-    private String explanation; 
-    private List<QuestionOptionDTO> options;  
-    private List<QuestionTextKeyDTO> answers; 
+    private int questionId;
+    private Integer lessonId;
+    private String content;
+    private String mediaUrl;
+    private String type;
+    private String explanation;
+    private List<QuestionOptionDTO> options;
+    private List<QuestionTextKeyDTO> answers;
 
     public int getQuestionId() {
         return questionId;
@@ -31,19 +29,11 @@ public class QuestionDTO {
         this.questionId = questionId;
     }
 
-    public int getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(int moduleId) {
-        this.moduleId = moduleId;
-    }
-
-    public int getLessonId() {
+    public Integer getLessonId() {
         return lessonId;
     }
 
-    public void setLessonId(int lessonId) {
+    public void setLessonId(Integer lessonId) {
         this.lessonId = lessonId;
     }
 
@@ -53,14 +43,6 @@ public class QuestionDTO {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
     }
 
     public String getMediaUrl() {
@@ -102,6 +84,4 @@ public class QuestionDTO {
     public void setAnswers(List<QuestionTextKeyDTO> answers) {
         this.answers = answers;
     }
-    
-    
 }

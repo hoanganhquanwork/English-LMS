@@ -13,12 +13,11 @@ public class CourseManagerDAO extends DBContext {
     public List<Course> getFilteredCourses(String status, String keyword, String sort, int categoryId) {
         List<Course> list = new ArrayList<>();
 
-        String sql
-                = "SELECT c.course_id, c.title, c.description, c.language, c.level, "
-                + "       c.thumbnail, c.status, c.price, c.created_at, c.publish_at, "
-                + "       ip.user_id AS instructor_id, ip.bio, ip.expertise, ip.qualifications, "
-                + "       u.user_id, u.full_name, u.email, u.profile_picture, "
-                + "       cat.category_id, cat.name AS category_name, cat.description AS category_description "
+        String sql = "SELECT c.course_id, c.title, c.description, c.language, c.level, "
+                + "c.thumbnail, c.status, c.price, c.created_at, c.publish_at, "
+                + "ip.user_id AS instructor_id, ip.bio, ip.expertise, ip.qualifications, "
+                + "u.user_id, u.full_name, u.email, u.profile_picture, "
+                + "cat.category_id, cat.name AS category_name, cat.description AS category_description "
                 + "FROM Course c "
                 + "JOIN InstructorProfile ip ON c.created_by = ip.user_id "
                 + "JOIN Users u ON ip.user_id = u.user_id "
@@ -34,9 +33,11 @@ public class CourseManagerDAO extends DBContext {
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (c.title LIKE ? OR u.full_name LIKE ?) ";
         }
+
         if (categoryId > 0) {
             sql += "AND c.category_id=? ";
         }
+
         sql += "ORDER BY c.created_at " + ("oldest".equalsIgnoreCase(sort) ? "ASC " : "DESC ");
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -52,6 +53,7 @@ public class CourseManagerDAO extends DBContext {
             if (categoryId > 0) {
                 ps.setInt(idx++, categoryId);
             }
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapCourseFromResultSet(rs));
@@ -67,12 +69,11 @@ public class CourseManagerDAO extends DBContext {
     public List<Course> getFilteredCoursesForPublish(String status, String keyword, String sort, int categoryId) {
         List<Course> list = new ArrayList<>();
 
-        String sql
-                = "SELECT c.course_id, c.title, c.description, c.language, c.level, "
-                + "       c.thumbnail, c.status, c.price, c.created_at, c.publish_at, "
-                + "       ip.user_id AS instructor_id, ip.bio, ip.expertise, ip.qualifications, "
-                + "       u.user_id, u.full_name, u.email, u.profile_picture, "
-                + "       cat.category_id, cat.name AS category_name, cat.description AS category_description "
+        String sql = "SELECT c.course_id, c.title, c.description, c.language, c.level, "
+                + "c.thumbnail, c.status, c.price, c.created_at, c.publish_at, "
+                + "ip.user_id AS instructor_id, ip.bio, ip.expertise, ip.qualifications, "
+                + "u.user_id, u.full_name, u.email, u.profile_picture, "
+                + "cat.category_id, cat.name AS category_name, cat.description AS category_description "
                 + "FROM Course c "
                 + "JOIN InstructorProfile ip ON c.created_by = ip.user_id "
                 + "JOIN Users u ON ip.user_id = u.user_id "
@@ -88,6 +89,7 @@ public class CourseManagerDAO extends DBContext {
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (c.title LIKE ? OR u.full_name LIKE ?) ";
         }
+
         if (categoryId > 0) {
             sql += "AND c.category_id=? ";
         }
@@ -107,6 +109,7 @@ public class CourseManagerDAO extends DBContext {
             if (categoryId > 0) {
                 ps.setInt(idx++, categoryId);
             }
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapCourseFromResultSet(rs));
@@ -120,12 +123,11 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public Course getCourseById(int id) {
-        String sql
-                = "SELECT c.course_id, c.title, c.description, c.language, c.level, "
-                + "       c.thumbnail, c.status, c.price, c.created_at, c.publish_at, "
-                + "       ip.user_id AS instructor_id, ip.bio, ip.expertise, ip.qualifications, "
-                + "       u.user_id, u.full_name, u.email, u.profile_picture, "
-                + "       cat.category_id, cat.name AS category_name, cat.description AS category_description "
+        String sql = "SELECT c.course_id, c.title, c.description, c.language, c.level, "
+                + "c.thumbnail, c.status, c.price, c.created_at, c.publish_at, "
+                + "ip.user_id AS instructor_id, ip.bio, ip.expertise, ip.qualifications, "
+                + "u.user_id, u.full_name, u.email, u.profile_picture, "
+                + "cat.category_id, cat.name AS category_name, cat.description AS category_description "
                 + "FROM Course c "
                 + "LEFT JOIN InstructorProfile ip ON c.created_by = ip.user_id "
                 + "LEFT JOIN Users u ON ip.user_id = u.user_id "
@@ -145,69 +147,62 @@ public class CourseManagerDAO extends DBContext {
         return null;
     }
 
- public boolean updateCourseStatus(int courseId, String newStatus) {
-    boolean success = false;
+    public boolean updateCourseStatus(int courseId, String newStatus) {
+        boolean success = false;
 
-    String sqlUpdateCourse =
-        "UPDATE Course "
-        + "SET status = ?, "
-        + "    publish_at = CASE WHEN ? = 'publish' THEN GETDATE() ELSE publish_at END "
-        + "WHERE course_id = ?";
+        String sqlUpdateCourse = "UPDATE Course "
+                + "SET status = ?, "
+                + "publish_at = CASE WHEN ? = 'publish' THEN GETDATE() ELSE publish_at END "
+                + "WHERE course_id = ?";
 
-    String sqlAutoApproveQuestions =
-        "UPDATE q "
-        + "SET q.status = 'approved' "
-        + "FROM Question q "
-        + "JOIN Lesson l ON q.lesson_id = l.lesson_id "
-        + "JOIN ModuleItem mi ON l.lesson_id = mi.module_item_id "
-        + "JOIN Module m ON mi.module_id = m.module_id "
-        + "WHERE m.course_id = ? AND q.status = 'submitted'";
+        String sqlAutoApproveQuestions = "UPDATE q "
+                + "SET q.status = 'approved' "
+                + "FROM Question q "
+                + "JOIN Lesson l ON q.lesson_id = l.lesson_id "
+                + "JOIN ModuleItem mi ON l.lesson_id = mi.module_item_id "
+                + "JOIN Module m ON mi.module_id = m.module_id "
+                + "WHERE m.course_id = ? AND q.status = 'submitted'";
 
-    try {
-        connection.setAutoCommit(false);
+        try {
+            connection.setAutoCommit(false);
 
-        try (PreparedStatement ps = connection.prepareStatement(sqlUpdateCourse)) {
-            ps.setString(1, newStatus);
-            ps.setString(2, newStatus);
-            ps.setInt(3, courseId);
-            int updatedCourses = ps.executeUpdate();
-            System.out.println("Updated Course " + courseId + " → " + newStatus + " (" + updatedCourses + " row)");
-        }
+            try (PreparedStatement ps = connection.prepareStatement(sqlUpdateCourse)) {
+                ps.setString(1, newStatus);
+                ps.setString(2, newStatus);
+                ps.setInt(3, courseId);
+                ps.executeUpdate();
+            }
 
-        if ("approved".equalsIgnoreCase(newStatus)) {
-            try (PreparedStatement ps2 = connection.prepareStatement(sqlAutoApproveQuestions)) {
-                ps2.setInt(1, courseId);
-                int updatedQuestions = ps2.executeUpdate();
-                System.out.println("→ Auto-approved " + updatedQuestions + " questions for course #" + courseId);
+            if ("approved".equalsIgnoreCase(newStatus)) {
+                try (PreparedStatement ps2 = connection.prepareStatement(sqlAutoApproveQuestions)) {
+                    ps2.setInt(1, courseId);
+                    ps2.executeUpdate();
+                }
+            }
+
+            connection.commit();
+            success = true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
-        connection.commit();
-        success = true;
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-        try {
-            connection.rollback();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    } finally {
-        try {
-            connection.setAutoCommit(true);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        return success;
     }
 
-    return success;
-}
     public boolean updateCoursePrice(int id, BigDecimal price) {
-        String sql
-                = "UPDATE Course "
-                + "SET price = ? "
-                + "WHERE course_id = ?";
-
+        String sql = "UPDATE Course SET price = ? WHERE course_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setBigDecimal(1, price);
             ps.setInt(2, id);
@@ -262,11 +257,7 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public boolean schedulePublish(int courseId, Timestamp publishDate) {
-        String sql
-                = "UPDATE Course "
-                + "SET publish_at = ?, status = 'publish' "
-                + "WHERE course_id = ?";
-
+        String sql = "UPDATE Course SET publish_at = ?, status = 'publish' WHERE course_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setTimestamp(1, publishDate);
             ps.setInt(2, courseId);
@@ -278,11 +269,7 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public boolean publishNow(int courseId) {
-        String sql
-                = "UPDATE Course "
-                + "SET status = 'publish', publish_at = GETDATE() "
-                + "WHERE course_id = ?";
-
+        String sql = "UPDATE Course SET status = 'publish', publish_at = GETDATE() WHERE course_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             return ps.executeUpdate() > 0;
@@ -293,11 +280,7 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public boolean unpublishCourse(int courseId) {
-        String sql
-                = "UPDATE Course "
-                + "SET status = 'unpublish' "
-                + "WHERE course_id = ?";
-
+        String sql = "UPDATE Course SET status = 'unpublish' WHERE course_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             return ps.executeUpdate() > 0;
@@ -308,11 +291,7 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public boolean republishCourse(int courseId) {
-        String sql
-                = "UPDATE Course "
-                + "SET status = 'publish', publish_at = GETDATE() "
-                + "WHERE course_id = ?";
-
+        String sql = "UPDATE Course SET status = 'publish', publish_at = GETDATE() WHERE course_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             return ps.executeUpdate() > 0;
@@ -329,7 +308,7 @@ public class CourseManagerDAO extends DBContext {
         WHERE status = 'approved'
           AND publish_at IS NOT NULL
           AND publish_at <= GETDATE()
-    """;
+        """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -338,16 +317,10 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public boolean rejectCourseWithReason(int courseId, int managerId, String reason) {
-        String sqlCourse = "UPDATE Course SET status = 'rejected' "
-                + "WHERE course_id = ? AND status IN ('submitted','approved')";
-
-        String sqlUpdateManager = "UPDATE CourseManagers "
-                + "SET reject_reason = ? "
-                + "WHERE course_id = ? AND user_id = ?";
-
+        String sqlCourse = "UPDATE Course SET status = 'rejected' WHERE course_id = ? AND status IN ('submitted','approved')";
+        String sqlUpdateManager = "UPDATE CourseManagers SET reject_reason = ? WHERE course_id = ? AND user_id = ?";
         String sqlInsertManager = "INSERT INTO CourseManagers (course_id, user_id, is_primary, can_approve, can_view_reports, reject_reason) "
-                + "SELECT ?, ?, 1, 1, 1, ? "
-                + "WHERE NOT EXISTS (SELECT 1 FROM CourseManagers WHERE course_id = ? AND user_id = ?)";
+                + "SELECT ?, ?, 1, 1, 1, ? WHERE NOT EXISTS (SELECT 1 FROM CourseManagers WHERE course_id = ? AND user_id = ?)";
 
         PreparedStatement ps1 = null;
         PreparedStatement ps2 = null;
@@ -391,15 +364,9 @@ public class CourseManagerDAO extends DBContext {
             return false;
         } finally {
             try {
-                if (ps1 != null) {
-                    ps1.close();
-                }
-                if (ps2 != null) {
-                    ps2.close();
-                }
-                if (ps3 != null) {
-                    ps3.close();
-                }
+                if (ps1 != null) ps1.close();
+                if (ps2 != null) ps2.close();
+                if (ps3 != null) ps3.close();
                 connection.setAutoCommit(true);
             } catch (SQLException ignored) {
             }
@@ -420,11 +387,7 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public int getActiveInstructors() {
-        String sql
-                = "SELECT COUNT(DISTINCT u.user_id) "
-                + "FROM Users u "
-                + "JOIN InstructorProfile ip ON u.user_id = ip.user_id "
-                + "WHERE u.status = 'active'";
+        String sql = "SELECT COUNT(DISTINCT u.user_id) FROM Users u JOIN InstructorProfile ip ON u.user_id = ip.user_id WHERE u.status = 'active'";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
@@ -448,8 +411,7 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public void getCourseStatusCounts(List<String> statuses, List<Integer> counts) {
-        String sql = "SELECT status, COUNT(*) AS cnt "
-                + "FROM Course WHERE status <> 'draft' GROUP BY status";
+        String sql = "SELECT status, COUNT(*) AS cnt FROM Course WHERE status <> 'draft' GROUP BY status";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 statuses.add(rs.getString("status"));
@@ -461,10 +423,8 @@ public class CourseManagerDAO extends DBContext {
     }
 
     public String getRejectReasonByCourseId(int courseId) {
-        String sql = "SELECT reject_reason FROM CourseManagers "
-                + "WHERE course_id = ? ";
-        try (
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+        String sql = "SELECT reject_reason FROM CourseManagers WHERE course_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -475,5 +435,4 @@ public class CourseManagerDAO extends DBContext {
         }
         return null;
     }
-
 }

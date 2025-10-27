@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -111,9 +112,7 @@
                 color: white
             }
             .go-to-next-item {
-                position: fixed;
                 bottom: 20px;
-                right: 20px;
                 padding: 10px 20px;
                 font-size: 1rem;
                 text-decoration: none;
@@ -206,6 +205,34 @@
                 color: #007bff;
             }
 
+            .dic-btn{
+                width:48px;
+                height:48px;
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                border-radius:50%;
+                border:0;
+                cursor:pointer;
+                color:#fff;
+                background:#0d6efd;
+                box-shadow:0 10px 24px rgba(13,110,253,.35);
+            }
+
+            .dic-fab{
+                position: fixed;
+                right: 16px;
+                bottom: 16px;
+                z-index: 2000;
+            }
+
+            .offcanvas-backdrop.show {
+                opacity:.35;
+                backdrop-filter: blur(2px);
+            }
+
+
+
         </style>
     </head>
     <body>
@@ -232,6 +259,7 @@
                             <c:if test="${sessionScope.user.role == 'Student'}">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/studentVocab">Từ điển của tôi</a></li>
                                 </c:if>
                             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
                         </ul>
@@ -269,8 +297,8 @@
                                                 aria-controls="module-${m.moduleId}"
                                                 aria-expanded="${expand}">
                                             <span>
-                                                <span class="ms-1 fw-bold text-dark">Module ${m.orderIndex}:</span>
-                                                <span class="ms-1 fw-bold text-dark">${m.title}</span>
+                                                <span class="ms-1 fw-semibold text-bolddark">Module ${m.orderIndex}:</span>
+                                                <span class="ms-1 fw-semibold text-dark">${m.title}</span>
                                             </span>
                                             <i class="bi bi-chevron-down"></i>
                                         </button>
@@ -314,10 +342,7 @@
 
             <!--Content--> 
             <main class="flex-fill p-4">
-                <a href="${pageContext.request.contextPath}/coursePage?itemId=${activeItemId+1}&courseId=${cp.course.courseId}" 
-                   class="btn btn-outline-primary go-to-next-item text-decoration-none">
-                    Đi tới mục tiếp theo
-                </a>
+
 
                 <!--For lesson-->
 
@@ -708,132 +733,546 @@
                 <!--For quiz-->
 
                 <c:if test="${requestScope.selectedItemType == 'quiz'}">
-                    <c:set var="quiz" value="${requestScope.quiz}" />
-                    <c:set var="quizView" value="${requestScope.quizView}" />
-                    <c:set var="attempt" value="${requestScope.attempt}" />
-                    <c:set var="bestScore" value="${requestScope.bestScore}" />
-
+                    <c:set var="quiz"             value="${requestScope.quiz}" />
+                    <c:set var="isGraded"         value="${requestScope.isGraded}" />
+                    <c:set var="quizView"         value="${requestScope.quizView}" />
+                    <c:set var="attempt"          value="${requestScope.attempt}" />
+                    <c:set var="bestScore"        value="${requestScope.bestScore}" />
+                    <c:set var="latestSubmittedId" value="${requestScope.latestSubmittedId}" />
+                    <c:set var="hasPassed"        value="${requestScope.hasPassed}" />
+                    <c:set var="isLocked"         value="${requestScope.isLocked}" />
+                    <c:set var="cooldownActive"   value="${requestScope.cooldownActive}" />
+                    <c:set var="retryAtDisplay"   value="${requestScope.retryAtDisplay}" />
+                    <p style="red">${requestScope.errorMessage}</p>
                     <div class="custom-container">
+                        <!-- Tiêu đề -->
                         <h1 class="fw-bold mb-4">
-                            <c:if test="${not empty quiz.title}">Quiz: ${quiz.title}</c:if>
-                            </h1>
+                            <c:choose>
+                                <c:when test="${not empty quiz and not empty quiz.title}">
+                                    Quiz: ${quiz.title}
+                                </c:when>
+                                <c:otherwise>Quiz</c:otherwise>
+                            </c:choose>
+                        </h1>
 
-                            <div class="p-4 rounded-4" style="background:#eef4ff;">
-                                <div class="row align-items-center">
-                                    <!-- Mô tả (trái) -->
-                                    <div class="col-md-9">
-                                        <div class="fw-bold mb-2">Thông tin mô tả</div>
-
-                                        <p>
-                                            Bạn cần đạt được
-                                        <c:choose>
-                                            <c:when test="${empty quiz.passingScorePct}">--</c:when>
-                                            <c:otherwise><c:out value="${quiz.passingScorePct}" />%</c:otherwise>
-                                        </c:choose>
-                                        để hoàn thành bài quiz
-                                    </p>
-
+                        <!-- Thông tin tổng quan -->
+                        <div class="p-4 rounded-4" style="background:#eef4ff;">
+                            <div class="row align-items-center">
+                                <div class="col-md-9">
+                                    <div class="fw-bold mb-2">Thông tin mô tả</div>
                                     <p>
-                                        Số lượng câu hỏi trong bài quiz: ${quiz.pickCount} câu                                
-                                    </p>
-
-                                    <p>
-                                        Trạng thái:
+                                        Yêu cầu đạt:
                                         <c:choose>
-                                            <c:when test="${attempt != null}">
-                                                <c:out value="${attempt.status == 'submitted' ? 'Đã nộp' : 'Bản nháp'}" />
+                                            <c:when test="${isGraded and not empty quiz.passingScorePct}">
+                                                <strong>${quiz.passingScorePct}%</strong>
                                             </c:when>
-                                            <c:otherwise>Chưa làm</c:otherwise>
+                                            <c:otherwise>--</c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                    <p>
+                                        Số câu hỏi: 
+                                        <c:choose>
+                                            <c:when test="${not empty quiz.pickCount}"><strong>${quiz.pickCount}</strong></c:when>
+                                            <c:otherwise>--</c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                    <p>
+                                        Trạng thái hiện tại:
+                                        <c:choose>
+                                            <c:when test="${empty attempt}">Chưa làm</c:when>
+                                            <c:when test="${attempt.status == 'submitted'}">Đã nộp</c:when>
+                                            <c:otherwise>Bản nháp</c:otherwise>
                                         </c:choose>
                                     </p>
 
-                                    <c:if test="${attempt != null && attempt.submittedAt != null}">
-                                        <p>Thời gian: ${attempt.submittedAt}</p>
-                                    </c:if>
                                 </div>
 
-                                <!-- Nút (phải) -->
                                 <div class="col-md-3 text-md-end mt-3 mt-md-0">
                                     <c:choose>
-                                        <c:when test="${quizView == 'intro' || attempt == null}">
-                                            <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
-                                                <input type="hidden" name="courseId" value="${cp.course.courseId}">
-                                                <input type="hidden" name="itemId" value="${activeItemId}">
-                                                <button class="btn btn-primary px-4">Bắt đầu</button>
-                                            </form>
-                                        </c:when>
 
-                                        <c:when test="${attempt != null && attempt.status == 'submitted'}">
+                                        <c:when test="${quizView == 'intro'}">
                                             <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
                                                 <input type="hidden" name="courseId" value="${cp.course.courseId}">
-                                                <input type="hidden" name="itemId" value="${activeItemId}">
-                                                <button class="btn btn-primary px-4">
-                                                    <i class="bi bi-arrow-clockwise me-1"></i>Làm lại
+                                                <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                <button class="btn btn-primary px-4" ${isLocked ? 'disabled' : ''}>
+                                                    Bắt đầu
                                                 </button>
                                             </form>
                                         </c:when>
 
-                                        <c:otherwise>
+                                        <c:when test="${quizView == 'doing'}">
                                             <a href="${pageContext.request.contextPath}/doQuiz?attemptId=${attempt.attemptId}&courseId=${cp.course.courseId}&itemId=${activeItemId}"
-                                               class="btn btn-primary px-4">Tiếp tục</a>
+                                               class="btn btn-primary px-4 ${isLocked ? 'disabled' : ''}">
+                                                Tiếp tục
+                                            </a>
+                                        </c:when>
+
+                                        <c:otherwise>
+                                            <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                                                <c:if test="${not isGraded and not empty latestSubmittedId}">
+                                                    <a class="btn btn-outline-primary"
+                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${requestScope.latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
+                                                        Xem kết quả gần nhất
+                                                    </a>
+                                                </c:if>
+
+                                                <c:choose>
+                                                    <c:when test="${isGraded}">
+                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                            <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                                            <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                            <button class="btn btn-primary px-4" 
+                                                                    ${ (hasPassed or isLocked) ? 'disabled' : '' }>
+                                                                <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
+                                                            </button>
+                                                        </form>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                            <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                                            <input type="hidden" name="itemId"   value="${activeItemId}">
+                                                            <button class="btn btn-primary px-4">
+                                                                <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
+                                                            </button>
+                                                        </form>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
                                         </c:otherwise>
+
                                     </c:choose>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-3">
-                            <c:choose>
-                                <c:when test="${bestScore >= quiz.passingScorePct}">
-                                    <div class="p-4 rounded-4 bg-success-subtle ">
-                                    </c:when>
-
-                                    <c:otherwise>
-                                        <div class="p-4 rounded-4 bg-danger-subtle">
-                                        </c:otherwise>
-                                    </c:choose>
-
+                        <c:if test="${isGraded}">
+                            <div class="mt-3">
+                                <div class="p-4 rounded-4
+                                     ${not empty bestScore and not empty quiz.passingScorePct and bestScore >= quiz.passingScorePct 
+                                       ? 'bg-success-subtle' : 'bg-danger-subtle'}">
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                                         <div>
                                             <div class="fw-bold mb-1">Kết quả của bạn</div>
-
                                             <div class="small text-muted">
-                                                Điểm cao nhất (ghi nhận):
+                                                Điểm cao nhất:
                                                 <span class="fw-semibold
-                                                      ${bestScore >= quiz.passingScorePct ? 'text-success' : 'text-danger'}">
-                                                    <c:choose>
-                                                        <c:when test="${not empty bestScore}">
-                                                            ${bestScore}%
-                                                        </c:when>
-                                                        <c:otherwise>--</c:otherwise>
-                                                    </c:choose>
+                                                      ${not empty bestScore and not empty quiz.passingScorePct and bestScore >= quiz.passingScorePct 
+                                                        ? 'text-success' : 'text-danger'}">
+                                                      <c:choose>
+                                                          <c:when test="${not empty bestScore}">${bestScore}%</c:when>
+                                                          <c:otherwise>--</c:otherwise>
+                                                      </c:choose>
                                                 </span>
                                             </div>
                                         </div>
 
+                                        <c:if test="${isGraded}">
+                                            <c:if test="${hasPassed}">
+                                                <div class="text-end">
+                                                    <div class="alert alert-success my-2">
+                                                        <i class="bi bi-check-circle me-2"></i>
+                                                        Bạn đã đạt yêu cầu
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="${!hasPassed and cooldownActive}">
+                                                <div class="alert alert-warning my-2">
+                                                    <i class="bi bi-hourglass-split me-2"></i>
+                                                    Bạn chưa đạt. Lần làm tiếp theo lúc: <strong>${retryAtDisplay}</strong>
+                                                </div>
+                                            </c:if>
+                                        </c:if>
+
                                         <div class="text-md-end">
-                                            <c:choose>
-                                                <c:when test="${not empty latestSubmittedId}">
-                                                    <a class="btn btn-outline-primary"
-                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
-                                                        Xem kết quả gần nhất
-                                                    </a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <button class="btn btn-outline-secondary" disabled>Chưa có bài nộp nào</button>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <c:if test="${not isGraded}">
+                                                <c:choose>
+                                                    <c:when test="${not empty latestSubmittedId }">
+                                                        <a class="btn btn-outline-primary"
+                                                           href="${pageContext.request.contextPath}/doQuiz?attemptId=${latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
+                                                            Xem bài đã nộp
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <button class="btn btn-outline-secondary" disabled>Chưa có bài nộp</button>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
                                         </div>
                                     </div>
-                                </div> 
+                                </div>
+                            </div>
+                        </c:if>
+
+                        <c:if test="${!isGraded}">
+                            <div class="alert alert-info mt-3">
+                                Chế độ ôn tập: không giới hạn thời gian, có thể làm lại nhiều lần. 
+                            </div>
+                        </c:if>
+                    </div>
+
+                </c:if>
+
+                <!--For assignment-->
+                <c:if test="${requestScope.selectedItemType == 'assignment'}">
+                    <c:set var="assignment" value="${requestScope.assginment}" />
+                    <c:set var="awWork" value="${requestScope.awWork}" />
+                    <c:set var="awStatus" value="${requestScope.awStatus}" />
+                    <c:set var="isCooldown" value="${requestScope.isCooldown}" />
+                    <c:set var="nextRetryAt" value="${requestScope.nextRetryAt}" />
+                    <c:set var="canEdit" value="${requestScope.canEdit}" />
+                    <c:set var="canSubmit" value="${requestScope.canSubmit}" />
+                    <c:set var="showResult" value="${requestScope.showResult}" />
+
+                    <div class="custom-container">
+
+                        <!-- Title -->
+                        <h1 class="fw-bold mb-3">Assignment: ${assignment.title}</h1>
+
+
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs mt-3" id="assignmentTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="instr-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#instr-pane" type="button" role="tab"
+                                        aria-controls="instr-pane" aria-selected="true">
+                                    Hướng dẫn
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="my-tab" data-bs-toggle="tab" 
+                                        data-bs-target="#my-pane" type="button" role="tab"
+                                        aria-controls="my-pane" aria-selected="false">
+                                    Bài làm
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="assignmentTabContent">
+
+                            <!-- TAB: Instruction -->
+                            <div class="tab-pane fade show active p-3" id="instr-pane" role="tabpanel" aria-labelledby="instr-tab">
+                                <div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            ${assignment.instructions}
+                                        </div>
+
+                                        <c:if test="${not empty assignment.passingScorePct}">
+                                            <div class="small text-bold mb-2">
+                                                Yêu cầu đạt: <strong>${assignment.passingScorePct}%</strong>
+                                            </div>
+                                        </c:if>
+
+                                        <div class="small text-bold mb-2">
+                                            Kiểu nộp bài: <strong class="text-uppercase">${assignment.submissionType}</strong>
+
+                                        </div>
+
+                                        <c:if test="${assignment.aiGradeAllowed}">
+                                            <div class="small text-bold">
+                                                Cho phép chấm tự động
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                </div>
                             </div>
 
-                        </div>
-                    </c:if>
+                            <!-- TAB: My submission -->
+                            <div class="tab-pane fade p-3" id="my-pane" role="tabpanel" aria-labelledby="my-tab">
+                                <div>
+                                    <div class="card-body">
+                                        <h5 class="fw-bold mb-3">Mô tả bài làm</h5>
 
+                                        <div class="assignment-content">
+                                            ${assignment.content}
+                                        </div>
+
+                                        <!-- Tài liệu đính kèm (nếu có) -->
+                                        <c:if test="${not empty assignment.attachmentUrl}">
+                                            <hr/>
+                                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                                <div>
+                                                    <i class="bi bi-paperclip me-2"></i>Tài liệu đính kèm
+                                                </div>
+                                                <a class="btn btn-outline-primary btn-sm"
+                                                   href="${pageContext.request.contextPath}/${assignment.attachmentUrl}"
+                                                   download target="_blank">
+                                                    <i class="bi bi-download me-1"></i> Tải xuống
+                                                </a>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                </div>
+
+
+                                <!--Nộp bài-->
+                                <div class="mt-3">
+                                    <div class="card-body">
+                                        <h5 class="fw-bold mb-3">Bài làm của bạn</h5>
+
+                                        <form method="post"
+                                              action="${pageContext.request.contextPath}/assignmentDo"
+                                              enctype="multipart/form-data">
+                                            <input type="hidden" name="assignmentId" value="${assignment.assignmentId}">
+                                            <input type="hidden" name="courseId" value="${cp.course.courseId}">
+                                            <input type="hidden" name="submissionType" value="${assignment.submissionType}">
+
+                                            <!--Type : text-->
+                                            <c:if test="${assignment.submissionType == 'text'}">
+                                                <c:choose>
+                                                    <c:when test="${canEdit}">
+                                                        <textarea id="textAnswer"
+                                                                  name="textAnswer"
+                                                                  class="form-control"
+                                                                  rows="20" 
+                                                                  >${awWork != null ? awWork.textAnswer : ''}</textarea>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <div class="form-control" style="min-height:240px; overflow:auto;">
+                                                            ${awWork != null ? awWork.textAnswer : ''}
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:if>
+
+                                            <!-- TYPE = FILE (.docx hoặc .mp3) -->
+
+                                            <c:if test="${assignment.submissionType == 'file'}">
+                                                <c:set var="fname" value="${(not empty awWork && not empty awWork.fileUrl)
+                                                                            ? fn:substringAfter(awWork.fileUrl, 'uploads/assignmentWork/')
+                                                                            : ''}" />
+                                                <div class="mb-3">
+                                                    <label class="form-label">Tệp bài làm</label>
+                                                    <input class="form-control"
+                                                           type="file"
+                                                           name="answerFile"
+                                                           accept=".docx,audio/mpeg"                                                          
+                                                           ${!canEdit ? 'disabled' : ''}>
+                                                    <div class="form-text">
+                                                        <span id="fileName">
+                                                            <c:choose>
+                                                                <c:when test="${not empty fname}">Tệp đã tải lên: ${fname}</c:when>
+                                                                <c:otherwise>Chưa chọn tệp</c:otherwise>
+                                                            </c:choose>
+                                                        </span>
+                                                    </div>
+                                                    <c:if test="${not empty awWork && not empty awWork.fileUrl}">
+                                                        <div class="mt-2">
+                                                            Tệp hiện tại:
+                                                            <a href="${pageContext.request.contextPath}/${awWork.fileUrl}"
+                                                               target="_blank" class="link-primary">Xem / tải xuống</a>
+                                                        </div>
+                                                    </c:if>
+                                                </div>
+                                            </c:if>
+
+                                            <!-- Nút -->
+                                            <c:choose>
+                                                <c:when test="${awStatus == 'draft' || awStatus == 'returned'}">
+                                                    <div class="d-flex gap-2 mt-3 justify-content-between">
+
+                                                        <div>
+                                                            <button type="submit" name="submitType" value="submit"
+                                                                    class="btn ${isCooldown ? 'btn-secondary' : 'btn-primary'}"
+                                                                    ${(!canSubmit || isCooldown) ? 'disabled' : ''}>
+                                                                Nộp cho giáo viên
+                                                            </button>
+
+                                                            <c:if test="${assignment.aiGradeAllowed}">
+                                                                <button type="submit"
+                                                                        name="submitType" value="aiGrade"
+                                                                        class ="btn btn-warning"
+                                                                        ${(!canSubmit || isCooldown) ? 'disabled' : ''}
+                                                                        >
+                                                                    <i class="bi bi-stars me-1"></i> Chấm tự động
+                                                                </button>
+                                                            </c:if>
+                                                        </div>
+
+                                                        <button type="submit" name="submitType" value="draft"
+                                                                class="btn ${canEdit ? 'btn-outline-secondary' : 'btn-outline-secondary disabled'}"
+                                                                ${!canEdit ? 'disabled' : ''}>
+                                                            Lưu bài
+                                                        </button>
+                                                    </div>
+                                                </c:when>
+
+                                                <c:when test="${awStatus == 'submitted'}">
+                                                    <div class="d-flex mt-3">
+                                                        <button type="button" class="btn btn-secondary" disabled>
+                                                            <i class="bi bi-hourglass-split me-1"></i> Bài của bạn đang được chấm...
+                                                        </button>
+                                                    </div>
+                                                </c:when>
+
+                                                <c:when test="${awStatus == 'passed'}">
+                                                </c:when>
+
+
+                                                <c:otherwise>
+                                                    <div class="d-flex gap-2 mt-3 justify-content-between">
+
+                                                        <div>
+                                                            <button type="submit" name="submitType" value="submit"
+                                                                    class="btn btn-primary" ${!canSubmit ? 'disabled' : ''}>
+                                                                Nộp cho giáo viên
+                                                            </button>
+
+                                                            <c:if test="${assignment.aiGradeAllowed}">
+                                                                <button type="submit"
+                                                                        name="submitType" value="aiGrade"
+                                                                        class ="btn btn-warning"
+                                                                        ${(!canSubmit || isCooldown) ? 'disabled' : ''}
+                                                                        >
+                                                                    <i class="bi bi-stars me-1"></i> Chấm tự động
+                                                                </button>
+                                                            </c:if>
+                                                        </div>
+
+                                                        <button type="submit" name="submitType" value="draft"
+                                                                class="btn btn-outline-secondary" ${!canEdit ? 'disabled' : ''} formnovalidate>
+                                                            Lưu bài
+                                                        </button>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <!--c:otherwise none or null chưa có draft-->
+
+                                            <div class="text-danger small mt-1">${requestScope.errorMessage}</div>
+
+                                            <div class="form-text mt-2 ">
+                                                Trạng thái: <strong>
+                                                    <c:choose>
+                                                        <c:when test="${awStatus == 'none'}">Chưa có bài làm</c:when>
+                                                        <c:when test="${awStatus == 'draft'}">Đã lưu nháp</c:when>
+                                                        <c:when test="${awStatus == 'submitted'}">Đang chấm</c:when>
+                                                        <c:when test="${awStatus == 'returned'}">Trả về - cần chỉnh sửa</c:when>
+                                                        <c:when test="${awStatus == 'passed'}">Đã đạt yêu cầu</c:when>
+                                                        <c:otherwise>-</c:otherwise>
+                                                    </c:choose>
+                                                </strong>
+                                                <c:if test="${isCooldown}">
+                                                    <div class="alert alert-warning my-2">
+                                                        <i class="bi bi-hourglass-split me-2"></i>
+                                                        Bài làm chưa đạt. Vui lòng chỉnh sửa và đợi đến <strong> ${nextRetryAt} </strong>để nộp lại.
+                                                    </div>
+                                                </c:if> 
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!--end card-->
+                                </div>
+
+                                <!--kết quả pass or return-->
+                                <div class="mt-3">
+                                    <c:if test="${showResult}">
+                                        <div class="card mb-4 rounded-4 shadow-sm ${awStatus == 'passed' ? 'border-success' : 'border-danger'}" style="border-width: 3px">
+                                            <div class="card-body rounded-4">
+                                                <h6 class="fw-bold mb-2">Kết quả đánh giá</h6>
+                                                <div class="mb-1">
+                                                    Điểm: <strong>
+                                                        <c:choose>
+                                                            <c:when test="${not empty awWork.score}">${awWork.score}%</c:when>
+                                                            <c:otherwise>--</c:otherwise>
+                                                        </c:choose>
+                                                    </strong>
+                                                </div>
+                                                <div class="mb-0">
+                                                    Phản hồi:
+                                                    <div class="border rounded p-2 bg-light mt-1">
+                                                        <c:out value="${empty awWork.feedbackText ? 'Chưa có phản hồi' : awWork.feedbackText}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+
+                <hr>
+                <div>
+                    <div class="text-end">
+                        <!--Nút mở panel (góc phải-dưới)--> 
+                        <button
+                            class="btn btn-primary rounded-circle d-inline-flex align-items-center justify-content-center
+                            position-fixed bottom-0 end-0 m-3 shadow"
+                            style="width:48px;height:48px;z-index:1080"
+                            data-bs-toggle="offcanvas" data-bs-target="#dictPanel" aria-controls="dictPanel" title="Dictionary">
+                            <i class="bi bi-search text-white"></i>
+                        </button>
+
+                        <!--Panel bên phải--> 
+                        <div class="offcanvas offcanvas-end" tabindex="-1" id="dictPanel"
+                             aria-labelledby="dictPanelLabel" style="--bs-offcanvas-width:420px">
+                            <div class="offcanvas-header">
+                                <h5 class="offcanvas-title" id="dictPanelLabel">Từ điển Tiếng Anh</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+
+                            <div class="offcanvas-body">
+                                <form id="search-box" class="input-group mb-3">
+                                    <input id="search-input" class="form-control" placeholder="Nhập từ vựng cần tra">
+                                    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                                </form>
+
+                                <p class="errTxt text-danger fw-semibold d-none"></p>
+
+                                <div class="word-details card shadow-sm d-none">
+                                    <div class="card-body text-start">
+                                        <div class="d-flex gap-2 justify-content-between flex-wrap">
+                                            <div>
+                                                <h2 id="word-txt" class="h2 mb-0"></h2>
+                                                <p class="mb-0 text-secondary">
+                                                    <span id="type-txt"></span>
+                                                    <span id="phonetic-txt" class="ms-1"></span>
+                                                </p>
+                                            </div>
+                                            <button id="sound-btn" type="button"
+                                                    class="btn btn-outline-success btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
+                                                    style="width:38px;height:38px" title="Play">
+                                                <i class="bi bi-volume-up"></i>
+                                            </button>
+                                        </div>
+
+                                        <p id="definition-txt"class="mt-3 mb-2">definition</p>
+
+                                        <div id="example-elem"  class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Examples</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+                                        <div id="synonyms-elem" class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Synonyms</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+                                        <div id="antonyms-elem" class="mt-2 ps-3 border-start border-3 border-primary d-none">
+                                            <h6 class="mb-1">Antonyms</h6><p class="text-secondary mb-0"></p>
+                                        </div>
+
+                                        <form id="save-word-form" method="post" action="${pageContext.request.contextPath}/studentVocab" class="mt-4">
+                                            <input type="hidden" name="word" id="input-word">
+                                            <input type="hidden" name="phonetic" id="input-phonetic">
+                                            <input type="hidden" name="audioUrl" id="input-audio-url">
+                                            <input type="hidden" name="partOfSpeech" id="input-part-of-speech">
+                                            <input type="hidden" name="definition" id="input-definition">
+                                            <input type="hidden" name="example" id="input-example">
+                                            <input type="hidden" name="synonyms" id="input-synonyms">
+                                            <input type="hidden" name="antonyms" id="input-antonyms">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="bi bi-bookmark-check"></i> Lưu từ vựng
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </main>
 
-            <!--<hr class="custom-hr">-->
+
         </div>
 
     </body>
@@ -843,159 +1282,204 @@
     <!--Youtube API-->
     <script src="https://www.youtube.com/iframe_api"></script>
 
+    <script src="${pageContext.request.contextPath}/js/dictionary.js"></script>
+
     <script>
-                                                        tinymce.init({
-                                                            selector: '#userReply',
-                                                            plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                            toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                            menubar: false,
-                                                            statusbar: false,
-                                                            branding: false,
-                                                            width: '100%'
-                                                        });
-
-                                                        function replyForm(formId) {
-                                                            event.preventDefault(); // Ngừng hành động mặc định của form (reload trang)
-                                                            var form = document.getElementById(formId);
-                                                            if (form.style.display === "none" || form.style.display === "") {
-
-                                                                form.style.display = "block";
-
-                                                                var editorId = formId.replace('replyForm', 'userReply');
-                                                                tinymce.remove('#' + editorId);
-
-                                                                tinymce.init({
-                                                                    selector: '#' + editorId,
-                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                    menubar: false,
-                                                                    statusbar: false,
-                                                                    branding: false,
-                                                                    width: '100%'
-                                                                })
-                                                            } else {
-                                                                form.style.display = "none";
-                                                            }
-                                                        }
-
-                                                        function editPostContent(postId) {
-                                                            var contentElement = document.getElementById('postContent' + postId); // Lấy nội dung bài đăng
-                                                            var content = contentElement.innerText;
-
-                                                            var form = document.getElementById('editForm' + postId);
-                                                            if (form.style.display === "none" || form.style.display === "") {
-                                                                form.style.display = "block";
-
-                                                                var editorId = 'userReply' + postId;
-                                                                tinymce.remove('#' + editorId);
-                                                                tinymce.init({
-                                                                    selector: '#' + editorId,
-                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                    menubar: false,
-                                                                    statusbar: false,
-                                                                    branding: false,
-                                                                    width: '100%',
-                                                                    setup: function (editor) {
-                                                                        editor.on('init', function () {
-                                                                            editor.setContent(content);
-                                                                        });
-                                                                    }
-                                                                })
-                                                            } else {
-                                                                form.style.display = "none";
-                                                            }
-                                                        }
-
-                                                        function editCommentContent(commentId) {
-                                                            var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
-                                                            var content = contentElement.innerText;
-
-                                                            var form = document.getElementById('editCommentForm' + commentId);
-                                                            if (form.style.display === "none" || form.style.display === "") {
-                                                                form.style.display = "block";
-
-                                                                var editorId = 'commentReply' + commentId;
-                                                                tinymce.remove('#' + editorId);
-                                                                tinymce.init({
-                                                                    selector: '#' + editorId,
-                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                    menubar: false,
-                                                                    statusbar: false,
-                                                                    branding: false,
-                                                                    width: '100%',
-                                                                    setup: function (editor) {
-                                                                        editor.on('init', function () {
-                                                                            editor.setContent(content);
-                                                                        });
-                                                                    }
-                                                                })
-                                                            } else {
-                                                                form.style.display = "none";
-                                                            }
-                                                        }
-
-                                                        function editCommentContent(commentId) {
-                                                            var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
-                                                            var content = contentElement.innerText;
-
-                                                            var form = document.getElementById('editCommentForm' + commentId);
-                                                            if (form.style.display === "none" || form.style.display === "") {
-                                                                form.style.display = "block";
-
-                                                                var editorId = 'commentReply' + commentId;
-                                                                tinymce.remove('#' + editorId);
-                                                                tinymce.init({
-                                                                    selector: '#' + editorId,
-                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                    menubar: false,
-                                                                    statusbar: false,
-                                                                    branding: false,
-                                                                    width: '100%',
-                                                                    setup: function (editor) {
-                                                                        editor.on('init', function () {
-                                                                            editor.setContent(content);
-                                                                        });
-                                                                    }
-                                                                })
-                                                            } else {
-                                                                form.style.display = "none";
-                                                            }
-                                                        }
+//                                                                            tinymce.init({
+//                                                                                selector: '#textAnswer',
+//                                                                                plugins: 'advlist autolink lists link image charmap print preview anchor',
+//                                                                                toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+//                                                                                menubar: false,
+//                                                                                statusbar: false,
+//                                                                                branding: false,
+//                                                                                width: '100%'
+//                                                                            });
 
 
-                                                        //for video youtube api
-                                                        let ytPlayer;
+                                                                            tinymce.init({
+                                                                                selector: '#userReply',
+                                                                                plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                                toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                                menubar: false,
+                                                                                statusbar: false,
+                                                                                branding: false,
+                                                                                width: '100%'
+                                                                            });
 
-                                                        // phải là global để YouTube API gọi được
-                                                        window.onYouTubeIframeAPIReady = function () {
-                                                            ytPlayer = new YT.Player('yt-player', {
-                                                                events: {
-                                                                    'onStateChange': window.onPlayerStateChange
-                                                                }
-                                                            });
-                                                        };
 
-                                                        window.onPlayerStateChange = function (e) {
-                                                            if (e.data === YT.PlayerState.ENDED) {
-                                                                window.markVideoWatched().finally(() => location.reload());
-                                                            }
-                                                        };
 
-                                                        // cũng phải global
-                                                        window.markVideoWatched = function () {
-                                                            const form = new FormData();
-                                                            form.append('courseId', '${cp.course.courseId}');
-                                                            form.append('itemId', '${activeItemId}');
-                                                            form.append('contentType', 'markVideoWatched');
+                                                                            function replyForm(formId) {
+                                                                                event.preventDefault(); // Ngừng hành động mặc định của form (reload trang)
+                                                                                var form = document.getElementById(formId);
+                                                                                if (form.style.display === "none" || form.style.display === "") {
 
-                                                            return fetch('${pageContext.request.contextPath}/moduleItemProgress', {
-                                                                method: 'POST',
-                                                                body: form,
-                                                                credentials: 'include'
-                                                            });
-                                                        };
+                                                                                    form.style.display = "block";
+
+                                                                                    var editorId = formId.replace('replyForm', 'userReply');
+                                                                                    tinymce.remove('#' + editorId);
+
+                                                                                    tinymce.init({
+                                                                                        selector: '#' + editorId,
+                                                                                        plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                                        toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                                        menubar: false,
+                                                                                        statusbar: false,
+                                                                                        branding: false,
+                                                                                        width: '100%'
+                                                                                    })
+                                                                                } else {
+                                                                                    form.style.display = "none";
+                                                                                }
+                                                                            }
+
+                                                                            function editPostContent(postId) {
+                                                                                var contentElement = document.getElementById('postContent' + postId); // Lấy nội dung bài đăng
+                                                                                var content = contentElement.innerText;
+
+                                                                                var form = document.getElementById('editForm' + postId);
+                                                                                if (form.style.display === "none" || form.style.display === "") {
+                                                                                    form.style.display = "block";
+
+                                                                                    var editorId = 'userReply' + postId;
+                                                                                    tinymce.remove('#' + editorId);
+                                                                                    tinymce.init({
+                                                                                        selector: '#' + editorId,
+                                                                                        plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                                        toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                                        menubar: false,
+                                                                                        statusbar: false,
+                                                                                        branding: false,
+                                                                                        width: '100%',
+                                                                                        setup: function (editor) {
+                                                                                            editor.on('init', function () {
+                                                                                                editor.setContent(content);
+                                                                                            });
+                                                                                        }
+                                                                                    })
+                                                                                } else {
+                                                                                    form.style.display = "none";
+                                                                                }
+                                                                            }
+
+                                                                            function editCommentContent(commentId) {
+                                                                                var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
+                                                                                var content = contentElement.innerText;
+
+                                                                                var form = document.getElementById('editCommentForm' + commentId);
+                                                                                if (form.style.display === "none" || form.style.display === "") {
+                                                                                    form.style.display = "block";
+
+                                                                                    var editorId = 'commentReply' + commentId;
+                                                                                    tinymce.remove('#' + editorId);
+                                                                                    tinymce.init({
+                                                                                        selector: '#' + editorId,
+                                                                                        plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                                        toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                                        menubar: false,
+                                                                                        statusbar: false,
+                                                                                        branding: false,
+                                                                                        width: '100%',
+                                                                                        setup: function (editor) {
+                                                                                            editor.on('init', function () {
+                                                                                                editor.setContent(content);
+                                                                                            });
+                                                                                        }
+                                                                                    })
+                                                                                } else {
+                                                                                    form.style.display = "none";
+                                                                                }
+                                                                            }
+
+                                                                            function editCommentContent(commentId) {
+                                                                                var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
+                                                                                var content = contentElement.innerText;
+
+                                                                                var form = document.getElementById('editCommentForm' + commentId);
+                                                                                if (form.style.display === "none" || form.style.display === "") {
+                                                                                    form.style.display = "block";
+
+                                                                                    var editorId = 'commentReply' + commentId;
+                                                                                    tinymce.remove('#' + editorId);
+                                                                                    tinymce.init({
+                                                                                        selector: '#' + editorId,
+                                                                                        plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                                        toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                                        menubar: false,
+                                                                                        statusbar: false,
+                                                                                        branding: false,
+                                                                                        width: '100%',
+                                                                                        setup: function (editor) {
+                                                                                            editor.on('init', function () {
+                                                                                                editor.setContent(content);
+                                                                                            });
+                                                                                        }
+                                                                                    })
+                                                                                } else {
+                                                                                    form.style.display = "none";
+                                                                                }
+                                                                            }
+
+                                                                            //for video youtube api
+                                                                            let ytPlayer;
+
+                                                                            // phải là global để YouTube API gọi được
+                                                                            window.onYouTubeIframeAPIReady = function () {
+                                                                                ytPlayer = new YT.Player('yt-player', {
+                                                                                    events: {
+                                                                                        'onStateChange': window.onPlayerStateChange
+                                                                                    }
+                                                                                });
+                                                                            };
+
+                                                                            window.onPlayerStateChange = function (e) {
+                                                                                if (e.data === YT.PlayerState.ENDED) {
+                                                                                    window.markVideoWatched().finally(() => location.reload());
+                                                                                }
+                                                                            };
+
+                                                                            // cũng phải global
+                                                                            window.markVideoWatched = function () {
+                                                                                const form = new FormData();
+                                                                                form.append('courseId', '${cp.course.courseId}');
+                                                                                form.append('itemId', '${activeItemId}');
+                                                                                form.append('contentType', 'markVideoWatched');
+
+                                                                                return fetch('${pageContext.request.contextPath}/moduleItemProgress', {
+                                                                                    method: 'POST',
+                                                                                    body: form,
+                                                                                    credentials: 'include'
+                                                                                });
+                                                                            };
+
+                                                                            //Save vocab
+                                                                            const formEl = document.getElementById("save-word-form");
+                                                                            formEl.addEventListener('submit', async (e) => {
+                                                                                e.preventDefault();
+                                                                                const fd = new FormData(formEl);
+
+                                                                                try {
+                                                                                    const res = await fetch(formEl.action, {
+                                                                                        method: 'POST',
+                                                                                        body: fd,
+                                                                                        credentials: 'include'
+                                                                                    });
+
+                                                                                    let data = {};
+                                                                                    try {
+                                                                                        data = await res.json();
+                                                                                    } catch (_) {
+                                                                                    }
+
+                                                                                    if (!res.ok || data.success === false) {
+                                                                                        alert('Từ vựng đã được thêm trước đó');
+                                                                                        return;
+                                                                                    }
+                                                                                    alert('Đã lưu từ vựng!');
+                                                                                } catch (err) {
+                                                                                    console.error(err);
+                                                                                    alert('Có lỗi mạng khi lưu.');
+                                                                                }
+                                                                            });
+
     </script>
 </html>

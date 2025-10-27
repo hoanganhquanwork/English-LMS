@@ -4,6 +4,8 @@
  */
 package model.entity;
 
+import java.util.List;
+
 /**
  *
  * @author Lenovo
@@ -21,10 +23,15 @@ public class Question {
     private Integer topicId;
     private String reviewComment;
 
+    private List<QuestionOption> options;
+    private QuestionTextKey textKey;
+
     public Question() {
     }
 
-    public Question(int questionId, Integer lessonId, String content, String mediaUrl, String type, InstructorProfile createdBy, String explanation, String status, Integer topicId, String reviewComment) {
+    public Question(int questionId, Integer lessonId, String content, String mediaUrl, String type,
+                    InstructorProfile createdBy, String explanation, String status,
+                    Integer topicId, String reviewComment) {
         this.questionId = questionId;
         this.lessonId = lessonId;
         this.content = content;
@@ -85,8 +92,6 @@ public class Question {
         this.createdBy = createdBy;
     }
 
- 
-
     public String getExplanation() {
         return explanation;
     }
@@ -119,4 +124,37 @@ public class Question {
         this.reviewComment = reviewComment;
     }
 
+    public List<QuestionOption> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<QuestionOption> options) {
+        this.options = options;
+    }
+
+    public QuestionTextKey getTextKey() {
+        return textKey;
+    }
+
+    public void setTextKey(QuestionTextKey textKey) {
+        this.textKey = textKey;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "questionId=" + questionId +
+                ", lessonId=" + lessonId +
+                ", content='" + content + '\'' +
+                ", mediaUrl='" + mediaUrl + '\'' +
+                ", type='" + type + '\'' +
+                ", createdBy=" + createdBy +
+                ", explanation='" + explanation + '\'' +
+                ", status='" + status + '\'' +
+                ", topicId=" + topicId +
+                ", reviewComment='" + reviewComment + '\'' +
+                ", options=" + options +
+                ", textKey=" + textKey +
+                '}';
+    }
 }

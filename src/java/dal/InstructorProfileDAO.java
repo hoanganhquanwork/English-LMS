@@ -29,6 +29,36 @@ public class InstructorProfileDAO extends DBContext {
         return null; 
     }
     
+    public int updateInstructorProfile(InstructorProfile profile) {
+        String sql = "UPDATE InstructorProfile "
+                   + "SET bio = ?, expertise = ?, qualifications = ? "
+                   + "WHERE user_id = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, profile.getBio());
+            st.setString(2, profile.getExpertise());
+            st.setString(3, profile.getQualifications());
+            st.setInt(4, profile.getUser().getUserId());
+            return st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    public boolean insertInstructorProfile(InstructorProfile profile) {
+        String sql = "INSERT INTO InstructorProfile (user_id, bio, expertise, qualifications) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, profile.getUser().getUserId());
+            ps.setString(2, profile.getBio());
+            ps.setString(3, profile.getExpertise());
+            ps.setString(4, profile.getQualifications());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     public static void main(String[] args) {
         InstructorProfileDAO dao = new  InstructorProfileDAO();
         System.out.println(dao.getByUserId(8));

@@ -4,33 +4,29 @@
  */
 package model.entity;
 
-
-
 /**
  *
  * @author Lenovo
  */
 public class Quiz {
-    
-    private int quizId;                
-    private String title;             
-    private Integer attemptsAllowed;  
-    private Double passingScorePct; 
-    private Integer pickCount;         
 
-  
+    private int quizId;
+    private String title;
+    private Double passingScorePct;
+    private Integer pickCount;
+    private Integer timeLimitMin;
+
     public Quiz() {
     }
 
-    public Quiz(int quizId, String title, Integer attemptsAllowed, Double passingScorePct, Integer pickCount) {
+    public Quiz(int quizId, String title, Double passingScorePct, Integer pickCount, Integer timeLimitMin) {
         this.quizId = quizId;
         this.title = title;
-        this.attemptsAllowed = attemptsAllowed;
         this.passingScorePct = passingScorePct;
         this.pickCount = pickCount;
+        this.timeLimitMin = timeLimitMin;
     }
 
-    
     // ===== Getters & Setters =====
     public int getQuizId() {
         return quizId;
@@ -48,14 +44,6 @@ public class Quiz {
         this.title = title;
     }
 
-    public Integer getAttemptsAllowed() {
-        return attemptsAllowed;
-    }
-
-    public void setAttemptsAllowed(Integer attemptsAllowed) {
-        this.attemptsAllowed = attemptsAllowed;
-    }
-
     public Double getPassingScorePct() {
         return passingScorePct;
     }
@@ -64,12 +52,19 @@ public class Quiz {
         this.passingScorePct = passingScorePct;
     }
 
-   
     public Integer getPickCount() {
         return pickCount;
     }
 
     public void setPickCount(Integer pickCount) {
         this.pickCount = pickCount;
+    }
+
+    public Integer getTimeLimitMin() {
+        return timeLimitMin;
+    }
+
+    public void setTimeLimitMin(Integer timeLimitMin) {
+        this.timeLimitMin = timeLimitMin;
     }
 }

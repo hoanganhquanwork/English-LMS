@@ -24,15 +24,33 @@
                         <div class="confetti-piece"></div>
                     </div>
                 </div>
+<<<<<<< HEAD
                 
                 <div class="result-content">
                     <h3 class="result-title success">🎊 Thanh toán thành công!</h3>
                     <p class="result-message">Chúc mừng! Giao dịch của bạn đã được xử lý thành công.</p>
                     
+=======
+
+                <div class="result-content">
+                    <h3 class="result-title success">🎊 Thanh toán thành công!</h3>
+                    <p class="result-message">Chúc mừng! Giao dịch của bạn đã được xử lý thành công.</p>
+
+>>>>>>> main
                     <div class="success-message">
                         <p>🎯 Đơn hàng của bạn đã được xác nhận và sẽ được xử lý trong thời gian sớm nhất.</p>
                     </div>
                 </div>
+<<<<<<< HEAD
+=======
+                <div class="action-buttons">
+                    <a href="${pageContext.request.contextPath}/parent/orders" class="btn primary">
+                        <span class="btn-icon">📋</span>
+                        <span class="btn-text">Xem danh sách đơn hàng</span>
+                    </a>
+
+                </div>
+>>>>>>> main
             </div>
         </c:when>
 
@@ -42,19 +60,38 @@
                 <div class="result-animation">
                     <div class="error-icon">😔</div>
                 </div>
+<<<<<<< HEAD
                 
                 <div class="result-content">
                     <h3 class="result-title error">❌ Thanh toán không thành công</h3>
                     <p class="result-message">Rất tiếc, giao dịch không thể hoàn tất hoặc đã bị hủy.</p>
  
+=======
+
+                <div class="result-content">
+                    <h3 class="result-title error">❌ Thanh toán không thành công</h3>
+                    <p class="result-message">Rất tiếc, giao dịch không thể hoàn tất hoặc đã bị hủy.</p>
+
+>>>>>>> main
                     <div class="error-message">
                         <p>🔄 Vui lòng thử lại thanh toán hoặc liên hệ hỗ trợ nếu vấn đề vẫn tiếp diễn.</p>
                     </div>
                 </div>
+<<<<<<< HEAD
+=======
+                <div class="action-buttons">
+                    <a href="${pageContext.request.contextPath}/parent/paymentitems" class="btn primary">
+                        <span class="btn-icon">📋</span>
+                        <span class="btn-text">Quay lại danh sách chờ thanh toán</span>
+                    </a>
+
+                </div>
+>>>>>>> main
             </div>
         </c:otherwise>
     </c:choose>
 
+<<<<<<< HEAD
     <div class="action-buttons">
         <a href="${pageContext.request.contextPath}/parent/orders" class="btn primary">
             <span class="btn-icon">📋</span>
@@ -66,4 +103,11 @@
 
 <footer class="footer">
     <div class="container bottom">© 2025 LinguaTrack</div>
+=======
+
+</main>
+
+<footer>
+        <jsp:include page="/footer.jsp" />
+>>>>>>> main
 </footer>

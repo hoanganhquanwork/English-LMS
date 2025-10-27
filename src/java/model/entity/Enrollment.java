@@ -14,7 +14,7 @@ public class Enrollment {
 
     private int enrollmentId;
     private Course course;       // nối đến Course
-    private Users user;      // nối đến StudentProfile
+    private Users user;          // nối đến StudentProfile
     private String status;       // active, completed
     private Date enrolledAt;
 
@@ -68,6 +68,4 @@ public class Enrollment {
     public void setEnrolledAt(Date enrolledAt) {
         this.enrolledAt = enrolledAt;
     }
-
-
 }

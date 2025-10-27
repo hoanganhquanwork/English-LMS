@@ -187,6 +187,7 @@
 
                         <!-- Filter and Search Section -->
                         <div class="questions-filter">
+<<<<<<< HEAD
                             <div class="filter-left">
                                 <button class="btn btn-outline">
                                     <i class="fas fa-filter"></i>
@@ -205,6 +206,12 @@
                                         Sắp xếp theo
                                     </button>
                                 </div>
+=======
+                            
+                            <div class="filter-right">
+
+                               
+>>>>>>> main
                                 <a href="addQuestion?courseId=${param.courseId}" class="btn btn-primary">
                                     <i class="fas fa-plus"></i>
                                     Thêm câu hỏi
@@ -238,11 +245,15 @@
                                                             <i class="fas fa-eye"></i>
                                                             Xem
                                                         </a>
+<<<<<<< HEAD
                                                         <a href="add-questions.jsp?courseId=${param.courseId}&moduleId=${module.moduleId}" 
                                                            class="btn btn-edit">
                                                             <i class="fas fa-edit"></i>
                                                             Chỉnh sửa
                                                         </a>
+=======
+                                                     
+>>>>>>> main
                                                         <a href="deleteModule?courseId=${param.courseId}&moduleId=${module.moduleId}" 
                                                            class="btn btn-delete"
                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa module này không?')">

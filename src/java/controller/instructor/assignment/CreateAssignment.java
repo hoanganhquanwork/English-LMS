@@ -60,8 +60,10 @@ public class CreateAssignment extends HttpServlet {
             String instructions = request.getParameter("description");
             String submissionType = request.getParameter("submissionType");
             String rubric = request.getParameter("gradingCriteria");
+            boolean isAiGradeAllowed = "true".equals(request.getParameter("aiGrading"));
+            String promptSummary = request.getParameter("promptSummary");
 
-            double maxScore = Double.parseDouble(request.getParameter("maxScore"));
+          
             String passingStr = request.getParameter("passingScorePct");
             Double passingScorePct = (passingStr == null || passingStr.isEmpty())
                     ? null : Double.parseDouble(passingStr);
@@ -74,7 +76,9 @@ public class CreateAssignment extends HttpServlet {
                 String fileName = new File(filePart.getSubmittedFileName()).getName();
                 String uploadPath = request.getServletContext().getRealPath("/uploads/assignment/");
                 File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
 
                 String filePath = uploadPath + File.separator + fileName;
                 filePart.write(filePath);
@@ -83,6 +87,9 @@ public class CreateAssignment extends HttpServlet {
                 fileUrl = "uploads/assignment/" + fileName;
             }
 
+            String[] nos = request.getParameterValues("criterion_no");
+            String[] guidances = request.getParameterValues("guidance");
+            String[] weights = request.getParameterValues("weight");
             // 🔹 Gói dữ liệu Assignment
             Assignment a = new Assignment();
             a.setTitle(title);
@@ -90,18 +97,19 @@ public class CreateAssignment extends HttpServlet {
             a.setInstructions(instructions);
             a.setSubmissionType(submissionType);
             a.setAttachmentUrl(fileUrl);
-            a.setMaxScore(maxScore);
-            a.setPassingScorePct(passingScorePct);
-            a.setRubric(rubric);
+            a.setPassingScorePct(passingScorePct);         
+            a.setAiGradeAllowed(isAiGradeAllowed);
+            a.setPromptSummary(promptSummary);
 
             // 🔹 Gọi Service để lưu DB
-            int newId = assignmentService.createAssignment(moduleId, a);
+              int newId = assignmentService.createAssignment(moduleId, a, nos, guidances, weights);
+
 
             if (newId != -1) {
                 response.sendRedirect("updateAssignment?courseId=" + courseId + "&moduleId=" + moduleId + "&assignmentId=" + newId);
             } else {
                 request.setAttribute("error", "Không thể tạo Assignment mới. Vui lòng thử lại.");
-                request.getRequestDispatcher("instructor/create-assignment.jsp").forward(request, response);
+                request.getRequestDispatcher("teacher/create-assignment.jsp").forward(request, response);
             }
 
         } catch (Exception e) {

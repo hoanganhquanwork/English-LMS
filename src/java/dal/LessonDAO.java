@@ -19,22 +19,45 @@ import model.entity.Module;
 public class LessonDAO extends DBContext {
 
     public void insertLesson(Lesson lesson) throws SQLException {
-        String sql = "INSERT INTO Lesson (lesson_id, title, content_type, video_url, duration_sec, text_content) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
-        try (
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+        String sql = """
+        INSERT INTO Lesson (lesson_id, title, content_type, video_url, duration_sec, video_script, text_content)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setInt(1, lesson.getModuleItemId());
             ps.setString(2, lesson.getTitle());
             ps.setString(3, lesson.getContentType());
             ps.setString(4, lesson.getVideoUrl());
-            ps.setInt(5, lesson.getDurationSec());
-            ps.setString(6, lesson.getTextContent());
+
+           
+            if (lesson.getDurationSec() > 0) {
+                ps.setInt(5, lesson.getDurationSec());
+            } else {
+                ps.setNull(5, java.sql.Types.INTEGER);
+            }
+
+           
+            if (lesson.getVideoScript() != null && !lesson.getVideoScript().isEmpty()) {
+                ps.setString(6, lesson.getVideoScript());
+            } else {
+                ps.setNull(6, java.sql.Types.NVARCHAR);
+            }
+
+           
+            if (lesson.getTextContent() != null && !lesson.getTextContent().isEmpty()) {
+                ps.setString(7, lesson.getTextContent());
+            } else {
+                ps.setNull(7, java.sql.Types.NVARCHAR);
+            }
+
             ps.executeUpdate();
+            System.out.println(" Lesson inserted successfully!");
         }
     }
 
-    public Lesson getLessonById(int moduleItemId){
+    public Lesson getLessonById(int moduleItemId) {
         String sql = "SELECT * FROM Lesson WHERE lesson_id = ?";
         try (
                 PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -50,7 +73,7 @@ public class LessonDAO extends DBContext {
                 l.setTextContent(rs.getString("text_content"));
                 return l;
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
@@ -104,8 +127,9 @@ public class LessonDAO extends DBContext {
                 return list;
             }
         }
-        
+
     }
+
     public void updateLesson(Lesson l) throws SQLException {
         String sql = "UPDATE Lesson SET title = ?, video_url = ?, duration_sec = ?, text_content = ? WHERE lesson_id = ?";
         try (
@@ -119,7 +143,7 @@ public class LessonDAO extends DBContext {
         }
     }
 
- public boolean updateLessonReading(Lesson lesson) {
+    public boolean updateLessonReading(Lesson lesson) {
         String sql = "UPDATE Lesson SET title = ?, text_content = ? WHERE lesson_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, lesson.getTitle());

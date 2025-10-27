@@ -13,21 +13,10 @@ public class Review {
     private int reviewId;
     private int courseId;
     private int studentId;
-    private int rating;              
-    private String comment;          
-    private Timestamp createdAt;    
-
-    public Review() {
-    }
-
-    public Review(int reviewId, int courseId, int studentId, int rating, String comment, Timestamp createdAt) {
-        this.reviewId = reviewId;
-        this.courseId = courseId;
-        this.studentId = studentId;
-        this.rating = rating;
-        this.comment = comment;
-        this.createdAt = createdAt;
-    }
+    private int rating;
+    private String comment;
+    private Timestamp createdAt;
+    private Timestamp editedAt;  
 
     public int getReviewId() {
         return reviewId;
@@ -76,6 +65,12 @@ public class Review {
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
-    
-    
+
+    public Timestamp getEditedAt() {
+        return editedAt;
+    }
+
+    public void setEditedAt(Timestamp editedAt) {
+        this.editedAt = editedAt;
+    }
 }

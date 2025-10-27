@@ -31,6 +31,7 @@ public class CoursePublishController extends HttpServlet {
     private CourseManagerService courseService = new CourseManagerService();
     private final CategoryService caService = new CategoryService();
 
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -69,7 +70,6 @@ public class CoursePublishController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         courseService.autoPublishIfDue();
 
         String status = request.getParameter("status");
@@ -137,6 +137,7 @@ public class CoursePublishController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -149,7 +150,6 @@ public class CoursePublishController extends HttpServlet {
                 ids = new String[]{singleId};
             }
         }
-
         String dateStr = request.getParameter("publishDate");
 
         String message = courseService.handlePublishAction(action, ids, dateStr);

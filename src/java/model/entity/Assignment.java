@@ -10,7 +10,7 @@ package model.entity;
  */
 public class Assignment {
 
-    private int assignmentId;
+    private ModuleItem assignmentId;
     private String title;
     private String content;
     private String instructions;
@@ -18,12 +18,15 @@ public class Assignment {
     private String attachmentUrl;
     private double maxScore;
     private Double passingScorePct; // có thể null
-    private String rubric;
+    private String promptSummary;
+    private boolean isAiGradeAllowed;
 
     public Assignment() {
     }
 
-    public Assignment(int assignmentId, String title, String content, String instructions, String submissionType, String attachmentUrl, double maxScore, Double passingScorePct, String rubric) {
+    public Assignment(ModuleItem assignmentId, String title, String content, String instructions,
+                      String submissionType, String attachmentUrl, double maxScore,
+                      Double passingScorePct, String promptSummary, boolean isAiGradeAllowed) {
         this.assignmentId = assignmentId;
         this.title = title;
         this.content = content;
@@ -32,14 +35,15 @@ public class Assignment {
         this.attachmentUrl = attachmentUrl;
         this.maxScore = maxScore;
         this.passingScorePct = passingScorePct;
-        this.rubric = rubric;
+        this.promptSummary = promptSummary;
+        this.isAiGradeAllowed = isAiGradeAllowed;
     }
 
-    public int getAssignmentId() {
+    public ModuleItem getAssignmentId() {
         return assignmentId;
     }
 
-    public void setAssignmentId(int assignmentId) {
+    public void setAssignmentId(ModuleItem assignmentId) {
         this.assignmentId = assignmentId;
     }
 
@@ -99,13 +103,27 @@ public class Assignment {
         this.passingScorePct = passingScorePct;
     }
 
-    public String getRubric() {
-        return rubric;
+    public String getPromptSummary() {
+        return promptSummary;
     }
 
-    public void setRubric(String rubric) {
-        this.rubric = rubric;
+    public void setPromptSummary(String promptSummary) {
+        this.promptSummary = promptSummary;
     }
 
-    
+    public boolean isIsAiGradeAllowed() {
+        return isAiGradeAllowed;
+    }
+
+    public void setIsAiGradeAllowed(boolean isAiGradeAllowed) {
+        this.isAiGradeAllowed = isAiGradeAllowed;
+    }
+
+    public boolean isAiGradeAllowed() {
+        return isAiGradeAllowed;
+    }
+
+    public void setAiGradeAllowed(boolean isAiGradeAllowed) {
+        this.isAiGradeAllowed = isAiGradeAllowed;
+    }
 }

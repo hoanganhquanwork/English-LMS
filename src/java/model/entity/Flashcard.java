@@ -54,5 +54,4 @@ public class Flashcard {
     public void setBackText(String backText) {
         this.backText = backText;
     }
-
 }

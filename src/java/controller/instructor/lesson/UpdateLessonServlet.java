@@ -60,7 +60,7 @@ public class UpdateLessonServlet extends HttpServlet {
         try {
             List<Module> list = service.getModulesByCourse(courseId);
             Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
-            Map<Question, List<QuestionOption>> questionMap = null;
+            Map<Question, Object> questionMap = null;
 
             Lesson currentLesson = null;
             if (lessonIdStr != null && !lessonIdStr.isEmpty()) {
@@ -74,7 +74,7 @@ public class UpdateLessonServlet extends HttpServlet {
                         targetJsp = "teacher/lesson-video-content.jsp";
                     }
                     QuestionService qService = new QuestionService();
-                    questionMap = qService.getLessonQuestionsMap(lessonId);
+                    questionMap = qService.getLessonQuestionsWithAnswers(lessonId);
                 }
             }
 

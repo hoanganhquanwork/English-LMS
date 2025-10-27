@@ -27,8 +27,8 @@ import service.CourseDetailService;
 import service.CourseManagerService;
 import model.entity.Module;
 import model.entity.ModuleItem;
-import model.entity.Users;
 import service.QuestionManagerService;
+
 
 /**
  *
@@ -41,7 +41,7 @@ public class CourseDetailController extends HttpServlet {
     private final CourseDetailService dService = new CourseDetailService();
     private final QuestionManagerService qService = new QuestionManagerService();
 
-    @Override
+   @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -125,6 +125,7 @@ public class CourseDetailController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -159,7 +160,7 @@ public class CourseDetailController extends HttpServlet {
             String priceStr = request.getParameter("price");
 
             BigDecimal price = (priceStr != null && !priceStr.isEmpty()) ? new BigDecimal(priceStr) : null;
-            
+
             LocalDateTime publishDate = (publishDateStr != null && !publishDateStr.isEmpty())
                     ? LocalDate.parse(publishDateStr).atStartOfDay() : null;
 
@@ -187,5 +188,5 @@ public class CourseDetailController extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 }

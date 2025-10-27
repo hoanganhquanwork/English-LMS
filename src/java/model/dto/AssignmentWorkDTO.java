@@ -4,42 +4,26 @@
  */
 package model.dto;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  *
- * @author LENOVO
+ * @author Admin
  */
 public class AssignmentWorkDTO {
-
     private int assignmentId;
-    private String title;
-    private String content;
-    private String instructions;
-    private String submissionType;
-    private String attachmentUrl;
-    private double maxScore;
-    private Double passingScorePct;
-    private String rubric;
+    private int studentId;
 
-    private List<AssignmentWorkDTO> subWorks;
-
-    public AssignmentWorkDTO() {
-    }
-
-    public AssignmentWorkDTO(int assignmentId, String title, String content, String instructions, String submissionType, String attachmentUrl, double maxScore, Double passingScorePct, String rubric, List<AssignmentWorkDTO> subWorks) {
-        this.assignmentId = assignmentId;
-        this.title = title;
-        this.content = content;
-        this.instructions = instructions;
-        this.submissionType = submissionType;
-        this.attachmentUrl = attachmentUrl;
-        this.maxScore = maxScore;
-        this.passingScorePct = passingScorePct;
-        this.rubric = rubric;
-        this.subWorks = subWorks;
-    }
-    
+    private LocalDateTime submittedAt; 
+    private String textAnswer;        
+    private String fileUrl;          
+    private String status;            
+    private BigDecimal score;          
+    private Integer graderId;        
+    private LocalDateTime draftSavedAt;
+    private LocalDateTime gradedAt;
+    private String feedbackText;
 
     public int getAssignmentId() {
         return assignmentId;
@@ -49,77 +33,83 @@ public class AssignmentWorkDTO {
         this.assignmentId = assignmentId;
     }
 
-    public String getTitle() {
-        return title;
+    public int getStudentId() {
+        return studentId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
     }
 
-    public String getContent() {
-        return content;
+    public LocalDateTime getSubmittedAt() {
+        return submittedAt;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setSubmittedAt(LocalDateTime submittedAt) {
+        this.submittedAt = submittedAt;
     }
 
-    public String getInstructions() {
-        return instructions;
+    public String getTextAnswer() {
+        return textAnswer;
     }
 
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
+    public void setTextAnswer(String textAnswer) {
+        this.textAnswer = textAnswer;
     }
 
-    public String getSubmissionType() {
-        return submissionType;
+    public String getFileUrl() {
+        return fileUrl;
     }
 
-    public void setSubmissionType(String submissionType) {
-        this.submissionType = submissionType;
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
-    public String getAttachmentUrl() {
-        return attachmentUrl;
+    public String getStatus() {
+        return status;
     }
 
-    public void setAttachmentUrl(String attachmentUrl) {
-        this.attachmentUrl = attachmentUrl;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public double getMaxScore() {
-        return maxScore;
+    public BigDecimal getScore() {
+        return score;
     }
 
-    public void setMaxScore(double maxScore) {
-        this.maxScore = maxScore;
+    public void setScore(BigDecimal score) {
+        this.score = score;
     }
 
-    public Double getPassingScorePct() {
-        return passingScorePct;
+    public Integer getGraderId() {
+        return graderId;
     }
 
-    public void setPassingScorePct(Double passingScorePct) {
-        this.passingScorePct = passingScorePct;
+    public void setGraderId(Integer graderId) {
+        this.graderId = graderId;
     }
 
-    public String getRubric() {
-        return rubric;
+    public LocalDateTime getDraftSavedAt() {
+        return draftSavedAt;
     }
 
-    public void setRubric(String rubric) {
-        this.rubric = rubric;
+    public void setDraftSavedAt(LocalDateTime draftSavedAt) {
+        this.draftSavedAt = draftSavedAt;
     }
 
-    public List<AssignmentWorkDTO> getSubWorks() {
-        return subWorks;
+    public LocalDateTime getGradedAt() {
+        return gradedAt;
     }
 
-    public void setSubWorks(List<AssignmentWorkDTO> subWorks) {
-        this.subWorks = subWorks;
+    public void setGradedAt(LocalDateTime gradedAt) {
+        this.gradedAt = gradedAt;
     }
 
+    public String getFeedbackText() {
+        return feedbackText;
+    }
 
+    public void setFeedbackText(String feedbackText) {
+        this.feedbackText = feedbackText;
+    }
 }

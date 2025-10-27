@@ -30,8 +30,6 @@ public class FlashcardSet {
         this.status = status;
     }
 
-    
-
     public int getSetId() {
         return setId;
     }
@@ -79,6 +77,4 @@ public class FlashcardSet {
     public void setAuthorUsername(String authorUsername) {
         this.authorUsername = authorUsername;
     }
-    
-    
 }

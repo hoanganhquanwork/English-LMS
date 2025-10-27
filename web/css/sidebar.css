@@ -55,3 +55,113 @@ body {
 .sidebar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.3);
 }
+
+/* Sidebar User Section */
+.sidebar-user {
+  margin-top: auto;
+  text-align: center;
+  padding: 20px 16px;
+  border-top: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  position: relative;
+}
+
+.user-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto 8px auto;
+  border: 3px solid #0d6efd;
+  object-fit: cover;
+  display: block;
+}
+
+.sidebar-user span {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #212529;
+  font-size: 14px;
+}
+
+.sidebar-dropdown {
+  position: static;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: block;
+  margin-top: 12px;
+}
+
+.sidebar-dropdown a {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #495057;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.sidebar-dropdown a:last-child {
+  border-bottom: none;
+}
+
+.sidebar-dropdown a:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+}
+
+.sidebar-dropdown a i {
+  margin-right: 8px;
+  width: 16px;
+  text-align: center;
+}
+
+/* Admin Card Styles for Teacher Sidebar */
+.admin-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+}
+
+.admin-sidebar {
+  width: 280px;
+  min-height: 100vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar h4 {
+  padding: 20px 16px 16px 16px;
+  margin: 0;
+  color: #495057;
+  font-weight: 600;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+}
+
+.admin-menu {
+  flex: 1;
+  padding: 16px 0;
+}
+
+.admin-link {
+  display: block;
+  padding: 12px 20px;
+  color: #495057;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.admin-link:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+  border-left-color: #0d6efd;
+}

@@ -25,6 +25,7 @@ public class CourseManagerController extends HttpServlet {
     private final CourseManagerService courseService = new CourseManagerService();
     private final CategoryService caService = new CategoryService();
 
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -110,7 +111,6 @@ public class CourseManagerController extends HttpServlet {
         String redirectUrl = "coursemanager?status=" + (status != null ? status : "all")
                 + "&keyword=" + (keyword != null ? URLEncoder.encode(keyword, "UTF-8") : "")
                 + "&sort=" + (sort != null ? sort : "newest");
-
         String[] courseIds = request.getParameterValues("courseIds");
         if (courseIds == null) {
             String idStr = request.getParameter("courseId");

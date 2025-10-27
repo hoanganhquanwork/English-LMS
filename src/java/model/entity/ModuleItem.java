@@ -11,7 +11,7 @@ package model.entity;
 public class ModuleItem {
 
     private int moduleItemId;
-    private int moduleId;
+    private Module module;
     private String itemType;  // lesson, quiz, assignment, discussion
     private int orderIndex;
     private boolean required;
@@ -19,9 +19,9 @@ public class ModuleItem {
     public ModuleItem() {
     }
 
-    public ModuleItem(int moduleItemId, int moduleId, String itemType, int orderIndex, boolean required) {
+    public ModuleItem(int moduleItemId, Module module, String itemType, int orderIndex, boolean required) {
         this.moduleItemId = moduleItemId;
-        this.moduleId = moduleId;
+        this.module = module;
         this.itemType = itemType;
         this.orderIndex = orderIndex;
         this.required = required;
@@ -35,12 +35,12 @@ public class ModuleItem {
         this.moduleItemId = moduleItemId;
     }
 
-    public int getModuleId() {
-        return moduleId;
+    public Module getModule() {
+        return module;
     }
 
-    public void setModuleId(int moduleId) {
-        this.moduleId = moduleId;
+    public void setModule(Module module) {
+        this.module = module;
     }
 
     public String getItemType() {
@@ -66,6 +66,4 @@ public class ModuleItem {
     public void setRequired(boolean required) {
         this.required = required;
     }
-    
-    
 }

@@ -43,6 +43,30 @@ public class ModuleDAO extends DBContext {
         return list;
     }
 
+    public Module getModuleById(int moduleId) {
+        Module module = null;
+        String sql = "SELECT * FROM Module WHERE module_id =  ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, moduleId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {             
+                module = new Module();
+                module.setModuleId(rs.getInt("module_id"));
+                module.setTitle(rs.getString("title"));
+                module.setDescription(rs.getString("description"));
+                module.setOrderIndex(rs.getInt("order_index"));
+                module.setCourse(course.getCourseById(rs.getInt("course_id")));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return module;
+    }
+
     public boolean insertModule(Module module) {
         String sql = "INSERT INTO Module (course_id, title, description, order_index) "
                 + "SELECT ?, ?, ?, ISNULL(MAX(order_index), 0) + 1 "
@@ -83,19 +107,20 @@ public class ModuleDAO extends DBContext {
         return false;
     }
 
-     public int countQuestionsByModule(int moduleId) {
-        String sql = "SELECT COUNT(*) FROM Question WHERE module_id = ?";
+    public int countQuestionsByModule(int moduleId) {
+        String sql = "SELECT COUNT(*) FROM ModuleQuestions WHERE module_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, moduleId);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
-    
-    
+
     //for student feature list module item
     public List<ModuleWithItemsDTO> listModuleWithItems(int courseId, int studentId) {
         List<ModuleWithItemsDTO> result = new ArrayList<>();
@@ -160,4 +185,73 @@ public class ModuleDAO extends DBContext {
         }
         return result;
     }
+
+    //Quan
+    public List<ModuleWithItemsDTO> getModulesWithItemsByCourseId(int studentId, int courseId) {
+        List<ModuleWithItemsDTO> modules = new ArrayList<>();
+
+        String sql = """
+            SELECT m.module_id, m.course_id, m.title AS module_title, m.description, m.order_index,
+                   mi.module_item_id, mi.item_type, mi.order_index AS item_order, mi.is_required,
+                   l.title AS lesson_title, q.title AS quiz_title, a.title AS assign_title, d.title AS discuss_title,
+                   p.status, p.score_pct
+            FROM Module m
+            JOIN ModuleItem mi ON m.module_id = mi.module_id
+            LEFT JOIN Lesson l ON mi.module_item_id = l.lesson_id
+            LEFT JOIN Quiz q ON mi.module_item_id = q.quiz_id
+            LEFT JOIN Assignment a ON mi.module_item_id = a.assignment_id
+            LEFT JOIN Discussion d ON mi.module_item_id = d.discussion_id
+            LEFT JOIN Progress p ON p.module_item_id = mi.module_item_id AND p.student_id = ?
+            WHERE m.course_id = ?
+            ORDER BY m.order_index, mi.order_index
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, studentId);
+            ps.setInt(2, courseId);
+            ResultSet rs = ps.executeQuery();
+
+            Map<Integer, ModuleWithItemsDTO> moduleMap = new LinkedHashMap<>();
+
+            while (rs.next()) {
+                int moduleId = rs.getInt("module_id");
+                ModuleWithItemsDTO module = moduleMap.get(moduleId);
+
+                if (module == null) {
+                    module = new ModuleWithItemsDTO();
+                    module.setModuleId(moduleId);
+                    module.setCourseId(rs.getInt("course_id"));
+                    module.setTitle(rs.getString("module_title"));
+                    module.setDescription(rs.getString("description"));
+                    module.setOrderIndex(rs.getInt("order_index"));
+                    module.setItems(new ArrayList<>());
+                    moduleMap.put(moduleId, module);
+                }
+
+                ModuleItemViewDTO item = new ModuleItemViewDTO();
+                item.setModuleItemId(rs.getInt("module_item_id"));
+                item.setItemType(rs.getString("item_type"));
+                item.setOrderIndex(rs.getInt("item_order"));
+                item.setRequired(rs.getBoolean("is_required"));
+
+                // Tên hoạt động tùy loại
+                String title = rs.getString("lesson_title");
+                if (title == null) title = rs.getString("quiz_title");
+                if (title == null) title = rs.getString("assign_title");
+                if (title == null) title = rs.getString("discuss_title");
+                item.setTitle(title);
+
+                item.setStatus(rs.getString("status"));
+                item.setScore_pct(rs.getObject("score_pct") != null ? rs.getDouble("score_pct") : null);
+
+                module.getItems().add(item);
+            }
+
+            modules.addAll(moduleMap.values());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return modules;
+    }    
 }

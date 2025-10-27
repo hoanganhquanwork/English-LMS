@@ -1,10 +1,16 @@
+<<<<<<< HEAD
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+=======
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+>>>>>>> main
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
+<<<<<<< HEAD
         <title>Manager Dashboard — EnglishLMS</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
         <link rel="stylesheet" href="<c:url value='/css/manager-dashboard.css?v=63' />">
@@ -12,10 +18,18 @@
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     </head>
     <body>
+=======
+        <title>Dashboard Manager</title>
+           <link rel="stylesheet" href="<c:url value='/css/manager-style.css?v=31' />">
+        <link rel="stylesheet" href="<c:url value='css/manager-revenue.css' />">
+    </head>
+    <body class="dashboard">
+>>>>>>> main
 
         <jsp:include page="includes-manager/sidebar-manager.jsp" />
 
         <main class="main-content">
+<<<<<<< HEAD
             <div class="topbar">
                 <h2>Manager Dashboard</h2>
             </div>
@@ -355,5 +369,17 @@
                 document.getElementById('scheduleModal').style.display = 'none';
             }
         </script>
+=======
+            <div class="container">
+                <h1>Xin chào, ${sessionScope.user.fullName} 👋</h1>
+                <p>Đây là dashboard dành cho Manager.</p>
+
+                <ul>
+                    <li><a href="manager-profile">Hồ sơ cá nhân</a></li>
+                    <li><a href="coursemanager">Quản lý khóa học</a></li>
+                </ul>
+            </div>
+        </main>
+>>>>>>> main
     </body>
 </html>

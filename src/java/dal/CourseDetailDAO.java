@@ -3,7 +3,7 @@ package dal;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
-import model.dto.AssignmentWorkDTO;
+import model.dto.AssignmentDetailDTO;
 import model.dto.DiscussionCommentDTO;
 import model.dto.DiscussionPostDTO;
 import model.dto.ModuleItemDetailDTO;
@@ -54,129 +54,94 @@ public class CourseDetailDAO extends DBContext {
         return list;
     }
 
-public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
-    List<ModuleItemDetailDTO> list = new ArrayList<>();
+    public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
+        List<ModuleItemDetailDTO> list = new ArrayList<>();
 
-    String sql = "SELECT "
-            + " mi.module_item_id, mi.item_type, mi.order_index, "
-            + " m.module_id, m.title AS module_title, "
-            + " l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec, "
-            + " q.title AS quiz_title, q.attempts_allowed, q.passing_score_pct AS quiz_pass_pct, "
-            + " q.pick_count, q.time_limit_min, "
-            + " a.assignment_id, a.title AS assignment_title, a.submission_type, "
-            + " a.max_score, a.passing_score_pct AS assign_pass_pct, "
-            + " d.title AS discussion_title, d.description AS discussion_desc "
-            + "FROM ModuleItem mi "
-            + "JOIN Module m ON mi.module_id = m.module_id "
-            + "LEFT JOIN Lesson l ON mi.module_item_id = l.lesson_id "
-            + "LEFT JOIN Quiz q ON mi.module_item_id = q.quiz_id "
-            + "LEFT JOIN Assignment a ON mi.module_item_id = a.assignment_id "
-            + "LEFT JOIN Discussion d ON mi.module_item_id = d.discussion_id "
-            + "WHERE m.course_id = ? "
-            + "ORDER BY m.order_index, mi.order_index";
+        String sql = "SELECT "
+                + " mi.module_item_id, mi.item_type, mi.order_index, "
+                + " m.module_id, m.title AS module_title, "
+                + " l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec, "
+                + " q.title AS quiz_title, q.attempts_allowed, q.passing_score_pct AS quiz_pass_pct, "
+                + " q.pick_count, q.time_limit_min, "
+                + " a.assignment_id, a.title AS assignment_title, a.submission_type, "
+                + " a.max_score, a.passing_score_pct AS assign_pass_pct, "
+                + " d.title AS discussion_title, d.description AS discussion_desc "
+                + "FROM ModuleItem mi "
+                + "JOIN Module m ON mi.module_id = m.module_id "
+                + "LEFT JOIN Lesson l ON mi.module_item_id = l.lesson_id "
+                + "LEFT JOIN Quiz q ON mi.module_item_id = q.quiz_id "
+                + "LEFT JOIN Assignment a ON mi.module_item_id = a.assignment_id "
+                + "LEFT JOIN Discussion d ON mi.module_item_id = d.discussion_id "
+                + "WHERE m.course_id = ? "
+                + "ORDER BY m.order_index, mi.order_index";
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, courseId);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, courseId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ModuleItemDetailDTO dto = new ModuleItemDetailDTO();
 
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                ModuleItemDetailDTO dto = new ModuleItemDetailDTO();
+                    dto.setModuleId(rs.getInt("module_id"));
+                    dto.setModuleTitle(rs.getString("module_title"));
+                    dto.setItemId(rs.getInt("module_item_id"));
+                    dto.setItemType(rs.getString("item_type"));
+                    dto.setOrderIndex(rs.getInt("order_index"));
 
-                dto.setModuleId(rs.getInt("module_id"));
-                dto.setModuleTitle(rs.getString("module_title"));
-                dto.setItemId(rs.getInt("module_item_id"));
-                dto.setItemType(rs.getString("item_type"));
-                dto.setOrderIndex(rs.getInt("order_index"));
+                    String type = rs.getString("item_type");
 
-                String type = rs.getString("item_type");
-
-                if ("lesson".equalsIgnoreCase(type)) {
-                    dto.setLessonTitle(rs.getString("lesson_title"));
-                    dto.setContentType(rs.getString("content_type"));
-                    dto.setVideoUrl(rs.getString("video_url"));
-                    dto.setTextContent(rs.getString("text_content"));
-
-                    Object durObj = rs.getObject("duration_sec");
-                    if (durObj != null) {
-                        dto.setDurationSec(rs.getInt("duration_sec"));
-                    } else {
-                        dto.setDurationSec(0);
+                    if ("lesson".equalsIgnoreCase(type)) {
+                        dto.setLessonTitle(rs.getString("lesson_title"));
+                        dto.setContentType(rs.getString("content_type"));
+                        dto.setVideoUrl(rs.getString("video_url"));
+                        dto.setTextContent(rs.getString("text_content"));
+                        Object durObj = rs.getObject("duration_sec");
+                        dto.setDurationSec(durObj != null ? rs.getInt("duration_sec") : 0);
+                    } else if ("quiz".equalsIgnoreCase(type)) {
+                        dto.setQuizTitle(rs.getString("quiz_title"));
+                        Object attempts = rs.getObject("attempts_allowed");
+                        if (attempts != null) dto.setAttemptsAllowed(rs.getInt("attempts_allowed"));
+                        Object passPct = rs.getObject("quiz_pass_pct");
+                        if (passPct instanceof BigDecimal) {
+                            dto.setQuizPassingPct(((BigDecimal) passPct).doubleValue());
+                        }
+                        Object pickCount = rs.getObject("pick_count");
+                        if (pickCount != null) dto.setPickCount(rs.getInt("pick_count"));
+                        Object timeLimit = rs.getObject("time_limit_min");
+                        if (timeLimit != null) dto.setTimeLimitMin(rs.getInt("time_limit_min"));
+                    } else if ("assignment".equalsIgnoreCase(type)) {
+                        dto.setAssignmentTitle(rs.getString("assignment_title"));
+                        dto.setSubmissionType(rs.getString("submission_type"));
+                        Object maxScore = rs.getObject("max_score");
+                        if (maxScore != null) dto.setMaxScore(rs.getDouble("max_score"));
+                        Object assignPass = rs.getObject("assign_pass_pct");
+                        if (assignPass instanceof BigDecimal) {
+                            dto.setAssignmentPassingPct(((BigDecimal) assignPass).doubleValue());
+                        }
+                    } else if ("discussion".equalsIgnoreCase(type)) {
+                        dto.setDiscussionTitle(rs.getString("discussion_title"));
+                        dto.setDiscussionDescription(rs.getString("discussion_desc"));
                     }
 
-                    dto.setLessonQuestions(null);
+                    list.add(dto);
                 }
-
-                else if ("quiz".equalsIgnoreCase(type)) {
-                    dto.setQuizTitle(rs.getString("quiz_title"));
-
-                    Object attempts = rs.getObject("attempts_allowed");
-                    if (attempts != null) {
-                        dto.setAttemptsAllowed(rs.getInt("attempts_allowed"));
-                    }
-
-                    Object passPct = rs.getObject("quiz_pass_pct");
-                    if (passPct instanceof BigDecimal) {
-                        dto.setQuizPassingPct(((BigDecimal) passPct).doubleValue());
-                    }
-
-                    Object pickCount = rs.getObject("pick_count");
-                    if (pickCount != null) {
-                        dto.setPickCount(rs.getInt("pick_count"));
-                    }
-
-                    Object timeLimit = rs.getObject("time_limit_min");
-                    if (timeLimit != null) {
-                        dto.setTimeLimitMin(rs.getInt("time_limit_min"));
-                    }
-                }
-
-                else if ("assignment".equalsIgnoreCase(type)) {
-                    dto.setAssignmentTitle(rs.getString("assignment_title"));
-                    dto.setSubmissionType(rs.getString("submission_type"));
-
-                    Object maxScore = rs.getObject("max_score");
-                    if (maxScore != null) {
-                        dto.setMaxScore(rs.getDouble("max_score"));
-                    }
-
-                    Object assignPass = rs.getObject("assign_pass_pct");
-                    if (assignPass instanceof BigDecimal) {
-                        dto.setAssignmentPassingPct(((BigDecimal) assignPass).doubleValue());
-                    }
-
-                    dto.setAssignmentContent(null);
-                    dto.setAssignmentInstructions(null);
-                    dto.setAttachmentUrl(null);
-                    dto.setRubric(null);
-                    dto.setAssignmentWorks(null);
-                }
-
-                else if ("discussion".equalsIgnoreCase(type)) {
-                    dto.setDiscussionTitle(rs.getString("discussion_title"));
-                    dto.setDiscussionDescription(rs.getString("discussion_desc"));
-                }
-
-                list.add(dto);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return list;
     }
 
-    return list;
-}
-
-    public AssignmentWorkDTO getAssignmentDetail(int assignmentId) {
-        AssignmentWorkDTO dto = null;
-        String sql = "SELECT assignment_id, title, content, instructions, "
+public AssignmentDetailDTO getAssignmentDetail(int assignmentId) {
+    AssignmentDetailDTO dto = null;
+    String sql = "SELECT assignment_id, title, content, instructions, "
                 + "submission_type, attachment_url, max_score, passing_score_pct, rubric "
                 + "FROM Assignment WHERE assignment_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, assignmentId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                dto = new AssignmentWorkDTO();
+                dto = new AssignmentDetailDTO();
                 dto.setAssignmentId(rs.getInt("assignment_id"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
@@ -195,9 +160,7 @@ public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
             e.printStackTrace();
         }
         return dto;
-    }
-
-    
+}
 
     public List<DiscussionPostDTO> getDiscussionPosts(int discussionId) {
         List<DiscussionPostDTO> posts = new ArrayList<>();
@@ -221,7 +184,6 @@ public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
                 post.setFullName(rs.getString("full_name"));
                 post.setRole(rs.getString("role"));
                 post.setAvatar(rs.getString("profile_picture"));
-
                 post.setComments(getDiscussionComments(post.getPostId()));
                 posts.add(post);
             }
@@ -368,15 +330,16 @@ public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
         return instructor;
     }
 
-   public List<QuizDTO> getQuizzesWithQuestions(int courseId) {
+public List<QuizDTO> getQuizzesWithQuestions(int courseId) {
     List<QuizDTO> quizzes = new ArrayList<>();
 
-    String sql = "SELECT qz.quiz_id, mi.module_item_id, qz.title, qz.attempts_allowed, "
-            + "qz.passing_score_pct, qz.pick_count, qz.time_limit_min, "  
-            + "qu.question_id, qu.content AS question_content, qu.media_url, qu.type, qu.explanation, "
+    String sql = "SELECT qz.quiz_id, qz.module_item_id, qz.title, "
+            + "qz.passing_score_pct, qz.pick_count, qz.time_limit_min, "
+            + "qu.question_id, qu.content AS question_content, qu.media_url, "
+            + "qu.type, qu.explanation, "
             + "qo.option_id, qo.content AS option_content, qo.is_correct "
             + "FROM Quiz qz "
-            + "JOIN ModuleItem mi ON qz.quiz_id = mi.module_item_id "
+            + "JOIN ModuleItem mi ON qz.module_item_id = mi.module_item_id "
             + "JOIN Module m ON mi.module_id = m.module_id "
             + "LEFT JOIN ModuleQuestions mq ON mq.module_id = m.module_id "
             + "LEFT JOIN Question qu ON mq.question_id = qu.question_id "
@@ -399,25 +362,23 @@ public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
             if (quizId != lastQuizId) {
                 currentQuiz = new QuizDTO();
                 currentQuiz.setQuizId(quizId);
-                currentQuiz.setModuleId(rs.getInt("module_item_id"));
-                currentQuiz.setTitle(rs.getString("title"));
-                currentQuiz.setAttemptsAllowed((Integer) rs.getObject("attempts_allowed"));
 
+                int moduleId = rs.getInt("module_item_id");
+                currentQuiz.setModuleId(rs.wasNull() ? null : moduleId);
+
+                currentQuiz.setTitle(rs.getString("title"));
                 BigDecimal passScore = rs.getBigDecimal("passing_score_pct");
                 currentQuiz.setPassingScorePct(passScore != null ? passScore.doubleValue() : null);
                 currentQuiz.setPickCount((Integer) rs.getObject("pick_count"));
-
                 currentQuiz.setTimeLimitMin((Integer) rs.getObject("time_limit_min"));
-
                 currentQuiz.setBank(new ArrayList<>());
-                quizzes.add(currentQuiz);
 
+                quizzes.add(currentQuiz);
                 lastQuizId = quizId;
                 lastQuestionId = -1;
             }
-
             int questionId = rs.getInt("question_id");
-            if (questionId > 0) {
+            if (!rs.wasNull() && questionId > 0) {
                 if (questionId != lastQuestionId) {
                     currentQuestion = new QuestionDTO();
                     currentQuestion.setQuestionId(questionId);
@@ -429,9 +390,8 @@ public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
                     currentQuiz.getBank().add(currentQuestion);
                     lastQuestionId = questionId;
                 }
-
                 int optId = rs.getInt("option_id");
-                if (optId > 0 && currentQuestion != null) {
+                if (!rs.wasNull() && optId > 0 && currentQuestion != null) {
                     QuestionOptionDTO opt = new QuestionOptionDTO();
                     opt.setOptionId(optId);
                     opt.setContent(rs.getString("option_content"));
@@ -446,5 +406,4 @@ public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
 
     return quizzes;
 }
-
 }
