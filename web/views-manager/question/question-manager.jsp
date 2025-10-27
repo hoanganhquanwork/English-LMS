@@ -44,7 +44,7 @@
                     <select name="topicId">
                         <option value="all" ${param.topicId == 'all' ? 'selected' : ''}>Tất cả chủ đề</option>
                         <c:forEach var="t" items="${topics}">
-                           <option value="${t.topicId}" ${param.topicId eq t.topicId.toString() ? 'selected' : ''}>${t.name}</option>
+                            <option value="${t.topicId}" ${param.topicId eq t.topicId.toString() ? 'selected' : ''}>${t.name}</option>
                         </c:forEach>
                     </select>
                     <div class="instructor-search">
@@ -81,6 +81,15 @@
                         </tr>
                     </thead>
                     <tbody>
+                        
+                        <c:if test="${empty questions}">
+                            <tr>
+                                <td colspan="8" style="text-align:center; color:#777; padding:16px;">
+                                    Không có câu hỏi nào được tạo bởi giảng viên này.
+                                </td>
+                            </tr>
+                        </c:if>
+                            
                         <c:forEach var="q" items="${questions}">
                             <tr>
                                 <td><input type="checkbox" name="questionIds" value="${q.questionId}" form="bulkForm"></td>

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -19,6 +19,7 @@
             <c:if test="${not empty message}">
                 <div class="alert success">${message}</div>
             </c:if>
+
             <c:if test="${not empty error}">
                 <div class="alert error">${error}</div>
             </c:if>
@@ -53,7 +54,7 @@
                                 </td>
                                 <td>
                                     <button class="btn btn-edit"
-                                            onclick="openForm('category', ${c.categoryId}, '${fn:escapeXml(c.name)}', '${fn:escapeXml(c.description)}', '${c.picture}')">
+                                            onclick='openForm("category", ${c.categoryId}, "${fn:escapeXml(c.name)}", "${fn:escapeXml(c.description)}", "${c.picture}")'>
                                         <i class="fa fa-pen"></i>
                                     </button>
                                 </td>

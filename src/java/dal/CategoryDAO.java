@@ -7,6 +7,7 @@ package dal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import model.entity.Category;
@@ -59,10 +60,12 @@ public class CategoryDAO extends DBContext {
 
     public boolean insertCategory(Category c) {
         String sql = "INSERT INTO Categories (name, description, picture) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             ps.setString(1, c.getName());
             ps.setString(2, c.getDescription());
             ps.setString(3, c.getPicture());
+
             int rows = ps.executeUpdate();
             if (rows > 0) {
                 try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -72,10 +75,11 @@ public class CategoryDAO extends DBContext {
                 }
                 return true;
             }
+
         } catch (SQLException e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
-        return false;
+        return false; 
     }
 
     public boolean updateCategory(Category c) {
@@ -102,7 +106,7 @@ public class CategoryDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
         return false;
     }
@@ -118,7 +122,7 @@ public class CategoryDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
         return false;
     }

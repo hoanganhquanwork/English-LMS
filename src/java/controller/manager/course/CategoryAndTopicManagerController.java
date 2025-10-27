@@ -51,8 +51,11 @@ public class CategoryAndTopicManagerController extends HttpServlet {
 
         req.setCharacterEncoding("UTF-8");
         String type = req.getParameter("type");
-        String action = req.getParameter("action");
+        if (!"topic".equalsIgnoreCase(type) && !"category".equalsIgnoreCase(type)) {
+            type = "category";
+        }
 
+        String action = req.getParameter("action");
         if (action == null || action.isEmpty()) {
             action = (req.getParameter("id") == null || req.getParameter("id").isEmpty())
                     ? "add" : "update";
@@ -71,6 +74,7 @@ public class CategoryAndTopicManagerController extends HttpServlet {
             c.setDescription(req.getParameter("description"));
 
             Part filePart = req.getPart("pictureFile");
+
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = System.currentTimeMillis() + "_"
                         + Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
@@ -79,6 +83,7 @@ public class CategoryAndTopicManagerController extends HttpServlet {
                 Path filePath = Paths.get(uploadDir, fileName);
                 filePart.write(filePath.toString());
                 c.setPicture("uploads/categories/" + fileName);
+
             } else {
                 String oldPic = req.getParameter("pictureOld");
                 if (oldPic != null && !oldPic.isEmpty()) {
@@ -105,8 +110,7 @@ public class CategoryAndTopicManagerController extends HttpServlet {
             } else {
                 error = "Hành động không hợp lệ.";
             }
-        } 
-        else if ("topic".equals(type)) {
+        } else if ("topic".equals(type)) {
             Topic t = new Topic();
             String idRaw = req.getParameter("id");
             if (idRaw != null && !idRaw.isEmpty()) {
@@ -141,6 +145,15 @@ public class CategoryAndTopicManagerController extends HttpServlet {
             req.setAttribute("error", error);
         }
 
-        doGet(req, resp);
+        if ("topic".equals(type)) {
+            List<Topic> topics = service.getAllTopics();
+            req.setAttribute("topics", topics);
+        } else {
+            List<Category> categories = service.getAllCategories();
+            req.setAttribute("categories", categories);
+        }
+        req.setAttribute("type", type);
+        req.getRequestDispatcher("/views-manager/category/category-topic-management.jsp")
+        .forward(req, resp);
     }
 }
