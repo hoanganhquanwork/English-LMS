@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -500,6 +501,33 @@
                 display: none;
             }
 
+            /* Modal Animations */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .modal.show {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+
             /* Responsive Design */
             @media (max-width: 768px) {
                 .questions-section {
@@ -526,437 +554,278 @@
     <body>
         <div id="page" data-courseid="${param.courseId}"></div>
         <div class="container" style="max-width: 1500px;">
-            <a class="back-link" href="questions.jsp?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
+            <a class="back-link" href="ManageQuestionServlet?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
             <div class="page-title-wrap">
                 <h2>Xem Câu hỏi - Module: ${module.title}</h2>
             </div>
             
             <!-- Main Content -->
             <div class="main-content" style="height: auto; min-height: 700px; max-width: 1200px; margin: 0 auto;">
-                    <!-- Dữ liệu mẫu để test giao diện -->
-                    <c:set var="questionMap" value="${questionMap}" scope="request" />
-                    <c:if test="${empty questionMap}">
-                       
-                    </c:if>
-                    
-                    <c:choose>
-                        <c:when test="${not empty questionMap}">
-                            <div class="questions-section">
-                                <div class="questions-header">
-                                    <h3 class="questions-title">
-                                        <i class="fas fa-question-circle"></i>
-                                        Câu hỏi của module (${questionMap.size()} câu)
-                                    </h3>
-                                    <button class="collapse-btn" onclick="toggleQuestionsCollapse()">
-                                        <i class="fas fa-chevron-up"></i>
-                                        Thu gọn
-                                    </button>
-                                </div>
-                                <div class="questions-content-area expanded" id="questionsContent">
-                                    <c:forEach var="entry" items="${questionMap}" varStatus="status">
-                                        <div class="question-form" data-question-id="${entry.key.questionId}">
-                                            <div class="question-header" onclick="toggleQuestionContent('question-${status.index + 1}')">
-                                                <div class="question-number">Câu ${status.index + 1}</div>
-                                                <div class="question-type">
-                                                    <i class="fas fa-check-circle"></i>
-                                                    Trắc nghiệm
+                <!-- Questions Table -->
+                <div class="table-container" style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 20px; color: #2c3e50;">Danh sách câu hỏi module</h3>
+                    <table class="questions-table" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">ID</th>
+                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Nội dung câu hỏi</th>
+                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Chủ đề</th>
+                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Loại</th>
+                                <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:choose>
+                                <c:when test="${not empty questionMap}">
+                                    <c:forEach var="entry" items="${questionMap}">
+                                        <tr style="border-bottom: 1px solid #e9ecef;">
+                                            <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">${entry.key.questionId}</td>
+                                            <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                <div style="max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.4;" title="${entry.key.content}">
+                                                    ${fn:substring(entry.key.content, 0, 60)}...
                                                 </div>
-                                                <div class="question-header-actions">
-                                                    <button class="question-toggle-btn" id="toggle-${status.index + 1}" onclick="event.stopPropagation(); toggleQuestionContent('question-${status.index + 1}')">
-                                                        <i class="fas fa-chevron-up"></i>
-                                                        Thu gọn
-                                                    </button>
-                                                    <button class="edit-question-btn" onclick="event.stopPropagation(); editQuestion('${entry.key.questionId}')">
-                                                        <i class="fas fa-edit"></i>
-                                                        Chỉnh sửa
-                                                    </button>
-                                                    <a href="deleteQuestion?courseId=${param.courseId}&moduleId=${param.moduleId}&questionId=${entry.key.questionId}"
-                                                       class="delete-question-btn"
-                                                       onclick="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?'); event.stopPropagation();">
+                                            </td>
+                                            <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                <c:choose>
+                                                    <c:when test="${entry.key.topicId != null}">
+                                                        <c:forEach var="topic" items="${topics}">
+                                                            <c:if test="${topic.topicId == entry.key.topicId}">
+                                                                ${topic.name}
+                                                            </c:if>
+                                                        </c:forEach>
+                                                    </c:when>
+                                                    <c:otherwise>Không có</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                <c:choose>
+                                                    <c:when test="${entry.key.type == 'mcq_single'}">Trắc nghiệm</c:when>
+                                                    <c:when test="${entry.key.type == 'text'}">Tự luận</c:when>
+                                                    <c:otherwise>${entry.key.type}</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                <div style="display: flex; gap: 8px;">
+                                                    <a href="#" 
+                                                       style="padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #3498db; color: white;"
+                                                       data-id="${entry.key.questionId}"
+                                                       data-content="${fn:escapeXml(entry.key.content)}"
+                                                       data-type="${entry.key.type}"
+                                                       data-explanation="${fn:escapeXml(entry.key.explanation)}"
+                                                       data-file="${entry.key.mediaUrl}"
+                                                       data-topic="<c:choose><c:when test='${entry.key.topicId != null}'><c:forEach var='topic' items='${topics}'><c:if test='${topic.topicId == entry.key.topicId}'>${topic.name}</c:if></c:forEach></c:when><c:otherwise>Không có</c:otherwise></c:choose>"
+                                                       data-status="active"
+                                                       <c:if test="${entry.key.type == 'mcq_single'}">
+                                                           data-options="<c:forEach var='opt' items='${entry.value}' varStatus='loop'>${fn:escapeXml(opt.content)}|${opt.correct ? 'true' : 'false'}${!loop.last ? ',' : ''}</c:forEach>"
+                                                       </c:if>
+                                                       <c:if test="${entry.key.type == 'text'}">
+                                                           data-answer="${entry.value}"
+                                                       </c:if>
+                                                       onclick="openViewQuestion(this)">
+                                                        <i class="fas fa-eye"></i> Xem
+                                                    </a>
+                                                    <a href="deleteQuestionFromModule?courseId=${param.courseId}&moduleId=${param.moduleId}&questionId=${entry.key.questionId}"
+                                                       style="padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #e74c3c; color: white;"
+                                                       onclick="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');">
                                                         <i class="fas fa-trash"></i> Xóa
                                                     </a>
                                                 </div>
-                                            </div>
-                                            <div class="question-content expanded" id="question-${status.index + 1}">
-                                                <div class="question-text">${entry.key.content}</div>
-                                                <div class="answer-options">
-                                                    <c:forEach var="opt" items="${entry.value}">
-                                                        <div class="answer-option ${opt.correct ? 'correct' : 'incorrect'}">
-                                                            <div class="correct-answer-label ${opt.correct ? 'correct' : 'incorrect'}">
-                                                                <i class="fas ${opt.correct ? 'fa-check' : 'fa-times'}"></i>
-                                                            </div>
-                                                            <input type="text" class="answer-input" value="${opt.content}" readonly>
-                                                        </div>
-                                                    </c:forEach>
-                                                </div>
-                                                <div class="explanation-group">
-                                                    <textarea class="explanation-input" readonly>${entry.key.explanation}</textarea>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            </td>
+                                        </tr>
                                     </c:forEach>
-                                </div>
-                            </div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="questions-section">
-                                <div class="questions-header">
-                                    <h3 class="questions-title">
-                                        <i class="fas fa-question-circle"></i>
-                                        Câu hỏi của module
-                                    </h3>
-                                </div>
-                                <div class="questions-content-area expanded">
-                                    <div class="empty-questions">
-                                        <i class="fas fa-question-circle"></i>
-                                        <p>Module này chưa có câu hỏi nào</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
+                                </c:when>
+                                <c:otherwise>
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 40px; color: #6c757d; font-style: italic;">
+                                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; color: #dee2e6;"></i>
+                                            <p>Module này chưa có câu hỏi nào</p>
+                                        </td>
+                                    </tr>
+                                </c:otherwise>
+                            </c:choose>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <div class="actions">
-                        <a href="add-questions.jsp?courseId=${param.courseId}&moduleId=${param.moduleId}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Thêm câu hỏi mới
-                        </a>
-                        <a href="questions.jsp?courseId=${param.courseId}" class="btn btn-secondary">
-                            <i class="fas fa-list"></i> Xem tất cả modules
-                        </a>
+              
+            </div>
+        </div>
+
+        <!-- View Question Modal -->
+        <div id="viewQuestionModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); animation: fadeIn 0.3s ease;">
+            <div class="modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideInUp 0.3s ease; margin: auto; margin-top: 5%;">
+                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #e9ecef;">
+                    <h2 class="modal-title" style="font-size: 24px; font-weight: 600; color: #2c3e50; margin: 0;">
+                        <i class="fas fa-eye" style="color: #3498db; margin-right: 10px;"></i>
+                        Xem chi tiết câu hỏi
+                    </h2>
+                    <button class="close-btn" onclick="closeViewModal()" style="background: none; border: none; font-size: 24px; color: #6c757d; cursor: pointer; padding: 5px; border-radius: 4px; transition: all 0.3s;">&times;</button>
+                </div>
+                <div class="modal-body" style="margin-bottom: 25px;">
+                    <div class="question-details">
+                        <div class="question-info" style="margin-bottom: 20px;">
+                            <div class="info-row" style="display: flex; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: #2c3e50; width: 120px;">ID:</label>
+                                <span id="viewQuestionId" style="color: #6c757d;"></span>
+                            </div>
+                            <div class="info-row" style="display: flex; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: #2c3e50; width: 120px;">Loại:</label>
+                                <span id="viewQuestionType" style="color: #6c757d;"></span>
+                            </div>
+                            <div class="info-row" style="display: flex; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: #2c3e50; width: 120px;">Module:</label>
+                                <span id="viewQuestionTopic" style="color: #6c757d;"></span>
+                            </div>
+                            <div class="info-row" style="display: flex; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: #2c3e50; width: 120px;">Trạng thái:</label>
+                                <span id="viewQuestionStatus" style="color: #6c757d;"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="question-content-section" style="margin-bottom: 20px;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Nội dung câu hỏi:</label>
+                            <div id="viewQuestionContent" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3498db; font-size: 16px; line-height: 1.6; color: #2c3e50;"></div>
+                        </div>
+
+                        <div id="viewMcqOptions" style="margin-bottom: 20px; display: none;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Các phương án trả lời:</label>
+                            <div id="viewAnswerOptions" style="background: #f8f9fa; padding: 15px; border-radius: 8px;"></div>
+                        </div>
+
+                        <div id="viewTextAnswer" style="margin-bottom: 20px; display: none;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Đáp án đúng:</label>
+                            <div id="viewCorrectAnswer" style="background: #d4edda; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745; font-size: 16px; line-height: 1.6; color: #155724;"></div>
+                        </div>
+
+                        <div id="viewFileSection" style="margin-bottom: 20px; display: none;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">File đính kèm:</label>
+                            <div id="viewFileContent" style="background: #f8f9fa; padding: 15px; border-radius: 8px;"></div>
+                        </div>
+
+                        <div id="viewExplanation" style="margin-bottom: 20px;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Giải thích:</label>
+                            <div id="viewQuestionExplanation" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #6c757d; font-size: 16px; line-height: 1.6; color: #2c3e50;"></div>
+                        </div>
                     </div>
+                </div>
+                <div class="modal-footer" style="display: flex; gap: 15px; justify-content: flex-end; padding-top: 20px; border-top: 1px solid #e9ecef;">
+                    <button type="button" class="btn-cancel" onclick="closeViewModal()" style="background: #6c757d; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s;">Đóng</button>
+                </div>
             </div>
         </div>
 
         <script>
-            // Questions collapse/expand functionality
-            function toggleQuestionsCollapse() {
-                const content = document.getElementById('questionsContent');
-                const toggle = document.querySelector('.collapse-btn');
+            // View Question Modal Functions
+            function openViewQuestion(button) {
+                const id = button.getAttribute("data-id");
+                const content = button.getAttribute("data-content") || "";
+                const type = button.getAttribute("data-type") || "";
+                const explanation = button.getAttribute("data-explanation") || "";
+                const fileUrl = button.getAttribute("data-file") || "";
+                const topicName = button.getAttribute("data-topic") || "Không có";
+                const status = button.getAttribute("data-status") || "";
+                const optionsStr = button.getAttribute("data-options") || "";
+                const answerText = button.getAttribute("data-answer") || "";
 
-                if (content.classList.contains('expanded')) {
-                    content.classList.remove('expanded');
-                    content.classList.add('collapsed');
-                    toggle.innerHTML = '<i class="fas fa-chevron-down"></i> Mở rộng';
-                } else {
-                    content.classList.remove('collapsed');
-                    content.classList.add('expanded');
-                    toggle.innerHTML = '<i class="fas fa-chevron-up"></i> Thu gọn';
-                }
-            }
+                // Set basic info
+                document.getElementById("viewQuestionId").textContent = id;
+                document.getElementById("viewQuestionType").textContent = type === 'mcq_single' ? 'Trắc nghiệm' : 'Tự luận';
+                document.getElementById("viewQuestionTopic").textContent = topicName;
+                document.getElementById("viewQuestionStatus").textContent = status === 'active' ? 'Hoạt động' : status;
+                document.getElementById("viewQuestionContent").textContent = content;
+                document.getElementById("viewQuestionExplanation").textContent = explanation || "Không có giải thích";
 
-            // Toggle individual question content
-            function toggleQuestionContent(questionId) {
-                const content = document.getElementById(questionId);
-                const toggle = document.getElementById('toggle-' + questionId.split('-')[1]);
-
-                if (content.classList.contains('expanded')) {
-                    content.classList.remove('expanded');
-                    content.classList.add('collapsed');
-                    toggle.classList.add('collapsed');
-                    toggle.innerHTML = '<i class="fas fa-chevron-down"></i> Mở rộng';
-                } else {
-                    content.classList.remove('collapsed');
-                    content.classList.add('expanded');
-                    toggle.classList.remove('collapsed');
-                    toggle.innerHTML = '<i class="fas fa-chevron-up"></i> Thu gọn';
-                }
-            }
-
-            // Edit question functionality
-            function editQuestion(questionId) {
-                const qForm = document.querySelector('[data-question-id="' + questionId + '"]');
-                const editBtn = qForm.querySelector('.edit-question-btn');
-
-                if (!qForm) {
-                    alert("Không tìm thấy câu hỏi này!");
-                    return;
-                }
-
-                // Nếu đang ở chế độ chỉnh sửa => lưu thay đổi
-                if (qForm.classList.contains('editing')) {
-                    saveQuestion(qForm, questionId);
-                } else {
-                    // Bật chế độ chỉnh sửa
-                    enableEdit(qForm, editBtn);
-                }
-            }
-
-            function enableEdit(qForm, editBtn) {
-                qForm.classList.add('editing');
-                editBtn.innerHTML = '<i class="fas fa-save"></i> Lưu';
-                editBtn.classList.add('btn-save');
-                makeQuestionEditable(qForm);
-            }
-
-            function saveQuestion(qForm, questionId) {
-                const questionTextInput = qForm.querySelector('.question-input');
-                const explanationInput = qForm.querySelector('.explanation-input');
-
-                if (!questionTextInput) {
-                    alert("Không tìm thấy ô nhập câu hỏi!");
-                    return;
-                }
-
-                // Tạo form để submit dữ liệu
-                const form = document.createElement('form');
-                form.method = 'post';
-                form.action = 'updateQuestion';
+                // Handle MCQ options
+                const mcqOptions = document.getElementById("viewMcqOptions");
+                const textAnswer = document.getElementById("viewTextAnswer");
+                const optionsContainer = document.getElementById("viewAnswerOptions");
                 
-                // Thêm các input hidden
-                const courseId = document.getElementById('page').dataset.courseid;
-                addHiddenInput(form, 'courseId', courseId);
-                addHiddenInput(form, 'moduleId', '${param.moduleId}');
-                addHiddenInput(form, 'questionId', questionId);
-                addHiddenInput(form, 'questionText', questionTextInput.value);
-                addHiddenInput(form, 'explanation', explanationInput ? explanationInput.value : "");
-
-                // Thêm các phương án trả lời
-                qForm.querySelectorAll('.answer-input').forEach((input, i) => {
-                    if (input.value.trim()) {
-                        addHiddenInput(form, 'optionContent_' + (i + 1), input.value);
+                if (type === "mcq_single") {
+                    mcqOptions.style.display = "block";
+                    textAnswer.style.display = "none";
+                    
+                    optionsContainer.innerHTML = "";
+                    if (optionsStr.trim() !== "") {
+                        const pairs = optionsStr.split(",");
+                        pairs.forEach(function (p, index) {
+                            const parts = p.split("|");
+                            const optText = parts[0];
+                            const isCorrect = parts[1] === "true";
+                            
+                            const optionDiv = document.createElement("div");
+                            optionDiv.style.cssText = "display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #e9ecef;";
+                            
+                            const radio = document.createElement("input");
+                            radio.type = "radio";
+                            radio.checked = isCorrect;
+                            radio.disabled = true;
+                            radio.style.marginRight = "8px";
+                            
+                            const label = document.createElement("span");
+                            label.textContent = optText;
+                            label.style.cssText = isCorrect ? "color: #28a745; font-weight: 600;" : "color: #6c757d;";
+                            
+                            if (isCorrect) {
+                                const checkIcon = document.createElement("i");
+                                checkIcon.className = "fas fa-check";
+                                checkIcon.style.cssText = "color: #28a745; margin-left: 8px;";
+                                label.appendChild(checkIcon);
+                            }
+                            
+                            optionDiv.appendChild(radio);
+                            optionDiv.appendChild(label);
+                            optionsContainer.appendChild(optionDiv);
+                        });
                     }
-                });
-
-                // Thêm đáp án đúng
-                qForm.querySelectorAll('.correct-answer-checkbox:checked').forEach(cb => {
-                    addHiddenInput(form, 'correct', cb.value);
-                });
-
-                // Submit form
-                document.body.appendChild(form);
-                form.submit();
-            }
-
-            function addHiddenInput(form, name, value) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = name;
-                input.value = value;
-                form.appendChild(input);
-            }
-
-            function makeQuestionEditable(questionForm) {
-                
-                convertQuestionToTextarea(questionForm);
-
-                
-                makeOptionsEditable(questionForm);
-
-               
-                makeExplanationEditable(questionForm);
-
-                
-                addOptionButton(questionForm);
-            }
-
-            function convertQuestionToTextarea(questionForm) {
-                const questionText = questionForm.querySelector('.question-text');
-                if (questionText) {
-                    const textarea = document.createElement('textarea');
-                    textarea.className = 'question-input';
-                    textarea.value = questionText.textContent;
-                    textarea.name = 'editQuestionText';
-                    textarea.placeholder = 'Nhập nội dung câu hỏi...';
-                    textarea.required = true;
-                    questionText.parentNode.replaceChild(textarea, questionText);
-                }
-            }
-
-            function makeOptionsEditable(questionForm) {
-                const answerOptions = questionForm.querySelectorAll('.answer-option');
-                answerOptions.forEach((option, index) => {
-                    const input = option.querySelector('.answer-input');
-                    if (input) {
-                        input.removeAttribute('readonly');
-                        input.name = 'editOptionContent_' + (index + 1);
-                    }
-
-                    // Thêm checkbox chọn đáp án đúng
-                    if (!option.querySelector('.correct-answer-checkbox')) {
-                        addCorrectAnswerCheckbox(option, index, questionForm);
-                    }
-
-                    // Thêm nút xóa phương án
-                    if (!option.querySelector('.remove-option-btn')) {
-                        addRemoveButton(option);
-                    }
-                });
-            }
-
-            function addCorrectAnswerCheckbox(option, index, questionForm) {
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.name = 'correct';
-                checkbox.value = (index + 1);
-                checkbox.id = 'edit-correct-' + (index + 1);
-                checkbox.className = 'correct-answer-checkbox';
-
-                const label = document.createElement('label');
-                label.htmlFor = 'edit-correct-' + (index + 1);
-                label.className = 'correct-answer-label';
-                label.innerHTML = '<i class="fas fa-check"></i>';
-
-                // Đánh dấu đáp án đúng ban đầu
-                if (option.classList.contains('correct')) {
-                    checkbox.checked = true;
-                    label.classList.add('correct');
-                }
-
-                // Xử lý sự kiện click
-                label.onclick = function () {
-                    toggleCorrectAnswer(checkbox, label, questionForm);
-                };
-
-                const input = option.querySelector('.answer-input');
-                option.insertBefore(checkbox, input);
-                option.insertBefore(label, input);
-            }
-
-            function toggleCorrectAnswer(checkbox, label, questionForm) {
-                // Bỏ chọn tất cả các đáp án khác
-                questionForm.querySelectorAll('.correct-answer-checkbox').forEach(cb => {
-                    if (cb !== checkbox) {
-                        cb.checked = false;
-                        cb.nextElementSibling.classList.remove('correct');
-                    }
-                });
-
-                // Toggle đáp án hiện tại
-                checkbox.checked = !checkbox.checked;
-                if (checkbox.checked) {
-                    label.classList.add('correct');
+                } else if (type === "text") {
+                    mcqOptions.style.display = "none";
+                    textAnswer.style.display = "block";
+                    document.getElementById("viewCorrectAnswer").textContent = answerText;
                 } else {
-                    label.classList.remove('correct');
-                }
-            }
-
-            function addRemoveButton(option) {
-                const removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'remove-option-btn';
-                removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                removeBtn.onclick = function () {
-                    removeOption(removeBtn);
-                };
-                option.appendChild(removeBtn);
-            }
-
-            function makeExplanationEditable(questionForm) {
-                const explanationTextarea = questionForm.querySelector('.explanation-input');
-                if (explanationTextarea) {
-                    explanationTextarea.removeAttribute('readonly');
-                    explanationTextarea.name = 'editExplanation';
-                }
-            }
-
-            function addOptionButton(questionForm) {
-                const answerOptionsContainer = questionForm.querySelector('.answer-options');
-                if (answerOptionsContainer && !answerOptionsContainer.querySelector('.add-option-btn')) {
-                    const addOptionBtn = document.createElement('button');
-                    addOptionBtn.type = 'button';
-                    addOptionBtn.className = 'add-option-btn';
-                    addOptionBtn.innerHTML = '<i class="fas fa-plus"></i> Thêm phương án';
-                    addOptionBtn.onclick = function () {
-                        addOptionToEdit(questionForm);
-                    };
-                    answerOptionsContainer.appendChild(addOptionBtn);
-                }
-            }
-
-            function addOptionToEdit(questionForm) {
-                const answerOptionsContainer = questionForm.querySelector('.answer-options');
-                const currentCount = answerOptionsContainer.querySelectorAll('.answer-option').length;
-                const newIndex = currentCount + 1;
-
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'answer-option';
-
-                // Tạo checkbox
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.name = 'correct';
-                checkbox.value = newIndex;
-                checkbox.id = 'edit-correct-' + newIndex;
-                checkbox.className = 'correct-answer-checkbox';
-
-                // Tạo label
-                const label = document.createElement('label');
-                label.htmlFor = 'edit-correct-' + newIndex;
-                label.className = 'correct-answer-label';
-                label.innerHTML = '<i class="fas fa-check"></i>';
-                label.onclick = function () {
-                    toggleCorrectAnswer(checkbox, label, questionForm);
-                };
-
-                // Tạo input text
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.name = 'editOptionContent_' + newIndex;
-                input.className = 'answer-input';
-                input.placeholder = 'Nhập phương án. Ví dụ: Việt Nam';
-
-                // Tạo nút xóa
-                const removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'remove-option-btn';
-                removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                removeBtn.onclick = function () {
-                    removeOption(removeBtn);
-                };
-
-                // Thêm các phần tử vào div
-                optionDiv.appendChild(checkbox);
-                optionDiv.appendChild(label);
-                optionDiv.appendChild(input);
-                optionDiv.appendChild(removeBtn);
-
-                answerOptionsContainer.insertBefore(optionDiv, answerOptionsContainer.querySelector('.add-option-btn'));
-            }
-
-            function makeQuestionReadonly(questionForm) {
-                const questionTextarea = questionForm.querySelector('.question-input');
-                if (questionTextarea) {
-                    const questionText = document.createElement('div');
-                    questionText.className = 'question-text';
-                    questionText.textContent = questionTextarea.value;
-                    questionTextarea.parentNode.replaceChild(questionText, questionTextarea);
+                    mcqOptions.style.display = "none";
+                    textAnswer.style.display = "none";
                 }
 
-                const answerOptions = questionForm.querySelectorAll('.answer-option');
-                answerOptions.forEach(function (option) {
-                    const input = option.querySelector('.answer-input');
-                    if (input) {
-                        input.setAttribute('readonly', 'readonly');
+                // Handle file display
+                const fileSection = document.getElementById("viewFileSection");
+                const fileContent = document.getElementById("viewFileContent");
+                
+                if (fileUrl && fileUrl.trim() !== "") {
+                    fileSection.style.display = "block";
+                    const ext = fileUrl.split('.').pop().toLowerCase();
+                    
+                    let fileHtml = "";
+                    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
+                        fileHtml = '<img src="' + fileUrl + '" style="max-width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">';
+                    } else if (["mp3", "wav", "m4a", "aac"].includes(ext)) {
+                        fileHtml = '<audio controls style="width:100%;"><source src="' + fileUrl + '" type="audio/mpeg">Trình duyệt của bạn không hỗ trợ phát âm thanh.</audio>';
+                    } else {
+                        fileHtml = '<p style="color: #6c757d; font-style: italic;">Không thể hiển thị loại file này.</p>';
                     }
-
-                    // Remove checkbox and label for correct answer selection
-                    const checkbox = option.querySelector('.correct-answer-checkbox');
-                    const label = option.querySelector('.correct-answer-label');
-                    if (checkbox)
-                        checkbox.remove();
-                    if (label)
-                        label.remove();
-
-                    const removeBtn = option.querySelector('.remove-option-btn');
-                    if (removeBtn)
-                        removeBtn.remove();
-                });
-
-                const explanationTextarea = questionForm.querySelector('.explanation-input');
-                if (explanationTextarea) {
-                    explanationTextarea.setAttribute('readonly', 'readonly');
+                    fileContent.innerHTML = fileHtml;
+                } else {
+                    fileSection.style.display = "none";
                 }
 
-                const addOptionBtn = questionForm.querySelector('.add-option-btn');
-                if (addOptionBtn)
-                    addOptionBtn.remove();
+                // Show modal
+                const modal = document.getElementById("viewQuestionModal");
+                modal.style.display = "flex";
+                modal.classList.add("show");
             }
 
-            function removeOption(button) {
-                var optionDiv = button.closest(".answer-option");
-                if (optionDiv)
-                    optionDiv.remove();
+            function closeViewModal() {
+                const modal = document.getElementById("viewQuestionModal");
+                modal.style.display = "none";
+                modal.classList.remove("show");
             }
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('viewQuestionModal');
+                if (event.target === modal) {
+                    closeViewModal();
+                }
+            });
         </script>
     </body>
 </html>

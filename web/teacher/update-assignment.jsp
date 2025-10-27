@@ -19,7 +19,7 @@
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                 margin-bottom: 24px;
             }
-            
+
             .assignment-info {
                 background: #f8f9fa;
                 border: 1px solid #e9ecef;
@@ -27,13 +27,13 @@
                 padding: 16px;
                 margin-bottom: 20px;
             }
-            
+
             .assignment-info h3 {
                 color: #2c3e50;
                 margin-bottom: 10px;
                 font-size: 16px;
             }
-            
+
             .info-item {
                 display: flex;
                 align-items: center;
@@ -42,12 +42,12 @@
                 font-size: 14px;
                 color: #6c757d;
             }
-            
+
             .info-item i {
                 color: #3498db;
                 width: 16px;
             }
-            
+
             .form-section {
                 margin-bottom: 24px;
                 padding: 20px;
@@ -55,7 +55,7 @@
                 border-radius: 8px;
                 border-left: 4px solid #3498db;
             }
-            
+
             .section-title {
                 color: #2c3e50;
                 font-size: 18px;
@@ -65,35 +65,35 @@
                 align-items: center;
                 gap: 8px;
             }
-            
+
             .section-title i {
                 color: #3498db;
             }
-            
+
             .form-row {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 20px;
                 margin-bottom: 20px;
             }
-            
+
             .form-group {
                 display: flex;
                 flex-direction: column;
             }
-            
+
             .form-group label {
                 margin-bottom: 8px;
                 font-weight: 500;
                 color: #2c3e50;
                 font-size: 14px;
             }
-            
+
             .form-group label.required::after {
                 content: ' *';
                 color: #e74c3c;
             }
-            
+
             .form-group input,
             .form-group textarea,
             .form-group select {
@@ -104,7 +104,7 @@
                 transition: border-color 0.3s;
                 font-family: inherit;
             }
-            
+
             .form-group input:focus,
             .form-group textarea:focus,
             .form-group select:focus {
@@ -112,80 +112,80 @@
                 border-color: #3498db;
                 box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
             }
-            
+
             .form-group textarea {
                 resize: vertical;
                 min-height: 100px;
             }
-            
+
             /* TinyMCE Editor Styling */
             .tox-tinymce {
                 border-radius: 8px !important;
                 border: 1px solid #ddd !important;
             }
-            
+
             .tox .tox-editor-header {
                 border-bottom: 1px solid #e9ecef !important;
             }
-            
+
             .tox .tox-toolbar__primary {
                 background: #f8f9fa !important;
             }
-            
+
             .tox .tox-tbtn {
                 border-radius: 4px !important;
             }
-            
+
             .tox .tox-tbtn:hover {
                 background: #e9ecef !important;
             }
-            
+
             .form-group input[type="datetime-local"] {
                 padding: 12px 16px;
             }
-            
+
             .form-group input[type="file"] {
                 padding: 8px 12px;
                 border: 2px dashed #ddd;
                 background: #f8f9fa;
                 cursor: pointer;
             }
-            
+
             .form-group input[type="file"]:hover {
                 border-color: #3498db;
                 background: #f0f8ff;
             }
-            
+
             .checkbox-group {
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 margin-bottom: 16px;
             }
-            
+
             .checkbox-group input[type="checkbox"] {
                 width: 18px;
                 height: 18px;
                 cursor: pointer;
             }
-            
+
             .checkbox-group label {
                 margin-bottom: 0;
                 cursor: pointer;
                 font-weight: 500;
             }
-            
+
             .conditional-fields {
                 margin-left: 26px;
                 padding-left: 16px;
                 border-left: 2px solid #e9ecef;
                 margin-top: 8px;
             }
-            
+
             .conditional-fields .form-group {
                 margin-bottom: 12px;
             }
-            
+
             .file-upload-area {
                 border: 2px dashed #ddd;
                 border-radius: 8px;
@@ -195,38 +195,38 @@
                 transition: all 0.3s;
                 cursor: pointer;
             }
-            
+
             .file-upload-area:hover {
                 border-color: #3498db;
                 background: #f0f8ff;
             }
-            
+
             .file-upload-area.dragover {
                 border-color: #3498db;
                 background: #e3f2fd;
             }
-            
+
             .upload-icon {
                 font-size: 48px;
                 color: #bdc3c7;
                 margin-bottom: 12px;
             }
-            
+
             .upload-text {
                 color: #6c757d;
                 font-size: 14px;
                 margin-bottom: 8px;
             }
-            
+
             .upload-hint {
                 color: #95a5a6;
                 font-size: 12px;
             }
-            
+
             .file-list {
                 margin-top: 16px;
             }
-            
+
             .file-item {
                 display: flex;
                 align-items: center;
@@ -237,27 +237,27 @@
                 border-radius: 6px;
                 margin-bottom: 8px;
             }
-            
+
             .file-info {
                 display: flex;
                 align-items: center;
                 gap: 8px;
             }
-            
+
             .file-info i {
                 color: #3498db;
             }
-            
+
             .file-name {
                 font-size: 14px;
                 color: #2c3e50;
             }
-            
+
             .file-size {
                 font-size: 12px;
                 color: #6c757d;
             }
-            
+
             .remove-file-btn {
                 background: #e74c3c;
                 color: white;
@@ -268,11 +268,11 @@
                 font-size: 12px;
                 transition: background-color 0.3s;
             }
-            
+
             .remove-file-btn:hover {
                 background: #c0392b;
             }
-            
+
             .grading-section {
                 background: #fff3cd;
                 border: 1px solid #ffeaa7;
@@ -280,19 +280,19 @@
                 padding: 16px;
                 margin-bottom: 20px;
             }
-            
+
             .grading-section h4 {
                 color: #856404;
                 margin-bottom: 12px;
                 font-size: 16px;
             }
-            
+
             .grading-options {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 16px;
             }
-            
+
             .grading-option {
                 display: flex;
                 align-items: center;
@@ -304,21 +304,21 @@
                 cursor: pointer;
                 transition: all 0.3s;
             }
-            
+
             .grading-option:hover {
                 border-color: #3498db;
                 background: #f0f8ff;
             }
-            
+
             .grading-option input[type="radio"] {
                 margin: 0;
             }
-            
+
             .grading-option.selected {
                 border-color: #3498db;
                 background: #e3f2fd;
             }
-            
+
             .actions {
                 display: flex;
                 justify-content: flex-end;
@@ -327,7 +327,7 @@
                 padding: 20px 0;
                 border-top: 1px solid #eee;
             }
-            
+
             .btn {
                 padding: 12px 24px;
                 border: none;
@@ -341,82 +341,82 @@
                 align-items: center;
                 gap: 8px;
             }
-            
+
             .btn-secondary {
                 background: #6c757d;
                 color: white;
             }
-            
+
             .btn-secondary:hover {
                 background: #5a6268;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             }
-            
+
             .btn-primary {
                 background: #007bff;
                 color: white;
             }
-            
+
             .btn-primary:hover {
                 background: #0056b3;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 8px rgba(0,123,255,0.3);
             }
-            
+
             .btn-success {
                 background: #28a745;
                 color: white;
             }
-            
+
             .btn-success:hover {
                 background: #218838;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
             }
-            
+
             .btn-danger {
                 background: #dc3545;
                 color: white;
             }
-            
+
             .btn-danger:hover {
                 background: #c82333;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
             }
-            
+
             .hint {
                 font-size: 13px;
                 color: #7f8c8d;
                 margin-top: 8px;
             }
-            
+
             .alert {
                 padding: 12px 16px;
                 border-radius: 8px;
                 margin-bottom: 16px;
                 font-size: 14px;
             }
-            
+
             .alert-danger {
                 background: #f8d7da;
                 border: 1px solid #f5c6cb;
                 color: #721c24;
             }
-            
+
             .alert-success {
                 background: #d4edda;
                 border: 1px solid #c3e6cb;
                 color: #155724;
             }
-            
+
             .alert-info {
                 background: #d1ecf1;
                 border: 1px solid #bee5eb;
                 color: #0c5460;
             }
-            
+
             .current-assignment {
                 background: #e8f4fd;
                 border: 1px solid #b3d9ff;
@@ -424,38 +424,38 @@
                 padding: 16px;
                 margin-bottom: 20px;
             }
-            
+
             .current-assignment h3 {
                 color: #2c3e50;
                 margin-bottom: 12px;
                 font-size: 18px;
             }
-            
+
             .assignment-details {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 16px;
                 margin-bottom: 16px;
             }
-            
+
             .detail-item {
                 display: flex;
                 flex-direction: column;
                 gap: 4px;
             }
-            
+
             .detail-label {
                 font-weight: 600;
                 color: #2c3e50;
                 font-size: 14px;
             }
-            
+
             .detail-value {
                 color: #6c757d;
                 font-size: 14px;
                 word-break: break-word;
             }
-            
+
             .content-preview {
                 background: white;
                 border: 1px solid #e9ecef;
@@ -465,33 +465,46 @@
                 max-height: 200px;
                 overflow-y: auto;
             }
-            
+            .rubric-table input {
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 6px;
+            }
+            .rubric-table th, .rubric-table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                vertical-align: middle;
+            }
+            .rubric-table tr:hover {
+                background-color: #f9f9f9;
+            }
+
             @media (max-width: 768px) {
                 .form-row {
                     grid-template-columns: 1fr;
                     gap: 12px;
                 }
-                
+
                 .grading-options {
                     grid-template-columns: 1fr;
                 }
-                
+
                 .actions {
                     flex-direction: column;
                     align-items: stretch;
                 }
-                
+
                 .assignment-details {
                     grid-template-columns: 1fr;
                 }
             }
         </style>
-        
+
         <script src="https://cdn.tiny.cloud/1/808iwiomkwovmb2cvokzivnjb0nka12kkujkdkuf8tpcoxtw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                 tinymce.init({
-                     selector: '#description,#content,#gradingCriteria',
+                tinymce.init({
+                    selector: '#description,#content,#gradingCriteria',
                     width: '150%',
                     branding: false,
                     statusbar: false,
@@ -660,12 +673,16 @@
                                     <div class="content-preview">${requestScope.assignment.instructions}</div>
                                 </div>
                             </c:if>
-                            <c:if test="${not empty requestScope.assignment.rubric}">
-                                <div class="detail-item">
-                                    <div class="detail-label">Tiêu chí chấm điểm:</div>
-                                    <div class="content-preview">${requestScope.assignment.rubric}</div>
+                            <c:if test="${not empty requestScope.assignment.promptSummary}">
+                                <div class="form-group">
+                                    <label for="promptSummary">Tóm tắt ngắn gọn</label>
+                                    <input id="promptSummary" name="promptSummary" type="text" maxlength="300"
+                                           value="${requestScope.assignment.promptSummary}"
+                                           placeholder="Ví dụ: Viết đoạn văn 150 từ giới thiệu bản thân bằng tiếng Anh.">
+                                    <div class="hint">Tối đa 300 ký tự — mô tả ngắn về nội dung hoặc yêu cầu của bài tập.</div>
                                 </div>
                             </c:if>
+
                         </div>
 
                         <!-- Update Form -->
@@ -680,7 +697,7 @@
                                     <i class="fas fa-edit"></i>
                                     Thông tin cơ bản
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="title" class="required">Tiêu đề Assignment</label>
                                     <input id="title" name="title" type="text" value="${requestScope.assignment.title}" placeholder="Nhập tiêu đề assignment" required>
@@ -691,11 +708,16 @@
                                     <textarea id="description" name="description" placeholder="Hướng dẫn chi tiết về cách làm bài, yêu cầu và lưu ý cho học viên...">${requestScope.assignment.instructions}</textarea>
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="promptSummary">Tóm tắt ngắn gọn</label>
+                                    <input id="promptSummary" name="promptSummary" type="text" maxlength="300"
+                                           value="${requestScope.assignment.promptSummary}"
+                                           placeholder="Ví dụ: Viết đoạn văn 150 từ giới thiệu bản thân bằng tiếng Anh.">
+                                    <div class="hint">Tối đa 300 ký tự — mô tả ngắn về nội dung hoặc yêu cầu của bài tập.</div>
+                                </div>
+
                                 <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="maxScore" class="required">Điểm tối đa</label>
-                                        <input id="maxScore" name="maxScore" type="number" value="${requestScope.assignment.maxScore}" placeholder="100" min="1" max="100" required>
-                                    </div>
+
                                     <div class="form-group">
                                         <label for="passingScorePct">Điểm đạt (%)</label>
                                         <input id="passingScorePct" name="passingScorePct" type="number" 
@@ -711,7 +733,7 @@
                                     <i class="fas fa-file-text"></i>
                                     Nội dung Assignment
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="content" class="required">Nội dung bài tập</label>
                                     <textarea id="content" name="content" placeholder="Nhập nội dung chi tiết của bài tập...">${requestScope.assignment.content}</textarea>
@@ -724,7 +746,7 @@
                                     <i class="fas fa-graduation-cap"></i>
                                     Phương thức chấm điểm và nộp bài
                                 </div>
-                                
+
                                 <div class="form-group">
                                     <label for="submissionType">Loại nộp bài</label>
                                     <select id="submissionType" name="submissionType">
@@ -733,10 +755,52 @@
                                         <option value="both" ${requestScope.assignment.submissionType == 'both' ? 'selected' : ''}>Cả hai</option>
                                     </select>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <label for="gradingCriteria" class="required">Tiêu chí chấm điểm</label>
-                                    <textarea id="gradingCriteria" name="gradingCriteria" placeholder="Nhập các tiêu chí chấm điểm chi tiết...">${requestScope.assignment.rubric}</textarea>
+
+                                <div class="form-section">
+                                    <div class="section-title">
+                                        <i class="fas fa-scale-balanced"></i>
+                                        Tiêu chí chấm điểm (Rubric)
+                                    </div>
+
+                                    <table id="rubricTable" class="rubric-table" style="width:100%; border-collapse:collapse; background:white;">
+                                        <thead style="background:#e3f2fd;">
+                                            <tr>
+                                                <th style="padding:8px; border:1px solid #ddd;">#</th>
+                                                <th style="padding:8px; border:1px solid #ddd;">Trọng số</th>
+                                                <th style="padding:8px; border:1px solid #ddd;">Hướng dẫn chấm điểm</th>
+                                                <th style="padding:8px; border:1px solid #ddd;">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rubricBody">
+                                            <c:forEach var="r" items="${rubricList}">
+                                                <tr>
+                                                    <td><input type="number" name="criterion_no" value="${r.criterionNo}" class="criterion-no" min="1" required style="width:60px;"></td>
+                                                    <td><input type="number" name="weight" value="${r.weight}" class="criterion-weight" step="0.01" min="0" max="1" required style="width:80px;"></td>
+                                                    <td><input type="text" name="guidance" value="${r.guidance}" class="criterion-guidance" required style="width:100%;"></td>
+                                                    <td><button type="button" class="btn btn-danger" onclick="removeCriterion(this)">Xóa</button></td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
+
+                                    <div style="margin-top:10px;">
+                                        <button type="button" class="btn btn-success" onclick="addCriterion()">
+                                            <i class="fas fa-plus"></i> Thêm tiêu chí
+                                        </button>
+                                    </div>
+
+                                    <div class="hint">
+                                        <i class="fas fa-info-circle"></i> Tổng tất cả trọng số phải bằng <strong>1.0</strong>.
+                                    </div>
+                                </div>
+
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="aiGrading" name="aiGrading" value="true" ${requestScope.assignment.aiGradeAllowed ? 'checked' : ''}>
+                                    <label for="aiGrading">Cho phép AI chấm bài tự động</label>
+                                </div>
+                                <div class="hint">
+                                    <i class="fas fa-info-circle"></i>
+                                    Khi bật tính năng này, hệ thống sẽ sử dụng AI để chấm điểm tự động dựa trên tiêu chí chấm điểm đã cung cấp.
                                 </div>
                             </div>
 
@@ -746,14 +810,14 @@
                                     <i class="fas fa-paperclip"></i>
                                     Tài liệu đính kèm
                                 </div>
-                                
+
                                 <c:if test="${not empty requestScope.assignment.attachmentUrl}">
                                     <div class="info-item">
                                         <i class="fas fa-file"></i>
                                         <span>Tài liệu hiện tại: <a href="${requestScope.assignment.attachmentUrl}" target="_blank">Xem tài liệu</a></span>
                                     </div>
                                 </c:if>
-                                
+
                                 <div class="file-upload-area" id="fileUploadArea">
                                     <div class="upload-icon">
                                         <i class="fas fa-cloud-upload-alt"></i>
@@ -762,7 +826,7 @@
                                     <div class="upload-hint">Hỗ trợ: PDF, DOC, DOCX, TXT, JPG, PNG (Tối đa 10MB)</div>
                                     <input type="file" id="attachments" name="attachments" multiple style="display: none;">
                                 </div>
-                                
+
                                 <div class="file-list" id="fileList"></div>
                             </div>
 
@@ -773,7 +837,7 @@
                                     ${error}
                                 </div>
                             </c:if>
-                            
+
                             <c:if test="${not empty success}">
                                 <div class="alert alert-success">
                                     <i class="fas fa-check-circle"></i>
@@ -892,35 +956,35 @@
 
             function validateFile(file) {
                 const maxSize = 10 * 1024 * 1024; // 10MB
-                const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'image/jpeg', 'image/png','audio/mpeg','audio/wav',
-    'audio/mp4',        // .m4a
-    'audio/x-m4a']       // định dạng m4a phổ biến khác];
-                
+                const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'image/jpeg', 'image/png', 'audio/mpeg', 'audio/wav',
+                    'audio/mp4', // .m4a
+                    'audio/x-m4a']       // định dạng m4a phổ biến khác];
+
                 if (file.size > maxSize) {
                     alert('File ' + file.name + ' quá lớn. Kích thước tối đa là 10MB.');
                     return false;
                 }
-                
+
                 if (!allowedTypes.includes(file.type)) {
                     alert('File ' + file.name + ' không được hỗ trợ. Chỉ chấp nhận: PDF, DOC, DOCX, TXT, JPG, PNG.');
                     return false;
                 }
-                
+
                 return true;
             }
 
             function displayFile(file) {
                 const fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
-                fileItem.innerHTML = 
-                    '<div class="file-info">' +
+                fileItem.innerHTML =
+                        '<div class="file-info">' +
                         '<i class="fas fa-file"></i>' +
                         '<span class="file-name">' + file.name + '</span>' +
                         '<span class="file-size">(' + formatFileSize(file.size) + ')</span>' +
-                    '</div>' +
-                    '<button type="button" class="remove-file-btn" onclick="removeFile(\'' + file.name + '\')">' +
+                        '</div>' +
+                        '<button type="button" class="remove-file-btn" onclick="removeFile(\'' + file.name + '\')">' +
                         '<i class="fas fa-times"></i>' +
-                    '</button>';
+                        '</button>';
                 fileList.appendChild(fileItem);
             }
 
@@ -935,7 +999,8 @@
             }
 
             function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
+                if (bytes === 0)
+                    return '0 Bytes';
                 const k = 1024;
                 const sizes = ['Bytes', 'KB', 'MB', 'GB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -943,9 +1008,9 @@
             }
 
             // Form validation
-            document.getElementById('updateForm').addEventListener('submit', function(e) {
+            document.getElementById('updateForm').addEventListener('submit', function (e) {
                 const title = document.getElementById('title').value.trim();
-                const maxScore = document.getElementById('maxScore').value;
+               
                 const content = document.getElementById('content').value.trim();
 
                 if (!title) {
@@ -955,12 +1020,7 @@
                     return false;
                 }
 
-                if (!maxScore || parseInt(maxScore) < 1) {
-                    e.preventDefault();
-                    alert('Điểm tối đa phải lớn hơn 0');
-                    document.getElementById('maxScore').focus();
-                    return false;
-                }
+
 
                 if (!content) {
                     e.preventDefault();
@@ -974,11 +1034,61 @@
             });
 
             // Close dropdowns when clicking outside
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 if (!event.target.closest('.module-header')) {
                     document.querySelectorAll('.dropdown-menu').forEach(menu => {
                         menu.classList.remove('show');
                     });
+                }
+            });
+
+            function addCriterion() {
+                const tbody = document.getElementById("rubricBody");
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+        <td><input type="number" name="criterion_no" class="criterion-no" min="1" required style="width:60px;"></td>
+        <td><input type="number" name="weight" class="criterion-weight" step="0.01" min="0" max="1" required style="width:80px;"></td>
+        <td><input type="text" name="guidance" class="criterion-guidance" required style="width:100%;"></td>
+        <td><button type="button" class="btn btn-danger" onclick="removeCriterion(this)">Xóa</button></td>
+    `;
+                tbody.appendChild(newRow);
+            }
+
+            function removeCriterion(btn) {
+                const row = btn.closest("tr");
+                row.remove();
+                checkTotalWeight();
+            }
+
+            function checkTotalWeight() {
+                let total = 0;
+                document.querySelectorAll(".criterion-weight").forEach(input => {
+                    const val = parseFloat(input.value);
+                    if (!isNaN(val))
+                        total += val;
+                });
+                if (Math.abs(total - 1) > 0.0001) {
+                    document.querySelector(".hint").innerHTML =
+                            `<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i>
+            Tổng trọng số hiện tại: <strong>${total.toFixed(2)}</strong> ⚠️ (Phải = 1.0)`;
+                } else {
+                    document.querySelector(".hint").innerHTML =
+                            `<i class="fas fa-check-circle" style="color:#28a745;"></i>
+            Tổng trọng số hợp lệ: <strong>1.0</strong>`;
+                }
+            }
+
+// Kiểm tra tổng trọng số trước khi submit form
+            document.getElementById("updateForm").addEventListener("submit", function (e) {
+                let total = 0;
+                document.querySelectorAll(".criterion-weight").forEach(input => {
+                    const val = parseFloat(input.value);
+                    if (!isNaN(val))
+                        total += val;
+                });
+                if (Math.abs(total - 1) > 0.0001) {
+                    e.preventDefault();
+                    alert("Tổng trọng số của các tiêu chí phải bằng 1.0");
                 }
             });
         </script>

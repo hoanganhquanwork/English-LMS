@@ -123,26 +123,28 @@
                                 <input id="title" name="title" type="text" value="${requestScope.quiz.title}" required>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="attempts_allowed">Số lần thử cho phép</label>
-                                    <input id="attempts_allowed" name="attempts_allowed" type="number" 
-                                           value="${requestScope.quiz.attemptsAllowed != null ? requestScope.quiz.attemptsAllowed : ''}"
-                                           placeholder="Để trống = không giới hạn" min="1">
-                                </div>
+                          
+                           
                                 <div class="form-group">
                                     <label for="passing_score_pct">Điểm đạt (%)</label>
                                     <input id="passing_score_pct" name="passing_score_pct" type="number" 
                                            value="${requestScope.quiz.passingScorePct != null ? requestScope.quiz.passingScorePct : ''}"
                                            placeholder="Để trống = chỉ ôn tập" min="0" max="100" step="0.01">
                                 </div>
-                            </div>
+                      
 
                             <div class="form-group">
                                 <label for="pick_count">Số câu hỏi</label>
                                 <input id="pick_count" name="pick_count" type="number" 
                                        value="${requestScope.quiz.pickCount != null ? requestScope.quiz.pickCount : ''}"
                                        placeholder="Để trống = lấy hết pool" min="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="time_limit">Thời gian làm bài (phút)</label>
+                                <input id="time_limit" name="time_limit" type="number" 
+                                       value="${requestScope.quiz.timeLimitMin != null ? requestScope.quiz.timeLimitMin : ''}"
+                                       placeholder="Để trống = không giới hạn thời gian" min="1">
                             </div>
 
 
@@ -212,6 +214,7 @@
                 const attemptsAllowed = document.getElementById('attempts_allowed').value;
                 const passingScore = document.getElementById('passing_score_pct').value;
                 const pickCount = document.getElementById('pick_count').value;
+                const timeLimit = document.getElementById('time_limit').value;
 
                 if (!title) {
                     e.preventDefault();
@@ -241,6 +244,14 @@
                     e.preventDefault();
                     alert('Số câu hỏi lấy từ pool phải lớn hơn 0');
                     document.getElementById('pick_count').focus();
+                    return false;
+                }
+
+                // Validate time_limit
+                if (timeLimit && (parseInt(timeLimit) < 1)) {
+                    e.preventDefault();
+                    alert('Thời gian làm bài phải lớn hơn 0 phút');
+                    document.getElementById('time_limit').focus();
                     return false;
                 }
             });

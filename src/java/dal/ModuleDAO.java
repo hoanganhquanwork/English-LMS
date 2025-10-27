@@ -43,6 +43,30 @@ public class ModuleDAO extends DBContext {
         return list;
     }
 
+    public Module getModuleById(int moduleId) {
+        Module module = null;
+        String sql = "SELECT * FROM Module WHERE module_id =  ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, moduleId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {             
+                module = new Module();
+                module.setModuleId(rs.getInt("module_id"));
+                module.setTitle(rs.getString("title"));
+                module.setDescription(rs.getString("description"));
+                module.setOrderIndex(rs.getInt("order_index"));
+                module.setCourse(course.getCourseById(rs.getInt("course_id")));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return module;
+    }
+
     public boolean insertModule(Module module) {
         String sql = "INSERT INTO Module (course_id, title, description, order_index) "
                 + "SELECT ?, ?, ?, ISNULL(MAX(order_index), 0) + 1 "
@@ -83,19 +107,20 @@ public class ModuleDAO extends DBContext {
         return false;
     }
 
-     public int countQuestionsByModule(int moduleId) {
-        String sql = "SELECT COUNT(*) FROM Question WHERE module_id = ?";
+    public int countQuestionsByModule(int moduleId) {
+        String sql = "SELECT COUNT(*) FROM ModuleQuestions WHERE module_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, moduleId);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
-    
-    
+
     //for student feature list module item
     public List<ModuleWithItemsDTO> listModuleWithItems(int courseId, int studentId) {
         List<ModuleWithItemsDTO> result = new ArrayList<>();

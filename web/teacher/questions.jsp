@@ -187,24 +187,10 @@
 
                         <!-- Filter and Search Section -->
                         <div class="questions-filter">
-                            <div class="filter-left">
-                                <button class="btn btn-outline">
-                                    <i class="fas fa-filter"></i>
-                                    Bộ lọc
-                                </button>
-
-                                <div class="search-input">
-                                    <input type="text" placeholder="Tiêu đề">
-                                    <i class="fas fa-search"></i>
-                                </div>
-                            </div>
+                            
                             <div class="filter-right">
 
-                                <div class="dropdown">
-                                    <button class="btn btn-outline dropdown-toggle">
-                                        Sắp xếp theo
-                                    </button>
-                                </div>
+                               
                                 <a href="addQuestion?courseId=${param.courseId}" class="btn btn-primary">
                                     <i class="fas fa-plus"></i>
                                     Thêm câu hỏi
@@ -238,11 +224,7 @@
                                                             <i class="fas fa-eye"></i>
                                                             Xem
                                                         </a>
-                                                        <a href="add-questions.jsp?courseId=${param.courseId}&moduleId=${module.moduleId}" 
-                                                           class="btn btn-edit">
-                                                            <i class="fas fa-edit"></i>
-                                                            Chỉnh sửa
-                                                        </a>
+                                                     
                                                         <a href="deleteModule?courseId=${param.courseId}&moduleId=${module.moduleId}" 
                                                            class="btn btn-delete"
                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa module này không?')">

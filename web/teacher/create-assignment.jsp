@@ -19,7 +19,7 @@
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                 margin-bottom: 24px;
             }
-            
+
             .assignment-info {
                 background: #f8f9fa;
                 border: 1px solid #e9ecef;
@@ -27,13 +27,13 @@
                 padding: 16px;
                 margin-bottom: 20px;
             }
-            
+
             .assignment-info h3 {
                 color: #2c3e50;
                 margin-bottom: 10px;
                 font-size: 16px;
             }
-            
+
             .info-item {
                 display: flex;
                 align-items: center;
@@ -42,12 +42,12 @@
                 font-size: 14px;
                 color: #6c757d;
             }
-            
+
             .info-item i {
                 color: #3498db;
                 width: 16px;
             }
-            
+
             .form-section {
                 margin-bottom: 24px;
                 padding: 20px;
@@ -55,7 +55,7 @@
                 border-radius: 8px;
                 border-left: 4px solid #3498db;
             }
-            
+
             .section-title {
                 color: #2c3e50;
                 font-size: 18px;
@@ -65,35 +65,35 @@
                 align-items: center;
                 gap: 8px;
             }
-            
+
             .section-title i {
                 color: #3498db;
             }
-            
+
             .form-row {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 20px;
                 margin-bottom: 20px;
             }
-            
+
             .form-group {
                 display: flex;
                 flex-direction: column;
             }
-            
+
             .form-group label {
                 margin-bottom: 8px;
                 font-weight: 500;
                 color: #2c3e50;
                 font-size: 14px;
             }
-            
+
             .form-group label.required::after {
                 content: ' *';
                 color: #e74c3c;
             }
-            
+
             .form-group input,
             .form-group textarea,
             .form-group select {
@@ -104,7 +104,7 @@
                 transition: border-color 0.3s;
                 font-family: inherit;
             }
-            
+
             .form-group input:focus,
             .form-group textarea:focus,
             .form-group select:focus {
@@ -112,80 +112,80 @@
                 border-color: #3498db;
                 box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
             }
-            
+
             .form-group textarea {
                 resize: vertical;
                 min-height: 100px;
             }
-            
+
             /* TinyMCE Editor Styling */
             .tox-tinymce {
                 border-radius: 8px !important;
                 border: 1px solid #ddd !important;
             }
-            
+
             .tox .tox-editor-header {
                 border-bottom: 1px solid #e9ecef !important;
             }
-            
+
             .tox .tox-toolbar__primary {
                 background: #f8f9fa !important;
             }
-            
+
             .tox .tox-tbtn {
                 border-radius: 4px !important;
             }
-            
+
             .tox .tox-tbtn:hover {
                 background: #e9ecef !important;
             }
-            
+
             .form-group input[type="datetime-local"] {
                 padding: 12px 16px;
             }
-            
+
             .form-group input[type="file"] {
                 padding: 8px 12px;
                 border: 2px dashed #ddd;
                 background: #f8f9fa;
                 cursor: pointer;
             }
-            
+
             .form-group input[type="file"]:hover {
                 border-color: #3498db;
                 background: #f0f8ff;
             }
-            
+
             .checkbox-group {
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 margin-bottom: 16px;
             }
-            
+
             .checkbox-group input[type="checkbox"] {
                 width: 18px;
                 height: 18px;
                 cursor: pointer;
             }
-            
+
             .checkbox-group label {
                 margin-bottom: 0;
                 cursor: pointer;
                 font-weight: 500;
             }
-            
+
             .conditional-fields {
                 margin-left: 26px;
                 padding-left: 16px;
                 border-left: 2px solid #e9ecef;
                 margin-top: 8px;
             }
-            
+
             .conditional-fields .form-group {
                 margin-bottom: 12px;
             }
-            
+
             .file-upload-area {
                 border: 2px dashed #ddd;
                 border-radius: 8px;
@@ -195,38 +195,38 @@
                 transition: all 0.3s;
                 cursor: pointer;
             }
-            
+
             .file-upload-area:hover {
                 border-color: #3498db;
                 background: #f0f8ff;
             }
-            
+
             .file-upload-area.dragover {
                 border-color: #3498db;
                 background: #e3f2fd;
             }
-            
+
             .upload-icon {
                 font-size: 48px;
                 color: #bdc3c7;
                 margin-bottom: 12px;
             }
-            
+
             .upload-text {
                 color: #6c757d;
                 font-size: 14px;
                 margin-bottom: 8px;
             }
-            
+
             .upload-hint {
                 color: #95a5a6;
                 font-size: 12px;
             }
-            
+
             .file-list {
                 margin-top: 16px;
             }
-            
+
             .file-item {
                 display: flex;
                 align-items: center;
@@ -237,27 +237,27 @@
                 border-radius: 6px;
                 margin-bottom: 8px;
             }
-            
+
             .file-info {
                 display: flex;
                 align-items: center;
                 gap: 8px;
             }
-            
+
             .file-info i {
                 color: #3498db;
             }
-            
+
             .file-name {
                 font-size: 14px;
                 color: #2c3e50;
             }
-            
+
             .file-size {
                 font-size: 12px;
                 color: #6c757d;
             }
-            
+
             .remove-file-btn {
                 background: #e74c3c;
                 color: white;
@@ -268,11 +268,11 @@
                 font-size: 12px;
                 transition: background-color 0.3s;
             }
-            
+
             .remove-file-btn:hover {
                 background: #c0392b;
             }
-            
+
             .grading-section {
                 background: #fff3cd;
                 border: 1px solid #ffeaa7;
@@ -280,19 +280,19 @@
                 padding: 16px;
                 margin-bottom: 20px;
             }
-            
+
             .grading-section h4 {
                 color: #856404;
                 margin-bottom: 12px;
                 font-size: 16px;
             }
-            
+
             .grading-options {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 16px;
             }
-            
+
             .grading-option {
                 display: flex;
                 align-items: center;
@@ -304,21 +304,21 @@
                 cursor: pointer;
                 transition: all 0.3s;
             }
-            
+
             .grading-option:hover {
                 border-color: #3498db;
                 background: #f0f8ff;
             }
-            
+
             .grading-option input[type="radio"] {
                 margin: 0;
             }
-            
+
             .grading-option.selected {
                 border-color: #3498db;
                 background: #e3f2fd;
             }
-            
+
             .actions {
                 display: flex;
                 justify-content: flex-end;
@@ -327,7 +327,7 @@
                 padding: 20px 0;
                 border-top: 1px solid #eee;
             }
-            
+
             .btn {
                 padding: 12px 24px;
                 border: none;
@@ -341,93 +341,132 @@
                 align-items: center;
                 gap: 8px;
             }
-            
+
             .btn-secondary {
                 background: #6c757d;
                 color: white;
             }
-            
+
             .btn-secondary:hover {
                 background: #5a6268;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             }
-            
+
             .btn-primary {
                 background: #007bff;
                 color: white;
             }
-            
+
             .btn-primary:hover {
                 background: #0056b3;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 8px rgba(0,123,255,0.3);
             }
-            
+
             .btn-success {
                 background: #28a745;
                 color: white;
             }
-            
+
             .btn-success:hover {
                 background: #218838;
                 transform: translateY(-1px);
                 box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
             }
-            
+
             .hint {
                 font-size: 13px;
                 color: #7f8c8d;
                 margin-top: 8px;
             }
-            
+
             .alert {
                 padding: 12px 16px;
                 border-radius: 8px;
                 margin-bottom: 16px;
                 font-size: 14px;
             }
-            
+
             .alert-danger {
                 background: #f8d7da;
                 border: 1px solid #f5c6cb;
                 color: #721c24;
             }
-            
+
             .alert-success {
                 background: #d4edda;
                 border: 1px solid #c3e6cb;
                 color: #155724;
             }
-            
+
             .alert-info {
                 background: #d1ecf1;
                 border: 1px solid #bee5eb;
                 color: #0c5460;
             }
-            
+
             @media (max-width: 768px) {
                 .form-row {
                     grid-template-columns: 1fr;
                     gap: 12px;
                 }
-                
+
                 .grading-options {
                     grid-template-columns: 1fr;
                 }
-                
+
                 .actions {
                     flex-direction: column;
                     align-items: stretch;
                 }
             }
+            .rubric-container {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 8px;
+            }
+
+            .rubric-row {
+                display: grid;
+                grid-template-columns: 80px 1fr 120px 50px;
+                gap: 10px;
+                align-items: center;
+                background: #fff;
+                border: 1px solid #e9ecef;
+                border-radius: 6px;
+                padding: 8px;
+                width: 200%;
+            }
+
+            .rubric-row input {
+                padding: 8px 10px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+            }
+
+            .remove-criterion-btn {
+                background: #e74c3c;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+
+            .remove-criterion-btn:hover {
+                background: #c0392b;
+            }
         </style>
-        
+
         <script src="https://cdn.tiny.cloud/1/808iwiomkwovmb2cvokzivnjb0nka12kkujkdkuf8tpcoxtw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                 tinymce.init({
-                     selector: '#description,#content,#gradingCriteria',
+                tinymce.init({
+                    selector: '#description,#content,#gradingCriteria',
                     width: '150%',
                     branding: false,
                     statusbar: false,
@@ -555,7 +594,7 @@
                     <form action="createAssignment" method="post" enctype="multipart/form-data" id="assignmentForm">
                         <input type="hidden" name="courseId" value="${param.courseId}">
                         <input type="hidden" name="moduleId" value="${param.moduleId}">
-           
+
 
                         <!-- Basic Information Section -->
                         <div class="form-section">
@@ -563,7 +602,7 @@
                                 <i class="fas fa-edit"></i>
                                 Thông tin cơ bản
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="title" class="required">Tiêu đề Assignment</label>
                                 <input id="title" name="title" type="text" placeholder="Nhập tiêu đề assignment" required>
@@ -573,18 +612,23 @@
                                 <label for="description">Hướng dẫn làm bài</label>
                                 <textarea id="description" name="description" placeholder="Hướng dẫn chi tiết về cách làm bài, yêu cầu và lưu ý cho học viên..."></textarea>
                             </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="maxScore" class="required">Điểm tối đa</label>
-                                    <input id="maxScore" name="maxScore" type="number" placeholder="100" min="1" max="1000" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="weight">Trọng số (%)</label>
-                                    <input id="weight" name="weight" type="number" placeholder="10" min="0" max="100" step="0.1">
+                            <div class="form-group">
+                                <label for="promptSummary">Tóm tắt ngắn gọn</label>
+                                <input id="promptSummary" name="promptSummary" type="text" maxlength="300"
+                                       placeholder="Ví dụ: Viết đoạn văn 150 từ giới thiệu bản thân bằng tiếng Anh.">
+                                <div class="hint">
+                                    Tối đa 300 ký tự — mô tả ngắn về nội dung hoặc yêu cầu của bài tập.
                                 </div>
                             </div>
-                            
+
+                            <div class="form-row">
+                              
+                                <div class="form-group">
+                                    <label for="weight">Phần trăm đạt yêu cầu (%)</label>
+                                    <input id="passingScorePct" name="passingScorePct" type="number" placeholder="10" min="0" max="100" step="0.1">
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- Assignment Content Section -->
@@ -593,7 +637,7 @@
                                 <i class="fas fa-file-text"></i>
                                 Nội dung Assignment
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="content" class="required">Nội dung bài tập</label>
                                 <textarea id="content" name="content" placeholder="Nhập nội dung chi tiết của bài tập..."></textarea>
@@ -606,7 +650,7 @@
                                 <i class="fas fa-graduation-cap"></i>
                                 Phương thức chấm điểm và nộp bài
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="submissionType">Loại nộp bài</label>
                                 <select id="submissionType" name="submissionType">
@@ -615,10 +659,32 @@
                                     <option value="both">Cả hai</option>
                                 </select>
                             </div>
-                            
+
+                            <!--                            <div class="form-group">
+                                                            <label for="gradingCriteria" class="required">Tiêu chí chấm điểm</label>
+                                                            <textarea id="gradingCriteria" name="gradingCriteria" placeholder="Nhập các tiêu chí chấm điểm chi tiết..."></textarea>
+                                                        </div>-->
+
                             <div class="form-group">
-                                <label for="gradingCriteria" class="required">Tiêu chí chấm điểm</label>
-                                <textarea id="gradingCriteria" name="gradingCriteria" placeholder="Nhập các tiêu chí chấm điểm chi tiết..."></textarea>
+                                <label class="required">Tiêu chí chấm điểm (Rubric Criteria)</label>
+                                <div id="rubricContainer" class="rubric-container">
+                                    <!-- Các hàng tiêu chí sẽ được thêm tại đây bằng JS -->
+                                </div>
+                                <button type="button" class="btn btn-success" onclick="addCriterion()">
+                                    <i class="fas fa-plus"></i> Thêm tiêu chí
+                                </button>
+                                <div class="hint">
+                                    Mỗi tiêu chí bao gồm thứ tự (1-10), mô tả, và trọng số (0 < w ≤ 1). Tổng trọng số nên bằng 1.0
+                                </div>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="aiGrading" name="aiGrading" value="true">
+                                <label for="aiGrading">Cho phép AI chấm bài tự động</label>
+                            </div>
+                            <div class="hint">
+                                <i class="fas fa-info-circle"></i>
+                                Khi bật tính năng này, hệ thống sẽ sử dụng AI để chấm điểm tự động dựa trên tiêu chí chấm điểm đã cung cấp.
                             </div>
                         </div>
 
@@ -628,7 +694,7 @@
                                 <i class="fas fa-paperclip"></i>
                                 Tài liệu đính kèm
                             </div>
-                            
+
                             <div class="file-upload-area" id="fileUploadArea">
                                 <div class="upload-icon">
                                     <i class="fas fa-cloud-upload-alt"></i>
@@ -637,7 +703,7 @@
                                 <div class="upload-hint">Hỗ trợ: PDF, DOC, DOCX, TXT, JPG, PNG (Tối đa 10MB)</div>
                                 <input type="file" id="attachments" name="attachments" multiple style="display: none;">
                             </div>
-                            
+
                             <div class="file-list" id="fileList"></div>
                         </div>
 
@@ -649,7 +715,7 @@
                                 ${error}
                             </div>
                         </c:if>
-                        
+
                         <c:if test="${not empty success}">
                             <div class="alert alert-success">
                                 <i class="fas fa-check-circle"></i>
@@ -678,6 +744,29 @@
         </div>
 
         <script>
+
+            let rubricIndex = 0;
+
+            function addCriterion() {
+                rubricIndex++;
+                const container = document.getElementById('rubricContainer');
+
+                const row = document.createElement('div');
+                row.className = 'rubric-row';
+                row.innerHTML = `
+        <input type="number" name="criterion_no" placeholder="Thứ tự" min="1" max="10" required>
+        <input type="text" name="guidance" placeholder="Tiêu chí chấm điểm" maxlength="120" required>
+        <input type="number" name="weight" placeholder="Trọng số (0-1)" step="0.01" min="0" max="1" required>
+        <button type="button" class="remove-criterion-btn" onclick="removeCriterion(this)">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+                container.appendChild(row);
+            }
+
+            function removeCriterion(btn) {
+                btn.closest('.rubric-row').remove();
+            }
             // Toggle dropdown functionality
             function toggleDropdown(dropdownId) {
                 document.querySelectorAll('.dropdown-menu').forEach(menu => {
@@ -711,7 +800,7 @@
                 }
             }
 
-     
+
 
 
             // File upload functionality
@@ -759,35 +848,35 @@
 
             function validateFile(file) {
                 const maxSize = 10 * 1024 * 1024; // 10MB
-                const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'image/jpeg', 'image/png','audio/mpeg','audio/wav',
-    'audio/mp4',        // .m4a
-    'audio/x-m4a']       // định dạng m4a phổ biến khác];
-                
+                const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'image/jpeg', 'image/png', 'audio/mpeg', 'audio/wav',
+                    'audio/mp4', // .m4a
+                    'audio/x-m4a']       // định dạng m4a phổ biến khác];
+
                 if (file.size > maxSize) {
                     alert('File ' + file.name + ' quá lớn. Kích thước tối đa là 10MB.');
                     return false;
                 }
-                
+
                 if (!allowedTypes.includes(file.type)) {
                     alert('File ' + file.name + ' không được hỗ trợ. Chỉ chấp nhận: PDF, DOC, DOCX, TXT, JPG, PNG.');
                     return false;
                 }
-                
+
                 return true;
             }
 
             function displayFile(file) {
                 const fileItem = document.createElement('div');
                 fileItem.className = 'file-item';
-                fileItem.innerHTML = 
-                    '<div class="file-info">' +
+                fileItem.innerHTML =
+                        '<div class="file-info">' +
                         '<i class="fas fa-file"></i>' +
                         '<span class="file-name">' + file.name + '</span>' +
                         '<span class="file-size">(' + formatFileSize(file.size) + ')</span>' +
-                    '</div>' +
-                    '<button type="button" class="remove-file-btn" onclick="removeFile(\'' + file.name + '\')">' +
+                        '</div>' +
+                        '<button type="button" class="remove-file-btn" onclick="removeFile(\'' + file.name + '\')">' +
                         '<i class="fas fa-times"></i>' +
-                    '</button>';
+                        '</button>';
                 fileList.appendChild(fileItem);
             }
 
@@ -802,7 +891,8 @@
             }
 
             function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
+                if (bytes === 0)
+                    return '0 Bytes';
                 const k = 1024;
                 const sizes = ['Bytes', 'KB', 'MB', 'GB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -810,7 +900,9 @@
             }
 
             // Form validation
-            document.getElementById('assignmentForm').addEventListener('submit', function(e) {
+            // Kiểm tra tổng trọng số của rubric
+            document.getElementById('assignmentForm').addEventListener('submit', function (e) {
+                // --- Kiểm tra tiêu đề & điểm tối đa như cũ ---
                 const title = document.getElementById('title').value.trim();
                 const maxScore = document.getElementById('maxScore').value;
 
@@ -828,9 +920,29 @@
                     return false;
                 }
 
-                // Sync TinyMCE content before submit
+                // --- Kiểm tra tổng trọng số ---
+                const weightInputs = document.querySelectorAll('input[name="weight"]');
+                let totalWeight = 0;
+
+                weightInputs.forEach(input => {
+                    const val = parseFloat(input.value.replace(',', '.'));
+                    if (!isNaN(val))
+                        totalWeight += val;
+                });
+
+                // Làm tròn 2 chữ số sau dấu phẩy để tránh lỗi số thực
+                totalWeight = Math.round(totalWeight * 100) / 100;
+
+                if (totalWeight !== 1) {
+                    e.preventDefault();
+                    alert('Tổng trọng số của tất cả tiêu chí phải bằng 1. Hiện tại là: ' + totalWeight);
+                    return false;
+                }
+
+                // Đồng bộ TinyMCE
                 tinymce.triggerSave();
             });
+
 
             // Save draft functionality
             function saveDraft() {
@@ -840,13 +952,13 @@
                 draftInput.name = 'isDraft';
                 draftInput.value = 'true';
                 document.getElementById('assignmentForm').appendChild(draftInput);
-                
+
                 // Submit the form
                 document.getElementById('assignmentForm').submit();
             }
 
             // Close dropdowns when clicking outside
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 if (!event.target.closest('.module-header')) {
                     document.querySelectorAll('.dropdown-menu').forEach(menu => {
                         menu.classList.remove('show');

@@ -36,7 +36,7 @@ public class CreateVideoLessonServlet extends HttpServlet {
             throws ServletException, IOException {
 
     }
-     private LessonService lessonService = new LessonService();
+    private LessonService lessonService = new LessonService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -53,15 +53,18 @@ public class CreateVideoLessonServlet extends HttpServlet {
             // 2. Gọi YouTube API để lấy duration
             String isoDuration = ytClient.fetchIsoDuration(videoId);
             int durationSec = YouTubeApiClient.isoDurationToSeconds(isoDuration);
+            String transcript = ytClient.fetchSubtitle(youtubeUrl, "en"); 
+
             Lesson lesson = new Lesson();
             lesson.setTitle(title);
             lesson.setContentType("video");
             lesson.setVideoUrl(videoId);
             lesson.setDurationSec(durationSec);
+            lesson.setVideoScript(transcript);
             lesson.setTextContent(null);
 
             boolean success = lessonService.addLesson(lesson, moduleId);
-            response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId );
+            response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId);
         } catch (Exception e) {
             throw new ServletException(e);
         }

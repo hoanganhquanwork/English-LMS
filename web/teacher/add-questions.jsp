@@ -244,6 +244,33 @@
             .delete-question-btn:hover {
                 background: #c0392b;
             }
+
+            /* Modal Animations */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .modal.show {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
         </style>
     </head>
     <body>
@@ -324,7 +351,7 @@
                         <!-- Warning Message -->
                         <form action="addQuestion" method="post" enctype="multipart/form-data" id="bulkQuestionForm">
                             <input type="hidden" name="courseId" value="${course.courseId}">
-<!--                            <div class="form-section">
+                            <div class="form-section">
                                 <div class="form-group">
                                     <label for="questionBank">Ngân hàng câu hỏi *</label>
                                     <select id="questionBank" name="moduleId" class="form-select" required>
@@ -334,40 +361,202 @@
                                         </c:forEach>
                                     </select>
                                 </div>
-                            </div>-->
-
-                            <div id="questionsList" class="questions-content-area">
-                                <div class="empty-questions">
-                                    <p>Chưa có câu hỏi nào được thêm</p>
-                                </div>
                             </div>
 
-                            <div class="actions">
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-primary dropdown-toggle" onclick="toggleDropdown()">
-                                        + Thêm câu hỏi
-                                        <i class="fas fa-chevron-down"></i>
-                                    </button>
-                                    <div class="dropdown-menu" id="questionTypeDropdown">
-                                        <div class="dropdown-item" onclick="addQuestion('mcq_single')">
-                                            <i class="fas fa-check-circle"></i>
-                                            Câu hỏi lựa chọn 1 đáp án
-                                        </div>
-                                        <div class="dropdown-item" onclick="addTextQuestion()">
-                                            <i class="fas fa-file-text"></i>
-                                            Câu hỏi dạng text
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-success">Lưu tất cả</button>
-                            </div>
                         </form>
+
+                        <!-- Filter Section -->
+                        <div class="filter-section" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 30px; margin-bottom: 20px;">
+                            <form method="GET" action="addQuestion">
+                                <input type="hidden" name="courseId" value="${course.courseId}">
+                                <div class="filter-row" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                                    <div class="filter-group" style="display: flex; flex-direction: column; gap: 5px;">
+                                        <label class="filter-label" style="font-weight: 500; color: #2c3e50; font-size: 14px;">Lọc theo chủ đề:</label>
+                                        <select name="topicFilter" class="filter-select" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-width: 200px;">
+                                            <option value="">Tất cả chủ đề</option>
+                                            <c:forEach var="topic" items="${topics}">
+                                                <option value="${topic.topicId}" ${selectedTopic == topic.topicId ? 'selected' : ''}>
+                                                    ${topic.name}
+                                                </option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="filter-button" style="padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; transition: background 0.3s;">
+                                        <i class="fas fa-filter"></i> Lọc
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Questions Table -->
+                        <div class="table-container" style="margin-top: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h3 style="margin: 0; color: #2c3e50;">Danh sách câu hỏi</h3>
+                                <div style="display: flex; gap: 15px; align-items: center;">
+                                    <button type="button" id="addToModuleBtn" onclick="addSelectedToModule()" 
+                                            style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s; display: flex; align-items: center; gap: 8px;"
+                                            disabled>
+                                        <i class="fas fa-plus"></i> Thêm vào module
+                                    </button>
+                                </div>
+                            </div>
+                            <table class="questions-table" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <thead>
+                                    <tr style="background: #f8f9fa;">
+                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">
+                                            <input type="checkbox" id="selectAllQuestions" onchange="toggleAllQuestions()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #007bff;">
+                                        </th>
+                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">ID</th>
+                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Nội dung câu hỏi</th>
+                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Chủ đề</th>
+                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Loại</th>
+                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Trạng thái</th>
+                                        <th style="padding: 16px; text-align: left; font-weight: 600; color: #2c3e50; border-bottom: 2px solid #e9ecef;">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:choose>
+                                        <c:when test="${not empty approvedQuestionMap}">
+                                            <c:forEach var="entry" items="${approvedQuestionMap}">
+                                                <tr style="border-bottom: 1px solid #e9ecef;">
+                                                    <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                        <input type="checkbox" class="question-checkbox" value="${entry.key.questionId}" onchange="updateAddButton()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #007bff;">
+                                                    </td>
+                                                    <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">${entry.key.questionId}</td>
+                                                    <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                        <div style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.4;" title="${entry.key.content}">
+                                                            ${fn:substring(entry.key.content, 0, 50)}...
+                                                        </div>
+                                                    </td>
+                                                    <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                        <c:choose>
+                                                            <c:when test="${entry.key.topicId != null}">
+                                                                <c:forEach var="topic" items="${topics}">
+                                                                    <c:if test="${topic.topicId == entry.key.topicId}">
+                                                                        ${topic.name}
+                                                                    </c:if>
+                                                                </c:forEach>
+                                                            </c:when>
+                                                            <c:otherwise>Không có</c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                        <c:choose>
+                                                            <c:when test="${entry.key.type == 'mcq_single'}">Trắc nghiệm</c:when>
+                                                            <c:when test="${entry.key.type == 'text'}">Tự luận</c:when>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                        <span style="padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; background: #d4edda; color: #155724;">Đã duyệt</span>
+                                                    </td>
+                                                    <td style="padding: 12px 16px; vertical-align: middle; font-size: 14px;">
+                                                        <a href="#" 
+                                                           style="padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #3498db; color: white;"
+                                                           data-id="${entry.key.questionId}"
+                                                           data-content="${fn:escapeXml(entry.key.content)}"
+                                                           data-type="${entry.key.type}"
+                                                           data-explanation="${fn:escapeXml(entry.key.explanation)}"
+                                                           data-file="${entry.key.mediaUrl}"
+                                                           data-topic="<c:forEach var='topic' items='${topics}'><c:if test='${topic.topicId == entry.key.topicId}'>${topic.name}</c:if></c:forEach>"
+                                                           data-status="${entry.key.status}"
+                                                           <c:if test="${entry.key.type == 'mcq_single'}">
+                                                               data-options="<c:forEach var='opt' items='${entry.value}' varStatus='loop'>${fn:escapeXml(opt.content)}|${opt.correct ? 'true' : 'false'}${!loop.last ? ',' : ''}</c:forEach>"
+                                                           </c:if>
+                                                           <c:if test="${entry.key.type == 'text'}">
+                                                               data-answer="${entry.value}"
+                                                           </c:if>
+                                                           onclick="openViewQuestion(this)">
+                                                            <i class="fas fa-eye"></i> Xem
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <tr>
+                                                <td colspan="6" style="text-align: center; padding: 40px; color: #6c757d; font-style: italic;">
+                                                    <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; color: #dee2e6;"></i>
+                                                    <p>Chưa có câu hỏi nào được tạo</p>
+                                                </td>
+                                            </tr>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </tbody>
+                            </table>
+                        </div>
 
                     </div>
                 </main>
             </div>
         </div>
 
+        <!-- View Question Modal -->
+        <div id="viewQuestionModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); animation: fadeIn 0.3s ease;">
+            <div class="modal-content" style="background: white; border-radius: 12px; padding: 30px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideInUp 0.3s ease; margin: auto; margin-top: 5%;">
+                <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #e9ecef;">
+                    <h2 class="modal-title" style="font-size: 24px; font-weight: 600; color: #2c3e50; margin: 0;">
+                        <i class="fas fa-eye" style="color: #3498db; margin-right: 10px;"></i>
+                        Xem chi tiết câu hỏi
+                    </h2>
+                    <button class="close-btn" onclick="closeViewModal()" style="background: none; border: none; font-size: 24px; color: #6c757d; cursor: pointer; padding: 5px; border-radius: 4px; transition: all 0.3s;">&times;</button>
+                </div>
+                <div class="modal-body" style="margin-bottom: 25px;">
+                    <div class="question-details">
+                        <div class="question-info" style="margin-bottom: 20px;">
+                            <div class="info-row" style="display: flex; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: #2c3e50; width: 120px;">ID:</label>
+                                <span id="viewQuestionId" style="color: #6c757d;"></span>
+                            </div>
+                            <div class="info-row" style="display: flex; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: #2c3e50; width: 120px;">Loại:</label>
+                                <span id="viewQuestionType" style="color: #6c757d;"></span>
+                            </div>
+                            <div class="info-row" style="display: flex; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: #2c3e50; width: 120px;">Chủ đề:</label>
+                                <span id="viewQuestionTopic" style="color: #6c757d;"></span>
+                            </div>
+                            <div class="info-row" style="display: flex; margin-bottom: 10px;">
+                                <label style="font-weight: 600; color: #2c3e50; width: 120px;">Trạng thái:</label>
+                                <span id="viewQuestionStatus" style="color: #6c757d;"></span>
+                            </div>
+                        </div>
+
+                        <div class="question-content-section" style="margin-bottom: 20px;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Nội dung câu hỏi:</label>
+                            <div id="viewQuestionContent" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3498db; font-size: 16px; line-height: 1.6; color: #2c3e50;"></div>
+                        </div>
+
+                        <div id="viewMcqOptions" style="margin-bottom: 20px; display: none;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Các phương án trả lời:</label>
+                            <div id="viewAnswerOptions" style="background: #f8f9fa; padding: 15px; border-radius: 8px;"></div>
+                        </div>
+
+                        <div id="viewTextAnswer" style="margin-bottom: 20px; display: none;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Đáp án đúng:</label>
+                            <div id="viewCorrectAnswer" style="background: #d4edda; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745; font-size: 16px; line-height: 1.6; color: #155724;"></div>
+                        </div>
+
+                        <div id="viewFileSection" style="margin-bottom: 20px; display: none;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">File đính kèm:</label>
+                            <div id="viewFileContent" style="background: #f8f9fa; padding: 15px; border-radius: 8px;"></div>
+                        </div>
+
+                        <div id="viewExplanation" style="margin-bottom: 20px;">
+                            <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Giải thích:</label>
+                            <div id="viewQuestionExplanation" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #6c757d; font-size: 16px; line-height: 1.6; color: #2c3e50;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; gap: 15px; justify-content: flex-end; padding-top: 20px; border-top: 1px solid #e9ecef;">
+                    <button type="button" class="btn-cancel" onclick="closeViewModal()" style="background: #6c757d; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.3s;">Đóng</button>
+                </div>
+            </div>
+        </div>
+        <form id="addToModuleForm" action="addQuestionsToModule" method="POST" style="display:none;">
+            <input type="hidden" name="courseId" value="${course.courseId}">
+            <input type="hidden" name="moduleId" id="selectedModuleId">
+            <input type="hidden" name="questionIds" id="selectedQuestionIds">
+        </form>
 
         <script>
             let questionCount = 0;
@@ -397,202 +586,188 @@
                 }
             };
 
+            // View Question Modal Functions
+            function openViewQuestion(button) {
+                const id = button.getAttribute("data-id");
+                const content = button.getAttribute("data-content") || "";
+                const type = button.getAttribute("data-type") || "";
+                const explanation = button.getAttribute("data-explanation") || "";
+                const fileUrl = button.getAttribute("data-file") || "";
+                const topicName = button.getAttribute("data-topic") || "Không có";
+                const status = button.getAttribute("data-status") || "";
+                const optionsStr = button.getAttribute("data-options") || "";
+                const answerText = button.getAttribute("data-answer") || "";
 
-            function createOptionHTML(questionNumber) {
-                let html = "";
-                for (let i = 1; i <= 4; i++) {
-                    html += '<div class="answer-option">';
-                    html += '    <input type="checkbox" name="correct' + questionNumber + '" value="' + i + '" ';
-                    html += '        id="correct-' + questionNumber + '-' + i + '" class="correct-answer-checkbox">';
-                    html += '    <label for="correct-' + questionNumber + '-' + i + '" class="correct-answer-label">';
-                    html += '        <i class="fas fa-check"></i>';
-                    html += '    </label>';
-                    html += '    <input type="text" name="optionContent' + questionNumber + '_' + i + '" ';
-                    html += '        class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">';
-                    html += '    <button type="button" class="remove-option-btn" onclick="removeOption(this)">';
-                    html += '        <i class="fas fa-trash"></i>';
-                    html += '    </button>';
-                    html += '</div>';
+                // Set basic info
+                document.getElementById("viewQuestionId").textContent = id;
+                document.getElementById("viewQuestionType").textContent = type === 'mcq_single' ? 'Trắc nghiệm' : 'Tự luận';
+                document.getElementById("viewQuestionTopic").textContent = topicName;
+                document.getElementById("viewQuestionStatus").textContent = status === 'approved' ? 'Đã duyệt' : status;
+                document.getElementById("viewQuestionContent").textContent = content;
+                document.getElementById("viewQuestionExplanation").textContent = explanation || "Không có giải thích";
+
+                // Handle MCQ options
+                const mcqOptions = document.getElementById("viewMcqOptions");
+                const textAnswer = document.getElementById("viewTextAnswer");
+                const optionsContainer = document.getElementById("viewAnswerOptions");
+
+                if (type === "mcq_single") {
+                    mcqOptions.style.display = "block";
+                    textAnswer.style.display = "none";
+
+                    optionsContainer.innerHTML = "";
+                    if (optionsStr.trim() !== "") {
+                        const pairs = optionsStr.split(",");
+                        pairs.forEach(function (p, index) {
+                            const parts = p.split("|");
+                            const optText = parts[0];
+                            const isCorrect = parts[1] === "true";
+
+                            const optionDiv = document.createElement("div");
+                            optionDiv.style.cssText = "display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #e9ecef;";
+
+                            const radio = document.createElement("input");
+                            radio.type = "radio";
+                            radio.checked = isCorrect;
+                            radio.disabled = true;
+                            radio.style.marginRight = "8px";
+
+                            const label = document.createElement("span");
+                            label.textContent = optText;
+                            label.style.cssText = isCorrect ? "color: #28a745; font-weight: 600;" : "color: #6c757d;";
+
+                            if (isCorrect) {
+                                const checkIcon = document.createElement("i");
+                                checkIcon.className = "fas fa-check";
+                                checkIcon.style.cssText = "color: #28a745; margin-left: 8px;";
+                                label.appendChild(checkIcon);
+                            }
+
+                            optionDiv.appendChild(radio);
+                            optionDiv.appendChild(label);
+                            optionsContainer.appendChild(optionDiv);
+                        });
+                    }
+                } else if (type === "text") {
+                    mcqOptions.style.display = "none";
+                    textAnswer.style.display = "block";
+                    document.getElementById("viewCorrectAnswer").textContent = answerText;
+                } else {
+                    mcqOptions.style.display = "none";
+                    textAnswer.style.display = "none";
                 }
-                return html;
+
+                // Handle file display
+                const fileSection = document.getElementById("viewFileSection");
+                const fileContent = document.getElementById("viewFileContent");
+
+                if (fileUrl && fileUrl.trim() !== "") {
+                    fileSection.style.display = "block";
+                    const ext = fileUrl.split('.').pop().toLowerCase();
+
+                    let fileHtml = "";
+                    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
+                        fileHtml = '<img src="' + fileUrl + '" style="max-width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">';
+                    } else if (["mp3", "wav", "m4a", "aac"].includes(ext)) {
+                        fileHtml = '<audio controls style="width:100%;"><source src="' + fileUrl + '" type="audio/mpeg">Trình duyệt của bạn không hỗ trợ phát âm thanh.</audio>';
+                    } else {
+                        fileHtml = '<p style="color: #6c757d; font-style: italic;">Không thể hiển thị loại file này.</p>';
+                    }
+                    fileContent.innerHTML = fileHtml;
+                } else {
+                    fileSection.style.display = "none";
+                }
+
+                // Show modal
+                const modal = document.getElementById("viewQuestionModal");
+                modal.style.display = "flex";
+                modal.classList.add("show");
             }
 
-            function addQuestion(type) {
-                questionCount++;
-                const list = document.getElementById("questionsList");
-                const empty = list.querySelector(".empty-questions");
-                if (empty)
-                    empty.remove();
-
-                // Close dropdown
-                const dropdown = document.getElementById('questionTypeDropdown');
-                const toggle = document.querySelector('.dropdown-toggle');
-                dropdown.classList.remove('show');
-                toggle.classList.remove('active');
-
-                // Bắt đầu ghép chuỗi HTML
-                let html = '';
-                html += '<div class="question-form" id="question-' + questionCount + '">';
-                html += '    <div class="question-header">';
-                html += '        <div class="question-number">Câu ' + questionCount + '.</div>';
-                html += '        <button type="button" class="delete-question-btn" onclick="deleteQuestion(' + questionCount + ')">';
-                html += '            <i class="fas fa-trash"></i>';
-                html += '        </button>';
-                html += '    </div>';
-
-                html += '    <div class="question-content">';
-                html += '        <input type="hidden" name="questionType' + questionCount + '" value="' + type + '">';
-                html += '        <div class="question-input-group">';
-                html += '            <textarea name="questionText' + questionCount + '" ';
-                html += '                class="question-input" placeholder="Nhập nội dung câu hỏi tại đây..." required></textarea>';
-                html += '        </div>';
-
-                // Gọi hàm sinh option (vì createOptionHTML trả về HTML)
-                html += '        <div class="answer-options">' + createOptionHTML(questionCount) + '</div>';
-
-                html += '        <button type="button" class="add-option-btn" onclick="addOption(' + questionCount + ')">';
-                html += '            <i class="fas fa-plus"></i> Thêm phương án';
-                html += '        </button>';
-
-                html += '        <div class="file-upload-group">';
-                html += '            <label class="file-upload-label" for="file' + questionCount + '">Đính kèm file (tùy chọn)</label>';
-                html += '            <input type="file" id="file' + questionCount + '" name="file' + questionCount + '" ';
-                html += '                class="file-upload-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.mp3,.wav,.m4a,.aac">';
-                html += '            <div class="file-info">';
-                html += '                Hỗ trợ: PDF, Word, Text, hình ảnh (JPG, PNG, GIF), video (MP4, AVI, MOV, WMV), âm thanh (MP3, WAV, M4A, AAC)';
-                html += '            </div>';
-                html += '        </div>';
-
-                html += '        <div class="explanation-group">';
-                html += '            <textarea name="explanation' + questionCount + '" ';
-                html += '                class="explanation-input" placeholder="Nhập lời giải chi tiết tại đây (nếu có)"></textarea>';
-                html += '        </div>';
-                html += '    </div>';
-                html += '</div>';
-
-                // Thêm vào danh sách
-                list.insertAdjacentHTML("beforeend", html);
+            function closeViewModal() {
+                const modal = document.getElementById("viewQuestionModal");
+                modal.style.display = "none";
+                modal.classList.remove("show");
             }
 
+            // Close modal when clicking outside
+            window.addEventListener('click', function (event) {
+                const modal = document.getElementById('viewQuestionModal');
+                if (event.target === modal) {
+                    closeViewModal();
+                }
+            });
 
-            function deleteQuestion(number) {
-                // Xóa toàn bộ phần câu hỏi theo id
-                var question = document.getElementById("question-" + number);
-                if (question) {
-                    question.remove();
+            // Checkbox functionality
+            function toggleAllQuestions() {
+                const selectAll = document.getElementById('selectAllQuestions');
+                const checkboxes = document.querySelectorAll('.question-checkbox');
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+
+                updateAddButton();
+            }
+
+            function updateAddButton() {
+                const checkboxes = document.querySelectorAll('.question-checkbox:checked');
+                const addButton = document.getElementById('addToModuleBtn');
+                const selectAll = document.getElementById('selectAllQuestions');
+
+                if (checkboxes.length > 0) {
+                    addButton.disabled = false;
+                    addButton.style.background = '#28a745';
+                    addButton.style.cursor = 'pointer';
+                } else {
+                    addButton.disabled = true;
+                    addButton.style.background = '#6c757d';
+                    addButton.style.cursor = 'not-allowed';
+                }
+
+                // Update select all checkbox state
+                const totalCheckboxes = document.querySelectorAll('.question-checkbox');
+                if (checkboxes.length === 0) {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = false;
+                } else if (checkboxes.length === totalCheckboxes.length) {
+                    selectAll.checked = true;
+                    selectAll.indeterminate = false;
+                } else {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = true;
                 }
             }
 
-            function removeOption(button) {
-                // Tìm div cha có class .answer-option và xóa nó
-                var optionDiv = button.closest(".answer-option");
-                if (optionDiv) {
-                    optionDiv.remove();
+            function addSelectedToModule() {
+                const selectedQuestions = getSelectedQuestions();
+
+                if (selectedQuestions.length === 0) {
+                    alert('Vui lòng chọn ít nhất một câu hỏi!');
+                    return;
+                }
+
+                const moduleId = document.getElementById('questionBank').value;
+                if (!moduleId) {
+                    alert('Vui lòng chọn module trước khi thêm câu hỏi!');
+                    return;
+                }
+
+                if (confirm(`Bạn có chắc chắn muốn thêm ${selectedQuestions.length} câu hỏi vào module này?`)) {
+                    // Gán giá trị vào form có sẵn
+                    document.getElementById('selectedModuleId').value = moduleId;
+                    document.getElementById('selectedQuestionIds').value = selectedQuestions.join(',');
+
+                    // Gửi form
+                    document.getElementById('addToModuleForm').submit();
                 }
             }
 
-            function addOption(questionNumber) {
-                var optionsDiv = document.querySelector("#question-" + questionNumber + " .answer-options");
-                var currentCount = optionsDiv.querySelectorAll(".answer-option").length;
-                var newIndex = currentCount + 1;
-
-                var html = '';
-                html += '<div class="answer-option">';
-                html += '    <input type="checkbox" name="correct' + questionNumber + '" value="' + newIndex + '" ';
-                html += '        id="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-checkbox">';
-                html += '    <label for="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-label">';
-                html += '        <i class="fas fa-check"></i>';
-                html += '    </label>';
-                html += '    <input type="text" name="optionContent' + questionNumber + '_' + newIndex + '" ';
-                html += '        class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">';
-                html += '    <button type="button" class="remove-option-btn" onclick="removeOption(this)">';
-                html += '        <i class="fas fa-trash"></i>';
-                html += '    </button>';
-                html += '</div>';
-
-                optionsDiv.insertAdjacentHTML("beforeend", html);
+            function getSelectedQuestions() {
+                const checkboxes = document.querySelectorAll('.question-checkbox:checked');
+                return Array.from(checkboxes).map(cb => cb.value);
             }
 
-            function addTextQuestion() {
-                questionCount++;
-                const list = document.getElementById("questionsList");
-                const empty = list.querySelector(".empty-questions");
-                if (empty)
-                    empty.remove();
-
-                // Close dropdown
-                const dropdown = document.getElementById('questionTypeDropdown');
-                const toggle = document.querySelector('.dropdown-toggle');
-                dropdown.classList.remove('show');
-                toggle.classList.remove('active');
-
-                let html = '';
-                html += '<div class="text-question-form" id="question-' + questionCount + '">';
-                html += '    <div class="text-question-header">';
-                html += '        <div class="text-question-number">Câu ' + questionCount + '.</div>';
-                html += '        <div class="text-question-type">';
-                html += '            <i class="fas fa-file-text"></i>';
-                html += '            Câu hỏi dạng text';
-                html += '        </div>';
-                html += '        <button type="button" class="delete-question-btn" onclick="deleteQuestion(' + questionCount + ')">';
-                html += '            <i class="fas fa-trash"></i>';
-                html += '            Xóa';
-                html += '        </button>';
-                html += '    </div>';
-                html += '    <div class="text-question-content">';
-                html += '        <input type="hidden" name="questionType' + questionCount + '" value="text">';
-                html += '        <div class="question-input-group">';
-                html += '            <textarea name="questionText' + questionCount + '" ';
-                html += '                class="question-input" placeholder="Nhập nội dung câu hỏi tại đây..." required></textarea>';
-                html += '        </div>';
-                html += '        <div class="file-upload-group">';
-                html += '            <label class="file-upload-label" for="file' + questionCount + '">Đính kèm file (tùy chọn)</label>';
-                html += '            <input type="file" id="file' + questionCount + '" name="file' + questionCount + '" ';
-                html += '                class="file-upload-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.mp3,.wav,.m4a,.aac">';
-                html += '            <div class="file-info">';
-                html += '                Hỗ trợ: PDF, Word, Text, hình ảnh (JPG, PNG, GIF), video (MP4, AVI, MOV, WMV), âm thanh (MP3, WAV, M4A, AAC)';
-                html += '            </div>';
-                html += '        </div>';
-                html += '        <div class="answer-group">';
-                html += '            <label class="answer-label">Đáp án đúng:</label>';
-                html += '            <textarea name="correctAnswer' + questionCount + '" ';
-                html += '                class="answer-input" placeholder="Nhập đáp án đúng cho câu hỏi này..." required></textarea>';
-                html += '        </div>';
-                html += '        <div class="explanation-group">';
-                html += '            <textarea name="explanation' + questionCount + '" ';
-                html += '                class="explanation-input" placeholder="Nhập lời giải chi tiết tại đây (nếu có)"></textarea>';
-                html += '        </div>';
-                html += '    </div>';
-                html += '</div>';
-
-                list.insertAdjacentHTML("beforeend", html);
-            }
-//            window.onload = function () {
-//                const form = document.getElementById("bulkQuestionForm");
-//                form.addEventListener("submit", function (e) {
-//                    const moduleSelect = document.getElementById("questionBank");
-//                    console.log("Module selected:", moduleSelect.value);
-//                    console.log("Form data:", new FormData(form));
-//                    
-//                    if (!moduleSelect.value) {
-//                        alert("⚠️ Vui lòng chọn module trước khi lưu câu hỏi!");
-//                        e.preventDefault();
-//                        return;
-//                    }
-//                    
-//                    // Check if there are any questions
-//                    const questionCount = document.querySelectorAll('.question-form, .text-question-form').length;
-//                    console.log("Question count:", questionCount);
-//                    
-//                    if (questionCount === 0) {
-//                        alert("⚠️ Vui lòng thêm ít nhất một câu hỏi!");
-//                        e.preventDefault();
-//                        return;
-//                    }
-//                    
-//                    console.log("Form submitting...");
-//                });
-//            };
         </script>
     </body>
 </html>

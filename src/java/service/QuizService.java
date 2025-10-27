@@ -4,11 +4,11 @@
  */
 package service;
 
+import dal.ModuleDAO;
 import dal.ProgressDAO;
 import dal.QuestionDAO;
 import dal.QuizDAO;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +21,6 @@ import dal.ModuleItemDAO;
 import java.math.BigDecimal;
 import model.entity.ModuleItem;
 import model.entity.Quiz;
-import java.sql.SQLException;
 
 public class QuizService {
 
@@ -29,6 +28,7 @@ public class QuizService {
     private QuestionDAO questionDAO = new QuestionDAO();
     private ProgressDAO progressDAO = new ProgressDAO();
     private ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
+    private ModuleDAO moduleDAO = new ModuleDAO();
 
     public QuizDTO getQuizById(int quizId) {
         if (quizId <= 0) {
@@ -154,51 +154,57 @@ public class QuizService {
         return quizDAO.findLatestSubmittedAttempt(quizId, studentId);
     }
 
-   
-    public int createQuiz(int moduleId, String title, Integer attemptsAllowed, Double passingScorePct, Integer pickCount) {
-        try {
-            
-            ModuleItem item = new ModuleItem();
-            item.setModuleId(moduleId);
-            item.setItemType("quiz");
-            item.setOrderIndex(moduleItemDAO.getNextOrderIndex(moduleId));
-            item.setRequired(true);
+    public int createQuiz(int moduleId, String title, Double passingScorePct, Integer pickCount, Integer timeLimit) {
+    try {
+        ModuleItem item = new ModuleItem();
+        item.setModule(moduleDAO.getModuleById(moduleId));
+        item.setItemType("quiz");
+        item.setOrderIndex(moduleItemDAO.getNextOrderIndex(moduleId));
+        item.setRequired(true);
 
-            int moduleItemId = moduleItemDAO.insertModuleItem(item);
-            if (moduleItemId == -1) {
-                System.err.println("Không thể tạo ModuleItem cho quiz");
-                return -1;
-            }
-
-           
-            Quiz quiz = new Quiz(moduleItemId, title, attemptsAllowed, passingScorePct, pickCount);
-            boolean success = quizDAO.insertQuiz(quiz);
-
-            return success ? moduleItemId : -1;
-        } catch (Exception e) {
-            e.printStackTrace();
+        int moduleItemId = moduleItemDAO.insertModuleItem(item);
+        if (moduleItemId == -1) {
+            System.err.println("Không thể tạo ModuleItem cho quiz");
             return -1;
         }
-    }
 
-    public boolean updateQuiz(int quizId, String title, Integer attemptsAllowed, BigDecimal passingScorePct, Integer pickCount) {
-        try {
-            return quizDAO.updateQuiz(quizId, title, attemptsAllowed, passingScorePct, pickCount);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+        Quiz quiz = new Quiz(moduleItemId, title, passingScorePct, pickCount, timeLimit);
+        boolean success = quizDAO.insertQuiz(quiz);
 
-    public boolean deleteQuiz(int quizId) {
-        try {
-         
-                boolean itemDeleted = moduleItemDAO.deleteModuleItem(quizId);
-                return itemDeleted;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        return success ? moduleItemId : -1;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return -1;
     }
 }
 
+   public boolean updateQuiz(int quizId, String title, Double passingScorePct, Integer pickCount, Integer timeLimitMin) {
+    try {
+        Quiz q = new Quiz();
+        q.setQuizId(quizId);
+        q.setTitle(title);    
+        q.setPassingScorePct(passingScorePct);
+        q.setPickCount(pickCount);
+        q.setTimeLimitMin(timeLimitMin);
+
+        return quizDAO.updateQuiz(q);
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+    public boolean deleteQuiz(int quizId) {
+        try {
+
+            boolean itemDeleted = moduleItemDAO.deleteModuleItem(quizId);
+            return itemDeleted;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public Quiz getQuiz(int quizId) {
+        return quizDAO.getQuiz(quizId);
+    }
+}
