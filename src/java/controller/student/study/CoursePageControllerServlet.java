@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import model.dto.AssignmentDTO;
+import model.dto.AssignmentWorkDTO;
 import model.dto.CoursePageDTO;
 import model.dto.DiscussionDTO;
 import model.dto.DiscussionPostDTO;
@@ -25,6 +27,7 @@ import model.dto.QuizAttemptDTO;
 import model.dto.QuizDTO;
 import model.entity.Lesson;
 import model.entity.Users;
+import service.AssignmentService;
 import service.CoursePageService;
 import service.DiscussionService;
 import service.LessonService;
@@ -47,6 +50,7 @@ public class CoursePageControllerServlet extends HttpServlet {
     private DiscussionService discussionService = new DiscussionService();
     private QuestionService questionService = new QuestionService();
     private QuizService quizService = new QuizService();
+    private AssignmentService assignmentService = new AssignmentService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -253,6 +257,65 @@ public class CoursePageControllerServlet extends HttpServlet {
                 request.setAttribute("page", pageNumber);
                 request.setAttribute("pageSize", pageSize);
                 request.setAttribute("listPost", listPost);
+            } else if ("assignment".equalsIgnoreCase(item.getItemType())) {
+                int assignmentId = item.getModuleItemId();
+                int studentId = user.getUserId();
+                AssignmentDTO assginment = assignmentService.getAssignmentWithRubric(assignmentId);
+                AssignmentWorkDTO work = assignmentService.getAssigmentWork(assignmentId, studentId);
+
+                String awStatus = (work == null || work.getStatus() == null)
+                        ? "none" : work.getStatus().toLowerCase();
+                boolean isCooldown = false;
+                String nextRetryAt = null;
+
+                if (work != null && work.getGradedAt() != null && "returned".equalsIgnoreCase(awStatus)) {
+                    LocalDateTime gradedAt = work.getGradedAt();
+                    LocalDateTime nextRetryTime = gradedAt.plusHours(1);
+                    if (LocalDateTime.now().isBefore(nextRetryTime)) {
+                        isCooldown = true;
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+                        nextRetryAt = nextRetryTime.format(dtf);
+                    }
+                }
+
+                boolean canEdit;
+                boolean canSubmit;
+
+                switch (awStatus) {
+                    case "none":
+                        canEdit = true;
+                        canSubmit = true;
+                        break;
+                    case "draft":
+                        canEdit = true;
+                        canSubmit = true;
+                        break;
+                    case "returned":
+                        canEdit = !isCooldown;
+                        canSubmit = !isCooldown;
+                        break;
+                    case "submitted":
+                        canEdit = false;
+                        canSubmit = false;
+                        break;
+                    case "passed":
+                        canEdit = false;
+                        canSubmit = false;
+                        break;
+                    default:
+                        canEdit = true;
+                        canSubmit = true;
+                }
+
+                boolean showResult = "returned".equals(awStatus) || "passed".equals(awStatus);
+                request.setAttribute("assginment", assginment);
+                request.setAttribute("awWork", work);
+                request.setAttribute("awStatus", awStatus);
+                request.setAttribute("isCooldown", isCooldown);
+                request.setAttribute("nextRetryAt", nextRetryAt);
+                request.setAttribute("canEdit", canEdit);
+                request.setAttribute("canSubmit", canSubmit);
+                request.setAttribute("showResult", showResult);
             }
 
         } catch (IllegalArgumentException e) {
@@ -261,6 +324,14 @@ public class CoursePageControllerServlet extends HttpServlet {
             request.setAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             request.setAttribute("errorMessage", "Có lỗi trong quá trình xử lý");
+        }
+        HttpSession ss = request.getSession(false);
+        if (ss != null) {
+            Object fe = ss.getAttribute("flashError");
+            if (fe != null) {
+                request.setAttribute("errorMessage", fe); 
+                ss.removeAttribute("flashError");     
+            }
         }
         request.getRequestDispatcher("/course/main-layout.jsp").forward(request, response);
     }

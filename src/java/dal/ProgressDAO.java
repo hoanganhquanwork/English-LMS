@@ -149,8 +149,8 @@ public class ProgressDAO extends DBContext {
         return null;
     }
 
-    //quiz score
-    public int updateBestQuizScore(int studentId, int moduleItemId, double newScorePct, boolean passed) {
+    //quiz, assignment score
+    public int updateBestQuizOrAssigmentScore(int studentId, int moduleItemId, double newScorePct, boolean passed) {
         String sqlUpdate
                 = "UPDATE Progress SET "
                 + "  score_pct = CASE WHEN score_pct IS NULL OR ? > score_pct THEN ? ELSE score_pct END, "
