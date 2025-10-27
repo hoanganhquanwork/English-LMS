@@ -107,7 +107,7 @@ public class LoginInternalServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/dashboard-manager");
                     break;
                 case "Admin":
-                    response.sendRedirect(request.getContextPath() + "/AdminUserController");
+                    response.sendRedirect(request.getContextPath() + "/AdminUserList");
 
                     break;
                 default:

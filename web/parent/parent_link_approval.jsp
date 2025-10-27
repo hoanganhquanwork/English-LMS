@@ -129,7 +129,7 @@
 
                                 <c:if test="${not empty r.note}">
                                     <div class="note-section">
-                                        <span class="note-label">📝 Lý do:</span>
+                                        <span class="note-label">📝 Ghi chú:</span>
                                         <span class="note-content">${r.note}</span>
                                     </div>
                                 </c:if>
@@ -178,8 +178,9 @@
     </div>
 </main>
 
-<footer class="footer">
-    <div class="container bottom">© 2025 LinguaTrack</div>
+
+<footer>
+        <jsp:include page="/footer.jsp" />
 </footer>
 
 <script>

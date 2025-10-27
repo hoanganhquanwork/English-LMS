@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.entity.Users;
 import service.TokenService;
 
 /**
@@ -63,6 +64,8 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
+        Users user = (Users) session.getAttribute("user");
+        String role = user.getRole();
         if (session != null) {
             session.invalidate();
         }
@@ -78,7 +81,12 @@ public class LogoutServlet extends HttpServlet {
                 }
             }
         }
+        if("admin".equalsIgnoreCase(role)||"manager".equalsIgnoreCase(role)||"instructor".equalsIgnoreCase(role)){
+            response.sendRedirect("loginInternal");
+        }
+        else{
         response.sendRedirect("login");
+    }
     }
 
     /**

@@ -111,6 +111,9 @@
         </main>
 
         <!-- Footer -->
+        
+<footer>
         <jsp:include page="/footer.jsp" />
+</footer>
     </body>
 </html>
