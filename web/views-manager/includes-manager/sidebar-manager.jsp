@@ -26,17 +26,14 @@
            class="${pageContext.request.requestURI.contains('/revenue-report') ? 'active' : ''}">
             <i class="fas fa-chart-bar"></i> Báo cáo
         </a>
-
         <a href="coursepublish"
            class="${pageContext.request.requestURI.contains('/coursepublish') ? 'active' : ''}">
             <i class="fas fa-calendar-days"></i> Lịch đăng khóa học
         </a>
-
         <a href="manager-flashcard"
            class="${pageContext.request.requestURI.contains('/manager-flashcard') ? 'active' : ''}">
             <i class="fa fa-clone"></i> Quản lí flashcard
         </a>
-
         <a href="question-manager"
            class="${pageContext.request.requestURI.contains('question-manager') ? 'active' : ''}">
             <i class="fa fa-question"></i> Quản lí câu hỏi
