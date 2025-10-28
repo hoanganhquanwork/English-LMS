@@ -226,17 +226,20 @@ public class AssignmentDAO extends DBContext {
         String updateSql = "UPDATE AssignmentWork "
                 + "  SET status = 'submitted', "
                 + "  submitted_at = GETDATE(), "
-                + "  text_answer = ?, file_url = ? "
+                + "  text_answer = ?, file_url = ?,  "
+                + "  grader_id = ? "
                 + "  WHERE assignment_id = ? AND student_id = ?";
         String insertSql = "INSERT INTO AssignmentWork "
-                + " (assignment_id, student_id, text_answer, file_url, status, submitted_at) "
-                + "  VALUES (?, ?, ?, ?, 'submitted', GETDATE())";
+                + " (assignment_id, student_id, text_answer, file_url, status, submitted_at, grader_id) "
+                + "  VALUES (?, ?, ?, ?, 'submitted', GETDATE(), ?)";
         try {
+            Integer graderId = getGraderId(work.getAssignmentId());
             PreparedStatement up = connection.prepareStatement(updateSql);
             up.setString(1, work.getTextAnswer());
             up.setString(2, work.getFileUrl());
-            up.setInt(3, work.getAssignmentId());
-            up.setInt(4, work.getStudentId());
+            up.setInt(3, graderId);
+            up.setInt(4, work.getAssignmentId());
+            up.setInt(5, work.getStudentId());
             int rows = up.executeUpdate();
             if (rows > 0) {
                 return true;
@@ -247,6 +250,8 @@ public class AssignmentDAO extends DBContext {
             ins.setInt(2, work.getStudentId());
             ins.setString(3, work.getTextAnswer());
             ins.setString(4, work.getFileUrl());
+            ins.setInt(5, graderId);
+
             return ins.executeUpdate() > 0;
 
         } catch (SQLException e) {
@@ -284,4 +289,23 @@ public class AssignmentDAO extends DBContext {
         return false;
     }
 
+    public int getGraderId(int assignmentId) {
+        String sql = "SELECT TOP 1 c.created_by AS grader_id "
+                + "   FROM Course c "
+                + "   JOIN Module m ON m.course_id = c.course_id "
+                + "   JOIN ModuleItem mi ON mi.module_id = m.module_id "
+                + "   WHERE mi.module_item_id = ?";
+
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, assignmentId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.wasNull() ? null : rs.getInt("grader_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }

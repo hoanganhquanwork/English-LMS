@@ -178,5 +178,28 @@ public class ProgressDAO extends DBContext {
             return -1;
         }
     }
+    
+    public boolean isAllModuleItemCompleted(int courseId, int studentId){
+        String sql = "SELECT CASE WHEN SUM(CASE WHEN mi.is_required = 1 THEN 1 ELSE 0 END) > 0 "
+                + " AND SUM(CASE WHEN mi.is_required = 1 "
+                + " AND (p.status IS NULL OR p.status <> 'completed') THEN 1 ELSE 0 END) = 0 "
+                + " THEN 1 ELSE 0 END "
+                + " FROM ModuleItem mi JOIN Module m ON m.module_id = mi.module_id "
+                + " LEFT JOIN Progress p ON p.module_item_id = mi.module_item_id AND p.student_id = ? "
+                + " WHERE m.course_id = ?";
+        
+        try {
+            PreparedStatement st = connection.prepareStatement(sql);
+            st.setInt(1, studentId);
+            st.setInt(2, courseId);
+            ResultSet rs = st.executeQuery();
+            if(rs.next()){
+                return rs.getInt(1) == 1 ;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }

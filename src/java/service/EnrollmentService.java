@@ -13,13 +13,18 @@ import model.entity.Enrollment;
  * @author Lenovo
  */
 public class EnrollmentService {
+
     private EnrollmentDAO dao = new EnrollmentDAO();
 
     public List<Enrollment> getEnrollments(int courseId, String keyword, String status) {
         return dao.searchAndFilterEnrollments(courseId, keyword, status);
     }
-    public boolean enrollAfterPayment(int courseId, int studentId) {
-    return dao.insertEnrollmentAfterPayment(courseId, studentId);
-}
 
+    public boolean enrollAfterPayment(int courseId, int studentId) {
+        return dao.insertEnrollmentAfterPayment(courseId, studentId);
+    }
+
+    public boolean isStudentEnrolledInCourse(int studentId, int courseId){
+        return dao.isStudentEnrolledInCourse(studentId, courseId);
+    }
 }

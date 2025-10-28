@@ -47,15 +47,15 @@
                     <c:forEach var="c" items="${requestScope.popularCourses}" >
                         <div class="col-12 col-md-6 col-lg-3 ">
                             <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}"
-                               class="card card-course h-100 text-decoration-none text-dark">
-                                <img src="${pageContext.request.contextPath}/${c.thumbnail}" class="card-img-top" alt="${c.title}">
+                               class="card card-course h-100 text-decoration-none text-dark rounded-4 border border-1 overflow-hidden">
+                                <img src="${pageContext.request.contextPath}/${c.thumbnail}" class="card-img-top w-100 h-100 object-fit-cover" alt="${c.title}">
                                 <div class="card-body">
                                     <h5 class="card-title fw-semibold mb-2 line-2" title="${c.title}">${c.title}</h5>
                                     <p class="text-secondary mb-2 desc-3"
                                        style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
                                         <c:out value="${c.description}"/>
                                     </p>
-
+                                    <span class="badge rounded-pill text-bg-primary mb-2">Phổ biến</span>
                                 </div>
                             </a>
                         </div>
@@ -81,8 +81,8 @@
                     <c:forEach var="c" items="${requestScope.newCourses}">
                         <div class="col-12 col-md-6 col-lg-3">
                             <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}"
-                               class="card card-course h-100 text-decoration-none text-dark">
-                                <img src="${pageContext.request.contextPath}/${c.thumbnail}" class="card-img-top" alt="${c.title}">
+                               class="card card-course h-100 text-decoration-none text-dark rounded-4 border border-1 overflow-hidden">
+                                <img src="${pageContext.request.contextPath}/${c.thumbnail}" class="card-img-top w-100 h-100 object-fit-cover" alt="${c.title}">
                                 <div class="card-body">
                                     <h5 class="card-title fw-semibold mb-2 line-2" title="${c.title}">${c.title}</h5>
                                     <p class="text-secondary mb-2 desc-3"

@@ -323,9 +323,22 @@
                                                             <c:if test="${it.itemType != 'lesson'}">
                                                                 <small class="text-muted text-capitalize">${it.itemType}</small>
                                                             </c:if>
-                                                            <c:if test="${not empty it.durationMin}"> • ${it.durationMin} min</c:if>
-                                                            </a>
-                                                        </li>
+                                                            <c:if test="${it.itemType == 'lesson'}">
+                                                                <c:if test="${not empty it.durationMin}">
+                                                                    <small class="text-muted text-capitalize"> • ${it.durationMin} phút </small>
+                                                                </c:if>
+                                                                <c:if test="${it.contentType == 'reading'}">
+                                                                    <small class="text-muted text-capitalize"> • 10 phút </small>
+                                                                </c:if>
+                                                            </c:if>
+                                                            <c:if test="${it.itemType == 'assignment'}">
+                                                                <small class="text-muted text-capitalize"> • 30 phút </small>
+                                                            </c:if>
+                                                            <c:if test="${it.itemType == 'discussion'}">
+                                                                <small class="text-muted text-capitalize"> • Không bắt buộc </small>
+                                                            </c:if>
+                                                        </a>
+                                                    </li>
                                                 </c:forEach>
                                             </ul>
                                         </div>
@@ -423,7 +436,30 @@
                                                 <div class="card border-0 bg-light rounded-3 shadow-sm mb-4">
                                                     <div class="card-body">
                                                         <div class="fw-semibold mb-3">Câu ${st.count}: ${q.content}</div>
+                                                        <c:if test="${not empty q.mediaUrl}">
+                                                            <c:set var="url" value="${q.mediaUrl}" />
+                                                            <c:set var="lower" value="${fn:toLowerCase(url)}" />
 
+                                                            <!--image-->
+                                                            <c:if test="${fn:endsWith(lower,'.jpg') 
+                                                                          || fn:endsWith(lower,'.jpeg') 
+                                                                          || fn:endsWith(lower,'.png') 
+                                                                          || fn:endsWith(lower,'.webp') 
+                                                                          || fn:endsWith(lower,'.gif')}">
+                                                                  <img src="${pageContext.request.contextPath}/${url}"
+                                                                       alt="Minh họa câu hỏi ${st.count}"
+                                                                       class="img-fluid rounded mb-3"
+                                                                       style="max-height:260px; object-fit:cover;">
+                                                            </c:if>
+
+                                                            <!--audio-->
+                                                            <c:if test="${fn:endsWith(lower,'.mp3')}">
+                                                                <audio controls preload="none" class="w-100 mb-3">
+                                                                    <source src="${pageContext.request.contextPath}/${url}" type="audio/mpeg">
+                                                                </audio>
+                                                            </c:if>
+
+                                                        </c:if>
                                                         <!-- MCQ single choice -->
                                                         <c:if test="${q.type == 'mcq_single'}">
                                                             <c:set var="userChoice" value="${requestScope.userAnswers[q.questionId]}" />
@@ -1296,190 +1332,190 @@
 //                                                                            });
 
 
-                                                                            tinymce.init({
-                                                                                selector: '#userReply',
-                                                                                plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                                toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                                menubar: false,
-                                                                                statusbar: false,
-                                                                                branding: false,
-                                                                                width: '100%'
-                                                                            });
+                                                        tinymce.init({
+                                                            selector: '#userReply',
+                                                            plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                            toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                            menubar: false,
+                                                            statusbar: false,
+                                                            branding: false,
+                                                            width: '100%'
+                                                        });
 
 
 
-                                                                            function replyForm(formId) {
-                                                                                event.preventDefault(); // Ngừng hành động mặc định của form (reload trang)
-                                                                                var form = document.getElementById(formId);
-                                                                                if (form.style.display === "none" || form.style.display === "") {
+                                                        function replyForm(formId) {
+                                                            event.preventDefault(); // Ngừng hành động mặc định của form (reload trang)
+                                                            var form = document.getElementById(formId);
+                                                            if (form.style.display === "none" || form.style.display === "") {
 
-                                                                                    form.style.display = "block";
+                                                                form.style.display = "block";
 
-                                                                                    var editorId = formId.replace('replyForm', 'userReply');
-                                                                                    tinymce.remove('#' + editorId);
+                                                                var editorId = formId.replace('replyForm', 'userReply');
+                                                                tinymce.remove('#' + editorId);
 
-                                                                                    tinymce.init({
-                                                                                        selector: '#' + editorId,
-                                                                                        plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                                        toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                                        menubar: false,
-                                                                                        statusbar: false,
-                                                                                        branding: false,
-                                                                                        width: '100%'
-                                                                                    })
-                                                                                } else {
-                                                                                    form.style.display = "none";
-                                                                                }
-                                                                            }
+                                                                tinymce.init({
+                                                                    selector: '#' + editorId,
+                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                    menubar: false,
+                                                                    statusbar: false,
+                                                                    branding: false,
+                                                                    width: '100%'
+                                                                })
+                                                            } else {
+                                                                form.style.display = "none";
+                                                            }
+                                                        }
 
-                                                                            function editPostContent(postId) {
-                                                                                var contentElement = document.getElementById('postContent' + postId); // Lấy nội dung bài đăng
-                                                                                var content = contentElement.innerText;
+                                                        function editPostContent(postId) {
+                                                            var contentElement = document.getElementById('postContent' + postId); // Lấy nội dung bài đăng
+                                                            var content = contentElement.innerText;
 
-                                                                                var form = document.getElementById('editForm' + postId);
-                                                                                if (form.style.display === "none" || form.style.display === "") {
-                                                                                    form.style.display = "block";
+                                                            var form = document.getElementById('editForm' + postId);
+                                                            if (form.style.display === "none" || form.style.display === "") {
+                                                                form.style.display = "block";
 
-                                                                                    var editorId = 'userReply' + postId;
-                                                                                    tinymce.remove('#' + editorId);
-                                                                                    tinymce.init({
-                                                                                        selector: '#' + editorId,
-                                                                                        plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                                        toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                                        menubar: false,
-                                                                                        statusbar: false,
-                                                                                        branding: false,
-                                                                                        width: '100%',
-                                                                                        setup: function (editor) {
-                                                                                            editor.on('init', function () {
-                                                                                                editor.setContent(content);
-                                                                                            });
-                                                                                        }
-                                                                                    })
-                                                                                } else {
-                                                                                    form.style.display = "none";
-                                                                                }
-                                                                            }
+                                                                var editorId = 'userReply' + postId;
+                                                                tinymce.remove('#' + editorId);
+                                                                tinymce.init({
+                                                                    selector: '#' + editorId,
+                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                    menubar: false,
+                                                                    statusbar: false,
+                                                                    branding: false,
+                                                                    width: '100%',
+                                                                    setup: function (editor) {
+                                                                        editor.on('init', function () {
+                                                                            editor.setContent(content);
+                                                                        });
+                                                                    }
+                                                                })
+                                                            } else {
+                                                                form.style.display = "none";
+                                                            }
+                                                        }
 
-                                                                            function editCommentContent(commentId) {
-                                                                                var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
-                                                                                var content = contentElement.innerText;
+                                                        function editCommentContent(commentId) {
+                                                            var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
+                                                            var content = contentElement.innerText;
 
-                                                                                var form = document.getElementById('editCommentForm' + commentId);
-                                                                                if (form.style.display === "none" || form.style.display === "") {
-                                                                                    form.style.display = "block";
+                                                            var form = document.getElementById('editCommentForm' + commentId);
+                                                            if (form.style.display === "none" || form.style.display === "") {
+                                                                form.style.display = "block";
 
-                                                                                    var editorId = 'commentReply' + commentId;
-                                                                                    tinymce.remove('#' + editorId);
-                                                                                    tinymce.init({
-                                                                                        selector: '#' + editorId,
-                                                                                        plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                                        toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                                        menubar: false,
-                                                                                        statusbar: false,
-                                                                                        branding: false,
-                                                                                        width: '100%',
-                                                                                        setup: function (editor) {
-                                                                                            editor.on('init', function () {
-                                                                                                editor.setContent(content);
-                                                                                            });
-                                                                                        }
-                                                                                    })
-                                                                                } else {
-                                                                                    form.style.display = "none";
-                                                                                }
-                                                                            }
+                                                                var editorId = 'commentReply' + commentId;
+                                                                tinymce.remove('#' + editorId);
+                                                                tinymce.init({
+                                                                    selector: '#' + editorId,
+                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                    menubar: false,
+                                                                    statusbar: false,
+                                                                    branding: false,
+                                                                    width: '100%',
+                                                                    setup: function (editor) {
+                                                                        editor.on('init', function () {
+                                                                            editor.setContent(content);
+                                                                        });
+                                                                    }
+                                                                })
+                                                            } else {
+                                                                form.style.display = "none";
+                                                            }
+                                                        }
 
-                                                                            function editCommentContent(commentId) {
-                                                                                var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
-                                                                                var content = contentElement.innerText;
+                                                        function editCommentContent(commentId) {
+                                                            var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
+                                                            var content = contentElement.innerText;
 
-                                                                                var form = document.getElementById('editCommentForm' + commentId);
-                                                                                if (form.style.display === "none" || form.style.display === "") {
-                                                                                    form.style.display = "block";
+                                                            var form = document.getElementById('editCommentForm' + commentId);
+                                                            if (form.style.display === "none" || form.style.display === "") {
+                                                                form.style.display = "block";
 
-                                                                                    var editorId = 'commentReply' + commentId;
-                                                                                    tinymce.remove('#' + editorId);
-                                                                                    tinymce.init({
-                                                                                        selector: '#' + editorId,
-                                                                                        plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                                        toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                                        menubar: false,
-                                                                                        statusbar: false,
-                                                                                        branding: false,
-                                                                                        width: '100%',
-                                                                                        setup: function (editor) {
-                                                                                            editor.on('init', function () {
-                                                                                                editor.setContent(content);
-                                                                                            });
-                                                                                        }
-                                                                                    })
-                                                                                } else {
-                                                                                    form.style.display = "none";
-                                                                                }
-                                                                            }
+                                                                var editorId = 'commentReply' + commentId;
+                                                                tinymce.remove('#' + editorId);
+                                                                tinymce.init({
+                                                                    selector: '#' + editorId,
+                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
+                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
+                                                                    menubar: false,
+                                                                    statusbar: false,
+                                                                    branding: false,
+                                                                    width: '100%',
+                                                                    setup: function (editor) {
+                                                                        editor.on('init', function () {
+                                                                            editor.setContent(content);
+                                                                        });
+                                                                    }
+                                                                })
+                                                            } else {
+                                                                form.style.display = "none";
+                                                            }
+                                                        }
 
-                                                                            //for video youtube api
-                                                                            let ytPlayer;
+                                                        //for video youtube api
+                                                        let ytPlayer;
 
-                                                                            // phải là global để YouTube API gọi được
-                                                                            window.onYouTubeIframeAPIReady = function () {
-                                                                                ytPlayer = new YT.Player('yt-player', {
-                                                                                    events: {
-                                                                                        'onStateChange': window.onPlayerStateChange
-                                                                                    }
-                                                                                });
-                                                                            };
+                                                        // phải là global để YouTube API gọi được
+                                                        window.onYouTubeIframeAPIReady = function () {
+                                                            ytPlayer = new YT.Player('yt-player', {
+                                                                events: {
+                                                                    'onStateChange': window.onPlayerStateChange
+                                                                }
+                                                            });
+                                                        };
 
-                                                                            window.onPlayerStateChange = function (e) {
-                                                                                if (e.data === YT.PlayerState.ENDED) {
-                                                                                    window.markVideoWatched().finally(() => location.reload());
-                                                                                }
-                                                                            };
+                                                        window.onPlayerStateChange = function (e) {
+                                                            if (e.data === YT.PlayerState.ENDED) {
+                                                                window.markVideoWatched().finally(() => location.reload());
+                                                            }
+                                                        };
 
-                                                                            // cũng phải global
-                                                                            window.markVideoWatched = function () {
-                                                                                const form = new FormData();
-                                                                                form.append('courseId', '${cp.course.courseId}');
-                                                                                form.append('itemId', '${activeItemId}');
-                                                                                form.append('contentType', 'markVideoWatched');
+                                                        // cũng phải global
+                                                        window.markVideoWatched = function () {
+                                                            const form = new FormData();
+                                                            form.append('courseId', '${cp.course.courseId}');
+                                                            form.append('itemId', '${activeItemId}');
+                                                            form.append('contentType', 'markVideoWatched');
 
-                                                                                return fetch('${pageContext.request.contextPath}/moduleItemProgress', {
-                                                                                    method: 'POST',
-                                                                                    body: form,
-                                                                                    credentials: 'include'
-                                                                                });
-                                                                            };
+                                                            return fetch('${pageContext.request.contextPath}/moduleItemProgress', {
+                                                                method: 'POST',
+                                                                body: form,
+                                                                credentials: 'include'
+                                                            });
+                                                        };
 
-                                                                            //Save vocab
-                                                                            const formEl = document.getElementById("save-word-form");
-                                                                            formEl.addEventListener('submit', async (e) => {
-                                                                                e.preventDefault();
-                                                                                const fd = new FormData(formEl);
+                                                        //Save vocab
+                                                        const formEl = document.getElementById("save-word-form");
+                                                        formEl.addEventListener('submit', async (e) => {
+                                                            e.preventDefault();
+                                                            const fd = new FormData(formEl);
 
-                                                                                try {
-                                                                                    const res = await fetch(formEl.action, {
-                                                                                        method: 'POST',
-                                                                                        body: fd,
-                                                                                        credentials: 'include'
-                                                                                    });
+                                                            try {
+                                                                const res = await fetch(formEl.action, {
+                                                                    method: 'POST',
+                                                                    body: fd,
+                                                                    credentials: 'include'
+                                                                });
 
-                                                                                    let data = {};
-                                                                                    try {
-                                                                                        data = await res.json();
-                                                                                    } catch (_) {
-                                                                                    }
+                                                                let data = {};
+                                                                try {
+                                                                    data = await res.json();
+                                                                } catch (_) {
+                                                                }
 
-                                                                                    if (!res.ok || data.success === false) {
-                                                                                        alert('Từ vựng đã được thêm trước đó');
-                                                                                        return;
-                                                                                    }
-                                                                                    alert('Đã lưu từ vựng!');
-                                                                                } catch (err) {
-                                                                                    console.error(err);
-                                                                                    alert('Có lỗi mạng khi lưu.');
-                                                                                }
-                                                                            });
+                                                                if (!res.ok || data.success === false) {
+                                                                    alert('Từ vựng đã được thêm trước đó');
+                                                                    return;
+                                                                }
+                                                                alert('Đã lưu từ vựng!');
+                                                            } catch (err) {
+                                                                console.error(err);
+                                                                alert('Có lỗi mạng khi lưu.');
+                                                            }
+                                                        });
 
     </script>
 </html>

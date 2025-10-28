@@ -48,7 +48,7 @@
             <div class="row g-4 align-items-start justify-content-center">              
                 <!-- ========= Left  ========= -->
                 <div class="col-lg-5 pt-3">
-                    <div class="card border-0 bg-white shadow-soft thumb-card">
+                    <div class="card border-0 bg-white shadow-soft thumb-card rounded-4 border border-1 overflow-hidden">
                         <div class="ratio ratio-16x9">
                             <img class="w-100 h-100 rounded-3 object-fit-cover"
                                  src="${pageContext.request.contextPath}/${course.thumbnail}"
@@ -87,7 +87,7 @@
                                 <c:forEach begin="1" end="${5 - fullStars - (hasHalf ? 1 : 0)}"><i class="bi bi-star"></i></c:forEach>
                                 </span>
                                 <a class="small link-purple"  href="${pageContext.request.contextPath}/reviewCourse?courseId=${course.courseId}">
-                                    (<fmt:formatNumber value="${course.ratingsCount}" /> lượt đánh giá)
+                                (<fmt:formatNumber value="${course.ratingsCount}" /> lượt đánh giá)
                             </a>
                             <span class="text-light small ms-2">
                                 <fmt:formatNumber value="${course.studentCount}" /> học sinh
@@ -112,39 +112,41 @@
                                 <fmt:formatNumber value="${course.price}" type="number" groupingUsed="true" maxFractionDigits="0" />đ
                             </div>
                         </div>
-                        <div class="d-flex gap-2">
-                            <c:choose>
-                                <c:when test="${courseRequestStatus == 'enrolled'}">
-                                    <form method="get" action="${pageContext.request.contextPath}/coursePage?courseId=${course.courseId}">
-                                        <input type="hidden" name="courseId" value="${course.courseId}">
-                                        <button type="submit" class="btn btn-success w-100 fw-semibold">
-                                            <i class="bi bi-play-circle me-1"></i> Vào khóa học
+                        <c:if test="${not empty sessionScope.student}">
+                            <div class="d-flex gap-2">
+                                <c:choose>
+                                    <c:when test="${courseRequestStatus == 'enrolled'}">
+                                        <form method="get" action="${pageContext.request.contextPath}/coursePage?courseId=${course.courseId}">
+                                            <input type="hidden" name="courseId" value="${course.courseId}">
+                                            <button type="submit" class="btn btn-success w-100 fw-semibold">
+                                                <i class="bi bi-play-circle me-1"></i> Vào khóa học
+                                            </button>
+                                        </form>
+                                    </c:when>
+
+                                    <c:when test="${courseRequestStatus == 'requestExists'}">
+                                        <button type="button"
+                                                class="btn btn-outline-light w-100 fw-semibold opacity-100"
+                                                disabled "
+                                                title="Bạn đã tạo yêu cầu cho khóa học này rồi">
+                                            <i class="bi bi-card-checklist me-1"></i> Yêu cầu đã được lưu trữ
                                         </button>
-                                    </form>
-                                </c:when>
 
-                                <c:when test="${courseRequestStatus == 'requestExists'}">
-                                    <button type="button"
-                                            class="btn btn-outline-light w-100 fw-semibold opacity-100"
-                                            disabled "
-                                            title="Bạn đã tạo yêu cầu cho khóa học này rồi">
-                                        <i class="bi bi-card-checklist me-1"></i> Yêu cầu đã được lưu trữ
-                                    </button>
+                                    </c:when>
 
-                                </c:when>
-
-                                <c:otherwise>
-                                    <form method="post" action="${pageContext.request.contextPath}/createCourseRequest">
-                                        <input type="hidden" name="courseId" value="${course.courseId}">
-                                        <input type="hidden" name="source" value="courseInfo">
-                                        <button type="submit" class="btn btn-primary w-100 fw-semibold"
-                                                style="background-color:#6f42c1; border-color:#6f42c1; color:#fff;">
-                                            <i class="bi bi-plus-circle me-1"></i> Thêm vào danh sách tạm lưu
-                                        </button>
-                                    </form>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
+                                    <c:otherwise>
+                                        <form method="post" action="${pageContext.request.contextPath}/createCourseRequest">
+                                            <input type="hidden" name="courseId" value="${course.courseId}">
+                                            <input type="hidden" name="source" value="courseInfo">
+                                            <button type="submit" class="btn btn-primary w-100 fw-semibold"
+                                                    style="background-color:#6f42c1; border-color:#6f42c1; color:#fff;">
+                                                <i class="bi bi-plus-circle me-1"></i> Thêm vào danh sách tạm lưu
+                                            </button>
+                                        </form>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
@@ -399,79 +401,81 @@
 
     </div>
     <!--Similar-->
-    <div class="card border-0 bg-white shadow-soft mt-4 p-4">
-        <h3 class="fw-bold mb-3">
-            Khóa học tương tự
-        </h3>
+    <c:if test="${not empty sessionScope.student}">
+        <div class="card border-0 bg-white shadow-soft mt-4 p-4">
+            <h3 class="fw-bold mb-3">
+                Khóa học tương tự
+            </h3>
 
-        <c:choose>
-            <c:when test="${not empty randomSameCategory}">
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-                    <c:forEach var="c2" items="${randomSameCategory}">
-                        <div class="col">
-                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden ">
-                                <div class="ratio ratio-16x9">
-                                    <img src="${pageContext.request.contextPath}/${c2.thumbnail}"
-                                         alt="${c2.title}" class="w-100 h-100 object-fit-cover">
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="card-title mb-1 text-truncate" title="${c2.title}">
-                                        ${c2.title}
-                                    </h6>
-                                    <div class="text-secondary small mb-2 text-truncate" title="${c2.instructor.fullName}">
-                                        ${c2.instructor.fullName}
+            <c:choose>
+                <c:when test="${not empty randomSameCategory}">
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                        <c:forEach var="c2" items="${randomSameCategory}">
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden ">
+                                    <div class="ratio ratio-16x9">
+                                        <img src="${pageContext.request.contextPath}/${c2.thumbnail}"
+                                             alt="${c2.title}" class="w-100 h-100 object-fit-cover">
                                     </div>
+                                    <div class="card-body">
+                                        <h6 class="card-title mb-1 text-truncate" title="${c2.title}">
+                                            ${c2.title}
+                                        </h6>
+                                        <div class="text-secondary small mb-2 text-truncate" title="${c2.instructor.fullName}">
+                                            ${c2.instructor.fullName}
+                                        </div>
 
-                                    <!-- rating + count -->
-                                    <div class="d-flex align-items-center gap-2 mb-2">
-                                        <span class="fw-semibold small text-warning">
-                                            <c:choose>
-                                                <c:when test="${c2.rating != null}">
-                                                    <fmt:formatNumber value="${c2.rating}" minFractionDigits="1" maxFractionDigits="1"/>
-                                                </c:when>
-                                                <c:otherwise>—</c:otherwise>
-                                            </c:choose>
-                                        </span>
-                                        <span class="text-warning small">
-                                            <c:forEach begin="1" end="${(c2.rating != null) ? (c2.rating - (c2.rating % 1)) : 0}">
-                                                <i class="bi bi-star-fill"></i>
-                                            </c:forEach>
-                                            <c:forEach begin="1" end="${5 - ((c2.rating != null) ? (c2.rating - (c2.rating % 1)) : 0)}">
-                                                <i class="bi bi-star"></i>
-                                            </c:forEach>
-                                        </span>
-                                        <span class="small text-secondary">(<fmt:formatNumber value="${c2.ratingsCount}"/>)</span>
-                                    </div>
+                                        <!-- rating + count -->
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <span class="fw-semibold small text-warning">
+                                                <c:choose>
+                                                    <c:when test="${c2.rating != null}">
+                                                        <fmt:formatNumber value="${c2.rating}" minFractionDigits="1" maxFractionDigits="1"/>
+                                                    </c:when>
+                                                    <c:otherwise>—</c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                            <span class="text-warning small">
+                                                <c:forEach begin="1" end="${(c2.rating != null) ? (c2.rating - (c2.rating % 1)) : 0}">
+                                                    <i class="bi bi-star-fill"></i>
+                                                </c:forEach>
+                                                <c:forEach begin="1" end="${5 - ((c2.rating != null) ? (c2.rating - (c2.rating % 1)) : 0)}">
+                                                    <i class="bi bi-star"></i>
+                                                </c:forEach>
+                                            </span>
+                                            <span class="small text-secondary">(<fmt:formatNumber value="${c2.ratingsCount}"/>)</span>
+                                        </div>
 
-                                    <!-- extra info -->
-                                    <div class="small text-secondary">
-                                        <span class="me-2"><i class="bi bi-collection me-1"></i>${c2.level}</span>
-                                        <span><i class="bi bi-translate me-1"></i>${c2.language}</span>
+                                        <!-- extra info -->
+                                        <div class="small text-secondary">
+                                            <span class="me-2"><i class="bi bi-collection me-1"></i>${c2.level}</span>
+                                            <span><i class="bi bi-translate me-1"></i>${c2.language}</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card-footer bg-white border-0">
-                                    <div class="fw-semibold">
-                                        <fmt:formatNumber value="${c2.price}" type="number" groupingUsed="true" maxFractionDigits="0" />đ
+                                    <div class="card-footer bg-white border-0">
+                                        <div class="fw-semibold">
+                                            <fmt:formatNumber value="${c2.price}" type="number" groupingUsed="true" maxFractionDigits="0" />đ
+                                        </div>
+                                        <a class="stretched-link" href="${pageContext.request.contextPath}/courseInformation?courseId=${c2.courseId}"></a>
                                     </div>
-                                    <a class="stretched-link" href="${pageContext.request.contextPath}/courseInformation?courseId=${c2.courseId}"></a>
                                 </div>
                             </div>
-                        </div>
-                    </c:forEach>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <div class="text-secondary">Chưa có khóa học tương tự.</div>
-            </c:otherwise>
-        </c:choose>
-        <div class="text-start mt-4">
-            <a class="btn btn-outline-primary px-4"
-               href="${pageContext.request.contextPath}/courseSearching?categoryIDs=${course.categoryId}">
-                Xem thêm khóa học tương tự
-            </a>
-        </div>
+                        </c:forEach>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="text-secondary">Chưa có khóa học tương tự.</div>
+                </c:otherwise>
+            </c:choose>
+            <div class="text-start mt-4">
+                <a class="btn btn-outline-primary px-4"
+                   href="${pageContext.request.contextPath}/courseSearching?categoryIDs=${course.categoryId}">
+                    Xem thêm khóa học tương tự
+                </a>
+            </div>
 
-    </div>
+        </div>
+    </c:if>
 </div>
 <footer>
     <jsp:include page="../footer.jsp"/>
