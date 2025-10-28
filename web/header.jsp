@@ -19,13 +19,14 @@
     <body>
         <c:if test="${sessionScope.user == null or sessionScope.user.role == 'Student'}">
             <header class="py-2">
-                <div class="container d-flex align-items-center justify-content-between">      
+                <div class="container d-flex align-items-center justify-content-between" style="padding: 0px;">      
                     <div class="d-flex align-items-center flex-shrink-0">
                         <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/image/logo/logo.png" 
                                                                                alt="hi" height="28" class="me-3"></a>
                         <a href="${pageContext.request.contextPath}/courseSearching" class="nav-link me-3">Khám phá</a>
                         <c:if test="${sessionScope.user != null}">
                             <a href="${pageContext.request.contextPath}/myLearning" class="nav-link me-3">Khóa học của tôi</a>
+                            <a href="${pageContext.request.contextPath}/flashcard" class="nav-link me-3">Flashcard</a>
                         </c:if>
                     </div>
 

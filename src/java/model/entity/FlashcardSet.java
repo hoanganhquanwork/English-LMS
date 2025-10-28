@@ -8,6 +8,9 @@ public class FlashcardSet {
     private int termCount; 
     private String status;
     private String authorUsername;
+    private java.sql.Timestamp createdAt;
+    private java.sql.Timestamp updatedAt;
+    private java.sql.Timestamp lastActivityAt;
 
     public FlashcardSet() {
     }
@@ -79,6 +82,29 @@ public class FlashcardSet {
     public void setAuthorUsername(String authorUsername) {
         this.authorUsername = authorUsername;
     }
-    
+
+    public java.sql.Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(java.sql.Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public java.sql.Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(java.sql.Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public java.sql.Timestamp getLastActivityAt() {
+        return lastActivityAt;
+    }
+
+    public void setLastActivityAt(java.sql.Timestamp lastActivityAt) {
+        this.lastActivityAt = lastActivityAt;
+    }
     
 }
