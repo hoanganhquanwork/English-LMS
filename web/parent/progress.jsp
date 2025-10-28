@@ -23,7 +23,7 @@
 
     </head>
     <body>
-        <%@ include file="parent_header.jsp" %>
+            <jsp:include page="../header.jsp"/>
 
         <main class="container">
             <div class="page-title">

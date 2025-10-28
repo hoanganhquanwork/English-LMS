@@ -6,7 +6,7 @@
     request.setAttribute("currentPage", "orders");
 %>
 
-<%@ include file="parent_header.jsp" %>
+<jsp:include page="../header.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
 
 <main class="container">
@@ -34,7 +34,7 @@
                     </c:choose>
                 </div>
             </div>
-            
+
             <div class="order-dates">
                 <div class="date-item">
                     <span class="date-label">📅 Ngày tạo:</span>
@@ -89,7 +89,7 @@
                     <span class="btn-text">Tiến hành thanh toán (VNPAY)</span>
                 </button>
             </form>
-            
+
             <form action="${pageContext.request.contextPath}/parent/cancelorder" method="get" class="cancel-form">
                 <input type="hidden" name="orderId" value="${order.orderId}" />
                 <button type="submit" class="cancel-btn"
@@ -104,6 +104,6 @@
 
 
 <footer>
-        <jsp:include page="/footer.jsp" />
+    <jsp:include page="/footer.jsp" />
 </footer>
 

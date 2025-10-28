@@ -8,7 +8,7 @@
     request.setAttribute("currentPage", "approvals");
 %>
 
-<%@ include file="parent_header.jsp" %>
+<jsp:include page="../header.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
 
 <main class="container">
