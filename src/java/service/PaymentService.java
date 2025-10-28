@@ -91,14 +91,24 @@ public class PaymentService {
         int orderId = -1;
         List<Integer> reqIds = new ArrayList<>();
         try {
-            if (txnRef != null && txnRef.startsWith("ORD")) {
-                String[] parts = txnRef.split("_R");
-                orderId = Integer.parseInt(parts[0].substring(3));
-                if (parts.length > 1) {
-                    String[] arr = parts[1].split("-");
-                    for (String s : arr) if (!s.isBlank()) reqIds.add(Integer.parseInt(s));
+               if (txnRef != null && txnRef.startsWith("ORD")) {
+            // Bỏ phần timestamp (ví dụ: "_1761673803343") nếu có
+            int lastUnderscore = txnRef.lastIndexOf('_');
+            int rIndex = txnRef.indexOf("_R");
+            String cleanRef = (lastUnderscore > rIndex)
+                    ? txnRef.substring(0, lastUnderscore)
+                    : txnRef;
+
+            // Tách phần ORD{orderId} và R{reqIds}
+            String[] parts = cleanRef.split("_R");
+            orderId = Integer.parseInt(parts[0].substring(3));
+
+            if (parts.length > 1) {
+                for (String s : parts[1].split("-")) {
+                    if (!s.isBlank()) reqIds.add(Integer.parseInt(s));
                 }
             }
+        }
         } catch (Exception ignore) {}
 
         if (orderId <= 0) return false;

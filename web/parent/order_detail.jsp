@@ -57,8 +57,9 @@
                 <div class="course-item">
                     <div class="course-item-content">
                         <div class="course-info">
-                            <h4 class="course-title">${item.course.title}</h4>
-                            <p class="student-info">👨‍🎓 Học sinh: ${item.student.user.fullName}</p>
+                            <h4 class="course-title">${item.course.title}</h4>  
+                            <a href="${pageContext.request.contextPath}/courseInformation?courseId=${item.course.courseId}" class="btn primary" target="_blank"> Xem thông tin khóa học </a>
+                                <p class="student-info">👨‍🎓 Học sinh: ${item.student.user.fullName}</p>
                         </div>
                         <div class="course-price">
                             <span class="price-value">

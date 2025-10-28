@@ -48,6 +48,8 @@
                                         <h3 class="course-title">${item.course.title}</h3>
                                         <p class="student-name">👨‍🎓 Học sinh: ${item.student.user.fullName}</p>
                                         <div class="course-meta">
+                                            <a href="${pageContext.request.contextPath}/courseInformation?courseId=${item.course.courseId}" class="btn primary" target="_blank">
+                                                Xem thông tin khóa học                                    </a>
                                             <span class="status-badge pending">⏳ Chờ thanh toán</span>
                                         </div>
                                     </div>
