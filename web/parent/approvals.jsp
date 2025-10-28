@@ -89,6 +89,9 @@
                                 </div>
 
                                 <div class="status-container">
+                                    <a href="${pageContext.request.contextPath}/courseInformation?courseId=${req.course.courseId}" class="btn primary" target="_blank">
+                                        📖 Xem thông tin khóa học
+                                    </a>
                                     <c:choose>
                                         <c:when test="${req.status eq 'pending'}">
                                             <span class="status-badge pending">⏳ Chờ duyệt</span>
@@ -189,7 +192,8 @@
                 return;
             }
         } else {
-            if (!confirm(message)) return;
+            if (!confirm(message))
+                return;
         }
 
         const form = button.closest('form');
@@ -199,5 +203,5 @@
 </script>
 
 <footer>
-        <jsp:include page="/footer.jsp" />
+    <jsp:include page="/footer.jsp" />
 </footer>
