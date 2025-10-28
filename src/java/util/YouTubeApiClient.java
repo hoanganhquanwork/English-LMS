@@ -117,4 +117,54 @@ public class YouTubeApiClient {
 
         return hours * 3600 + minutes * 60 + seconds;
     }
+    
+    public static String fetchSubtitle(String youtubeUrl, String langCode) {
+        try {
+            String videoId = extractVideoId(youtubeUrl);
+            if (videoId == null) return " Không tìm thấy videoId hợp lệ.";
+
+           String apiUrl = "https://www.youtube.com/api/timedtext?lang=" + langCode +  "&v=" + videoId;
+
+
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)
+            );
+
+            StringBuilder xml = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) xml.append(line);
+            br.close();
+
+            // Chuyển XML <text>...</text> thành text thuần
+            Pattern p = Pattern.compile("<text[^>]*>(.*?)</text>");
+            Matcher matcher = p.matcher(xml.toString());
+
+            StringBuilder transcript = new StringBuilder();
+            while (matcher.find()) {
+                // Giải mã ký tự đặc biệt HTML
+                String text = matcher.group(1)
+                        .replaceAll("&amp;", "&")
+                        .replaceAll("&#39;", "'")
+                        .replaceAll("&quot;", "\"")
+                        .replaceAll("&lt;", "<")
+                        .replaceAll("&gt;", ">");
+                transcript.append(text).append(" ");
+            }
+
+            if (transcript.length() == 0) return " Video này không có phụ đề công khai hoặc auto.";
+            return transcript.toString().trim();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return " Lỗi khi lấy phụ đề: " + e.getMessage();
+        }
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(fetchSubtitle("https://www.youtube.com/watch?v=oBXSvS2QKxU", "en"));
+    }
 }

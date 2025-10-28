@@ -30,11 +30,11 @@ public class VNPayReturnController extends HttpServlet {
         ParsedRef p = new ParsedRef();
         if (txnRef != null && txnRef.startsWith("ORD")) {
             try {
-                String core = txnRef.substring(3);               // {orderId}_R...
+                String core = txnRef.substring(3);               
                 String[] a = core.split("_R");
                 p.orderId = Integer.parseInt(a[0]);
                 if (a.length > 1) {
-                    String reqPart = a[1].split("_")[0];         // r1-r2-... (bỏ timestamp)
+                    String reqPart = a[1].split("_")[0];         
                     for (String s : reqPart.split("-")) {
                         if (!s.isBlank()) p.reqIds.add(Integer.parseInt(s));
                     }

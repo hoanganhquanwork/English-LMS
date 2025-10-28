@@ -23,12 +23,15 @@ import model.entity.QuestionOption;
 import model.entity.Module;
 import java.io.*;
 import java.nio.file.*;
+import java.util.Map;
 import model.entity.Course;
 import model.entity.InstructorProfile;
 import model.entity.QuestionTextKey;
+import model.entity.Topic;
 import model.entity.Users;
 import service.CourseService;
 import service.QuestionService;
+import service.TopicService;
 
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024,
@@ -54,16 +57,46 @@ public class AddQuestion extends HttpServlet {
         }
     }
     private CourseService courseService = new CourseService();
+    private TopicService topicService = new TopicService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         int courseId = Integer.parseInt(request.getParameter("courseId"));
+        String topicFilter = request.getParameter("topicFilter");
+
         Course course = courseService.getCourseById(courseId);
         ModuleDAO mDao = new ModuleDAO();
         List<Module> modules = mDao.getModulesByCourse(courseId);
-        request.setAttribute("moduleList", modules);
+
+        List<Topic> topics = topicService.getAllTopics();
+
+        int pageSize = 5;
+        int currentPage = 1;
+        if (request.getParameter("page") != null) {
+            try {
+                currentPage = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException e) {
+                currentPage = 1;
+            }
+        }
+
+        int totalApproved = questionService.countApprovedQuestions(topicFilter);
+        int totalPages = (int) Math.ceil((double) totalApproved / pageSize);
+
+        Map<Question, Object> approvedQuestionMap
+                = questionService.getApprovedQuestionsWithAnswersPaged(topicFilter, currentPage, pageSize);
+
         request.setAttribute("course", course);
+        request.setAttribute("moduleList", modules);
+        request.setAttribute("topics", topics);
+        request.setAttribute("approvedQuestionMap", approvedQuestionMap);
+        request.setAttribute("selectedTopic", topicFilter);
+
+        request.setAttribute("page", currentPage);
+        request.setAttribute("totalPages", totalPages);
+
         request.getRequestDispatcher("teacher/add-questions.jsp").forward(request, response);
     }
 
@@ -73,7 +106,7 @@ public class AddQuestion extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-
+            String moduleId = request.getParameter("moduleId");
             String courseId = request.getParameter("courseId");
             String lessonIdStr = request.getParameter("lessonId");
             Integer lessonId = (lessonIdStr != null && !lessonIdStr.isEmpty())
@@ -115,7 +148,12 @@ public class AddQuestion extends HttpServlet {
                 q.setType(type);
                 q.setExplanation(explanation);
                 q.setMediaUrl(fileUrl);
-                q.setStatus("draft");
+                if (lessonId != null) {
+                    q.setStatus("submitted");
+                } else {
+                    q.setStatus("draft");
+                }
+
                 q.setTopicId(null);
                 q.setCreatedBy(instructor);
 
@@ -160,13 +198,14 @@ public class AddQuestion extends HttpServlet {
 
                 i++;
             }
-
+//            response.sendRedirect("questions?tab=questions");
             if (lessonId != null) {
+                Integer module = (moduleId != null && !moduleId.isEmpty())
+                        ? Integer.parseInt(moduleId) : null;
                 response.sendRedirect("updateLesson?courseId=" + courseId
-                       
-                        + "&lessonId=" + lessonId);
+                        + "&lessonId=" + lessonId + "&moduleId=" + module);
             } else {
-//                response.sendRedirect("ManageQuestionServlet?courseId=" + courseId);
+                response.sendRedirect("questions?tab=questions");
             }
 
         } catch (Exception e) {

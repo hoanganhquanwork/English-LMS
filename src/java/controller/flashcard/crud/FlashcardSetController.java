@@ -73,7 +73,7 @@ public class FlashcardSetController extends HttpServlet {
         }
     }
 
-    @Override
+        @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -97,6 +97,8 @@ public class FlashcardSetController extends HttpServlet {
                 createSet(request, response, studentId);
             } else if ("updateSet".equals(action)) {
                 updateSet(request, response, studentId);
+            } else if ("toggleStatus".equals(action)) {
+                toggleStatus(request, response, studentId);
             } else {
                 response.sendRedirect("dashboard?action=listSets");
             }
@@ -111,6 +113,8 @@ public class FlashcardSetController extends HttpServlet {
         set.setStudentId(studentId);
         set.setTitle(request.getParameter("title"));
         set.setDescription(request.getParameter("description"));
+        String status = request.getParameter("status");
+        set.setStatus(status != null && !status.isEmpty() ? status : "private");
 
         int setId = service.createSetReturnId(set);
 
@@ -134,8 +138,12 @@ public class FlashcardSetController extends HttpServlet {
         int setId = Integer.parseInt(request.getParameter("setId"));
         String title = request.getParameter("title");
         String description = request.getParameter("description");
+        String status = request.getParameter("status");
+        if (status == null || status.isEmpty()) {
+            status = "private";
+        }
 
-        if (!service.updateSetIfOwner(setId, studentId, title, description)) {
+        if (!service.updateSetIfOwner(setId, studentId, title, description, status)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền sửa set này.");
             return;
         }
@@ -175,6 +183,26 @@ public class FlashcardSetController extends HttpServlet {
                     service.deleteCard(cardId);
                 }
             }
+        }
+
+        response.sendRedirect("dashboard?action=viewSet&setId=" + setId);
+    }
+
+    private void toggleStatus(HttpServletRequest request, HttpServletResponse response, Integer studentId)
+            throws Exception {
+        int setId = Integer.parseInt(request.getParameter("setId"));
+        String target = request.getParameter("status");
+
+        boolean ok = false;
+        if ("public".equalsIgnoreCase(target)) {
+            ok = service.makeSetPublic(setId, studentId);
+        } else if ("private".equalsIgnoreCase(target)) {
+            ok = service.makeSetPrivate(setId, studentId);
+        }
+
+        if (!ok) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền cập nhật trạng thái set này.");
+            return;
         }
         response.sendRedirect("dashboard?action=viewSet&setId=" + setId);
     }

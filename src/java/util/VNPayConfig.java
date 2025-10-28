@@ -13,7 +13,7 @@ public class VNPayConfig {
     public static final String vnp_TmnCode = "58X4B4HP";
     public static final String vnp_HashSecret = "VRLDWNVWDNPCOEPBZUTWSEDQAGXJCNGZ";
     public static final String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static final String vnp_ReturnUrl = "http://localhost:9999/EnglishLMS/parent/vnpay-return";
+    public static final String vnp_ReturnUrl = "http://localhost:8080/EnglishLMS/parent/vnpay-return";
 
     // ==== Hỗ trợ ký HMAC SHA512 ====
     public static String hmacSHA512(String key, String data) {

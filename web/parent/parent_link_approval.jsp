@@ -7,7 +7,7 @@
     request.setAttribute("currentPage", "children");
 %>
 
-<%@ include file="parent_header.jsp" %>
+<jsp:include page="../header.jsp"/>
 <link rel="stylesheet" href="css/parent_link_approval.css" />
 
 <main class="container">
@@ -180,7 +180,7 @@
 
 
 <footer>
-        <jsp:include page="/footer.jsp" />
+    <jsp:include page="/footer.jsp" />
 </footer>
 
 <script>
@@ -223,7 +223,8 @@
                 return;
             }
         } else {
-            if (!confirm(message)) return;
+            if (!confirm(message))
+                return;
         }
 
         // Gán lý do vào input hidden và submit form

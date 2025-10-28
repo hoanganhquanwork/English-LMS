@@ -16,7 +16,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import model.entity.Category;
 import model.entity.Course;
+import service.CategoryService;
 import service.CourseManagerService;
 
 /**
@@ -27,6 +29,7 @@ import service.CourseManagerService;
 public class CoursePublishController extends HttpServlet {
 
     private CourseManagerService courseService = new CourseManagerService();
+    private final CategoryService caService = new CategoryService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -63,22 +66,37 @@ public class CoursePublishController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-     @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-       
         courseService.autoPublishIfDue();
 
         String status = request.getParameter("status");
         String keyword = request.getParameter("keyword");
         String sort = request.getParameter("sort");
+        String categoryParam = request.getParameter("categoryId");
+        if (status == null) {
+            status = "all";
+        }
+        if (sort == null) {
+            sort = "newest";
+        }
 
-        if (status == null) status = "all";
-        if (sort == null) sort = "newest";
+        if (categoryParam == null) {
+            categoryParam = "0";
+        }
+        int categoryId = 0;
+        try {
+            if (categoryParam != null && !categoryParam.isEmpty()) {
+                categoryId = Integer.parseInt(categoryParam);
+            }
+        } catch (NumberFormatException e) {
+            categoryId = 0;
+        }
 
-        List<Course> courseList = courseService.getFilterPublishCourse(status, keyword, sort);
-
+        List<Course> courseList = courseService.getFilterPublishCourse(status, keyword, sort, categoryParam);
+        List<Category> cate = caService.getAllCategories();
         DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter tf = DateTimeFormatter.ofPattern("HH:mm");
         List<String> createdDateList = new ArrayList<>();
@@ -96,10 +114,12 @@ public class CoursePublishController extends HttpServlet {
         request.setAttribute("courseList", courseList);
         request.setAttribute("createdDateList", createdDateList);
         request.setAttribute("createdTimeList", createdTimeList);
-        
+
         request.setAttribute("status", status);
         request.setAttribute("keyword", keyword);
         request.setAttribute("sort", sort);
+        request.setAttribute("categoryId", categoryId);
+        request.setAttribute("categoryList", cate);
         request.setAttribute("message", request.getSession().getAttribute("message"));
         request.setAttribute("errorMessage", request.getSession().getAttribute("errorMessage"));
         request.getSession().removeAttribute("message");
@@ -107,7 +127,6 @@ public class CoursePublishController extends HttpServlet {
 
         request.getRequestDispatcher("/views-manager/course-publish.jsp").forward(request, response);
     }
-
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -117,7 +136,7 @@ public class CoursePublishController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-      @Override
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -131,64 +150,14 @@ public class CoursePublishController extends HttpServlet {
             }
         }
 
-        if (action == null || ids == null) {
-            response.sendRedirect("coursepublish");
-            return;
-        }
-        for (String idStr : ids) {
-            int id = Integer.parseInt(idStr.trim());
+        String dateStr = request.getParameter("publishDate");
 
-            switch (action) {
-                case "publish":
-                    courseService.publishNow(id);
-                    request.getSession().setAttribute("message", "Đã đăng khóa học ngay lập tức.");
-                    break;
+        String message = courseService.handlePublishAction(action, ids, dateStr);
 
-                case "unpublish":
-                    courseService.unpublishCourse(id);
-                    request.getSession().setAttribute("message", "Đã gỡ đăng khóa học.");
-                    break;
-
-                case "republish":
-                    courseService.republishCourse(id);
-                    request.getSession().setAttribute("message", "Đã đăng lại khóa học.");
-                    break;
-
-                case "schedule": {
-                    String dateStr = request.getParameter("publishDate");
-                    if (dateStr == null || dateStr.isEmpty()) {
-                        request.getSession().setAttribute("errorMessage", "Vui lòng chọn ngày đăng hợp lệ.");
-                        break;
-                    }
-                    try {
-                        LocalDate chosenDate = LocalDate.parse(dateStr);
-                        LocalDate today = LocalDate.now();
-
-                        if (chosenDate.isBefore(today)) {
-                            request.getSession().setAttribute("errorMessage", "Không thể chọn ngày trong quá khứ.");
-                            break;
-                        }
-                        if (chosenDate.isAfter(today.plusYears(1))) {
-                            request.getSession().setAttribute("errorMessage", "Không thể đặt lịch xa hơn 1 năm.");
-                            break;
-                        }
-
-                        LocalDateTime dateTime = chosenDate.atStartOfDay();
-                        boolean success = courseService.schedulePublish(id, dateTime);
-
-                        if (success) {
-                            request.getSession().setAttribute("message", "Đã đặt lịch đăng vào ngày " + dateStr + ".");
-                        } else {
-                            request.getSession().setAttribute("errorMessage", "Không thể lưu lịch đăng khóa học.");
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        request.getSession().setAttribute("errorMessage", "Ngày không hợp lệ. Định dạng: yyyy-MM-dd.");
-                    }
-                    break;
-                }
-            }
+        if (message.contains("Đã") || message.contains("thành công")) {
+            request.getSession().setAttribute("message", message);
+        } else {
+            request.getSession().setAttribute("errorMessage", message);
         }
 
         response.sendRedirect("coursepublish");

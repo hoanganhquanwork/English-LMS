@@ -57,7 +57,7 @@ public class GetRejectionReason extends HttpServlet {
         CourseManagerService service = new CourseManagerService();
         String reason = service.getRejectionReason(courseId);
 
-        // Lấy thêm danh sách cần thiết
+       
         HttpSession session = request.getSession(false);
         Users user = (Users) session.getAttribute("user");
         int instructorId = user.getUserId();
@@ -68,13 +68,13 @@ public class GetRejectionReason extends HttpServlet {
         List<Category> cateList = categoryService.getAllCategories();
         List<Course> courseList = courseService.searchAndFilterCourses(instructorId, keyword, status);
 
-        // Truyền dữ liệu ra view
+       
         request.setAttribute("courseList", courseList);
         request.setAttribute("cateList", cateList);
         request.setAttribute("keyword", keyword);
         request.setAttribute("status", status);
 
-        // Quan trọng: thêm 2 thuộc tính modal
+        
         request.setAttribute("rejectedCourseId", courseId);
         request.setAttribute("rejectionReason", reason);
 

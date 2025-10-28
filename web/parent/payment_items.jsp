@@ -6,7 +6,7 @@
     request.setAttribute("currentPage", "payments");
 %>
 
-<%@ include file="parent_header.jsp" %>
+<jsp:include page="../header.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
 
 <main class="container">
@@ -23,11 +23,11 @@
 
     <c:choose>
         <c:when test="${empty items}">
-         <div class="empty-state">
-            <div class="empty-icon">📭</div>
-            <h3>Chưa có khóa học chờ thanh toán</h3>
-            <p>Hiện tại bạn chưa có khóa học nào chờ thanh toán.</p>
-        </div>
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <h3>Chưa có khóa học chờ thanh toán</h3>
+                <p>Hiện tại bạn chưa có khóa học nào chờ thanh toán.</p>
+            </div>
         </c:when>
 
         <c:otherwise>
@@ -48,6 +48,8 @@
                                         <h3 class="course-title">${item.course.title}</h3>
                                         <p class="student-name">👨‍🎓 Học sinh: ${item.student.user.fullName}</p>
                                         <div class="course-meta">
+                                            <a href="${pageContext.request.contextPath}/courseInformation?courseId=${item.course.courseId}" class="btn primary" target="_blank">
+                                                Xem thông tin khóa học                                    </a>
                                             <span class="status-badge pending">⏳ Chờ thanh toán</span>
                                         </div>
                                     </div>
@@ -67,7 +69,7 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
-                                    
+
                                     <div class="payment-action">
                                         <label class="payment-checkbox">
                                             <!-- GẮN data-price để JS đọc số -->
@@ -108,7 +110,7 @@
 </main>
 
 <footer>
-        <jsp:include page="/footer.jsp" />
+    <jsp:include page="/footer.jsp" />
 </footer>
 
 <script>
@@ -120,7 +122,8 @@
         document.querySelectorAll('input[name="selectedItem"]:checked').forEach(cb => {
             count++;
             const p = parseFloat(cb.dataset.price || '0');
-            if (!Number.isNaN(p)) sum += p;
+            if (!Number.isNaN(p))
+                sum += p;
         });
         document.getElementById('selCount').textContent = count.toString();
         document.getElementById('selTotal').textContent = fmtVND.format(Math.round(sum)) + ' VND';
@@ -134,7 +137,7 @@
         }
         const totalText = document.getElementById('selTotal').textContent;
         return confirm('Bạn có chắc muốn tạo đơn thanh toán cho ' + checked.length + ' khóa học đã chọn?'
-                       + '\nTổng thanh toán: ' + totalText);
+                + '\nTổng thanh toán: ' + totalText);
     }
 
     // Lắng nghe thay đổi checkbox
@@ -144,5 +147,5 @@
         }
     });
 
-   
+
 </script>

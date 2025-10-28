@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ include file="parent_header.jsp" %>
+<jsp:include page="../header.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
 
 <main class="container" style="margin-top:40px;">
@@ -73,5 +73,5 @@
 </main>
 
 <footer>
-        <jsp:include page="/footer.jsp" />
+    <jsp:include page="/footer.jsp" />
 </footer>

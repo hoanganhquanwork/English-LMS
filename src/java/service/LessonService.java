@@ -25,7 +25,6 @@ public class LessonService {
     private LessonDAO lessonDAO = new LessonDAO();
     private ModuleDAO moduleDAO = new ModuleDAO();
     private ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
-   
 
     public Map<Module, List<Lesson>> getCourseContent(int courseId) throws SQLException {
         List<Module> modules = moduleDAO.getModulesByCourse(courseId);
@@ -43,39 +42,28 @@ public class LessonService {
 
     public boolean addLesson(Lesson lesson, int moduleId) {
         try {
-            if (lesson == null) {
-                System.err.println("Lesson object is null");
-                return false;
-            }
-
-            if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
-                System.err.println("Lesson title is missing");
-                return false;
-            }
-
-            if (lesson.getContentType() == null) {
-                System.err.println(" Lesson content type is missing");
+            if (lesson == null || lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
+                System.err.println("️ Invalid lesson data");
                 return false;
             }
 
             int orderIndex = moduleItemDAO.getNextOrderIndex(moduleId);
 
             ModuleItem item = new ModuleItem();
-            item.setModuleId(moduleId);
+            item.setModule(moduleDAO.getModuleById(moduleId));
             item.setItemType("lesson");
             item.setOrderIndex(orderIndex);
             item.setRequired(true);
 
             int moduleItemId = moduleItemDAO.insertModuleItem(item);
             if (moduleItemId == -1) {
-                System.err.println("Failed to insert ModuleItem for lesson");
+                System.err.println(" Failed to insert ModuleItem for lesson");
                 return false;
             }
 
             lesson.setModuleItemId(moduleItemId);
 
             lessonDAO.insertLesson(lesson);
-            System.out.println("esson inserted successfully!");
             return true;
 
         } catch (Exception e) {
@@ -87,7 +75,7 @@ public class LessonService {
 
     public boolean deleteLesson(int lessonId) {
         try {
-         
+
             boolean moduleDeleted = moduleItemDAO.deleteModuleItem(lessonId);
             return moduleDeleted;
         } catch (Exception e) {

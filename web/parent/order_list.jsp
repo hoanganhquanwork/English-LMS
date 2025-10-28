@@ -5,8 +5,8 @@
 <%
     request.setAttribute("currentPage", "orders");
 %>
+<jsp:include page="../header.jsp"/>
 
-<%@ include file="parent_header.jsp" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
 
 <main class="container">
@@ -75,5 +75,5 @@
 
 
 <footer>
-        <jsp:include page="/footer.jsp" />
+    <jsp:include page="/footer.jsp" />
 </footer>
