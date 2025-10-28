@@ -16,7 +16,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
+import model.dto.QuestionDTO;
+import model.dto.QuestionListItemDTO;
+import model.dto.QuizDTO;
 import model.entity.Course;
 import model.entity.Users;
 import service.CourseDetailService;
@@ -24,6 +28,7 @@ import service.CourseManagerService;
 import model.entity.Module;
 import model.entity.ModuleItem;
 import model.entity.Users;
+import service.QuestionManagerService;
 
 /**
  *
@@ -32,69 +37,85 @@ import model.entity.Users;
 @WebServlet(name = "CourseDetailController", urlPatterns = {"/coursedetail"})
 public class CourseDetailController extends HttpServlet {
 
-    private final CourseManagerService courseService = new CourseManagerService();
-    private final CourseDetailService detailService = new CourseDetailService();
+    private final CourseManagerService cService = new CourseManagerService();
+    private final CourseDetailService dService = new CourseDetailService();
+    private final QuestionManagerService qService = new QuestionManagerService();
 
-  @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        String idStr = request.getParameter("courseId");
+        Users manager = (Users) session.getAttribute("user");
 
+        if (manager == null || !"Manager".equalsIgnoreCase(manager.getRole())) {
+            session.setAttribute("errorMessage", "Vui lòng đăng nhập bằng tài khoản Quản lý!");
+            response.sendRedirect("loginInternal");
+            return;
+        }
+
+        String idStr = request.getParameter("courseId");
         if (idStr == null || idStr.isEmpty()) {
-            request.setAttribute("errorMessage", "Thiếu mã khóa học!");
-            request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
+            session.setAttribute("errorMessage", "Thiếu mã khóa học!");
+            response.sendRedirect("coursemanager");
             return;
         }
 
         try {
             int courseId = Integer.parseInt(idStr);
 
-            if (!detailService.isCourseValid(courseId)) {
-                request.setAttribute("errorMessage", "Khóa học không hợp lệ hoặc đã bị xóa.");
-                request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
-                return;
-            }
-
-            Course course = courseService.getCourseById(courseId);
-            if (course == null) {
-                session.setAttribute("errorMessage", "Không tìm thấy thông tin khóa học.");
+            if (!dService.isCourseValid(courseId)) {
+                session.setAttribute("errorMessage", "Khóa học không hợp lệ hoặc đã bị xóa!");
                 response.sendRedirect("coursemanager");
                 return;
             }
 
-            String createdDate = "";
-            if (course.getCreatedAt() != null) {
-                createdDate = course.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            Course course = cService.getCourseById(courseId);
+            if (course == null) {
+                session.setAttribute("errorMessage", "Không tìm thấy thông tin khóa học!");
+                response.sendRedirect("coursemanager");
+                return;
             }
 
-            Map<String, Object> data = detailService.getFullDetail(courseId);
-            if (data == null) {
-                request.setAttribute("errorMessage", "Không thể tải dữ liệu chi tiết khóa học.");
+            Map<String, Object> data = dService.getCourseDetail(courseId);
+            if (data == null || data.containsKey("error")) {
+                request.setAttribute("errorMessage", data != null ? data.get("error") : "Không thể tải dữ liệu khóa học.");
                 request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
                 return;
+            }
+
+            List<QuestionDTO> questions = (List<QuestionDTO>) data.get("questions");
+            if (questions != null) {
+                for (QuestionDTO q : questions) {
+                    q.setOptions(qService.getOptionsByQuestionId(q.getQuestionId()));
+                    q.setAnswers(qService.getAnswersByQuestionId(q.getQuestionId()));
+                }
             }
 
             request.setAttribute("course", course);
             request.setAttribute("modules", data.get("modules"));
             request.setAttribute("items", data.get("items"));
-            request.setAttribute("instructor", data.get("instructor"));
             request.setAttribute("stats", data.get("stats"));
-            request.setAttribute("createdDate", createdDate);
+            request.setAttribute("quizzes", data.get("quizzes"));
+            request.setAttribute("questions", questions);
+            request.setAttribute("instructor", data.get("instructor"));
+
+            if (course.getCreatedAt() != null) {
+                request.setAttribute("createdDate",
+                        course.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            }
 
             request.getRequestDispatcher("/views-manager/course-detail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Mã khóa học không hợp lệ.");
-            request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
+            session.setAttribute("errorMessage", "Mã khóa học không hợp lệ!");
+            response.sendRedirect("coursemanager");
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "Đã xảy ra lỗi khi tải trang chi tiết khóa học.");
-            request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
+            session.setAttribute("errorMessage", "Đã xảy ra lỗi khi tải trang chi tiết khóa học!");
+            response.sendRedirect("coursemanager");
         }
     }
-
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -104,15 +125,12 @@ public class CourseDetailController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
- 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-            session = request.getSession(true);
-            session.setAttribute("errorMessage", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!");
             response.sendRedirect("loginInternal");
             return;
         }
@@ -124,97 +142,50 @@ public class CourseDetailController extends HttpServlet {
             return;
         }
 
-        Integer managerIdObj = (Integer) session.getAttribute("managerId");
-        int managerId = (managerIdObj != null) ? managerIdObj : manager.getUserId();
-        session.setAttribute("managerId", managerId);
-
-        String action = request.getParameter("action");
         String idStr = request.getParameter("courseId");
+        String action = request.getParameter("action");
 
-        if (action == null || idStr == null || idStr.isEmpty()) {
-            request.setAttribute("errorMessage", "Thiếu tham số xử lý yêu cầu.");
-            request.getRequestDispatcher("/views-manager/course-detail.jsp").forward(request, response);
+        if (idStr == null || idStr.isEmpty() || action == null) {
+            session.setAttribute("errorMessage", "Thiếu tham số xử lý yêu cầu.");
+            response.sendRedirect("coursemanager");
             return;
         }
 
         try {
             int courseId = Integer.parseInt(idStr);
-            String message = null;
 
-            switch (action) {
-                case "approve":
-                    courseService.updateCourseStatus(courseId, "approved");
-                    message = "Khóa học đã được duyệt thành công!";
-                    break;
+            String reason = request.getParameter("rejectReason");
+            String publishDateStr = request.getParameter("publishDate");
+            String priceStr = request.getParameter("price");
 
-                case "reject": {
-                    String reason = request.getParameter("rejectReason");
-                    if (reason == null || reason.trim().isEmpty()) {
-                        request.setAttribute("errorMessage", "Vui lòng nhập lý do từ chối!");
-                    } else {
-                        courseService.rejectCourseWithReason(courseId, managerId, reason.trim());
-                        message = "Khóa học đã bị từ chối và phản hồi đã được gửi cho giảng viên.";
-                    }
-                    break;
-                }
+            BigDecimal price = (priceStr != null && !priceStr.isEmpty()) ? new BigDecimal(priceStr) : null;
+            
+            LocalDateTime publishDate = (publishDateStr != null && !publishDateStr.isEmpty())
+                    ? LocalDate.parse(publishDateStr).atStartOfDay() : null;
 
-                case "publish": {
-                    String publishDateStr = request.getParameter("publishDate");
-                    if (publishDateStr != null && !publishDateStr.isEmpty()) {
-                        LocalDate publishDate = LocalDate.parse(publishDateStr);
-                        LocalDateTime publishDateTime = publishDate.atStartOfDay();
-                        boolean success = courseService.schedulePublish(courseId, publishDateTime);
-                        if (!success) {
-                            request.setAttribute("errorMessage", "Ngày đăng không hợp lệ (phải sau hôm nay và trong vòng 1 năm).");
-                        } else {
-                            message = "Khóa học đã được lên lịch đăng thành công!";
-                        }
-                    } else {
-                        request.setAttribute("errorMessage", "Vui lòng chọn ngày đăng!");
-                    }
-                    break;
-                }
+            String resultMessage = cService.performAction(
+                    action, courseId, reason, price, publishDate, manager.getUserId()
+            );
 
-                case "unpublish":
-                    courseService.unpublishCourse(courseId);
-                    message = "Khóa học đã được gỡ đăng.";
-                    break;
-
-                case "updatePrice": {
-                    String priceStr = request.getParameter("price");
-                    if (priceStr == null || priceStr.isEmpty()) {
-                        request.setAttribute("errorMessage", "Giá khóa học không được để trống!");
-                    } else {
-                        BigDecimal price = new BigDecimal(priceStr);
-                        courseService.updateCoursePrice(courseId, price);
-                        message = "Cập nhật giá khóa học thành công!";
-                    }
-                    break;
-                }
-
-                default:
-                    request.setAttribute("errorMessage", "Hành động không hợp lệ: " + action);
-                    break;
-            }
-
-            if (message != null) {
-                session.setAttribute("message", message);
+            if (resultMessage.contains("thành công") || resultMessage.contains("đã")) {
+                session.setAttribute("message", resultMessage);
+            } else {
+                session.setAttribute("errorMessage", resultMessage);
             }
 
             response.sendRedirect("coursedetail?courseId=" + idStr);
 
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Định dạng mã khóa học không hợp lệ!");
-            request.getRequestDispatcher("/views-manager/course-detail.jsp").forward(request, response);
+            session.setAttribute("errorMessage", "Định dạng mã khóa học không hợp lệ!");
+            response.sendRedirect("coursemanager");
         } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Đã xảy ra lỗi trong quá trình xử lý yêu cầu!");
-            request.getRequestDispatcher("/views-manager/course-detail.jsp").forward(request, response);
+            session.setAttribute("errorMessage", "Đã xảy ra lỗi trong quá trình xử lý yêu cầu!");
+            response.sendRedirect("coursemanager");
         }
     }
 
     @Override
     public String getServletInfo() {
-        return "Course Detail Management for Manager";
-    }
+        return "Short description";
+    }// </editor-fold>
 }

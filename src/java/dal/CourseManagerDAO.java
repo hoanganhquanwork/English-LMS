@@ -10,7 +10,7 @@ import model.entity.Users;
 
 public class CourseManagerDAO extends DBContext {
 
-    public List<Course> getFilteredCourses(String status, String keyword, String sort) {
+    public List<Course> getFilteredCourses(String status, String keyword, String sort, int categoryId) {
         List<Course> list = new ArrayList<>();
 
         String sql
@@ -34,7 +34,9 @@ public class CourseManagerDAO extends DBContext {
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (c.title LIKE ? OR u.full_name LIKE ?) ";
         }
-
+        if (categoryId > 0) {
+            sql += "AND c.category_id=? ";
+        }
         sql += "ORDER BY c.created_at " + ("oldest".equalsIgnoreCase(sort) ? "ASC " : "DESC ");
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -47,7 +49,9 @@ public class CourseManagerDAO extends DBContext {
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
             }
-
+            if (categoryId > 0) {
+                ps.setInt(idx++, categoryId);
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapCourseFromResultSet(rs));
@@ -60,7 +64,7 @@ public class CourseManagerDAO extends DBContext {
         return list;
     }
 
-    public List<Course> getFilteredCoursesForPublish(String status, String keyword, String sort) {
+    public List<Course> getFilteredCoursesForPublish(String status, String keyword, String sort, int categoryId) {
         List<Course> list = new ArrayList<>();
 
         String sql
@@ -84,6 +88,9 @@ public class CourseManagerDAO extends DBContext {
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql += "AND (c.title LIKE ? OR u.full_name LIKE ?) ";
         }
+        if (categoryId > 0) {
+            sql += "AND c.category_id=? ";
+        }
 
         sql += "ORDER BY c.created_at " + ("oldest".equalsIgnoreCase(sort) ? "ASC " : "DESC ");
 
@@ -97,7 +104,9 @@ public class CourseManagerDAO extends DBContext {
                 ps.setString(idx++, kw);
                 ps.setString(idx++, kw);
             }
-
+            if (categoryId > 0) {
+                ps.setInt(idx++, categoryId);
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapCourseFromResultSet(rs));
@@ -136,26 +145,63 @@ public class CourseManagerDAO extends DBContext {
         return null;
     }
 
-    public boolean updateCourseStatus(int id, String newStatus) {
-        String sql
-                = "UPDATE Course "
-                + "SET status = ?, "
-                + "    publish_at = CASE WHEN ? = 'publish' THEN GETDATE() ELSE publish_at END "
-                + "WHERE course_id = ?";
+ public boolean updateCourseStatus(int courseId, String newStatus) {
+    boolean success = false;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+    String sqlUpdateCourse =
+        "UPDATE Course "
+        + "SET status = ?, "
+        + "    publish_at = CASE WHEN ? = 'publish' THEN GETDATE() ELSE publish_at END "
+        + "WHERE course_id = ?";
+
+    String sqlAutoApproveQuestions =
+        "UPDATE q "
+        + "SET q.status = 'approved' "
+        + "FROM Question q "
+        + "JOIN Lesson l ON q.lesson_id = l.lesson_id "
+        + "JOIN ModuleItem mi ON l.lesson_id = mi.module_item_id "
+        + "JOIN Module m ON mi.module_id = m.module_id "
+        + "WHERE m.course_id = ? AND q.status = 'submitted'";
+
+    try {
+        connection.setAutoCommit(false);
+
+        try (PreparedStatement ps = connection.prepareStatement(sqlUpdateCourse)) {
             ps.setString(1, newStatus);
             ps.setString(2, newStatus);
-            ps.setInt(3, id);
-            int rows = ps.executeUpdate();
-            System.out.println("Updated course_id=" + id + " → " + newStatus + " (" + rows + " rows)");
-            return rows > 0;
+            ps.setInt(3, courseId);
+            int updatedCourses = ps.executeUpdate();
+            System.out.println("Updated Course " + courseId + " → " + newStatus + " (" + updatedCourses + " row)");
+        }
+
+        if ("approved".equalsIgnoreCase(newStatus)) {
+            try (PreparedStatement ps2 = connection.prepareStatement(sqlAutoApproveQuestions)) {
+                ps2.setInt(1, courseId);
+                int updatedQuestions = ps2.executeUpdate();
+                System.out.println("→ Auto-approved " + updatedQuestions + " questions for course #" + courseId);
+            }
+        }
+
+        connection.commit();
+        success = true;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        try {
+            connection.rollback();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    } finally {
+        try {
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
+    return success;
+}
     public boolean updateCoursePrice(int id, BigDecimal price) {
         String sql
                 = "UPDATE Course "
@@ -293,7 +339,7 @@ public class CourseManagerDAO extends DBContext {
 
     public boolean rejectCourseWithReason(int courseId, int managerId, String reason) {
         String sqlCourse = "UPDATE Course SET status = 'rejected' "
-                + "WHERE course_id = ? AND status IN ('submitted', 'approved')";
+                + "WHERE course_id = ? AND status IN ('submitted','approved')";
 
         String sqlUpdateManager = "UPDATE CourseManagers "
                 + "SET reject_reason = ? "
@@ -359,12 +405,66 @@ public class CourseManagerDAO extends DBContext {
             }
         }
     }
-    
-     public String getRejectReasonByCourseId(int courseId) {
-        String sql = "SELECT reject_reason FROM CourseManagers " +
-                     "WHERE course_id = ? ";
+
+    public int getTotalCourses() {
+        String sql = "SELECT COUNT(*) FROM Course WHERE status <> 'draft'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getActiveInstructors() {
+        String sql
+                = "SELECT COUNT(DISTINCT u.user_id) "
+                + "FROM Users u "
+                + "JOIN InstructorProfile ip ON u.user_id = ip.user_id "
+                + "WHERE u.status = 'active'";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getPendingApprovals() {
+        String sql = "SELECT COUNT(*) FROM Course WHERE status = 'submitted'";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void getCourseStatusCounts(List<String> statuses, List<Integer> counts) {
+        String sql = "SELECT status, COUNT(*) AS cnt "
+                + "FROM Course WHERE status <> 'draft' GROUP BY status";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                statuses.add(rs.getString("status"));
+                counts.add(rs.getInt("cnt"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getRejectReasonByCourseId(int courseId) {
+        String sql = "SELECT reject_reason FROM CourseManagers "
+                + "WHERE course_id = ? ";
         try (
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -375,4 +475,5 @@ public class CourseManagerDAO extends DBContext {
         }
         return null;
     }
+
 }
