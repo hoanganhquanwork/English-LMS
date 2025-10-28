@@ -23,15 +23,11 @@
 
     <c:choose>
         <c:when test="${empty items}">
-<<<<<<< HEAD
-            <p class="muted">Hiện chưa có khóa học nào đang chờ thanh toán.</p>
-=======
          <div class="empty-state">
             <div class="empty-icon">📭</div>
             <h3>Chưa có khóa học chờ thanh toán</h3>
             <p>Hiện tại bạn chưa có khóa học nào chờ thanh toán.</p>
         </div>
->>>>>>> main
         </c:when>
 
         <c:otherwise>
@@ -111,13 +107,8 @@
     </c:choose>
 </main>
 
-<<<<<<< HEAD
-<footer class="footer">
-    <div class="container bottom">© 2025 LinguaTrack</div>
-=======
 <footer>
         <jsp:include page="/footer.jsp" />
->>>>>>> main
 </footer>
 
 <script>

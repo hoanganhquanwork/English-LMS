@@ -16,14 +16,13 @@ public class ModuleItemViewDTO {
     private int orderIndex;
     private String title;
     private String status;
-
-    // for lesson
+    //for lesson
     private String contentType;
     private Integer durationSec;
     private Integer durationMin;
     private boolean isRequired;
     private Double score_pct;
-
+    
     public int getModuleItemId() {
         return moduleItemId;
     }
@@ -115,4 +114,5 @@ public class ModuleItemViewDTO {
     public void setScore_pct(Double score_pct) {
         this.score_pct = score_pct;
     }
+
 }

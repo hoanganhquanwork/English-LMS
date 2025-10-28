@@ -100,7 +100,7 @@ public class ProgressDAO extends DBContext {
         }
     }
 
-    // kiểm tra xem đã hoàn thành lesson chưa
+    //kiem tra xem hoan thanh lesson chua
     public boolean isLessonCompleted(int studentId, int moduleItemId) {
         String sql = "SELECT status FROM Progress WHERE student_id=? AND module_item_id=?";
         try {
@@ -149,7 +149,7 @@ public class ProgressDAO extends DBContext {
         return null;
     }
 
-    // quiz, assignment score
+    //quiz, assignment score
     public int updateBestQuizOrAssigmentScore(int studentId, int moduleItemId, double newScorePct, boolean passed) {
         String sqlUpdate
                 = "UPDATE Progress SET "
@@ -183,21 +183,27 @@ public class ProgressDAO extends DBContext {
         String sql = """
         UPDATE Progress
         SET 
+           
             score_pct = CASE 
                             WHEN score_pct IS NULL OR ? > score_pct THEN ? 
                             ELSE score_pct 
                         END,
+            
+          
             status = CASE 
                         WHEN ? = 1 THEN 'completed' 
                         ELSE status 
                      END,
+            
+           
             completed_at = CASE 
                               WHEN ? = 1 AND completed_at IS NULL THEN GETDATE() 
                               ELSE completed_at 
                            END,
+
             updated_at = GETDATE()
         WHERE student_id = ? AND module_item_id = ?
-        """;
+    """;
 
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             int i = 1;
@@ -211,7 +217,7 @@ public class ProgressDAO extends DBContext {
             int rows = st.executeUpdate();
 
             if (rows == 0) {
-                System.out.println("Progress chưa tồn tại cho assignment " + moduleItemId);
+                System.out.println(" Progress chưa tồn tại cho assignment " + moduleItemId);
             }
 
             return rows;
@@ -220,4 +226,5 @@ public class ProgressDAO extends DBContext {
             return -1;
         }
     }
+
 }

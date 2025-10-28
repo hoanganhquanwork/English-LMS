@@ -29,9 +29,7 @@ public class Question {
     public Question() {
     }
 
-    public Question(int questionId, Integer lessonId, String content, String mediaUrl, String type,
-                    InstructorProfile createdBy, String explanation, String status,
-                    Integer topicId, String reviewComment) {
+    public Question(int questionId, Integer lessonId, String content, String mediaUrl, String type, InstructorProfile createdBy, String explanation, String status, Integer topicId, String reviewComment) {
         this.questionId = questionId;
         this.lessonId = lessonId;
         this.content = content;
@@ -142,19 +140,8 @@ public class Question {
 
     @Override
     public String toString() {
-        return "Question{" +
-                "questionId=" + questionId +
-                ", lessonId=" + lessonId +
-                ", content='" + content + '\'' +
-                ", mediaUrl='" + mediaUrl + '\'' +
-                ", type='" + type + '\'' +
-                ", createdBy=" + createdBy +
-                ", explanation='" + explanation + '\'' +
-                ", status='" + status + '\'' +
-                ", topicId=" + topicId +
-                ", reviewComment='" + reviewComment + '\'' +
-                ", options=" + options +
-                ", textKey=" + textKey +
-                '}';
+        return "Question{" + "questionId=" + questionId + ", lessonId=" + lessonId + ", content=" + content + ", mediaUrl=" + mediaUrl + ", type=" + type + ", createdBy=" + createdBy + ", explanation=" + explanation + ", status=" + status + ", topicId=" + topicId + ", reviewComment=" + reviewComment + ", options=" + options + ", textKey=" + textKey + '}';
     }
+    
+    
 }

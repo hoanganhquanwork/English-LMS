@@ -73,7 +73,7 @@ public class FlashcardSetController extends HttpServlet {
         }
     }
 
-        @Override
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -111,8 +111,6 @@ public class FlashcardSetController extends HttpServlet {
         set.setStudentId(studentId);
         set.setTitle(request.getParameter("title"));
         set.setDescription(request.getParameter("description"));
-        String status = request.getParameter("status");
-        set.setStatus(status != null && !status.isEmpty() ? status : "private");
 
         int setId = service.createSetReturnId(set);
 
@@ -136,12 +134,8 @@ public class FlashcardSetController extends HttpServlet {
         int setId = Integer.parseInt(request.getParameter("setId"));
         String title = request.getParameter("title");
         String description = request.getParameter("description");
-        String status = request.getParameter("status");
-        if (status == null || status.isEmpty()) {
-            status = "private";
-        }
 
-        if (!service.updateSetIfOwner(setId, studentId, title, description, status)) {
+        if (!service.updateSetIfOwner(setId, studentId, title, description)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền sửa set này.");
             return;
         }
@@ -182,7 +176,6 @@ public class FlashcardSetController extends HttpServlet {
                 }
             }
         }
-
         response.sendRedirect("dashboard?action=viewSet&setId=" + setId);
     }
 }

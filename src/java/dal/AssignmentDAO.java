@@ -20,7 +20,7 @@ public class AssignmentDAO extends DBContext {
 
     private final ModuleItemDAO moduleItemDAO = new ModuleItemDAO();
 
-      public boolean insertAssignment(Assignment a) {
+    public boolean insertAssignment(Assignment a) {
         String sql = """
         INSERT INTO Assignment
         (assignment_id, title, content, instructions, submission_type,
@@ -31,6 +31,7 @@ public class AssignmentDAO extends DBContext {
         try (PreparedStatement st = connection.prepareStatement(sql)) {
 
             st.setInt(1, a.getAssignmentId().getModuleItemId());
+
             st.setString(2, a.getTitle());
             st.setString(3, a.getContent());
             st.setString(4, a.getInstructions());
@@ -300,4 +301,5 @@ public class AssignmentDAO extends DBContext {
         }
         return false;
     }
+
 }

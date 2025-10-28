@@ -58,7 +58,6 @@ public class UpdateQuiz extends HttpServlet {
         }
     }
 
-   
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -67,6 +66,7 @@ public class UpdateQuiz extends HttpServlet {
         int quizId = Integer.parseInt(request.getParameter("quizId"));
 
         try {
+            // Lấy thông tin quiz
             Quiz quiz = quizService.getQuiz(quizId);
             if (quiz == null) {
                 request.setAttribute("error", "Không tìm thấy quiz với ID: " + quizId);
@@ -74,6 +74,7 @@ public class UpdateQuiz extends HttpServlet {
                 return;
             }
 
+            // Lấy thông tin course content
             List<Module> list = service.getModulesByCourse(courseId);
             Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
 
@@ -91,8 +92,7 @@ public class UpdateQuiz extends HttpServlet {
         }
     }
 
-
- @Override
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -101,17 +101,22 @@ public class UpdateQuiz extends HttpServlet {
             int quizId = Integer.parseInt(request.getParameter("quizId"));
             String title = request.getParameter("title");
 
+          
             String scoreStr = request.getParameter("passing_score_pct");
             String pickStr = request.getParameter("pick_count");
             String timeStr = request.getParameter("time_limit");
 
+       
             Double score = (scoreStr == null || scoreStr.isEmpty()) ? null : Double.parseDouble(scoreStr);
             Integer pick = (pickStr == null || pickStr.isEmpty()) ? null : Integer.parseInt(pickStr);
             Integer timeLimit = (timeStr == null || timeStr.isEmpty()) ? null : Integer.parseInt(timeStr);
 
+            // Cập nhật quiz
             boolean success = quizService.updateQuiz(quizId, title, score, pick, timeLimit);
 
             if (success) {
+                request.setAttribute("success", "Cập nhật quiz thành công!");
+                // Redirect để tránh resubmit
                 response.sendRedirect("updateQuiz?courseId=" + courseId + "&moduleId=" + moduleId + "&quizId=" + quizId + "&success=1");
             } else {
                 request.setAttribute("error", "Không thể cập nhật quiz. Vui lòng thử lại.");

@@ -78,34 +78,36 @@ public class CreateQuiz extends HttpServlet {
     }
     private QuizService quizService = new QuizService();
 
-   @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    try {
-        int courseId = Integer.parseInt(request.getParameter("courseId"));
-        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
-        String title = request.getParameter("title");
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int courseId = Integer.parseInt(request.getParameter("courseId"));
+            int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+            String title = request.getParameter("title");
 
-        String scoreStr = request.getParameter("passingScore");
-        String pickStr = request.getParameter("pickCount");
-        String timeStr = request.getParameter("time_limit");
+         
+            String scoreStr = request.getParameter("passingScore");
+            String pickStr = request.getParameter("pickCount");
+            String timeStr = request.getParameter("time_limit");
 
-        Double score = (scoreStr == null || scoreStr.isEmpty()) ? null : Double.parseDouble(scoreStr);
-        Integer pick = (pickStr == null || pickStr.isEmpty()) ? null : Integer.parseInt(pickStr);
-        Integer timeLimit = (timeStr == null || timeStr.isEmpty()) ? null : Integer.parseInt(timeStr);
+           
+            Double score = (scoreStr == null || scoreStr.isEmpty()) ? null : Double.parseDouble(scoreStr);
+            Integer pick = (pickStr == null || pickStr.isEmpty()) ? null : Integer.parseInt(pickStr);
+            Integer timeLimit = (timeStr == null || timeStr.isEmpty()) ? null : Integer.parseInt(timeStr);
 
-        int newQuizId = quizService.createQuiz(moduleId, title, score, pick, timeLimit);
+            int newQuizId = quizService.createQuiz(moduleId, title, score, pick, timeLimit);
 
-        if (newQuizId != -1) {
-            response.sendRedirect("updateQuiz?courseId=" + courseId + "&moduleId=" + moduleId + "&quizId=" + newQuizId);
-        } else {
-            request.setAttribute("error", "Không thể tạo quiz mới.");
-            request.getRequestDispatcher("teacher/create-quiz.jsp").forward(request, response);
+            if (newQuizId != -1) {
+                response.sendRedirect("updateQuiz?courseId=" + courseId + "&moduleId=" + moduleId + "&quizId=" + newQuizId);
+            } else {
+                request.setAttribute("error", "Không thể tạo quiz mới.");
+                request.getRequestDispatcher("teacher/create-quiz.jsp").forward(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServletException("Lỗi khi tạo quiz: " + e.getMessage(), e);
         }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw new ServletException("Lỗi khi tạo quiz: " + e.getMessage(), e);
     }
-}
 }
