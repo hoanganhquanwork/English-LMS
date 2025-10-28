@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="<c:url value='/css/manager-question.css?v=554' />">
     </head>
     <body>
-        <<jsp:include page="../includes-manager/sidebar-manager.jsp" />
+        <jsp:include page="../includes-manager/sidebar-manager.jsp" />
 
         <main>
             <h2>Ngân hàng câu hỏi</h2>

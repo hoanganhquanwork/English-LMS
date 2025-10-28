@@ -26,11 +26,6 @@
                     <div class="alert alert-danger">${sessionScope.errorMessage}</div>
                     <c:remove var="errorMessage" scope="session"/>
                 </c:if>
-<<<<<<< HEAD
-
-=======
-                    
->>>>>>> main
                 <div class="filter-panel">
                     <form method="get" action="coursemanager" class="filter-form">
                         <div class="filter-grid">
@@ -57,7 +52,6 @@
                                 </select>
                             </div>
 
-<<<<<<< HEAD
                             <div class="filter-group">
                                 <label for="category">Danh mục</label>
                                 <select name="categoryId" id="category">
@@ -71,8 +65,6 @@
                             </div>
 
 
-=======
->>>>>>> main
                             <div class="filter-actions">
                                 <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Lọc</button>
                             </div>
@@ -83,11 +75,7 @@
                 <div class="table-header">
                     <h2 class="table-title">Danh sách khóa học</h2>
                     <div class="bulk-actions">
-<<<<<<< HEAD
                         <button form="bulkForm" type="submit" class="btn btwn-success" onclick="return setBulkAction('approve')">
-=======
-                        <button form="bulkForm" type="submit" class="btn btn-success" onclick="return setBulkAction('approve')">
->>>>>>> main
                             <i class="fa fa-check"></i> Duyệt hàng loạt
                         </button>
                         <button type="button" class="btn btn-danger" onclick="return setBulkAction('reject')">
@@ -122,11 +110,7 @@
                                         </div>
                                     </div>
                                 </td>
-<<<<<<< HEAD
                                 
-=======
-
->>>>>>> main
                                 <td>
                                     <div class="teacher-info">
                                         <img src="${course.createdBy.user.profilePicture != null ? course.createdBy.user.profilePicture : '/views-manager/icon/default.png'}" class="avatar">

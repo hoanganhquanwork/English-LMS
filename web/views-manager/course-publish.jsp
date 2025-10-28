@@ -45,7 +45,6 @@
                                     <option value="oldest" ${sort == 'oldest' ? 'selected' : ''}>Cũ nhất</option>
                                 </select>
                             </div>
-<<<<<<< HEAD
                             <div class="filter-group">
                                 <label for="category">Danh mục</label>
                                 <select name="categoryId" id="category">
@@ -57,8 +56,6 @@
                                     </c:forEach>
                                 </select>
                             </div>
-=======
->>>>>>> main
                             <div class="filter-actions">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-search"></i> Lọc
@@ -118,11 +115,7 @@
                                 <td>${course.price}</td>
                                 <td>
                                     <div class="table-actions">
-<<<<<<< HEAD
                                         <a href="${pageContext.request.contextPath}/coursedetail?courseId=${course.courseId}"
-=======
-                                        <a href="${pageContext.request.contextPath}/coursedetail?courseId=${course.courseId}" 
->>>>>>> main
                                            class="btn btn-outline" title="Xem chi tiết">
                                             <i class="fas fa-eye"></i>
                                         </a>
