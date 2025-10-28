@@ -36,6 +36,7 @@
                         <a href="set?action=editSetForm&setId=${set.setId}" class="create-btn">
                             Chỉnh sửa
                         </a>
+                        
                         <a href="set?action=deleteSet&setId=${set.setId}" 
                            class="add-card-btn" 
                            onclick="return confirm('Bạn có chắc muốn xóa bộ thẻ này không?')">

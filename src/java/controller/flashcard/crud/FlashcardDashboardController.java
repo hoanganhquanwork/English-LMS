@@ -143,6 +143,16 @@ public class FlashcardDashboardController extends HttpServlet {
         FlashcardSet set = service.getSetById(setId);
         List<Flashcard> cards = service.getCardsBySet(setId);
 
+        // Authorization: only owner can view private/inactive sets
+        HttpSession session = request.getSession(false);
+        Users current = (Users) (session != null ? session.getAttribute("user") : null);
+        Integer currentUserId = current != null ? current.getUserId() : null;
+        boolean isOwner = currentUserId != null && set != null && set.getStudentId() == currentUserId;
+        if (set == null || (!isOwner && !"public".equalsIgnoreCase(set.getStatus()))) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền xem bộ thẻ này.");
+            return;
+        }
+
         String sortCardOrder = request.getParameter("sortOrder");
         if ("asc".equals(sortCardOrder)) {
             cards.sort(Comparator.comparing(Flashcard::getFrontText, String.CASE_INSENSITIVE_ORDER));

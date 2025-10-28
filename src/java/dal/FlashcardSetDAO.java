@@ -34,7 +34,7 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "JOIN Users u ON s.student_id = u.user_id "
-                + "WHERE s.student_id = ? "
+                + "WHERE s.student_id = ? AND s.status <> 'inactive' "
                 + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
                 + "ORDER BY s.set_id DESC";
         try {
@@ -103,16 +103,12 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
     }
 
     public void deleteSet(int setId) {
-        String sqlCards = "DELETE FROM Flashcards WHERE set_id=?";
-        String sqlSet = "DELETE FROM FlashcardSets WHERE set_id=?";
+        // Soft delete: mark as inactive instead of removing rows
+        String sql = "UPDATE FlashcardSets SET status='inactive', updated_at=GETDATE() WHERE set_id=?";
         try {
-            PreparedStatement stm1 = connection.prepareStatement(sqlCards);
-            stm1.setInt(1, setId);
-            stm1.executeUpdate();
-
-            PreparedStatement stm2 = connection.prepareStatement(sqlSet);
-            stm2.setInt(1, setId);
-            stm2.executeUpdate();
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, setId);
+            stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -125,6 +121,7 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "JOIN Users u ON s.student_id = u.user_id "
+                + "WHERE s.status = 'public' "
                 + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
                 + "ORDER BY s.set_id DESC";
         try {
@@ -154,7 +151,7 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "JOIN Users u ON s.student_id = u.user_id "
-                + "WHERE s.student_id=? "
+                + "WHERE s.student_id=? AND s.status <> 'inactive' "
                 + "  AND (s.title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? "
                 + "       OR COALESCE(s.description,'') COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?) "
                 + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
@@ -190,7 +187,7 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "LEFT JOIN Users u ON s.student_id = u.user_id "
-                + "WHERE s.status <> 'private' "
+                + "WHERE s.status = 'public' "
                 + "  AND (s.title COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ? "
                 + "       OR COALESCE(s.description,'') COLLATE SQL_Latin1_General_Cp1253_CI_AI LIKE ?) "
                 + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
@@ -234,7 +231,7 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards f ON s.set_id = f.set_id "
                 + "LEFT JOIN Users u ON s.student_id = u.user_id "
-                + "WHERE s.status <> 'private' "
+                + "WHERE s.status = 'public' "
                 + "  AND (s.title LIKE ? OR s.description LIKE ? OR u.username LIKE ?) "
                 + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username "
                 + orderClause;
