@@ -3,13 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package dal;
+
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.dto.RatingSummaryDTO;
 import model.dto.ReviewDTO;
-
 
 /**
  *
@@ -51,6 +51,7 @@ public class ReviewDAO extends DBContext {
         return null;
     }
 
+    //    Filter, search
     public List<ReviewDTO> getListReviewByStar(int courseId, Integer star, String keyword, int page, int pageSize) {
         StringBuilder sql = new StringBuilder("SELECT r.review_id, r.course_id, r.student_id, r.rating, r.comment,"
                 + " r.created_at, r.edited_at, u.full_name AS student_name, u.profile_picture AS student_avatar "
@@ -61,8 +62,8 @@ public class ReviewDAO extends DBContext {
         }
 
         sql.append(" AND r.comment LIKE ? ");
-        sql.append(" ORDER BY r.created_at DESC, r.review_id DESC ")
-           .append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        sql.append(" ORDER BY r.created_at DESC, r.review_id DESC ").append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
 
         String like = (keyword == null || keyword.isBlank()) ? "%%" : "%" + keyword.trim() + "%";
         int safePage = Math.max(1, page);
@@ -123,14 +124,18 @@ public class ReviewDAO extends DBContext {
             } else {
                 return 0;
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
+    //Find my response
 
+    // Lấy toàn bộ review của course (KHÔNG filter sao), sort newest
     public List<ReviewDTO> getAllReviews(int courseId) {
-        String sql = "SELECT r.review_id, r.course_id, r.student_id, r.rating, r.comment, "
+        String sql
+                = "SELECT r.review_id, r.course_id, r.student_id, r.rating, r.comment, "
                 + " r.created_at, r.edited_at, u.full_name AS student_name, u.profile_picture AS student_avatar "
                 + " FROM Reviews r JOIN Users u ON u.user_id = r.student_id "
                 + " WHERE r.course_id = ? "
@@ -161,7 +166,8 @@ public class ReviewDAO extends DBContext {
     }
 
     public ReviewDTO getReviewByCourseAndStudent(int courseId, int studentId) {
-        String sql = "SELECT r.review_id, r.course_id, r.student_id, r.rating, r.comment, r.created_at, r.edited_at, "
+        String sql
+                = "SELECT r.review_id, r.course_id, r.student_id, r.rating, r.comment, r.created_at, r.edited_at, "
                 + " u.full_name AS student_name, u.profile_picture AS student_avatar "
                 + " FROM Reviews r JOIN Users u ON u.user_id = r.student_id "
                 + " WHERE r.course_id = ? AND r.student_id = ?";
@@ -189,6 +195,7 @@ public class ReviewDAO extends DBContext {
         return null;
     }
 
+    //Create new review
     public boolean existsReview(int courseId, int studentId) {
         String sql = "SELECT 1 FROM Reviews WHERE course_id = ? AND student_id = ?";
         try {
@@ -204,7 +211,8 @@ public class ReviewDAO extends DBContext {
     }
 
     public boolean insertReview(int courseId, int studentId, int rating, String comment) {
-        String sql = "INSERT INTO Reviews (course_id, student_id, rating, comment) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Reviews (course_id, student_id, rating, comment) "
+                + "VALUES (?, ?, ?, ?)";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, courseId);
@@ -219,7 +227,8 @@ public class ReviewDAO extends DBContext {
     }
 
     public boolean updateReview(int courseId, int studentId, int rating, String comment) {
-        String sql = "UPDATE Reviews SET rating = ?, comment = ?, edited_at = GETDATE() "
+        String sql = "UPDATE Reviews "
+                + "SET rating = ?, comment = ?, edited_at = GETDATE() "
                 + "WHERE course_id = ? AND student_id = ?";
         try {
             PreparedStatement st = connection.prepareStatement(sql);

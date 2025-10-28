@@ -27,6 +27,7 @@ public class ModuleItem {
         this.required = required;
     }
 
+
     public int getModuleItemId() {
         return moduleItemId;
     }
@@ -42,6 +43,8 @@ public class ModuleItem {
     public void setModule(Module module) {
         this.module = module;
     }
+
+    
 
     public String getItemType() {
         return itemType;
@@ -66,4 +69,6 @@ public class ModuleItem {
     public void setRequired(boolean required) {
         this.required = required;
     }
+    
+    
 }

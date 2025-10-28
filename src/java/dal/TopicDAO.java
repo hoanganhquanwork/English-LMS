@@ -15,11 +15,14 @@ import java.util.List;
  */
 public class TopicDAO extends DBContext {
 
-    public List<Topic> getAllTopics() {
+   public List<Topic> getAllTopics() {
         List<Topic> list = new ArrayList<>();
         String sql = "SELECT topic_id, name, description FROM Topics ORDER BY name ASC";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
+
+        try (
+             PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 Topic t = new Topic();
                 t.setTopicId(rs.getInt("topic_id"));
@@ -27,14 +30,15 @@ public class TopicDAO extends DBContext {
                 t.setDescription(rs.getString("description"));
                 list.add(t);
             }
+
         } catch (SQLException e) {
-            System.err.println("[TopicDAO.getAllTopics] " + e.getMessage());
+            e.printStackTrace();
         }
         return list;
     }
 
     public Topic getTopicById(int topicId) {
-        String sql = "SELECT topic_id, name, description FROM Topics WHERE topic_id = ?";
+        String sql = "SELECT * FROM Topics WHERE topic_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, topicId);
             ResultSet rs = ps.executeQuery();
@@ -46,72 +50,9 @@ public class TopicDAO extends DBContext {
                 );
             }
         } catch (SQLException e) {
-            System.err.println("[TopicDAO.getTopicById] " + e.getMessage());
+            System.err.println("Lỗi khi lấy topic: " + e.getMessage());
         }
         return null;
     }
-
-    public boolean insertTopic(Topic t) {
-        String sql = "INSERT INTO Topics (name, description) VALUES (?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, t.getName());
-            ps.setString(2, t.getDescription());
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        t.setTopicId(rs.getInt(1));
-                    }
-                }
-                return true;
-            }
-        } catch (SQLException e) {
-            System.err.println("[TopicDAO.insertTopic] " + e.getMessage());
-        }
-        return false;
-    }
-
-    public boolean updateTopic(Topic t) {
-        String sql = "UPDATE Topics SET name = ?, description = ? WHERE topic_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, t.getName());
-            ps.setString(2, t.getDescription());
-            ps.setInt(3, t.getTopicId());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("[TopicDAO.updateTopic] " + e.getMessage());
-        }
-        return false;
-    }
-
-    public boolean isTopicNameExists(String name) {
-        String sql = "SELECT COUNT(*) FROM Topics WHERE LOWER(name) = LOWER(?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, name);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("[TopicDAO.isTopicNameExists] " + e.getMessage());
-        }
-        return false;
-    }
-
-    public boolean isTopicNameExistsForUpdate(String name, int excludeId) {
-        String sql = "SELECT COUNT(*) FROM Topics WHERE LOWER(name) = LOWER(?) AND topic_id <> ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, name);
-            ps.setInt(2, excludeId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("[TopicDAO.isTopicNameExistsForUpdate] " + e.getMessage());
-        }
-        return false;
-    }
 }
+

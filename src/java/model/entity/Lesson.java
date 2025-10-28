@@ -16,7 +16,7 @@ public class Lesson {
     private String videoUrl;
     private int durationSec;
     private String textContent;
-    private String videoScript;
+     private String videoScript;
 
     public Lesson() {
     }
@@ -30,6 +30,8 @@ public class Lesson {
         this.textContent = textContent;
         this.videoScript = videoScript;
     }
+
+  
 
     public int getModuleItemId() {
         return moduleItemId;
@@ -86,4 +88,7 @@ public class Lesson {
     public void setVideoScript(String videoScript) {
         this.videoScript = videoScript;
     }
+    
+    
+    
 }
