@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -22,6 +23,21 @@
                 <div class="create-header">
                     <h1 class="create-title">${set.title}</h1>
                     <p class="create-subtitle">${set.description}</p>
+                    <p class="create-subtitle">
+                        <span>Cập nhật gần nhất: 
+                            <c:choose>
+                                <c:when test="${not empty set.lastActivityAt}">
+                                    <fmt:formatDate value="${set.lastActivityAt}" pattern="yyyy-MM-dd HH:mm" />
+                                </c:when>
+                                <c:when test="${not empty set.updatedAt}">
+                                    <fmt:formatDate value="${set.updatedAt}" pattern="yyyy-MM-dd HH:mm" />
+                                </c:when>
+                                <c:otherwise>
+                                    <fmt:formatDate value="${set.createdAt}" pattern="yyyy-MM-dd HH:mm" />
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
+                    </p>
                 </div>
 
                 <c:if test="${not empty error}">

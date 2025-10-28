@@ -61,12 +61,14 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
     public FlashcardSet getSetById(int setId) {
         FlashcardSet set = null;
         String sql = "SELECT s.set_id, s.student_id, s.title, s.description, s.status, "
+                + "s.created_at, s.updated_at, "
+                + "MAX(COALESCE(c.updated_at, c.created_at)) AS lastCardActivity, "
                 + "COUNT(c.card_id) AS termCount, u.username AS authorUsername "
                 + "FROM FlashcardSets s "
                 + "LEFT JOIN Flashcards c ON s.set_id = c.set_id "
                 + "JOIN Users u ON s.student_id = u.user_id "
                 + "WHERE s.set_id = ? "
-                + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, u.username";
+                + "GROUP BY s.set_id, s.student_id, s.title, s.description, s.status, s.created_at, s.updated_at, u.username";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             stm.setInt(1, setId);
@@ -81,6 +83,9 @@ public int insertFlashcardSetReturnId(FlashcardSet set) {
                         rs.getString("status"),
                         rs.getString("authorUsername")
                 );
+                set.setCreatedAt(rs.getTimestamp("created_at"));
+                set.setUpdatedAt(rs.getTimestamp("updated_at"));
+                set.setLastActivityAt(rs.getTimestamp("lastCardActivity"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
