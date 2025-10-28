@@ -17,14 +17,6 @@
             <i class="fas fa-book"></i> Quản lý khóa học
         </a>
 
-<<<<<<< HEAD
-        <a href="cate-topic"
-           class="${pageContext.request.requestURI.contains('/cate-topic') ? 'active' : ''}">
-           <i class="fa fa-layer-group"></i> Quản lý chủ đề và danh mục
-        </a>
-
-=======
->>>>>>> main
         <a href="revenue-report"
            class="${pageContext.request.requestURI.contains('/revenue-report') ? 'active' : ''}">
             <i class="fas fa-chart-bar"></i> Báo cáo
@@ -33,22 +25,12 @@
            class="${pageContext.request.requestURI.contains('/coursepublish') ? 'active' : ''}">
             <i class="fas fa-calendar-days"></i> Lịch đăng khóa học
         </a>
-<<<<<<< HEAD
-        <a href="manager-flashcard"
-           class="${pageContext.request.requestURI.contains('/manager-flashcard') ? 'active' : ''}">
-            <i class="fa fa-clone"></i> Quản lí flashcard
-        </a>
-        <a href="question-manager"
-           class="${pageContext.request.requestURI.contains('question-manager') ? 'active' : ''}">
-            <i class="fa fa-question"></i> Quản lí câu hỏi
-=======
         <a href="notifications"
            class="${pageContext.request.requestURI.contains('/notifications') ? 'active' : ''}">
             <i class="fas fa-bell"></i> Thông báo
             <c:if test="${not empty sessionScope.unreadCount && sessionScope.unreadCount > 0}">
                 <span class="badge">${sessionScope.unreadCount}</span>
             </c:if>
->>>>>>> main
         </a>
     </nav>
 

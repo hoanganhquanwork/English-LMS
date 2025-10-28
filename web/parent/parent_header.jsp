@@ -14,14 +14,6 @@
         </a>
 
         <div class="header-actions">
-<<<<<<< HEAD
-            <a href="notifications.html" class="notification-bell">
-                <span class="bell-icon">🔔</span>
-                <span class="notification-badge">2</span>
-            </a>
-
-=======
->>>>>>> main
             <div class="user-dropdown">
                 <button class="avatar-btn" onclick="toggleUserDropdown()">
                     <img src="${pageContext.request.contextPath}/${sessionScope.user.profilePicture == null ? 'image/avatar/avatar_0.png' :sessionScope.user.profilePicture}" 
@@ -41,21 +33,12 @@
 
     <div class="container navigation-bar">
         <nav class="nav">
-<<<<<<< HEAD
-            <a href="dashboard.html"
-               class="<%= "dashboard".equals(currentPage) ? "active" : "" %>">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/parentlinkstudent"
-               class="<%= "children".equals(currentPage) ? "active" : "" %>">Quản lý con</a>
-            <a href="enrollments.html"
-               class="<%= "enrollments".equals(currentPage) ? "active" : "" %>">Tiến độ học tập</a>
-=======
             <a href="${pageContext.request.contextPath}/parent/dashboard"
                class="<%= "dashboard".equals(currentPage) ? "active" : "" %>">Dashboard</a>
             <a href="${pageContext.request.contextPath}/parentlinkstudent"
                class="<%= "children".equals(currentPage) ? "active" : "" %>">Quản lý con</a>
             <a href="${pageContext.request.contextPath}/parent/progress"
                class="<%= "progress".equals(currentPage) ? "active" : "" %>">Tiến độ học tập</a>
->>>>>>> main
             <a href="${pageContext.request.contextPath}/parent/approvals"
                class="<%= "approvals".equals(currentPage) ? "active" : "" %>">Phê duyệt</a>
             <a href="${pageContext.request.contextPath}/parent/paymentitems"
@@ -65,11 +48,7 @@
         </nav>
     </div>
 </header>
-<<<<<<< HEAD
-
-=======
         
->>>>>>> main
 <script>
     // User dropdown toggle
     function toggleUserDropdown() {
@@ -90,7 +69,4 @@
     };
 
 </script>
-<<<<<<< HEAD
-=======
 
->>>>>>> main

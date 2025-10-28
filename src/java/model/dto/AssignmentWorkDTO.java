@@ -112,4 +112,7 @@ public class AssignmentWorkDTO {
     public void setFeedbackText(String feedbackText) {
         this.feedbackText = feedbackText;
     }
+    
+    
+    
 }

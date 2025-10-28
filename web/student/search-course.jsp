@@ -101,13 +101,9 @@
 
                                         <!-- Body -->
                                         <div class="p-3 d-flex flex-column flex-grow-1">
-<<<<<<< HEAD
-                                            <h6 class="course-title fw-semibold">${c.title}</h6>
-=======
                                             <h6 class="course-title fw-semibold">
                                                 <a class="text-decoration-none text-dark" href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}">${c.title}</a> 
                                             </h6>
->>>>>>> main
                                             <p class="text-secondary mb-2 desc-3"
                                                style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
                                                 <c:out value="${c.description}"/>

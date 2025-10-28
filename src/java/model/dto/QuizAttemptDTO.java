@@ -21,7 +21,9 @@ public class QuizAttemptDTO {
     private LocalDateTime submittedAt;
     private LocalDateTime startedAt;
     private LocalDateTime deadlineAt;
+    
     private Long remainingSeconds;
+    
     private Double scorePct;
 
     private List<QuizAttemptQuestionDTO> questions;
@@ -122,4 +124,6 @@ public class QuizAttemptDTO {
     public void setAnswers(List<QuizAttemptAnswerDTO> answers) {
         this.answers = answers;
     }
+
+   
 }
