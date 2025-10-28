@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.student.profile;
+package controller.auth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,8 +19,8 @@ import service.AuthService;
  *
  * @author Admin
  */
-@WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/changeStudentPassword"})
-public class ChangeStudentPasswordServlet extends HttpServlet {
+@WebServlet(name = "ChangeUserPasswordServlet", urlPatterns = {"/changeUserPassword"})
+public class ChangeUserPasswordServlet extends HttpServlet {
 
     AuthService authService = new AuthService();
 
@@ -41,10 +41,10 @@ public class ChangeStudentPasswordServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ChangePasswordServlet</title>");
+            out.println("<title>Servlet ChangeUserPasswordServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ChangePasswordServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ChangeUserPasswordServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,7 +63,6 @@ public class ChangeStudentPasswordServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
-
     }
 
     /**

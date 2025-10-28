@@ -108,7 +108,7 @@
                                                             </c:choose>
 
                                                             <c:set var="minutes" value="${c.nextItem.durationMin}" />
-                                                            <c:if test="${c.nextItem.contentType == 'assignment' || c.nextItem.contentType == 'quiz'}">
+                                                            <c:if test="${c.nextItem.contentType == 'assignment'}">
                                                                 <c:set var="minutes" value="30" />
                                                             </c:if>
                                                             <c:if test="${c.nextItem.contentType == 'reading'}">
