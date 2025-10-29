@@ -61,7 +61,7 @@ public class CourseDetailDAO extends DBContext {
                 + " mi.module_item_id, mi.item_type, mi.order_index, "
                 + " m.module_id, m.title AS module_title, "
                 + " l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec, "
-                + " q.title AS quiz_title, q.attempts_allowed, q.passing_score_pct AS quiz_pass_pct, "
+                + " q.title AS quiz_title, q.passing_score_pct AS quiz_pass_pct, "
                 + " q.pick_count, q.time_limit_min, "
                 + " a.assignment_id, a.title AS assignment_title, a.submission_type, "
                 + "a.passing_score_pct AS assign_pass_pct, "
@@ -107,11 +107,6 @@ public class CourseDetailDAO extends DBContext {
                     } else if ("quiz".equalsIgnoreCase(type)) {
                         dto.setQuizTitle(rs.getString("quiz_title"));
 
-                        Object attempts = rs.getObject("attempts_allowed");
-                        if (attempts != null) {
-                            dto.setAttemptsAllowed(rs.getInt("attempts_allowed"));
-                        }
-
                         Object passPct = rs.getObject("quiz_pass_pct");
                         if (passPct instanceof BigDecimal) {
                             dto.setQuizPassingPct(((BigDecimal) passPct).doubleValue());
@@ -129,11 +124,6 @@ public class CourseDetailDAO extends DBContext {
                     } else if ("assignment".equalsIgnoreCase(type)) {
                         dto.setAssignmentTitle(rs.getString("assignment_title"));
                         dto.setSubmissionType(rs.getString("submission_type"));
-
-                        Object maxScore = rs.getObject("max_score");
-                        if (maxScore != null) {
-                            dto.setMaxScore(rs.getDouble("max_score"));
-                        }
 
                         Object assignPass = rs.getObject("assign_pass_pct");
                         if (assignPass instanceof BigDecimal) {
@@ -164,7 +154,7 @@ public class CourseDetailDAO extends DBContext {
     public AssignmentDTO getAssignmentDetail(int assignmentId) {
         AssignmentDTO dto = null;
         String sql = "SELECT assignment_id, title, content, instructions, "
-                + "submission_type, attachment_url, passing_score_pct, rubric "
+                + "submission_type, attachment_url, passing_score_pct "
                 + "FROM Assignment WHERE assignment_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, assignmentId);
@@ -362,7 +352,7 @@ public class CourseDetailDAO extends DBContext {
     public List<QuizDTO> getQuizzesWithQuestions(int courseId) {
         List<QuizDTO> quizzes = new ArrayList<>();
 
-        String sql = "SELECT qz.quiz_id, mi.module_item_id, qz.title, qz.attempts_allowed, "
+        String sql = "SELECT qz.quiz_id, mi.module_item_id, qz.title, "
                 + "qz.passing_score_pct, qz.pick_count, qz.time_limit_min, "
                 + "qu.question_id, qu.content AS question_content, qu.media_url, qu.type, qu.explanation, "
                 + "qo.option_id, qo.content AS option_content, qo.is_correct "

@@ -7,7 +7,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Chi tiết khóa học - Manager Dashboard</title>
-        <link rel="stylesheet" href="<c:url value='/css/manager-detail.css?v=3432' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-detail.css?v=3433' />">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     </head>
     <body class="dashboard">
@@ -20,7 +20,7 @@
                         <i class="fa fa-arrow-left"></i> Quay lại danh sách quản lí
                     </a>
                     <a href="coursepublish" class="back-btn">
-                        <i class="fa fa-arrow-left"></i> Quay lại danh sách Đăng khóa học
+                        <i class="fa fa-arrow-left"></i> Quay lại danh sách đăng khóa học
                     </a>
                 </div>
                 <c:if test="${not empty sessionScope.message}">
@@ -67,8 +67,8 @@
                     <c:choose>
                         <c:when test="${course.status eq 'submitted'}">
                             <form method="post" action="coursedetail">
-                                <input type="hidden" name="action" value="approve">
-                                <input type="hidden" name="courseId" value="${course.courseId}">
+                                <input type="hidden" name="action" value="approve" />
+                                <input type="hidden" name="courseId" value="${course.courseId}" />
                                 <button class="btn btn-success"><i class="fa fa-check"></i> Duyệt</button>
                             </form>
                             <button class="btn btn-danger" onclick="openRejectModal(${course.courseId})">
@@ -87,16 +87,16 @@
 
                         <c:when test="${course.status eq 'rejected'}">
                             <form method="post" action="coursedetail">
-                                <input type="hidden" name="action" value="approve">
-                                <input type="hidden" name="courseId" value="${course.courseId}">
+                                <input type="hidden" name="action" value="approve" />
+                                <input type="hidden" name="courseId" value="${course.courseId}" />
                                 <button class="btn btn-success"><i class="fa fa-check"></i> Duyệt lại</button>
                             </form>
                         </c:when>
 
                         <c:when test="${course.status eq 'publish'}">
                             <form method="post" action="coursedetail">
-                                <input type="hidden" name="action" value="unpublish">
-                                <input type="hidden" name="courseId" value="${course.courseId}">
+                                <input type="hidden" name="action" value="unpublish" />
+                                <input type="hidden" name="courseId" value="${course.courseId}" />
                                 <button class="btn btn-warning"><i class="fa fa-download"></i> Gỡ đăng</button>
                             </form>
                         </c:when>
@@ -109,10 +109,11 @@
                     </c:choose>
 
                     <form method="post" action="coursedetail" class="inline-form">
-                        <input type="hidden" name="action" value="updatePrice">
-                        <input type="hidden" name="courseId" value="${course.courseId}">
-                        <input type="number" name="price" value="${course.price != null ? course.price : 0}" 
-                               min="0" step="1000" class="price-inline-input">
+                        <input type="hidden" name="action" value="updatePrice" />
+                        <input type="hidden" name="courseId" value="${course.courseId}" />
+                        <input type="number" name="price" 
+                               value="${course.price != null ? course.price : 0}" 
+                               min="0" step="1000" class="price-inline-input" />
                         <button class="price-inline-btn" title="Cập nhật giá">
                             <i class="fa fa-save"></i>
                         </button>
@@ -168,6 +169,7 @@
                                         <span>Chương ${m.orderIndex}: ${m.title}</span>
                                         <i class="fa fa-chevron-down"></i>
                                     </div>
+
                                     <div class="module-lessons">
                                         <c:forEach var="i" items="${items}">
                                             <c:if test="${i.moduleId == m.moduleId}">
@@ -191,14 +193,14 @@
                                                         </h4>
                                                         <i class="fa fa-chevron-down toggle-icon"></i>
                                                     </div>
-                                                    <div class="item-detail" style="display:none;">
 
+                                                    <div class="item-detail" style="display:none;">
                                                         <c:if test="${i.itemType eq 'lesson'}">
                                                             <p><strong>Loại nội dung:</strong> ${i.contentType}</p>
                                                             <c:if test="${not empty i.videoUrl}">
                                                                 <iframe width="560" height="315" src="${i.videoUrl}" frameborder="0" allowfullscreen></iframe>
-                                                                </c:if>
-                                                                <c:if test="${not empty i.textContent}">
+                                                            </c:if>
+                                                            <c:if test="${not empty i.textContent}">
                                                                 <div class="text-content">${i.textContent}</div>
                                                             </c:if>
                                                             <p><i class="fa fa-clock"></i> Thời lượng: ${i.durationSec} giây</p>
@@ -210,80 +212,70 @@
                                                                         <c:set var="hasQuestion" value="true" />
                                                                         <div class="lesson-questions">
                                                                             <h5>Các câu hỏi trong bài học:</h5>
-                                                                        </c:if>
-                                                                        <div class="question-item">
-                                                                            <strong>Q${q.questionId}:</strong> ${q.content}
-
-                                                                            <c:if test="${not empty q.mediaUrl}">
-                                                                                <c:set var="fixedUrl" value="${fn:replace(q.mediaUrl, 'watch?v=', 'embed/')}" />
-
-                                                                                <div class="q-media">
-                                                                                    <c:choose>
-
-                                                                                        <c:when test="${fn:contains(fixedUrl, 'youtube.com/embed')}">
-                                                                                            <div class="youtube-container">
-                                                                                                <iframe class="youtube-embed"
-                                                                                                        src="${fixedUrl}"
-                                                                                                        frameborder="0"
-                                                                                                        allowfullscreen
-                                                                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                                                                                                </iframe>
-                                                                                            </div>
-                                                                                        </c:when>
-
-                                                                                        <c:when test="${fn:endsWith(q.mediaUrl, '.jpg') 
-                                                                                                        or fn:endsWith(q.mediaUrl, '.jpeg') 
-                                                                                                        or fn:endsWith(q.mediaUrl, '.png') 
-                                                                                                        or fn:endsWith(q.mediaUrl, '.gif')}">
-                                                                                                <img src="${q.mediaUrl}" alt="Hình minh họa" class="media-img">
-                                                                                        </c:when>
-
-                                                                                        <c:when test="${fn:endsWith(q.mediaUrl, '.mp4') 
-                                                                                                        or fn:endsWith(q.mediaUrl, '.webm') 
-                                                                                                        or fn:endsWith(q.mediaUrl, '.mov')}">
-                                                                                                <video controls class="media-video">
-                                                                                                    <source src="${q.mediaUrl}" type="video/mp4">
-                                                                                                </video>
-                                                                                        </c:when>
-
-                                                                                        <c:otherwise>
-                                                                                            <a href="${q.mediaUrl}" target="_blank">
-                                                                                                ${q.mediaUrl}
-                                                                                            </a>
-                                                                                        </c:otherwise>
-
-                                                                                    </c:choose>
-                                                                                </div>
-                                                                            </c:if>
-
-                                                                            <c:if test="${not empty q.options}">
-                                                                                <div class="option-list">
-                                                                                    <h6>Các lựa chọn:</h6>
-                                                                                    <c:forEach var="opt" items="${q.options}">
-                                                                                        <div class="option ${opt.isCorrect ? 'correct' : ''}">
-                                                                                            <i class="fa ${opt.isCorrect ? 'fa-check-circle text-success' : 'fa-circle'}"></i>
-                                                                                            ${opt.content}
-                                                                                        </div>
-                                                                                    </c:forEach>
-                                                                                </div>
-                                                                            </c:if>
-                                                                            <c:if test="${not empty q.answers}">
-                                                                                <div class="answer-list">
-                                                                                    <h6>Đáp án mẫu:</h6>
-                                                                                    <ul>
-                                                                                        <c:forEach var="ans" items="${q.answers}">
-                                                                                            <li>${ans.answerText}</li>
-                                                                                            </c:forEach>
-                                                                                    </ul>
-                                                                                </div>
-                                                                            </c:if>
-                                                                            <c:if test="${not empty q.explanation}">
-                                                                                <div class="muted"><em>Giải thích:</em> ${q.explanation}</div>
-                                                                            </c:if>
-                                                                        </div>
                                                                     </c:if>
-                                                                </c:forEach>
-                                                                <c:if test="${hasQuestion}">
+
+                                                                    <div class="question-item">
+                                                                        <strong>Q${q.questionId}:</strong> ${q.content}
+
+                                                                        <c:if test="${not empty q.mediaUrl}">
+                                                                            <c:set var="fixedUrl" value="${fn:replace(q.mediaUrl, 'watch?v=', 'embed/')}" />
+                                                                            <div class="q-media">
+                                                                                <c:choose>
+                                                                                    <c:when test="${fn:contains(fixedUrl, 'youtube.com/embed')}">
+                                                                                        <div class="youtube-container">
+                                                                                            <iframe class="youtube-embed"
+                                                                                                    src="${fixedUrl}"
+                                                                                                    frameborder="0"
+                                                                                                    allowfullscreen
+                                                                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                                                                            </iframe>
+                                                                                        </div>
+                                                                                    </c:when>
+                                                                                    <c:when test="${fn:endsWith(q.mediaUrl, '.jpg') or fn:endsWith(q.mediaUrl, '.jpeg') or fn:endsWith(q.mediaUrl, '.png') or fn:endsWith(q.mediaUrl, '.gif')}">
+                                                                                        <img src="${q.mediaUrl}" alt="Hình minh họa" class="media-img" />
+                                                                                    </c:when>
+                                                                                    <c:when test="${fn:endsWith(q.mediaUrl, '.mp4') or fn:endsWith(q.mediaUrl, '.webm') or fn:endsWith(q.mediaUrl, '.mov')}">
+                                                                                        <video controls class="media-video">
+                                                                                            <source src="${q.mediaUrl}" type="video/mp4" />
+                                                                                        </video>
+                                                                                    </c:when>
+                                                                                    <c:otherwise>
+                                                                                        <a href="${q.mediaUrl}" target="_blank">${q.mediaUrl}</a>
+                                                                                    </c:otherwise>
+                                                                                </c:choose>
+                                                                            </div>
+                                                                        </c:if>
+
+                                                                        <c:if test="${not empty q.options}">
+                                                                            <div class="option-list">
+                                                                                <h6>Các lựa chọn:</h6>
+                                                                                <c:forEach var="opt" items="${q.options}">
+                                                                                    <div class="option ${opt.isCorrect ? 'correct' : ''}">
+                                                                                        <i class="fa ${opt.isCorrect ? 'fa-check-circle text-success' : 'fa-circle'}"></i>
+                                                                                        ${opt.content}
+                                                                                    </div>
+                                                                                </c:forEach>
+                                                                            </div>
+                                                                        </c:if>
+
+                                                                        <c:if test="${not empty q.answers}">
+                                                                            <div class="answer-list">
+                                                                                <h6>Đáp án mẫu:</h6>
+                                                                                <ul>
+                                                                                    <c:forEach var="ans" items="${q.answers}">
+                                                                                        <li>${ans.answerText}</li>
+                                                                                    </c:forEach>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </c:if>
+
+                                                                        <c:if test="${not empty q.explanation}">
+                                                                            <div class="muted"><em>Giải thích:</em> ${q.explanation}</div>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </c:if>
+                                                            </c:forEach>
+                                                            <c:if test="${hasQuestion}">
                                                                 </div>
                                                             </c:if>
                                                         </c:if>
@@ -292,7 +284,7 @@
                                                             <p><strong>Giới hạn thời gian:</strong>
                                                                 <c:choose>
                                                                     <c:when test="${i.timeLimitMin != null}">
-                                                                        <c:out value="${i.timeLimitMin}" /> phút
+                                                                        ${i.timeLimitMin} phút
                                                                     </c:when>
                                                                     <c:otherwise>Không giới hạn</c:otherwise>
                                                                 </c:choose>
@@ -300,19 +292,16 @@
                                                             <p>Tỉ lệ qua: ${i.quizPassingPct}%</p>
                                                             <p>Số câu chọn ngẫu nhiên: ${i.pickCount}</p>
                                                         </c:if>
+
                                                         <c:if test="${i.itemType eq 'assignment'}">
                                                             <div class="assignment-detail">
                                                                 <p><strong>Hình thức nộp:</strong> ${i.submissionType}</p>
-                                                                <p><strong>Điểm tối đa:</strong> ${i.maxScore}</p>
+                                                                <p><strong>Điểm tối đa:</strong> 100</p>
                                                                 <p><strong>Tỉ lệ qua:</strong> ${i.assignmentPassingPct}%</p>
                                                                 <c:if test="${not empty i.assignmentInstructions}">
-                                                                    <c:if test="${not empty item.attachmentUrl}">
-                                                                        <p> Tệp đính kèm:
-                                                                            <a href="${item.attachmentUrl}" 
-                                                                               target="_blank" 
-                                                                               class="btn btn-outline">
-                                                                                Xem / Tải tệp Word
-                                                                            </a>
+                                                                    <c:if test="${not empty i.attachmentUrl}">
+                                                                        <p>Tệp đính kèm:
+                                                                            <a href="${i.attachmentUrl}" target="_blank" class="btn btn-outline">Xem / Tải tệp Word</a>
                                                                         </p>
                                                                     </c:if>
                                                                     <div class="text-content"><h5>Hướng dẫn:</h5>${i.assignmentInstructions}</div>
@@ -320,11 +309,9 @@
                                                                 <c:if test="${not empty i.assignmentContent}">
                                                                     <div class="text-content"><h5>Nội dung bài tập:</h5>${i.assignmentContent}</div>
                                                                 </c:if>
-                                                                <c:if test="${not empty i.rubric}">
-                                                                    <div class="text-content"><h5>Tiêu chí chấm điểm:</h5>${i.rubric}</div>
-                                                                </c:if>
                                                             </div>
                                                         </c:if>
+
                                                         <c:if test="${i.itemType eq 'discussion'}">
                                                             <p>${i.discussionDescription}</p>
                                                         </c:if>
@@ -345,8 +332,8 @@
             <div class="modal-content">
                 <h3>Nhập lý do từ chối</h3>
                 <form method="post" action="coursedetail">
-                    <input type="hidden" name="action" value="reject">
-                    <input type="hidden" name="courseId" id="rejectCourseId">
+                    <input type="hidden" name="action" value="reject" />
+                    <input type="hidden" name="courseId" id="rejectCourseId" />
                     <textarea name="rejectReason" required placeholder="Nhập lý do..."></textarea>
                     <div class="modal-buttons">
                         <button type="submit" class="btn btn-danger">Gửi</button>
@@ -360,11 +347,11 @@
             <div class="modal-content">
                 <h3>Chọn ngày xuất bản</h3>
                 <form method="post" action="coursedetail">
-                    <input type="hidden" name="action" value="publish">
-                    <input type="hidden" name="courseId" id="scheduleCourseId">
+                    <input type="hidden" name="action" value="publish" />
+                    <input type="hidden" name="courseId" id="scheduleCourseId" />
                     <div class="form-group">
                         <label for="publishDate">Ngày đăng:</label>
-                        <input type="date" name="publishDate" id="publishDate" required>
+                        <input type="date" name="publishDate" id="publishDate" required />
                     </div>
                     <div class="modal-buttons">
                         <button type="submit" class="btn btn-primary">Lưu lịch</button>

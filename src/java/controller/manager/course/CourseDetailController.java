@@ -80,7 +80,7 @@ public class CourseDetailController extends HttpServlet {
             Map<String, Object> data = dService.getCourseDetail(courseId);
             if (data == null || data.containsKey("error")) {
                 request.setAttribute("errorMessage", data != null ? data.get("error") : "Không thể tải dữ liệu khóa học.");
-                request.getRequestDispatcher("/views-manager/course-manager.jsp").forward(request, response);
+                request.getRequestDispatcher("/views-manager/course-detail.jsp").forward(request, response);
                 return;
             }
 
@@ -167,7 +167,7 @@ public class CourseDetailController extends HttpServlet {
                     action, courseId, reason, price, publishDate, manager.getUserId()
             );
 
-            if (resultMessage.contains("thành công") || resultMessage.contains("đã")) {
+            if (resultMessage.toLowerCase().contains("thành công")) {
                 session.setAttribute("message", resultMessage);
             } else {
                 session.setAttribute("errorMessage", resultMessage);
