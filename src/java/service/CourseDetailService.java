@@ -56,10 +56,29 @@ public class CourseDetailService {
             for (ModuleItemDetailDTO item : items) {
                 if ("lesson".equalsIgnoreCase(item.getItemType())) {
 
-                    if ("video".equalsIgnoreCase(item.getContentType())
-                            && item.getVideoUrl() != null
-                            && item.getVideoUrl().contains("watch?v=")) {
-                        item.setVideoUrl(item.getVideoUrl().replace("watch?v=", "embed/"));
+                    if ("video".equalsIgnoreCase(item.getContentType())) {
+                        String rawUrl = item.getVideoUrl();
+
+                        if (rawUrl != null && !rawUrl.isBlank()) {
+                            String videoId = null;
+
+                            if (rawUrl.contains("watch?v=")) {
+                                videoId = rawUrl.substring(rawUrl.indexOf("watch?v=") + 8);
+                                int amp = videoId.indexOf("&");
+                                if (amp > 0) {
+                                    videoId = videoId.substring(0, amp);
+                                }
+                            } else if (rawUrl.contains("youtu.be/")) {
+                                videoId = rawUrl.substring(rawUrl.lastIndexOf("/") + 1);
+                            } else if (rawUrl.contains("embed/")) {
+                                videoId = rawUrl.substring(rawUrl.lastIndexOf("/") + 1);
+                            } else {
+                                videoId = rawUrl.trim();
+                            }
+                            if (videoId != null && !videoId.isBlank()) {
+                                item.setVideoUrl("https://www.youtube.com/embed/" + videoId);
+                            }
+                        }
                     }
 
                     List<QuestionDTO> lessonQuestions = new ArrayList<>();

@@ -61,7 +61,7 @@ public class CourseDetailDAO extends DBContext {
                 + " mi.module_item_id, mi.item_type, mi.order_index, "
                 + " m.module_id, m.title AS module_title, "
                 + " l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec, "
-                + " q.title AS quiz_title, q.attempts_allowed, q.passing_score_pct AS quiz_pass_pct, "
+                + " q.title AS quiz_title, q.passing_score_pct AS quiz_pass_pct, "
                 + " q.pick_count, q.time_limit_min, "
                 + " a.assignment_id, a.title AS assignment_title, a.submission_type, "
                 + "a.passing_score_pct AS assign_pass_pct, "
@@ -106,11 +106,6 @@ public class CourseDetailDAO extends DBContext {
                         dto.setLessonQuestions(null);
                     } else if ("quiz".equalsIgnoreCase(type)) {
                         dto.setQuizTitle(rs.getString("quiz_title"));
-
-                        Object attempts = rs.getObject("attempts_allowed");
-                        if (attempts != null) {
-                            dto.setAttemptsAllowed(rs.getInt("attempts_allowed"));
-                        }
 
                         Object passPct = rs.getObject("quiz_pass_pct");
                         if (passPct instanceof BigDecimal) {
