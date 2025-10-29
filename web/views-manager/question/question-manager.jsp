@@ -7,7 +7,7 @@
         <meta charset="UTF-8" />
         <title>Ngân hàng câu hỏi — EnglishLMS Manager</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-        <link rel="stylesheet" href="<c:url value='/css/manager-question.css?v=554' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-question.css?v=54' />">
     </head>
     <body>
         <jsp:include page="../includes-manager/sidebar-manager.jsp" />
@@ -59,7 +59,7 @@
 
             <form method="post" action="question-manager" id="bulkForm">
                 <div class="bulk-actions">
-                    <button type="button" class="btn btn-success" onclick="return setBulkAction('approve')">
+                    <button type="button" class="btn btn-success" onclick="return setBulkAction('approved')">
                         <i class="fa fa-check"></i> Duyệt hàng loạt
                     </button>
                     <button type="button" class="btn btn-danger" onclick="return setBulkAction('reject')">
@@ -81,7 +81,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
+
                         <c:if test="${empty questions}">
                             <tr>
                                 <td colspan="8" style="text-align:center; color:#777; padding:16px;">
@@ -89,7 +89,7 @@
                                 </td>
                             </tr>
                         </c:if>
-                            
+
                         <c:forEach var="q" items="${questions}">
                             <tr>
                                 <td><input type="checkbox" name="questionIds" value="${q.questionId}" form="bulkForm"></td>
@@ -111,8 +111,8 @@
                                     </button>
                                     <c:choose>
                                         <c:when test="${q.status eq 'submitted'}">
-                                            <button type="submit" class="btn btn-approve" name="action" value="approve"
-                                                    onclick="return confirmAction(${q.questionId}, 'approve')">
+                                            <button type="submit" class="btn btn-approve" name="action" value="approved"
+                                                    onclick="addHidden(this.form, 'questionId', ${q.questionId}); return confirmAction(${q.questionId}, 'approved')">
                                                 <i class="fa fa-check"></i>
                                             </button>
                                             <button type="button" class="btn btn-reject" onclick="openReject(${q.questionId})">
@@ -120,10 +120,12 @@
                                             </button>
                                         </c:when>
                                         <c:when test="${q.status eq 'approved'}">
-                                            <button type="submit" class="btn btn-archive" name="action" value="archive"
-                                                    onclick="return confirmAction(${q.questionId}, 'archive')">
+                                            <button type="submit" class="btn btn-archive" name="action" value="archived"
+                                                    onclick="return confirmAction(${q.questionId}, 'archived')">
                                                 <i class="fa fa-box-archive"></i>
                                             </button>
+                                        </c:when>
+                                        <c:when test="${q.status eq 'rejected'}">
                                         </c:when>
                                         <c:when test="${q.status eq 'rejected' || q.status eq 'archived'}">
                                             <button type="submit" class="btn btn-approve" name="action" value="restore"
@@ -180,7 +182,7 @@
                     return alert('Vui lòng nhập lý do từ chối!');
                 const form = document.getElementById('bulkForm');
                 addHidden(form, 'questionIds', rejectId);
-                addHidden(form, 'action', 'reject');
+                addHidden(form, 'action', 'rejected');
                 addHidden(form, 'reason', reason);
                 form.submit();
             }
@@ -223,7 +225,7 @@
 
                 const ids = Array.from(checked).map(cb => cb.value).join(',');
 
-                if (action === 'approve') {
+                if (action === 'approved') {
                     if (confirm(`Xác nhận duyệt ${checked.length} câu hỏi đã chọn?`)) {
                         const form = document.getElementById('bulkForm');
                         addHidden(form, 'questionIds', ids);
@@ -233,7 +235,7 @@
                     return false;
                 }
 
-                if (action === 'reject') {
+                if (action === 'rejected') {
                     rejectId = ids;
                     document.getElementById('rejectModal').style.display = 'flex';
                     return false;
