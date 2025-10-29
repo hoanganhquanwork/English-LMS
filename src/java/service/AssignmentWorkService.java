@@ -58,8 +58,8 @@ public class AssignmentWorkService {
         work.setStatus(status);
 
         boolean updated = dao.updateGrade(work, graderId);
-        if (updated ) {
-             boolean passed = "passed".equals(status);
+        if (updated) {
+            boolean passed = "passed".equals(status);
             progressDAO.updateBestAssignmentScore(studentId, assignmentId, scorePct, passed);
         }
 

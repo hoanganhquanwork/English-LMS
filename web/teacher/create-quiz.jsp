@@ -118,10 +118,6 @@
                                 <input id="passing_score_pct" name="passing_score_pct" type="number" 
                                        placeholder="Để trống = chỉ ôn tập" min="0" max="100" step="0.01">
                             </div>
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
 
                         <div class="form-group">
                             <label for="pick_count">Số câu hỏi</label>
