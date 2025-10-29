@@ -17,3 +17,5 @@
 .DS_Store
 Thumbs.db
 /dist/
+nbproject/genfiles.properties
+nbproject/build-impl.xml
