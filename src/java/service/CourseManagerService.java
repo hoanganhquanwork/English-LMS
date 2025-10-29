@@ -138,16 +138,56 @@ public class CourseManagerService {
         dao.autoPublishIfDue();
     }
 
-    private String handleApprove(String[] courseIds) {
-        if (courseIds == null || courseIds.length == 0) {
-            return "Vui lòng chọn ít nhất một khóa học!";
-        }
-
-        for (String id : courseIds) {
-            updateCourseStatus(Integer.parseInt(id), "approved");
-        }
-        return "Đã duyệt thành công " + courseIds.length + " khóa học.";
+private String handleApprove(String[] courseIds) {
+    if (courseIds == null || courseIds.length == 0) {
+        return " Vui lòng chọn ít nhất một khóa học!";
     }
+
+    int approvedCount = 0;
+    StringBuilder invalidCourses = new StringBuilder();
+
+    for (String idStr : courseIds) {
+        try {
+            int courseId = Integer.parseInt(idStr.trim());
+            Course course = dao.getCourseById(courseId);
+
+            if (course == null) {
+                invalidCourses.append("[").append(courseId).append("] không tồn tại, ");
+                continue;
+            }
+
+            BigDecimal price = course.getPrice();
+
+            if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+                invalidCourses.append(course.getTitle())
+                        .append(" (giá: ")
+                        .append(price == null ? "chưa đặt" : price)
+                        .append("), ");
+                continue;
+            }
+
+            boolean success = dao.updateCourseStatus(courseId, "approved");
+            if (success) {
+                approvedCount++;
+            }
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    if (approvedCount == 0) {
+        return "Không thể duyệt. Tất cả các khóa học được chọn đều chưa có giá hợp lệ.";
+    }
+
+    if (invalidCourses.length() > 0) {
+        String invalidList = invalidCourses.substring(0, invalidCourses.length() - 2);
+        return "Đã duyệt " + approvedCount + " khóa học, "
+                + "nhưng bỏ qua các khóa chưa có giá hợp lệ: " + invalidList + ".";
+    }
+
+    return "Đã duyệt thành công " + approvedCount + " khóa học.";
+}
 
     private String handleReject(String[] courseIds, String reason, Users manager) {
         if (courseIds == null || courseIds.length == 0) {
