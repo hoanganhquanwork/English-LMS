@@ -116,7 +116,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="parentDropdown">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/parent/profile">Hồ sơ</a></li>
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeUserPassword">Cài đặt mật khẩu</a></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
                             </ul>
                         </div>
