@@ -53,8 +53,8 @@ h1{
 .card{
     perspective:1200px;
     perspective-origin:center;
-    width:500px;
-    height:280px;
+    width:800px;
+    height:448px;
     position:relative;
     cursor:pointer;
     transition:transform .3s ease,opacity .3s ease;
@@ -80,7 +80,7 @@ h1{
     align-items:center;
     text-align:center;
     padding:25px;
-    font-size:1.25rem;
+    font-size:2rem;
     line-height:1.6;
     box-shadow:0 6px 18px rgba(0,0,0,.1);
     backface-visibility:hidden;
