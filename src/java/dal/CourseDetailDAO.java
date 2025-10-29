@@ -130,11 +130,6 @@ public class CourseDetailDAO extends DBContext {
                         dto.setAssignmentTitle(rs.getString("assignment_title"));
                         dto.setSubmissionType(rs.getString("submission_type"));
 
-                        Object maxScore = rs.getObject("max_score");
-                        if (maxScore != null) {
-                            dto.setMaxScore(rs.getDouble("max_score"));
-                        }
-
                         Object assignPass = rs.getObject("assign_pass_pct");
                         if (assignPass instanceof BigDecimal) {
                             dto.setAssignmentPassingPct(((BigDecimal) assignPass));
@@ -164,7 +159,7 @@ public class CourseDetailDAO extends DBContext {
     public AssignmentDTO getAssignmentDetail(int assignmentId) {
         AssignmentDTO dto = null;
         String sql = "SELECT assignment_id, title, content, instructions, "
-                + "submission_type, attachment_url, passing_score_pct, rubric "
+                + "submission_type, attachment_url, passing_score_pct "
                 + "FROM Assignment WHERE assignment_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, assignmentId);
@@ -362,7 +357,7 @@ public class CourseDetailDAO extends DBContext {
     public List<QuizDTO> getQuizzesWithQuestions(int courseId) {
         List<QuizDTO> quizzes = new ArrayList<>();
 
-        String sql = "SELECT qz.quiz_id, mi.module_item_id, qz.title, qz.attempts_allowed, "
+        String sql = "SELECT qz.quiz_id, mi.module_item_id, qz.title, "
                 + "qz.passing_score_pct, qz.pick_count, qz.time_limit_min, "
                 + "qu.question_id, qu.content AS question_content, qu.media_url, qu.type, qu.explanation, "
                 + "qo.option_id, qo.content AS option_content, qo.is_correct "

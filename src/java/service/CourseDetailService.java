@@ -1,17 +1,14 @@
 package service;
 
 import dal.CourseDetailDAO;
-import dal.QuestionDAO;
 import java.util.*;
 import model.dto.*;
 import model.entity.*;
-import service.QuestionManagerService;
 import model.entity.Module;
 
 public class CourseDetailService {
 
     private final CourseDetailDAO dao = new CourseDetailDAO();
-    private final QuestionManagerService qService = new QuestionManagerService();
 
     public boolean isCourseValid(int courseId) {
         return courseId > 0 && dao.isCourseValid(courseId);
@@ -57,16 +54,23 @@ public class CourseDetailService {
             }
 
             for (ModuleItemDetailDTO item : items) {
-                if ("lesson".equalsIgnoreCase(item.getItemType())
-                        && "video".equalsIgnoreCase(item.getContentType())
-                        && item.getVideoUrl() != null
-                        && item.getVideoUrl().contains("watch?v=")) {
-                    item.setVideoUrl(item.getVideoUrl().replace("watch?v=", "embed/"));
-                    List<QuestionDTO> lessonQuestions = dao.getQuestionsByLesson(courseId);
-                    item.setLessonQuestions(lessonQuestions); 
+                if ("lesson".equalsIgnoreCase(item.getItemType())) {
+
+                    if ("video".equalsIgnoreCase(item.getContentType())
+                            && item.getVideoUrl() != null
+                            && item.getVideoUrl().contains("watch?v=")) {
+                        item.setVideoUrl(item.getVideoUrl().replace("watch?v=", "embed/"));
+                    }
+
+                    List<QuestionDTO> lessonQuestions = new ArrayList<>();
+                    for (QuestionDTO q : questions) {
+                        if (q.getLessonId() == item.getItemId()) {
+                            lessonQuestions.add(q);
+                        }
+                    }
+                    item.setLessonQuestions(lessonQuestions);
                 }
             }
-
             Map<Integer, QuizDTO> quizMap = new HashMap<>();
             for (QuizDTO qz : quizzes) {
                 quizMap.put(qz.getQuizId(), qz);
@@ -98,12 +102,18 @@ public class CourseDetailService {
                 }
             }
 
-            data.put("modules", modules);
-            data.put("items", items);
-            data.put("quizzes", quizzes);
-            data.put("stats", stats);
-            data.put("instructor", instructor);
-            data.put("questions", questions);
+            data.put(
+                    "modules", modules);
+            data.put(
+                    "items", items);
+            data.put(
+                    "quizzes", quizzes);
+            data.put(
+                    "stats", stats);
+            data.put(
+                    "instructor", instructor);
+            data.put(
+                    "questions", questions);
 
         } catch (Exception e) {
             e.printStackTrace();

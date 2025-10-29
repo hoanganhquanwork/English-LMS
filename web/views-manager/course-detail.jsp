@@ -20,7 +20,7 @@
                         <i class="fa fa-arrow-left"></i> Quay lại danh sách quản lí
                     </a>
                     <a href="coursepublish" class="back-btn">
-                        <i class="fa fa-arrow-left"></i> Quay lại danh sách Đăng khóa học
+                        <i class="fa fa-arrow-left"></i> Quay lại danh sách đăng khóa học
                     </a>
                 </div>
                 <c:if test="${not empty sessionScope.message}">
@@ -303,7 +303,7 @@
                                                         <c:if test="${i.itemType eq 'assignment'}">
                                                             <div class="assignment-detail">
                                                                 <p><strong>Hình thức nộp:</strong> ${i.submissionType}</p>
-                                                                <p><strong>Điểm tối đa:</strong> ${i.maxScore}</p>
+                                                                <p><strong>Điểm tối đa:</strong>100</p>
                                                                 <p><strong>Tỉ lệ qua:</strong> ${i.assignmentPassingPct}%</p>
                                                                 <c:if test="${not empty i.assignmentInstructions}">
                                                                     <c:if test="${not empty item.attachmentUrl}">
@@ -319,9 +319,6 @@
                                                                 </c:if>
                                                                 <c:if test="${not empty i.assignmentContent}">
                                                                     <div class="text-content"><h5>Nội dung bài tập:</h5>${i.assignmentContent}</div>
-                                                                </c:if>
-                                                                <c:if test="${not empty i.rubric}">
-                                                                    <div class="text-content"><h5>Tiêu chí chấm điểm:</h5>${i.rubric}</div>
                                                                 </c:if>
                                                             </div>
                                                         </c:if>
