@@ -558,7 +558,7 @@
             <div class="page-title-wrap">
                 <h2>Xem Câu hỏi - Module: ${module.title}</h2>
             </div>
-            
+
             <!-- Main Content -->
             <div class="main-content" style="height: auto; min-height: 700px; max-width: 1200px; margin: 0 auto;">
                 <!-- Questions Table -->
@@ -614,7 +614,7 @@
                                                        data-explanation="${fn:escapeXml(entry.key.explanation)}"
                                                        data-file="${entry.key.mediaUrl}"
                                                        data-topic="<c:choose><c:when test='${entry.key.topicId != null}'><c:forEach var='topic' items='${topics}'><c:if test='${topic.topicId == entry.key.topicId}'>${topic.name}</c:if></c:forEach></c:when><c:otherwise>Không có</c:otherwise></c:choose>"
-                                                       data-status="active"
+                                                                       data-status="active"
                                                        <c:if test="${entry.key.type == 'mcq_single'}">
                                                            data-options="<c:forEach var='opt' items='${entry.value}' varStatus='loop'>${fn:escapeXml(opt.content)}|${opt.correct ? 'true' : 'false'}${!loop.last ? ',' : ''}</c:forEach>"
                                                        </c:if>
@@ -624,11 +624,13 @@
                                                        onclick="openViewQuestion(this)">
                                                         <i class="fas fa-eye"></i> Xem
                                                     </a>
-                                                    <a href="deleteQuestionFromModule?courseId=${param.courseId}&moduleId=${param.moduleId}&questionId=${entry.key.questionId}"
-                                                       style="padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #e74c3c; color: white;"
-                                                       onclick="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');">
-                                                        <i class="fas fa-trash"></i> Xóa
-                                                    </a>
+                                                    <c:if test="${course.status == 'draft' || course.status == 'rejected'}">
+                                                        <a href="deleteQuestionFromModule?courseId=${param.courseId}&moduleId=${param.moduleId}&questionId=${entry.key.questionId}"
+                                                           style="padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #e74c3c; color: white;"
+                                                           onclick="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');">
+                                                            <i class="fas fa-trash"></i> Xóa
+                                                        </a>
+                                                    </c:if>
                                                 </div>
                                             </td>
                                         </tr>
@@ -647,7 +649,7 @@
                     </table>
                 </div>
 
-              
+
             </div>
         </div>
 
@@ -681,7 +683,7 @@
                                 <span id="viewQuestionStatus" style="color: #6c757d;"></span>
                             </div>
                         </div>
-                        
+
                         <div class="question-content-section" style="margin-bottom: 20px;">
                             <label style="font-weight: 600; color: #2c3e50; margin-bottom: 10px; display: block;">Nội dung câu hỏi:</label>
                             <div id="viewQuestionContent" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3498db; font-size: 16px; line-height: 1.6; color: #2c3e50;"></div>
@@ -739,11 +741,11 @@
                 const mcqOptions = document.getElementById("viewMcqOptions");
                 const textAnswer = document.getElementById("viewTextAnswer");
                 const optionsContainer = document.getElementById("viewAnswerOptions");
-                
+
                 if (type === "mcq_single") {
                     mcqOptions.style.display = "block";
                     textAnswer.style.display = "none";
-                    
+
                     optionsContainer.innerHTML = "";
                     if (optionsStr.trim() !== "") {
                         const pairs = optionsStr.split(",");
@@ -751,27 +753,27 @@
                             const parts = p.split("|");
                             const optText = parts[0];
                             const isCorrect = parts[1] === "true";
-                            
+
                             const optionDiv = document.createElement("div");
                             optionDiv.style.cssText = "display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #e9ecef;";
-                            
+
                             const radio = document.createElement("input");
                             radio.type = "radio";
                             radio.checked = isCorrect;
                             radio.disabled = true;
                             radio.style.marginRight = "8px";
-                            
+
                             const label = document.createElement("span");
                             label.textContent = optText;
                             label.style.cssText = isCorrect ? "color: #28a745; font-weight: 600;" : "color: #6c757d;";
-                            
+
                             if (isCorrect) {
                                 const checkIcon = document.createElement("i");
                                 checkIcon.className = "fas fa-check";
                                 checkIcon.style.cssText = "color: #28a745; margin-left: 8px;";
                                 label.appendChild(checkIcon);
                             }
-                            
+
                             optionDiv.appendChild(radio);
                             optionDiv.appendChild(label);
                             optionsContainer.appendChild(optionDiv);
@@ -789,11 +791,11 @@
                 // Handle file display
                 const fileSection = document.getElementById("viewFileSection");
                 const fileContent = document.getElementById("viewFileContent");
-                
+
                 if (fileUrl && fileUrl.trim() !== "") {
                     fileSection.style.display = "block";
                     const ext = fileUrl.split('.').pop().toLowerCase();
-                    
+
                     let fileHtml = "";
                     if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
                         fileHtml = '<img src="' + fileUrl + '" style="max-width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">';
@@ -820,7 +822,7 @@
             }
 
             // Close modal when clicking outside
-            window.addEventListener('click', function(event) {
+            window.addEventListener('click', function (event) {
                 const modal = document.getElementById('viewQuestionModal');
                 if (event.target === modal) {
                     closeViewModal();

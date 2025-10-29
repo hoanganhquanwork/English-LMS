@@ -75,7 +75,7 @@ public class ManageAssignmentServlet extends HttpServlet {
 
     } catch (Exception e) {
         e.printStackTrace(); // log console
-        response.getWriter().println("❌ Lỗi trong ManageAssignmentServlet: " + e.getMessage());
+        response.getWriter().println(" Lỗi trong ManageAssignmentServlet: " + e.getMessage());
     }
 }
 

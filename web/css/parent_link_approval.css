@@ -208,7 +208,6 @@ body {
 .filter-tabs {
     display: flex;
     gap: 12px;
-    background: var(--bg);
     padding: 8px;
     border-radius: var(--radius);
 }

@@ -68,7 +68,7 @@ public class CreateAssignment extends HttpServlet {
             Double passingScorePct = (passingStr == null || passingStr.isEmpty())
                     ? null : Double.parseDouble(passingStr);
 
-            // 🔹 Xử lý upload file
+           
             Part filePart = request.getPart("attachments");
             String fileUrl = null;
 
@@ -83,7 +83,7 @@ public class CreateAssignment extends HttpServlet {
                 String filePath = uploadPath + File.separator + fileName;
                 filePart.write(filePath);
 
-                // Lưu đường dẫn tương đối để hiển thị trong JSP
+               
                 fileUrl = "uploads/assignment/" + fileName;
             }
 
@@ -101,7 +101,7 @@ public class CreateAssignment extends HttpServlet {
             a.setAiGradeAllowed(isAiGradeAllowed);
             a.setPromptSummary(promptSummary);
 
-            // 🔹 Gọi Service để lưu DB
+           
               int newId = assignmentService.createAssignment(moduleId, a, nos, guidances, weights);
 
 

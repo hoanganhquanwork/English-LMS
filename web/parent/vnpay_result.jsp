@@ -30,13 +30,13 @@
                     <p class="result-message">Chúc mừng! Giao dịch của bạn đã được xử lý thành công.</p>
 
                     <div class="success-message">
-                        <p>🎯 Đơn hàng của bạn đã được xác nhận và sẽ được xử lý trong thời gian sớm nhất.</p>
+                        <p>🎯 Đơn hàng của bạn đã được xác nhận. <br> Thông tin thanh toán sẽ gửi tới Email của bạn trong thời gian sớm nhất.</p>
                     </div>
                 </div>
                 <div class="action-buttons">
                     <a href="${pageContext.request.contextPath}/parent/orders" class="btn primary">
                         <span class="btn-icon">📋</span>
-                        <span class="btn-text">Xem danh sách đơn hàng</span>
+                        <span class="btn-text">Xem danh sách đơn hàng đã thanh toán</span>
                     </a>
 
                 </div>

@@ -48,6 +48,7 @@
                 </library>
                 <library dirs="200">
                     <file>${file.reference.json-20250517.jar-1}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
                     <file>${file.reference.commons-io-2.15.1.jar}</file>
@@ -87,9 +88,18 @@
                 </library>
                 <library dirs="200">
                     <file>${file.reference.json-20250517.jar-1}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
                     <file>${file.reference.jakarta.activation-2.0.1.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jakarta.mail-2.0.1__2_.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jakarta.activation-2.0.1.jar-1}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">

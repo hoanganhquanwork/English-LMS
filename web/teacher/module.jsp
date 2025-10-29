@@ -17,6 +17,16 @@
         <link rel="stylesheet" href="css/course-students.css">
         <link rel="stylesheet" href="css/course-content.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <style>
+            .module-name a {
+                color: #000;
+                text-decoration: none;
+                font-weight: 600;
+                transition: color 0.3s;
+            }
+
+            
+        </style>
     </head>
     <body>
         <!-- Header -->
@@ -30,7 +40,7 @@
                     <div class="nav">
                         <a href="instructorDashboard?id=3">Dashboard</a>
                         <a href="manage?id=3">Khóa học</a>                     
-                     
+
                     </div>
                     <button class="hamburger">
                         <i class="fas fa-bars"></i>
@@ -87,7 +97,7 @@
                                 <i class="fas fa-question-circle"></i>
                                 Câu hỏi
                             </a>
-                          
+
                         </nav>
                     </div>
 
@@ -101,58 +111,61 @@
                     <div class="module-list">
                         <div class="section-header">
                             <h3><i class="fas fa-list"></i> Danh sách Modules</h3>
-                            <div class="table-actions">
-                                <button class="btn btn-primary" onclick="openCreateModuleModal()">
-                                    <i class="fas fa-plus"></i> Tạo Module
-                                </button>
-                            </div>
+                            <c:if test="${course.status == 'draft' or course.status == 'rejected'}">
+                                <div class="table-actions">
+                                    <button class="btn btn-primary" onclick="openCreateModuleModal()">
+                                        <i class="fas fa-plus"></i> Tạo Module
+                                    </button>
+                                </div>
+                            </c:if>
                         </div>
 
                         <div id="modulesContainer">
                             <c:forEach var="h" items="${requestScope.moduleList}">
                                 <div class="module-item">
                                     <div class="module-info">
-                                        <div class="module-name">Module ${h.orderIndex}: ${h.title}</div>
+                                        <div class="module-name"><a href="ManageLessonServlet?courseId=${course.courseId}&moduleId=${h.moduleId}" >Module ${h.orderIndex}: ${h.title}</a></div>
                                         <div class="module-description">${h.description}</div>
                                         <div class="module-meta">
                                             <span><i class="fas fa-sort-numeric-up"></i> Thứ tự: ${h.orderIndex}</span>
                                         </div>
                                     </div>
                                     <div class="module-actions">
-                                        <button class="btn-icon" 
-                                                title="Sửa" 
-                                                onclick="editModule('${h.moduleId}', '${h.title}', '${h.description}')">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <a href="deleteModule?moduleId=${h.moduleId}&courseId=${course.courseId}" 
-                                           class="btn-icon danger" 
-                                           title="Xóa"
-                                           onclick="return confirm('Bạn có chắc chắn muốn xóa module này không?');">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                        <div class="lesson-actions">
-                                            <button class="btn-icon" title="Thêm bài học" onclick="toggleAddLessonMenu('${h.moduleId}')">
-                                                <i class="fas fa-plus"></i>
+                                        <c:if test="${course.status == 'draft' or course.status == 'rejected'}">
+                                            <button class="btn-icon" 
+                                                    title="Sửa" 
+                                                    onclick="editModule('${h.moduleId}', '${h.title}', '${h.description}')">
+                                                <i class="fas fa-edit"></i>
                                             </button>
-                                            <div id="addLessonMenu-${h.moduleId}" class="lesson-dropdown">
-                                                <a href="ManageLessonServlet?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
-                                                    <i class="fas fa-video"></i> Bài học video
-                                                </a>
-                                                <a href="createReadingLesson?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
-                                                    <i class="fas fa-file-alt"></i> Bài học reading
-                                                </a>
-                                                     <a href="createDiscussion?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
-                                                    <i class="fas fa-comments"></i> Bài thảo luận
-                                                </a>
-                                              
-                                                <a href="createQuiz?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
-                                                    <i class="fas fa-question-circle"></i> Bài quiz
-                                                </a>
-                                                <a href="manageAssignment?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
-                                                    <i class="fas fa-tasks"></i> Bài assign
-                                                </a>
+                                            <a href="deleteModule?moduleId=${h.moduleId}&courseId=${course.courseId}" 
+                                               class="btn-icon danger" 
+                                               title="Xóa"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa module này không?');">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                            <div class="lesson-actions">
+                                                <button class="btn-icon" title="Thêm bài học" onclick="toggleAddLessonMenu('${h.moduleId}')">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                                <div id="addLessonMenu-${h.moduleId}" class="lesson-dropdown">
+                                                    <a href="ManageLessonServlet?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
+                                                        <i class="fas fa-video"></i> Bài học video
+                                                    </a>
+                                                    <a href="createReadingLesson?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
+                                                        <i class="fas fa-file-alt"></i> Bài học reading
+                                                    </a>
+                                                    <a href="createDiscussion?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
+                                                        <i class="fas fa-comments"></i> Bài thảo luận
+                                                    </a>
+                                                    <a href="createQuiz?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
+                                                        <i class="fas fa-question-circle"></i> Bài quiz
+                                                    </a>
+                                                    <a href="manageAssignment?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
+                                                        <i class="fas fa-tasks"></i> Bài assign
+                                                    </a>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </c:if>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -200,24 +213,25 @@
 
         <script src="js/course-content.js"></script>
         <script>
-            function toggleAddLessonMenu(moduleId) {
-                const menu = document.getElementById('addLessonMenu-' + moduleId);
-                if (!menu) return;
-                const isShown = menu.classList.contains('show');
-                document.querySelectorAll('.lesson-dropdown.show').forEach(el => el.classList.remove('show'));
-                if (!isShown) {
-                    menu.classList.add('show');
-                }
-            }
+                        function toggleAddLessonMenu(moduleId) {
+                            const menu = document.getElementById('addLessonMenu-' + moduleId);
+                            if (!menu)
+                                return;
+                            const isShown = menu.classList.contains('show');
+                            document.querySelectorAll('.lesson-dropdown.show').forEach(el => el.classList.remove('show'));
+                            if (!isShown) {
+                                menu.classList.add('show');
+                            }
+                        }
 
 
-            document.addEventListener('click', function (e) {
-                const isButton = e.target.closest('.lesson-actions .btn-icon');
-                const isMenu = e.target.closest('.lesson-dropdown');
-                if (!isButton && !isMenu) {
-                    document.querySelectorAll('.lesson-dropdown.show').forEach(el => el.classList.remove('show'));
-                }
-            });
+                        document.addEventListener('click', function (e) {
+                            const isButton = e.target.closest('.lesson-actions .btn-icon');
+                            const isMenu = e.target.closest('.lesson-dropdown');
+                            if (!isButton && !isMenu) {
+                                document.querySelectorAll('.lesson-dropdown.show').forEach(el => el.classList.remove('show'));
+                            }
+                        });
         </script>
     </body>
 </html>
