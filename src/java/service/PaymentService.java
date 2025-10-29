@@ -11,23 +11,20 @@ import java.util.List;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import model.entity.CourseRequest;
+import model.entity.Payment;
+import model.entity.Users;
+import util.EmailUtil;
 
 /**
- * Luồng thanh toán (mới):
- * 1) initiatePayment(parentId, requestIds):
- *    - Validate CR thuộc parent & status=unpaid
- *    - Tạo Order (pending), tính tổng tiền
- *    - Tạo Payment (initiated) với txnRef = "ORD{orderId}_R{r1-r2-...}"
+ * Luồng thanh toán (mới): 1) initiatePayment(parentId, requestIds): - Validate
+ * CR thuộc parent & status=unpaid - Tạo Order (pending), tính tổng tiền - Tạo
+ * Payment (initiated) với txnRef = "ORD{orderId}_R{r1-r2-...}"
  *
- * 2) handleReturn(txnRef, success):
- *    - Cập nhật trạng thái Payment captured/failed
- *    - Parse txnRef để lấy orderId + requestIds
- *    - Nếu success:
- *        + Mark Order paid
- *        + Tạo OrderItems từ từng CourseRequest
- *        + Enroll và chốt CourseRequest -> 'approved'
- *      Nếu fail:
- *        + Hủy Order (cancelled) và dọn dẹp cần thiết
+ * 2) handleReturn(txnRef, success): - Cập nhật trạng thái Payment
+ * captured/failed - Parse txnRef để lấy orderId + requestIds - Nếu success: +
+ * Mark Order paid + Tạo OrderItems từ từng CourseRequest + Enroll và chốt
+ * CourseRequest -> 'approved' Nếu fail: + Hủy Order (cancelled) và dọn dẹp cần
+ * thiết
  */
 public class PaymentService {
 
@@ -37,18 +34,21 @@ public class PaymentService {
     private final CourseRequestDAO crdao = new CourseRequestDAO();
     private final EnrollmentService enrollmentService = new EnrollmentService();
 
-    public static final String METHOD_VNPAY = "ewallet"; 
+    public static final String METHOD_VNPAY = "ewallet";
 
     public static class InitResult {
+
         public final int orderId;
         public final double amount;
         public final String txnRef;
+
         public InitResult(int orderId, double amount, String txnRef) {
-            this.orderId = orderId; this.amount = amount; this.txnRef = txnRef;
+            this.orderId = orderId;
+            this.amount = amount;
+            this.txnRef = txnRef;
         }
     }
 
- 
     public InitResult initiatePayment(int parentId, List<Integer> requestIds) {
         if (requestIds == null || requestIds.isEmpty()) {
             throw new IllegalArgumentException("Danh sách request trống.");
@@ -56,33 +56,84 @@ public class PaymentService {
 
         // Tạo Order 'pending' (total DB có thể để 0, tổng dùng cho payment)
         int orderId = orderDAO.createOrder(parentId, BigDecimal.ZERO);
-        if (orderId <= 0) throw new RuntimeException("Tạo Order thất bại.");
+        if (orderId <= 0) {
+            throw new RuntimeException("Tạo Order thất bại.");
+        }
 
         double total = 0d;
         StringBuilder ref = new StringBuilder("ORD").append(orderId).append("_R");
         boolean first = true;
 
         for (Integer reqId : requestIds) {
-            if (reqId == null) continue;
+            if (reqId == null) {
+                continue;
+            }
             CourseRequest cr = crdao.getById(reqId);
-            if (cr == null || cr.getParent() == null) continue;
-            if (cr.getParent().getUserId() != parentId) continue;
-            if (!"unpaid".equalsIgnoreCase(cr.getStatus())) continue;
+            if (cr == null || cr.getParent() == null) {
+                continue;
+            }
+            if (cr.getParent().getUserId() != parentId) {
+                continue;
+            }
+            if (!"unpaid".equalsIgnoreCase(cr.getStatus())) {
+                continue;
+            }
 
             total += cr.getCourse().getPrice().doubleValue();
-            if (!first) ref.append("-");
+            if (!first) {
+                ref.append("-");
+            }
             ref.append(reqId);
             first = false;
         }
 
-        if (total <= 0) throw new IllegalStateException("Không có CourseRequest 'unpaid' hợp lệ.");
+        if (total <= 0) {
+            throw new IllegalStateException("Không có CourseRequest 'unpaid' hợp lệ.");
+        }
 
         String txnRef = ref.toString(); // ví dụ: ORD38_R12-19-25
         paymentDAO.insertPayment(orderId, total, METHOD_VNPAY, txnRef); // status='initiated'
         return new InitResult(orderId, total, txnRef);
     }
 
- 
+    public void sendPaymentSuccessEmail(int orderId, String txnRef) {
+        try {
+            Payment payment = paymentDAO.getPaymentByTxnRef(txnRef);
+            Users parent = orderDAO.getOrderOwner(orderId);
+            if (parent == null) {
+                return;
+            }
+            String html = """
+            <html>
+              <body style="font-family:sans-serif;line-height:1.6;color:#333">
+                <h2 style="color:#4CAF50">Thanh toán thành công</h2>
+                <p>Xin chào <b>%s</b>,</p>
+                <p>Bạn đã thanh toán thành công đơn hàng <b>#%d</b> qua VNPay.</p>
+                <table style="border-collapse:collapse;width:100%%;margin-top:10px">
+                  <tr><td><b>Số tiền</b></td><td>%,.0f VND</td></tr>
+                  <tr><td><b>Mã giao dịch</b></td><td>%s</td></tr>
+                  <tr><td><b>Thời gian</b></td><td>%s</td></tr>
+                </table>
+                <p>Cảm ơn bạn đã sử dụng <b>LinguaTrack</b>!<br>
+                <small>Đây là email tự động, vui lòng không trả lời.</small></p>
+              </body>
+            </html>
+        """.formatted(
+                    parent.getFullName(),
+                    orderId,
+                    payment.getAmount(),
+                    payment.getTxnRef(),
+                    payment.getCapturedAt()
+            );
+            EmailUtil.send(parent.getEmail(),
+                    "LinguaTrack: Thanh toán thành công #" + orderId,
+                    html);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public boolean handleReturn(String txnRef, boolean success) {
         // Update trạng thái payment
         paymentDAO.updatePaymentStatus(txnRef, success ? "captured" : "failed");
@@ -91,27 +142,32 @@ public class PaymentService {
         int orderId = -1;
         List<Integer> reqIds = new ArrayList<>();
         try {
-               if (txnRef != null && txnRef.startsWith("ORD")) {
-            // Bỏ phần timestamp (ví dụ: "_1761673803343") nếu có
-            int lastUnderscore = txnRef.lastIndexOf('_');
-            int rIndex = txnRef.indexOf("_R");
-            String cleanRef = (lastUnderscore > rIndex)
-                    ? txnRef.substring(0, lastUnderscore)
-                    : txnRef;
+            if (txnRef != null && txnRef.startsWith("ORD")) {
+                // Bỏ phần timestamp (ví dụ: "_1761673803343") nếu có
+                int lastUnderscore = txnRef.lastIndexOf('_');
+                int rIndex = txnRef.indexOf("_R");
+                String cleanRef = (lastUnderscore > rIndex)
+                        ? txnRef.substring(0, lastUnderscore)
+                        : txnRef;
 
-            // Tách phần ORD{orderId} và R{reqIds}
-            String[] parts = cleanRef.split("_R");
-            orderId = Integer.parseInt(parts[0].substring(3));
+                // Tách phần ORD{orderId} và R{reqIds}
+                String[] parts = cleanRef.split("_R");
+                orderId = Integer.parseInt(parts[0].substring(3));
 
-            if (parts.length > 1) {
-                for (String s : parts[1].split("-")) {
-                    if (!s.isBlank()) reqIds.add(Integer.parseInt(s));
+                if (parts.length > 1) {
+                    for (String s : parts[1].split("-")) {
+                        if (!s.isBlank()) {
+                            reqIds.add(Integer.parseInt(s));
+                        }
+                    }
                 }
             }
+        } catch (Exception ignore) {
         }
-        } catch (Exception ignore) {}
 
-        if (orderId <= 0) return false;
+        if (orderId <= 0) {
+            return false;
+        }
 
         if (success) {
             // Đánh dấu Order đã thanh toán (Orders -> paid + paid_at)
@@ -120,8 +176,12 @@ public class PaymentService {
             //  tạo OrderItems + Enroll + chốt CR
             for (Integer reqId : reqIds) {
                 CourseRequest cr = crdao.getById(reqId);
-                if (cr == null) continue;
-                if (!"unpaid".equalsIgnoreCase(cr.getStatus())) continue;
+                if (cr == null) {
+                    continue;
+                }
+                if (!"unpaid".equalsIgnoreCase(cr.getStatus())) {
+                    continue;
+                }
 
                 double price = cr.getCourse().getPrice().doubleValue();
                 itemDAO.createForOrder(
@@ -146,7 +206,6 @@ public class PaymentService {
             return false;
         }
     }
- 
 
     public double getOrderTotal(int orderId) {
         return paymentDAO.getOrderTotal(orderId);
@@ -178,7 +237,9 @@ public class PaymentService {
             hmac512.init(secretKey);
             byte[] bytes = hmac512.doFinal(data.getBytes(StandardCharsets.UTF_8));
             StringBuilder hash = new StringBuilder();
-            for (byte b : bytes) hash.append(String.format("%02x", b));
+            for (byte b : bytes) {
+                hash.append(String.format("%02x", b));
+            }
             return hash.toString();
         } catch (Exception ex) {
             throw new RuntimeException("Lỗi tạo HMAC SHA512", ex);

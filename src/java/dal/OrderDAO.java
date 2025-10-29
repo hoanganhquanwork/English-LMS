@@ -167,4 +167,29 @@ public class OrderDAO extends DBContext {
     return list;
 }
 
+    public Users getOrderOwner(int orderId) {
+        String sql = """
+            SELECT u.user_id, u.full_name, u.email, u.role
+            FROM Orders o
+            JOIN Users u ON o.parent_id = u.user_id
+            WHERE o.order_id = ?
+        """;
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, orderId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                Users u = new Users();
+                u.setUserId(rs.getInt("user_id"));
+                u.setFullName(rs.getString("full_name"));
+                u.setEmail(rs.getString("email"));
+                u.setRole(rs.getString("role"));
+                return u;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }

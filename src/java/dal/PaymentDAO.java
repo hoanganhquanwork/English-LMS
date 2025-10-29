@@ -86,4 +86,27 @@ public class PaymentDAO extends DBContext {
         }
         return 0;
     }
+
+    public Payment getPaymentByTxnRef(String txnRef) {
+        String sql = "SELECT * FROM Payments WHERE txn_ref = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, txnRef);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                Payment p = new Payment();
+                p.setPaymentId(rs.getInt("payment_id"));
+                p.setOrderId(rs.getInt("order_id"));
+                p.setAmount(rs.getDouble("amount_vnd"));
+                p.setMethod(rs.getString("payment_method"));
+                p.setStatus(rs.getString("status"));
+                p.setTxnRef(rs.getString("txn_ref"));
+                p.setCreatedAt(rs.getTimestamp("created_at"));
+                p.setCapturedAt(rs.getTimestamp("captured_at"));
+                return p;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+        }
 }

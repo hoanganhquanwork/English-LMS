@@ -78,6 +78,7 @@ public class VNPayReturnController extends HttpServlet {
 
                 eService.enrollAfterPayment(courseId, studentId);
                 crdao.updateStatus(reqId, "approved");
+                paymentService.sendPaymentSuccessEmail(ref.orderId, txnRef);
             }
             result = "success";
         } else {
