@@ -63,17 +63,17 @@
             }
 
             switch (action) {
-                case "approve":
+                case "approved":
                 case "bulkApprove":
                     approveQuestions(questionIds);
                     break;
 
-                case "reject":
+                case "rejected":
                 case "bulkReject":
                     rejectQuestions(questionIds, reason);
                     break;
 
-                case "archive":
+                case "archived":
                     archiveQuestions(questionIds);
                     break;
 

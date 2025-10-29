@@ -136,7 +136,7 @@
                                         <input type="hidden" name="status" value="${status}">
                                         <input type="hidden" name="keyword" value="${keyword}">
                                         <input type="hidden" name="sort" value="${sort}">
-                                        <input type="number" name="price" step="1000" min="0" value="${course.price}" class="price-inline-input">
+                                        <input type="number" name="price" step="1000" min="0" value="${course.price}" class="price-inline-input" required>
                                         <button type="submit" class="price-inline-btn"><i class="fas fa-save"></i></button>
                                     </form>
                                 </td>

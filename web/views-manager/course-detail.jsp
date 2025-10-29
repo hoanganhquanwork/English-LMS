@@ -113,7 +113,7 @@
                         <input type="hidden" name="courseId" value="${course.courseId}" />
                         <input type="number" name="price" 
                                value="${course.price != null ? course.price : 0}" 
-                               min="0" step="1000" class="price-inline-input" />
+                               min="0" step="1000" class="price-inline-input" required/>
                         <button class="price-inline-btn" title="Cập nhật giá">
                             <i class="fa fa-save"></i>
                         </button>
