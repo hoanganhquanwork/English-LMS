@@ -35,7 +35,7 @@ public class AssignmentWorkDAO extends DBContext {
         INNER JOIN ModuleItem mi ON a.assignment_id = mi.module_item_id
         INNER JOIN Module m ON mi.module_id = m.module_id
         INNER JOIN Course c ON m.course_id = c.course_id
-        WHERE aw.grader_id = ? AND aw.status IN ('submitted', 'passed', 'returned')
+        WHERE aw.grader_id = ? AND aw.status IN ('submitted')
         ORDER BY aw.submitted_at DESC;
     """;
 

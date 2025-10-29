@@ -25,6 +25,7 @@ public class Question {
 
     private List<QuestionOption> options;
     private QuestionTextKey textKey;
+     private String answerText;
 
     public Question() {
     }
@@ -140,8 +141,19 @@ public class Question {
 
     @Override
     public String toString() {
-        return "Question{" + "questionId=" + questionId + ", lessonId=" + lessonId + ", content=" + content + ", mediaUrl=" + mediaUrl + ", type=" + type + ", createdBy=" + createdBy + ", explanation=" + explanation + ", status=" + status + ", topicId=" + topicId + ", reviewComment=" + reviewComment + ", options=" + options + ", textKey=" + textKey + '}';
+        return "Question{" + "questionId=" + questionId + ", lessonId=" + lessonId + ", content=" + content + ", mediaUrl=" + mediaUrl + ", type=" + type + ", createdBy=" + createdBy + ", explanation=" + explanation + ", status=" + status + ", topicId=" + topicId + ", reviewComment=" + reviewComment + ", options=" + options + ", textKey=" + textKey + ", answerText=" + answerText + '}';
     }
+
+    
+    public String getAnswerText() {
+        return answerText;
+    }
+
+    public void setAnswerText(String answerText) {
+        this.answerText = answerText;
+    }
+    
+    
     
     
 }

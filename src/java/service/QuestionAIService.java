@@ -24,24 +24,37 @@ public class QuestionAIService {
         List<Question> questions = new ArrayList<>();
 
         // Prompt cho AI
-      String prompt = "Bạn là một chuyên gia tạo câu hỏi cho người học tiếng Anh (English Language Learning). "
-        + "Hãy tạo " + count + " câu hỏi học tiếng Anh về chủ đề \"" + topic + "\". "
-        + "Các câu hỏi phải giúp người học rèn luyện kỹ năng ngôn ngữ như: từ vựng, ngữ pháp, giao tiếp, hoặc hiểu nghĩa câu. "
-        + "Dạng câu hỏi là " + (type.equals("mcq") ? "trắc nghiệm (multiple choice)" : "tự luận (short answer)") + ". "
-        + "Nếu là trắc nghiệm: mỗi câu gồm 'content', danh sách 'options' (4 phương án), "
-        + "một phương án có 'isCorrect=true', và có 'explanation' giải thích lý do tại sao đáp án đúng. "
-        + "Nếu là tự luận: mỗi câu có 'content', 'answerText' là câu trả lời mẫu, và 'explanation' ngắn gọn. "
-        + "Câu hỏi phải bằng tiếng Anh, lời giải thích có thể bằng tiếng Việt để người học hiểu rõ. "
-        + "Hãy trả về **chỉ JSON** dạng mảng, không thêm mô tả. Ví dụ: "
-        + "[{"
-        + "\"type\":\"mcq\",\"content\":\"Choose the correct form: He ___ to school every day.\","
-        + "\"options\":["
-        + "{\"content\":\"go\",\"isCorrect\":false},"
-        + "{\"content\":\"goes\",\"isCorrect\":true},"
-        + "{\"content\":\"gone\",\"isCorrect\":false},"
-        + "{\"content\":\"going\",\"isCorrect\":false}],"
-        + "\"explanation\":\"Động từ 'He' cần chia ngôi thứ 3 số ít → 'goes'.\""
-        + "}]";
+        String prompt = "Bạn là chuyên gia tạo câu hỏi tiếng Anh cho người học ESL (English as a Second Language). "
+                + "Hãy tạo " + count + " câu hỏi bằng tiếng Anh về chủ đề \"" + topic + "\". "
+                + "Mục tiêu là giúp người học rèn luyện kỹ năng ngôn ngữ như: từ vựng, ngữ pháp, giao tiếp hoặc hiểu nghĩa câu. "
+                + "Dạng câu hỏi là " + (type.equals("mcq") ? "trắc nghiệm (multiple choice)" : "tự luận (short answer)") + ". "
+                + "Nếu là trắc nghiệm: mỗi câu hỏi phải có các trường sau: "
+                + "'type'='mcq', 'content' là câu hỏi, 'options' (mảng 4 lựa chọn, mỗi lựa chọn có 'content' và 'isCorrect'), "
+                + "và 'explanation' là lời giải thích ngắn bằng tiếng Việt cho đáp án đúng. "
+                + "Nếu là tự luận: mỗi câu phải có các trường 'type'='text', 'content', 'answerText' (câu trả lời mẫu bằng tiếng Anh), "
+                + "và 'explanation' là lời giải thích ngắn bằng tiếng Việt. "
+                + "Lưu ý: trường 'answerText' là bắt buộc trong tất cả câu hỏi dạng text. "
+                + "Không được dùng tên khác như 'answer' hoặc 'answer_text'. "
+                + "Nếu không có câu trả lời cụ thể, hãy viết câu mẫu bằng tiếng Anh, ví dụ: 'I like learning English.' "
+                + "Trả về duy nhất **JSON thuần** dạng mảng, không thêm bất kỳ mô tả, giải thích, markdown hay ký tự nào khác. "
+                + "Ví dụ: "
+                + "[{"
+                + "\"type\":\"text\","
+                + "\"content\":\"Translate into English: 'Tôi thích đọc sách.'\","
+                + "\"answerText\":\"I like reading books.\","
+                + "\"explanation\":\"Cấu trúc 'like + V-ing' để diễn tả sở thích.\""
+                + "},"
+                + "{"
+                + "\"type\":\"mcq\","
+                + "\"content\":\"Choose the correct verb form: He ___ to school every day.\","
+                + "\"options\":["
+                + "{\"content\":\"go\",\"isCorrect\":false},"
+                + "{\"content\":\"goes\",\"isCorrect\":true},"
+                + "{\"content\":\"gone\",\"isCorrect\":false},"
+                + "{\"content\":\"going\",\"isCorrect\":false}"
+                + "],"
+                + "\"explanation\":\"Động từ 'He' chia ngôi thứ 3 số ít → 'goes'.\""
+                + "}]";
 
         try {
             // HTTP client
@@ -96,7 +109,28 @@ public class QuestionAIService {
                     q.setContent(sq.getContent());
                     q.setExplanation(sq.getExplanation());
                     q.setOptions(sq.getOptions());
-                    q.setTextKey(sq.getTextKey());
+                    if ("text".equalsIgnoreCase(sq.getType())) {
+
+                        String answer = null;
+
+                        
+                        if (sq.getTextKey() != null && sq.getTextKey().getAnswerText() != null) {
+                            answer = sq.getTextKey().getAnswerText().trim();
+                        }
+
+                        
+                        if ((answer == null || answer.isEmpty()) && sq.getAnswerText() != null) {
+                            answer = sq.getAnswerText().trim();
+                        }
+
+                        // ✅ Nếu vẫn không có thì dùng mặc định
+                        if (answer == null || answer.isEmpty()) {
+                            answer = "Chưa có đáp án (hãy chỉnh tay).";
+                        }
+
+                        q.setAnswerText(answer);
+
+                    }
                     questions.add(q);
                 }
                 System.out.println("✅ Số câu hỏi parse được: " + questions.size());
@@ -111,9 +145,10 @@ public class QuestionAIService {
 
     public static void main(String[] args) {
         QuestionAIService service = new QuestionAIService();
-        List<Question> list = service.generateQuestions("Giao tiếp hàng ngày", "mcq", 1);
+        List<Question> list = service.generateQuestions("Giao tiếp hàng ngày", "text", 1);
         for (Question q : list) {
             System.out.println(q);
+
         }
     }
 

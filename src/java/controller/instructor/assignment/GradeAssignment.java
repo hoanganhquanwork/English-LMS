@@ -18,6 +18,7 @@ import model.entity.AssignmentWork;
 import model.entity.RubricCriterion;
 import model.entity.Users;
 import service.AssignmentWorkService;
+import service.ProgressService;
 
 /**
  *
@@ -52,6 +53,7 @@ public class GradeAssignment extends HttpServlet {
     }
 
     private AssignmentWorkService workService = new AssignmentWorkService();
+     private ProgressService pService = new ProgressService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -84,6 +86,7 @@ public class GradeAssignment extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            int courseId = Integer.parseInt(request.getParameter("courseId"));
             int assignmentId = Integer.parseInt(request.getParameter("assignmentId"));
             int studentId = Integer.parseInt(request.getParameter("studentId"));
             double score = Double.parseDouble(request.getParameter("score"));
@@ -99,6 +102,7 @@ public class GradeAssignment extends HttpServlet {
 
             AssignmentWorkService service = new AssignmentWorkService();
             boolean success = service.gradeAssignment(assignmentId, studentId, score, feedback, user.getUserId());
+            pService.updateCompleteStatusIfAllDone(studentId, courseId);
 
             response.sendRedirect("gradeListServlet");
 
