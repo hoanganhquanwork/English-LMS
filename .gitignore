@@ -7,17 +7,15 @@
 *.war
 *.ear
 
-# IDE files
+# IDE
 /.idea/
 /.vscode/
 /nbproject/private/
+nbproject/genfiles.properties
+nbproject/build-impl.xml
+nbproject/build-impl.xml~
 /out/
 
 # OS-specific
 .DS_Store
 Thumbs.db
-/dist/
-nbproject/genfiles.properties
-nbproject/build-impl.xml
-nbproject/build-impl.xml
-nbproject/genfiles.properties

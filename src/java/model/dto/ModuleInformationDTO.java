@@ -14,6 +14,7 @@ public class ModuleInformationDTO {
     private int id;
     private int orderNo;     
     private String title;
+    private String description;
     
     private int videoCount;
     private int readingCount;
@@ -27,6 +28,14 @@ public class ModuleInformationDTO {
     private List<ModuleItemInformationDTO> quizzes;
     private List<ModuleItemInformationDTO> discussions;
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
     public int getId() {
         return id;
     }

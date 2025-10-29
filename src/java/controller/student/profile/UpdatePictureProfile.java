@@ -91,6 +91,7 @@ public class UpdatePictureProfile extends HttpServlet {
         if (isUpload) {
             if (userService.updateProfilePicture(user)) {
                 session.setAttribute("user", user);
+                session.setAttribute("updateSuccess", "Cập nhật hồ sơ thành công");
                 response.sendRedirect(request.getContextPath() + "/updateStudentProfile");
             } else {
                 request.setAttribute("updateFail", "Cập nhật avatar thất bại");

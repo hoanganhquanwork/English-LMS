@@ -258,7 +258,7 @@
                         <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
                             <c:if test="${sessionScope.user.role == 'Student'}">
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/updateStudentProfile">Thông tin cá nhân</a></li>
-                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeStudentPassword">Cài đặt mật khẩu</a></li>
+                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/changeUserPassword">Cài đặt mật khẩu</a></li>
                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/studentVocab">Từ điển của tôi</a></li>
                                 </c:if>
                             <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Đăng xuất</a></li>
@@ -269,9 +269,9 @@
             </div>
         </header>
 
-        <div class="layout">
+        <div class="d-flex gap-3">
             <!-- Sidebar -->
-            <aside class="sidebar bg-white border-end">
+            <aside class="flex-shrink-0 sidebar bg-white border-end">
                 <div class="p-3">
 
 
@@ -844,35 +844,35 @@
                                         </c:when>
 
                                         <c:otherwise>
-                                            <div class="d-flex flex-wrap gap-2 justify-content-md-end">
-                                                <c:if test="${not isGraded and not empty latestSubmittedId}">
-                                                    <a class="btn btn-outline-primary"
-                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${requestScope.latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
-                                                        Xem kết quả gần nhất
-                                                    </a>
-                                                </c:if>
-
+                                            <div class="d-flex flex-wrap gap-2 justify-content-md-end">                                            
                                                 <c:choose>
                                                     <c:when test="${isGraded}">
-                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline flex-fill">
                                                             <input type="hidden" name="courseId" value="${cp.course.courseId}">
                                                             <input type="hidden" name="itemId"   value="${activeItemId}">
-                                                            <button class="btn btn-primary px-4" 
+                                                            <button class="btn btn-primary px-4 w-100"  
                                                                     ${ (hasPassed or isLocked) ? 'disabled' : '' }>
                                                                 <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
                                                             </button>
                                                         </form>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline">
+                                                        <form action="${pageContext.request.contextPath}/startQuiz" method="get" class="d-inline flex-fill">
                                                             <input type="hidden" name="courseId" value="${cp.course.courseId}">
                                                             <input type="hidden" name="itemId"   value="${activeItemId}">
-                                                            <button class="btn btn-primary px-4">
-                                                                <i class="bi bi-arrow-clockwise me-1"></i> Làm lại
+                                                            <button class="btn btn-primary px-4 w-100">
+                                                                <i class="bi bi-arrow-clockwise me-1 "></i> Làm lại
                                                             </button>
                                                         </form>
                                                     </c:otherwise>
                                                 </c:choose>
+
+                                                <c:if test="${not isGraded and not empty latestSubmittedId}">
+                                                    <a class="btn btn-outline-primary flex-fill"
+                                                       href="${pageContext.request.contextPath}/doQuiz?attemptId=${requestScope.latestSubmittedId}&courseId=${cp.course.courseId}&itemId=${activeItemId}">
+                                                        Xem kết quả gần nhất
+                                                    </a>
+                                                </c:if>
                                             </div>
                                         </c:otherwise>
 
@@ -919,8 +919,8 @@
                                             </c:if>
                                         </c:if>
 
-                                        <div class="text-md-end">
-                                            <c:if test="${not isGraded}">
+                                        <c:if test="${not isGraded}">
+                                            <div class="text-md-end">
                                                 <c:choose>
                                                     <c:when test="${not empty latestSubmittedId }">
                                                         <a class="btn btn-outline-primary"
@@ -932,8 +932,8 @@
                                                         <button class="btn btn-outline-secondary" disabled>Chưa có bài nộp</button>
                                                     </c:otherwise>
                                                 </c:choose>
-                                            </c:if>
-                                        </div>
+                                            </div>
+                                        </c:if>
                                     </div>
                                 </div>
                             </div>
