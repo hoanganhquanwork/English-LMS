@@ -187,14 +187,14 @@
 
                         <!-- Filter and Search Section -->
                         <div class="questions-filter">
-                            
-                            <div class="filter-right">
 
-                               
-                                <a href="addQuestion?courseId=${param.courseId}" class="btn btn-primary">
-                                    <i class="fas fa-plus"></i>
-                                    Thêm câu hỏi
-                                </a>
+                            <div class="filter-right">
+                                <c:if test="${course.status == 'draft' || course.status == 'rejected'}">
+                                    <a href="addQuestion?courseId=${param.courseId}" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i>
+                                        Thêm câu hỏi
+                                    </a>
+                                </c:if>
                             </div>
                         </div>
 
@@ -224,13 +224,14 @@
                                                             <i class="fas fa-eye"></i>
                                                             Xem
                                                         </a>
-                                                     
+                                                            <c:if test="${course.status == 'draft' || course.status == 'rejected'}">
                                                         <a href="deleteModule?courseId=${param.courseId}&moduleId=${module.moduleId}" 
                                                            class="btn btn-delete"
                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa module này không?')">
                                                             <i class="fas fa-trash"></i>
                                                             Xóa
                                                         </a>
+                                                           </c:if>
                                                     </div>
                                                 </td>
                                             </tr>

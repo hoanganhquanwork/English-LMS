@@ -85,8 +85,7 @@ public class AddQuestion extends HttpServlet {
         int totalApproved = questionService.countApprovedQuestions(topicFilter);
         int totalPages = (int) Math.ceil((double) totalApproved / pageSize);
 
-        Map<Question, Object> approvedQuestionMap
-                = questionService.getApprovedQuestionsWithAnswersPaged(topicFilter, currentPage, pageSize);
+        Map<Question, Object> approvedQuestionMap = questionService.getApprovedQuestionsWithAnswersPaged(topicFilter, currentPage, pageSize);
 
         request.setAttribute("course", course);
         request.setAttribute("moduleList", modules);

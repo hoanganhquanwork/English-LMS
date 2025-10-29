@@ -1951,9 +1951,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                    <button class="add-lesson-btn" onclick="toggleModuleDropdown('dropdown-${h.key.moduleId}')">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                        <button class="add-lesson-btn" onclick="toggleModuleDropdown('dropdown-${h.key.moduleId}')">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </c:if>
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
@@ -2027,12 +2029,14 @@
                             <h1>Cập nhật bài học dạng video</h1>
                         </div>
                         <div class="lesson-actions">
-                            <a href="deleteLesson?courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
-                               class="action-btn delete-lesson-btn"
-                               onclick="return confirm('Bạn có chắc chắn muốn xóa bài học này không?')">
-                                <i class="fas fa-trash"></i>
-                                Xóa bài học
-                            </a>
+                            <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                <a href="deleteLesson?courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
+                                   class="action-btn delete-lesson-btn"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa bài học này không?')">
+                                    <i class="fas fa-trash"></i>
+                                    Xóa bài học
+                                </a>
+                            </c:if>
                         </div>
                     </div>
 
@@ -2057,9 +2061,11 @@
                                                 allowfullscreen
                                                 class="video-iframe">
                                             </iframe>
-                                            <button type="button" class="delete-video-btn" onclick="deleteVideo()" title="Xóa hoặc thay video">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                                <button type="button" class="delete-video-btn" onclick="deleteVideo()" title="Xóa hoặc thay video">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </c:if>
                                         </div>
                                     </c:when>
                                     <c:otherwise>
@@ -2078,9 +2084,11 @@
                                 <a href="manageModule?courseId=${param.courseId}" class="btn btn-secondary">
                                     Hủy bỏ
                                 </a>
-                                <button type="submit" class="btn btn-primary">
-                                    Lưu
-                                </button>
+                                <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                    <button type="submit" class="btn btn-primary">
+                                        Lưu
+                                    </button>
+                                </c:if>
                             </div>
                         </div>
                     </form>
@@ -2167,11 +2175,13 @@
                                                             <i class="fas fa-exclamation-triangle"></i> Xem lý do
                                                         </a>
                                                     </c:if>
-                                                    <a href="deleteQuestion?questionId=${entry.key.questionId}&courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
-                                                       class="btn btn-delete" 
-                                                       onclick="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');">
-                                                        <i class="fas fa-trash"></i> Xóa
-                                                    </a>
+                                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                                        <a href="deleteQuestion?questionId=${entry.key.questionId}&courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
+                                                           class="btn btn-delete" 
+                                                           onclick="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');">
+                                                            <i class="fas fa-trash"></i> Xóa
+                                                        </a>
+                                                    </c:if>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -2189,42 +2199,43 @@
                             </tbody>
                         </table>
                     </div>
+                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                        <!-- Add Questions Form -->
+                        <div class="add-questions-form" style="margin-top: 100px;">
+                            <h3>Thêm câu hỏi mới</h3>
+                            <form action="addQuestion" method="post" enctype="multipart/form-data" id="bulkQuestionForm">
+                                <input type="hidden" name="courseId" value="${param.courseId}">
+                                <input type="hidden" name="moduleId" value="${param.moduleId}">
+                                <input type="hidden" name="lessonId" value="${lesson.moduleItemId}">
 
-                    <!-- Add Questions Form -->
-                    <div class="add-questions-form" style="margin-top: 100px;">
-                        <h3>Thêm câu hỏi mới</h3>
-                        <form action="addQuestion" method="post" enctype="multipart/form-data" id="bulkQuestionForm">
-                            <input type="hidden" name="courseId" value="${param.courseId}">
-                            <input type="hidden" name="moduleId" value="${param.moduleId}">
-                            <input type="hidden" name="lessonId" value="${lesson.moduleItemId}">
-
-                            <div id="questionsList" class="questions-content-area">
-                                <div class="empty-questions">
-                                    <p>Chưa có câu hỏi nào được thêm</p>
-                                </div>
-                            </div>
-
-                            <div class="actions">
-                                <div class="dropdown">
-                                    <button type="button" class="btn btn-primary dropdown-toggle" onclick="toggleQuestionTypeDropdown(this)">
-                                        + Thêm câu hỏi
-                                        <i class="fas fa-chevron-down"></i>
-                                    </button>
-                                    <div class="dropdown-menu" id="questionTypeDropdown">
-                                        <div class="dropdown-item" onclick="addQuestion('mcq_single')">
-                                            <i class="fas fa-check-circle"></i>
-                                            Câu hỏi lựa chọn 1 đáp án
-                                        </div>
-                                        <div class="dropdown-item" onclick="addTextQuestion()">
-                                            <i class="fas fa-file-text"></i>
-                                            Câu hỏi dạng text
-                                        </div>
+                                <div id="questionsList" class="questions-content-area">
+                                    <div class="empty-questions">
+                                        <p>Chưa có câu hỏi nào được thêm</p>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-success">Lưu tất cả</button>
-                            </div>
-                        </form>
-                    </div>
+
+                                <div class="actions">
+                                    <div class="dropdown">
+                                        <button type="button" class="btn btn-primary dropdown-toggle" onclick="toggleQuestionTypeDropdown(this)">
+                                            + Thêm câu hỏi
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                        <div class="dropdown-menu" id="questionTypeDropdown">
+                                            <div class="dropdown-item" onclick="addQuestion('mcq_single')">
+                                                <i class="fas fa-check-circle"></i>
+                                                Câu hỏi lựa chọn 1 đáp án
+                                            </div>
+                                            <div class="dropdown-item" onclick="addTextQuestion()">
+                                                <i class="fas fa-file-text"></i>
+                                                Câu hỏi dạng text
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Lưu tất cả</button>
+                                </div>
+                            </form>
+                        </div>
+                    </c:if>
                 </main>
             </div>
         </div>

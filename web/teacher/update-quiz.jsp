@@ -34,9 +34,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                    <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                        <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </c:if>
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
@@ -89,7 +91,7 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </c:when>
-                                         <c:when test="${item.itemType == 'assignment'}">
+                                        <c:when test="${item.itemType == 'assignment'}">
                                             <a href="updateAssignment?courseId=${param.courseId}&moduleId=${h.key.moduleId}&assignmentId=${item.moduleItemId}"
                                                style="text-decoration: none; color: inherit;">
                                                 <i class="fas fa-tasks" style="color: #27ae60;"></i>
@@ -123,15 +125,15 @@
                                 <input id="title" name="title" type="text" value="${requestScope.quiz.title}" required>
                             </div>
 
-                          
-                           
-                                <div class="form-group">
-                                    <label for="passing_score_pct">Điểm đạt (%)</label>
-                                    <input id="passing_score_pct" name="passing_score_pct" type="number" 
-                                           value="${requestScope.quiz.passingScorePct != null ? requestScope.quiz.passingScorePct : ''}"
-                                           placeholder="Để trống = chỉ ôn tập" min="0" max="100" step="0.01">
-                                </div>
-                      
+
+
+                            <div class="form-group">
+                                <label for="passing_score_pct">Điểm đạt (%)</label>
+                                <input id="passing_score_pct" name="passing_score_pct" type="number" 
+                                       value="${requestScope.quiz.passingScorePct != null ? requestScope.quiz.passingScorePct : ''}"
+                                       placeholder="Để trống = chỉ ôn tập" min="0" max="100" step="0.01">
+                            </div>
+
 
                             <div class="form-group">
                                 <label for="pick_count">Số câu hỏi</label>
@@ -153,17 +155,19 @@
                                     <i class="fas fa-times"></i>
                                     Hủy bỏ
                                 </a>
-                                <a href="deleteQuiz?courseId=${param.courseId}&moduleId=${param.moduleId}&quizId=${param.quizId}"
-                                   class="btn btn-danger"
-                                   onclick="return confirm('Bạn có chắc chắn muốn xóa quiz này không?');"
-                                   style="margin-left: 10px;">
-                                    <i class="fas fa-trash"></i>
-                                    Xóa Quiz
-                                </a>
-                                <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
-                                    <i class="fas fa-save"></i>
-                                    Cập nhật Quiz
-                                </button>
+                                <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                    <a href="deleteQuiz?courseId=${param.courseId}&moduleId=${param.moduleId}&quizId=${param.quizId}"
+                                       class="btn btn-danger"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa quiz này không?');"
+                                       style="margin-left: 10px;">
+                                        <i class="fas fa-trash"></i>
+                                        Xóa Quiz
+                                    </a>
+                                    <button type="submit" class="btn btn-primary" style="margin-left: 10px;">
+                                        <i class="fas fa-save"></i>
+                                        Cập nhật Quiz
+                                    </button>
+                                </c:if>
                             </div>
                         </form>
 
