@@ -71,9 +71,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                    <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                        <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </c:if>
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
@@ -116,7 +118,7 @@
                                                 Quiz #${item.moduleItemId}
                                             </a>
                                         </c:when>
-                                         <c:when test="${item.itemType == 'assignment'}">
+                                        <c:when test="${item.itemType == 'assignment'}">
                                             <a href="updateAssignment?courseId=${param.courseId}&moduleId=${h.key.moduleId}&assignmentId=${item.moduleItemId}"
                                                style="text-decoration: none; color: inherit;">
                                                 <i class="fas fa-tasks" style="color: #27ae60;"></i>
@@ -162,16 +164,18 @@
                                 <i class="fas fa-times"></i>
                                 Hủy bỏ
                             </a>
-                            <a href="deleteLesson?courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
-                               class="btn delete-lesson-btn"
-                               onclick="return confirm('Bạn có chắc chắn muốn xóa bài học này không?')">
-                                <i class="fas fa-trash"></i>
-                                Xóa bài học
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Cập nhật bài học
-                            </button>
+                            <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                <a href="deleteLesson?courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
+                                   class="btn delete-lesson-btn"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa bài học này không?')">
+                                    <i class="fas fa-trash"></i>
+                                    Xóa bài học
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Cập nhật bài học
+                                </button>
+                            </c:if>
                         </div>
                     </form>
 

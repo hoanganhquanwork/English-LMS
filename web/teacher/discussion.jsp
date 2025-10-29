@@ -589,16 +589,18 @@
                                 <i class="fas fa-times"></i>
                                 Hủy bỏ
                             </a>
-                            <a href="deleteDiscussion?courseId=${param.courseId}&moduleId=${param.moduleId}&discussionId=${discussion.discussionId}" 
-                               class="btn delete-discussion-btn"
-                               onclick="return confirm('Bạn có chắc chắn muốn xóa thảo luận này không?')">
-                                <i class="fas fa-trash"></i>
-                                Xóa thảo luận
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Cập nhật thảo luận
-                            </button>
+                            <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                <a href="deleteDiscussion?courseId=${param.courseId}&moduleId=${param.moduleId}&discussionId=${discussion.discussionId}" 
+                                   class="btn delete-discussion-btn"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa thảo luận này không?')">
+                                    <i class="fas fa-trash"></i>
+                                    Xóa thảo luận
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Cập nhật thảo luận
+                                </button>
+                            </c:if>
                         </div>
                     </form>
 

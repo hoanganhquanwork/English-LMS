@@ -19,7 +19,7 @@
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                 margin-bottom: 24px;
             }
-
+            
             .assignment-info {
                 background: #f8f9fa;
                 border: 1px solid #e9ecef;
@@ -557,9 +557,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                    <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                        <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </c:if>
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
@@ -768,7 +770,9 @@
                                                 <th style="padding:8px; border:1px solid #ddd;">#</th>
                                                 <th style="padding:8px; border:1px solid #ddd;">Trọng số</th>
                                                 <th style="padding:8px; border:1px solid #ddd;">Hướng dẫn chấm điểm</th>
-                                                <th style="padding:8px; border:1px solid #ddd;">Hành động</th>
+                                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                                    <th style="padding:8px; border:1px solid #ddd;">Hành động</th>
+                                                    </c:if>
                                             </tr>
                                         </thead>
                                         <tbody id="rubricBody">
@@ -777,16 +781,21 @@
                                                     <td><input type="number" name="criterion_no" value="${r.criterionNo}" class="criterion-no" min="1" required style="width:60px;"></td>
                                                     <td><input type="number" name="weight" value="${r.weight}" class="criterion-weight" step="0.01" min="0" max="1" required style="width:80px;"></td>
                                                     <td><input type="text" name="guidance" value="${r.guidance}" class="criterion-guidance" required style="width:100%;"></td>
-                                                    <td><button type="button" class="btn btn-danger" onclick="removeCriterion(this)">Xóa</button></td>
+                                                        <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                                        <td><button type="button" class="btn btn-danger" onclick="removeCriterion(this)">Xóa</button></td>
+                                                    </c:if>
+
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
                                     </table>
 
                                     <div style="margin-top:10px;">
-                                        <button type="button" class="btn btn-success" onclick="addCriterion()">
-                                            <i class="fas fa-plus"></i> Thêm tiêu chí
-                                        </button>
+                                        <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                            <button type="button" class="btn btn-success" onclick="addCriterion()">
+                                                <i class="fas fa-plus"></i> Thêm tiêu chí
+                                            </button>
+                                        </c:if>
                                     </div>
 
                                     <div class="hint">
@@ -851,16 +860,18 @@
                                     <i class="fas fa-times"></i>
                                     Hủy bỏ
                                 </a>
-                                <a href="deleteAssignment?courseId=${param.courseId}&moduleId=${param.moduleId}&assignmentId=${param.assignmentId}"
-                                   class="btn btn-danger"
-                                   onclick="return confirm('Bạn có chắc chắn muốn xóa assignment này không? Hành động này không thể hoàn tác!');">
-                                    <i class="fas fa-trash"></i>
-                                    Xóa Assignment
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i>
-                                    Cập nhật Assignment
-                                </button>
+                                <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                    <a href="deleteAssignment?courseId=${param.courseId}&moduleId=${param.moduleId}&assignmentId=${param.assignmentId}"
+                                       class="btn btn-danger"
+                                       onclick="return confirm('Bạn có chắc chắn muốn xóa assignment này không? Hành động này không thể hoàn tác!');">
+                                        <i class="fas fa-trash"></i>
+                                        Xóa Assignment
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Cập nhật Assignment
+                                    </button>
+                                </c:if>
                             </div>
                         </form>
                     </c:if>
@@ -1010,7 +1021,7 @@
             // Form validation
             document.getElementById('updateForm').addEventListener('submit', function (e) {
                 const title = document.getElementById('title').value.trim();
-               
+
                 const content = document.getElementById('content').value.trim();
 
                 if (!title) {
