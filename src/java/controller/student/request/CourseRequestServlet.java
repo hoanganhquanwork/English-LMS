@@ -12,12 +12,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import model.entity.CourseRequest;
 import model.entity.StudentProfile;
 import service.CourseRequestService;
 import service.StudentRequestService;
 import service.StudentService;
+import util.ParseUtil;
 
 /**
  *
@@ -141,34 +144,33 @@ public class CourseRequestServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
+
+        String flashErr = null;
         int studentId = student.getUserId();
-        //for parent link
-        String linkStatus = linkService.getLatestStatus(studentId);
-        request.setAttribute("requestStatus", linkStatus);
-        String linkEmail = linkService.getLatestParentEmail(studentId);
-        request.setAttribute("requestEmail", linkEmail);
-        StudentProfile s = studentService.getStudentProfile(studentId);
-        request.setAttribute("student", s);
         //for request action
         String requestIdRaw = request.getParameter("requestId");
         String requestAction = request.getParameter("requestAction");
         String note = request.getParameter("note");
         boolean ok = true;
         try {
-            int requestId = Integer.parseInt(requestIdRaw);
+            Integer requestId = Integer.parseInt(requestIdRaw);
             if ("resend".equalsIgnoreCase(requestAction)) {
-                ok = courseRequestService.sendCourseRequest(requestId, studentId, s.getParentId());
+                Integer parentId = student.getParentId();
+                if (parentId == null) {
+                    throw new IllegalStateException("Bạn chưa liên kết phụ huynh, không thể gửi lại.");
+                }
+                ok = courseRequestService.sendCourseRequest(requestId, studentId, parentId);
                 if (!ok) {
-                    request.setAttribute("errorMessage", "Có lỗi khi thực hiện hành động này");
+                    flashErr = "Trạng thái hiện tại không cho phép gửi lại";
                 }
             } else if ("cancel".equalsIgnoreCase(requestAction)) {
                 ok = courseRequestService.cancelRequest(requestId, studentId, note);
                 if (!ok) {
-                    request.setAttribute("errorMessage", "Có lỗi khi thực hiện hành động");
+                    flashErr = "Trạng thái hiện tại không cho phép hủy";
                 }
             }
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "Có lỗi khi thực hiện hành đông");
+            flashErr = (e.getMessage() != null) ? e.getMessage() : "Có lỗi khi thực hiện hành động này";
             System.out.println(e);
         }
 
@@ -179,25 +181,27 @@ public class CourseRequestServlet extends HttpServlet {
             sort = "created";
         }
         String keyword = request.getParameter("keyword");
-        int page;
-        try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (NumberFormatException e) {
-            page = 1;
-        }
-        int pageSize = 10;
-        int total = courseRequestService.countCourseRequest(studentId, status, keyword);
-        int totalPages = courseRequestService.computeTotalPage(total, pageSize);
-        List<CourseRequest> listCourse = courseRequestService.getListCourseRequest(studentId, status, sort,
-                keyword, page, pageSize);
-        request.setAttribute("courses", listCourse);
-        request.setAttribute("status", status);
-        request.setAttribute("sort", sort);
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("page", page);
-        request.getRequestDispatcher("student/course-request.jsp").forward(request, response);
 
+        String page = request.getParameter("page");
+
+        if (flashErr != null) {
+            session.setAttribute("flash_error", flashErr);
+        }
+
+        Integer pageInt = ParseUtil.parseIntOrNull(page);
+        if(pageInt <= 0 || pageInt == null){
+            pageInt = 1;
+        }
+        String send = String.format("?status=%s&sort=%s&keyword=%s&page=%s",
+                encode(status), encode(sort), encode(keyword), pageInt);
+
+        String url = response.encodeRedirectURL(request.getContextPath() + "/courseRequest" + send);
+        response.sendRedirect(url);
+
+    }
+
+    private static String encode(String s) {
+        return s == null ? "" : URLEncoder.encode(s, StandardCharsets.UTF_8);
     }
 
     /**

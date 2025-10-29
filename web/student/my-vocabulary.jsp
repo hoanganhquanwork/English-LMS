@@ -69,12 +69,12 @@
             }
         </style>
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <header>
             <jsp:include page="../header.jsp"/>
         </header>
 
-        <div class="container">
+        <div class="container flex-grow-1">
             <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
                 <h3 class="fw-bold mb-0 ">📘 Từ điển của tôi</h3>
             </div>

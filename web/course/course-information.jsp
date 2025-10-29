@@ -212,6 +212,9 @@
                                         <!-- Badges tổng quan -->
                                         <div class="d-flex flex-column gap-2 mb-3">
 
+                                            <div>
+                                                <p class="text-secondary">Mô tả: ${m.description}</p>
+                                            </div>
                                             <!-- Tiêu đề -->
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="fw-semibold text-decoration-underline text-dark">Học liệu bao gồm:</span>
@@ -344,8 +347,8 @@
     <div class="card border-0 bg-white shadow-soft mt-4 p-4"> 
         <h3 class="fw-bold mb-3">
             <i class="bi bi-star-fill text-warning me-2"></i>
-            <fmt:formatNumber value="${course.rating}" minFractionDigits="1" maxFractionDigits="1"/> course rating
-            • <fmt:formatNumber value="${course.ratingsCount}"/> ratings
+            <fmt:formatNumber value="${course.rating}" minFractionDigits="1" maxFractionDigits="1"/> Đánh giá trung bình
+            • <fmt:formatNumber value="${course.ratingsCount}"/> Lượt đánh giá
         </h3>
         <hr class="text-secondary opacity-25"/>
 

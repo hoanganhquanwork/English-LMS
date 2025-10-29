@@ -28,12 +28,12 @@
 
         </style>
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <header>
             <jsp:include page="../header.jsp"/>
         </header>
 
-        <div class="container py-4">
+        <div class="container py-4 flex-grow-1">
 
             <!-- Tabs -->
             <ul class="nav nav-pills mb-3 pill-tabs">

@@ -186,7 +186,7 @@ public class CourseInformationDAO extends DBContext {
     }
 
     private List<ModuleInformationDTO> getModuleInformation(int courseId) {
-        String sql = "SELECT m.module_id, m.title, m.order_index "
+        String sql = "SELECT m.module_id, m.title, m.order_index, m.description "
                 + "FROM Module m WHERE m.course_id = ? "
                 + "ORDER BY m.order_index ASC, m.module_id ASC";
         List<ModuleInformationDTO> list = new ArrayList<>();
@@ -199,6 +199,7 @@ public class CourseInformationDAO extends DBContext {
                 m.setId(rs.getInt("module_id"));
                 m.setTitle(rs.getString("title"));
                 m.setOrderNo(rs.getInt("order_index"));
+                m.setDescription(rs.getString("description"));
                 list.add(m);
             }
         } catch (SQLException e) {

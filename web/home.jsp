@@ -112,7 +112,7 @@
         <!-- ===== EXPECT: 6 tiêu chí ===== -->
         <section class="py-5">
             <div class="container">
-                <h2 class="section-title h1 text-center mb-4">Bạn sẽ nhận được gì từ khóa học</h2>
+                <h2 class="section-title h1 text-center mb-4">Bạn sẽ nhận được gì từ các khóa học</h2>
                 <div class="row g-4 expect">
                     <div class="col-12 col-md-6">
                         <div class="d-flex gap-3"><i class="bi bi-emoji-smile"></i>

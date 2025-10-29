@@ -47,11 +47,11 @@
             }
         </style>
     </head>
-    <body>
+    <body  class="d-flex flex-column min-vh-100">
         <header>
             <jsp:include page="../header.jsp"/>
         </header>
-        <div class="container py-4 page-container ">
+        <div class="container py-4 page-container flex-grow-1">
             <div class="row g-4">
                 <div class="col-lg-3">
                     <div class="card">
@@ -195,7 +195,7 @@
                                                                 <input type="hidden" name="keyword" value="${keyword}">
                                                                 <input type="hidden" name="page"    value="${page}">
 
-                                                                <button class="btn btn-sm btn-outline-danger">Hủy yêu cầu</button>
+                                                                <button class="btn btn-sm btn-outline-danger w-100">Hủy yêu cầu</button>
                                                             </form>
                                                         </c:when>
                                                         <c:when test="${c.status=='rejected' || c.status=='canceled' || c.status=='saved'}">
@@ -207,7 +207,7 @@
                                                                 <input type="hidden" name="keyword" value="${keyword}">
                                                                 <input type="hidden" name="page"    value="${page}">
                                                                 <c:if test="${requestScope.student.parentId !=null}"> 
-                                                                    <button class="btn btn-sm btn-primary">Gửi yêu cầu</button>
+                                                                    <button class="btn btn-sm btn-primary w-100">Gửi yêu cầu</button>
                                                                 </c:if>
                                                                 <!--chinh session thanh request-->
                                                                 <c:if test="${requestScope.student.parentId == null}"> 
@@ -220,7 +220,7 @@
                                                         <c:when test="${c.status=='approved'}">
                                                             <form action="${pageContext.request.contextPath}/coursePage" method="get" style="display:inline;">
                                                                 <input type="hidden" name="courseId" value="${c.course.courseId}">
-                                                                <button class="btn btn-sm btn-success">
+                                                                <button class="btn btn-sm btn-success w-100">
                                                                     Vào khóa học
                                                                 </button>
                                                             </form>
@@ -234,7 +234,7 @@
                             </div>
                             <c:if test="${requestScope.totalPages > 1}">
                                 <form action="${pageContext.request.contextPath}/courseRequest" method="get"
-                                      class="d-flex justify-content-center gap-1 mt-4" style="margin-top:12px;">
+                                      class="d-flex justify-content-end gap-1 mt-4" style="margin-top:12px;">
                                     <input type="hidden" name="status"  value="${param.status}">
                                     <input type="hidden" name="sort"    value="${param.sort}">
                                     <input type="hidden" name="keyword" value="${param.keyword}">

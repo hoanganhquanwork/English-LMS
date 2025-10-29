@@ -108,7 +108,7 @@
                     </div>
 
                     <div class="messages">
-                        <p class="success">${requestScope.updateSuccess}</p>
+                        <p class="text-success fw-semibold mt-2">${requestScope.updateSuccess}</p>
                         <p class="error">${requestScope.updateFail}</p>
                     </div>
                 </div>
