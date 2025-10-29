@@ -104,17 +104,33 @@
 
                                 <td>
                                     <div class="course-info">
-                                        <img src="${course.thumbnail != null ? course.thumbnail : '/views-manager/icon/default.png'}" class="thumbnail">
+                                        <c:choose>
+                                            <c:when test="${not empty course.thumbnail}">
+                                                <img src="${pageContext.request.contextPath}/${course.thumbnail}" class="thumbnail">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="${pageContext.request.contextPath}/views-manager/icon/logo.png" class="thumbnail">
+                                            </c:otherwise>
+                                        </c:choose>
+
                                         <div>
                                             <strong>${course.title}</strong><br>
                                             <small class="muted">${course.category.name}</small>
                                         </div>
                                     </div>
                                 </td>
-                                
+
                                 <td>
                                     <div class="teacher-info">
-                                        <img src="${course.createdBy.user.profilePicture != null ? course.createdBy.user.profilePicture : '/views-manager/icon/default.png'}" class="avatar">
+                                        <c:choose>
+                                            <c:when test="${not empty course.createdBy.user.profilePicture}">
+                                                <img src="${pageContext.request.contextPath}/${course.createdBy.user.profilePicture}" class="avatar">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="${pageContext.request.contextPath}/views-manager/icon/default.png" class="avatar">
+                                            </c:otherwise>
+                                        </c:choose>
+
                                         <div>
                                             <strong>${course.createdBy.user.fullName}</strong><br>
                                             <small>${course.createdBy.user.email}</small>
