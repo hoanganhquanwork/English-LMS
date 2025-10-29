@@ -30,6 +30,7 @@ public class AssignmentService {
     private final RubricCriterionDAO rubricDAO = new RubricCriterionDAO();
     private ProgressDAO progressDAO = new ProgressDAO();
 
+  
     public int createAssignment(int moduleId, Assignment a,
             String[] nos, String[] guidances, String[] weights) {
         try {

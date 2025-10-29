@@ -244,6 +244,45 @@
             .delete-question-btn:hover {
                 background: #c0392b;
             }
+            
+            .pagination-container {
+                display: flex;
+                justify-content: center;
+                margin: 20px 0;
+            }
+
+            .pagination-form {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .pagination-btn {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            .pagination-btn:hover {
+                background: #f5f5f5;
+            }
+
+            .pagination-btn.active {
+                background: #007bff;
+                color: #fff;
+                border-color: #007bff;
+            }
+
+            .pagination-info {
+                margin-left: 10px;
+                color: #666;
+                font-size: 14px;
+            }
 
             /* Modal Animations */
             @keyframes fadeIn {
@@ -484,6 +523,31 @@
                                 </tbody>
                             </table>
                         </div>
+                          <c:if test="${requestScope.totalPages > 1}">
+                        <div class="pagination-container">
+                            <form action="${pageContext.request.contextPath}/addQuestion" method="get" class="pagination-form">
+                              
+                                <input type="hidden" name="courseId" value="${param.courseId}">
+                                <input type="hidden" name="topicFilter" value="${param.topicFilter}">
+                                
+
+                                <c:if test="${requestScope.page > 1}">
+                                    <button type="submit" name="page" value="${requestScope.page-1}" class="pagination-btn pagination-nav">«</button>
+                                </c:if>
+
+                                <c:forEach begin="1" end="${requestScope.totalPages}" var="i">
+                                    <button type="submit" name="page" value="${i}"
+                                            class="pagination-btn ${i==requestScope.page ? 'active' : ''}">${i}</button>
+                                </c:forEach>
+
+                                <c:if test="${requestScope.page < requestScope.totalPages}">
+                                    <button type="submit" name="page" value="${requestScope.page+1}" class="pagination-btn pagination-nav">»</button>
+                                </c:if>
+
+                                <span class="pagination-info">Trang ${requestScope.page} / ${requestScope.totalPages}</span>
+                            </form>
+                        </div>
+                    </c:if>
 
                     </div>
                 </main>

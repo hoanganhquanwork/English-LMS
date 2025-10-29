@@ -91,7 +91,7 @@ public class QuestionAIService {
                 if (matcher.find()) {
                     text = matcher.group(0);
                 }
-                System.out.println("✅ JSON sau khi lọc:\n" + text);
+                System.out.println(" JSON sau khi lọc:\n" + text);
                 // Parse thành List<Question>
                 Gson gson = new GsonBuilder()
                         .registerTypeAdapter(java.time.LocalDate.class, (JsonDeserializer<LocalDate>) (json, typeOfT, context) -> null)

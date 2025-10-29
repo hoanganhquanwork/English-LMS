@@ -65,19 +65,19 @@ public class QuestionsController extends HttpServlet {
         int totalDraft = questionService.countDraftQuestions(user.getUserId());
         int draftTotalPages = (int) Math.ceil((double) totalDraft / pageSize);
         Map<Question, Object> draftQuestionMap = questionService.getDraftQuestionsWithAnswersPaged(user.getUserId(), draftPage, pageSize);
-//        Map<Question, Object> draftQuestionMap = questionService.getDraftQuestionsWithAnswers(user.getUserId());
+
 
         int totalSubmitted = questionService.countSubmittedQuestions(user.getUserId(), statusFilter, topicFilter);
         int submittedTotalPages = (int) Math.ceil((double) totalSubmitted / pageSize);
         Map<Question, Object> submittedQuestions
                 = questionService.getSubmittedQuestionsWithAnswersPaged(user.getUserId(), statusFilter, topicFilter, submittedPage, pageSize);
-//        Map<Question, Object> submittedQuestions = questionService.getSubmittedQuestionsWithAnswers(user.getUserId(), statusFilter, topicFilter);
+
 
         int totalApproved = questionService.countApprovedQuestions(topicFilter);
         int approvedTotalPages = (int) Math.ceil((double) totalApproved / pageSize);
         Map<Question, Object> approvedQuestionMap
                 = questionService.getApprovedQuestionsWithAnswersPaged(topicFilter, approvedPage, pageSize);
-//        Map<Question, Object> approvedQuestionMap = questionService.getApprovedQuestionsWithAnswers(topicFilter);
+
 
         request.setAttribute("topics", topics);
         request.setAttribute("draftQuestionMap", draftQuestionMap);
