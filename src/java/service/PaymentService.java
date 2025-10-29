@@ -1,7 +1,13 @@
 package service;
 
+import dal.CourseRequestDAO;
 import dal.OrderDAO;
+import dal.OrderItemDAO;
 import dal.PaymentDAO;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import model.entity.CourseRequest;
 import model.entity.Payment;
 import model.entity.Users;
 import util.EmailUtil;
@@ -10,6 +16,74 @@ public class PaymentService {
 
     private final OrderDAO orderDAO = new OrderDAO();
     private final PaymentDAO paymentDAO = new PaymentDAO();
+    private final OrderItemDAO itemDAO = new OrderItemDAO();
+    private final OrderService orderService = new OrderService();
+    private final EnrollmentService eService = new EnrollmentService();
+    private final CourseRequestDAO crdao = new CourseRequestDAO();
+
+    private static class ParsedRef {
+        int orderId = -1;
+        List<Integer> reqIds = new ArrayList<>();
+    }
+
+    private ParsedRef parseRef(String txnRef) {
+        ParsedRef p = new ParsedRef();
+        if (txnRef != null && txnRef.startsWith("ORD")) {
+            try {
+                String core = txnRef.substring(3);
+                String[] a = core.split("_R");
+                p.orderId = Integer.parseInt(a[0]);
+                if (a.length > 1) {
+                    String reqPart = a[1].split("_")[0];
+                    for (String s : reqPart.split("-")) {
+                        if (!s.isBlank()) p.reqIds.add(Integer.parseInt(s));
+                    }
+                }
+            } catch (Exception ignore) {}
+        }
+        return p;
+    }
+
+    public String handleVNPayReturn(HttpServletRequest request) {
+        String txnRef = request.getParameter("vnp_TxnRef");
+        String responseCode = request.getParameter("vnp_ResponseCode");
+        boolean success = "00".equals(responseCode);
+
+        // cập nhật trạng thái thanh toán
+        updatePaymentStatus(txnRef, success ? "captured" : "failed");
+
+        ParsedRef ref = parseRef(txnRef);
+        String result = "fail";
+
+        if (success && ref.orderId > 0) {
+            markOrderPaidByTxn(txnRef);
+
+            for (Integer reqId : ref.reqIds) {
+                CourseRequest cr = crdao.getById(reqId);
+                if (cr == null || !"unpaid".equalsIgnoreCase(cr.getStatus())) continue;
+
+                int courseId  = cr.getCourse().getCourseId();
+                int studentId = cr.getStudent().getUserId();
+                double price  = cr.getCourse().getPrice().doubleValue();
+
+                try {
+                    itemDAO.createForOrder(ref.orderId, reqId, courseId, studentId, price);
+                } catch (RuntimeException ignoreDup) {
+                }
+
+                eService.enrollAfterPayment(courseId, studentId);
+                crdao.updateStatus(reqId, "approved");
+                crdao.updateNoteForRequest(reqId, "Phụ huynh đã thanh toán thành công");
+                sendPaymentSuccessEmail(ref.orderId, txnRef);
+            }
+            result = "success";
+        } else {
+            if (ref.orderId > 0) {
+                orderService.cancelOrder(ref.orderId);
+            }
+        }
+        return result;
+    }
 
     public void sendPaymentSuccessEmail(int orderId, String txnRef) {
         try {
@@ -102,5 +176,6 @@ public class PaymentService {
     public void cancelPaymentByOrder(int orderId) {
         paymentDAO.deletePaymentByOrder(orderId);
     }
+
 
 }

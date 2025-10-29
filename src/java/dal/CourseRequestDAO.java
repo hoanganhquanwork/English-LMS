@@ -341,9 +341,10 @@ public class CourseRequestDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+      
         return false;
     }
-
+    
     public Map<String, Integer> countByStatus(int parentId) {
         Map<String, Integer> map = new HashMap<>();
         String sql = """
