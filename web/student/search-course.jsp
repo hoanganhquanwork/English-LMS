@@ -94,11 +94,10 @@
 
                             <div class="row g-3">
                             <c:forEach var="c" items="${courses}">
-                                <div class="col-12 col-md-6 col-lg-4">
-                                    <div class="course-card p-0 h-100 d-flex flex-column">
+                                <div class="col-12 col-md-6 col-lg-4 ">
+                                    <div class="course-card p-0 h-100 d-flex flex-column border border-1 rounded-4 overflow-hidden">
                                         <!-- Thumbnail -->
-                                        <img class="course-thumb" src="${pageContext.request.contextPath}/${c.thumbnail}" alt="${c.title}">
-
+                                            <img class="course-thumb w-100 h-100 object-fit-cover" src="${pageContext.request.contextPath}/${c.thumbnail}" alt="${c.title}">
                                         <!-- Body -->
                                         <div class="p-3 d-flex flex-column flex-grow-1">
                                             <h6 class="course-title fw-semibold">
@@ -114,10 +113,12 @@
                                                         ₫<fmt:formatNumber value="${c.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>
                                                     </span>
                                                 </div>
-                                                <button type="button" class="btn btn-sm btn-outline-primary"
-                                                        >
-                                                    <i class="bi bi-heart"></i> Lưu yêu thích
-                                                </button>
+                                                <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                                            >
+                                                        <i class="bi bi-box-arrow-up-right"></i> Xem chi tiết khóa học
+                                                    </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

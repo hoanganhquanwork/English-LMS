@@ -30,6 +30,7 @@ import model.entity.Users;
 import service.AssignmentService;
 import service.CoursePageService;
 import service.DiscussionService;
+import service.EnrollmentService;
 import service.LessonService;
 import service.ProgressService;
 import service.QuestionService;
@@ -46,6 +47,7 @@ public class CoursePageControllerServlet extends HttpServlet {
 
     private CoursePageService coursePageService = new CoursePageService();
     private ProgressService progressService = new ProgressService();
+    private EnrollmentService enrollService = new EnrollmentService();
     private LessonService lessonService = new LessonService();
     private DiscussionService discussionService = new DiscussionService();
     private QuestionService questionService = new QuestionService();
@@ -111,6 +113,15 @@ public class CoursePageControllerServlet extends HttpServlet {
         }
 
         int userId = user.getUserId();
+
+        //check student enroll
+        if (!enrollService.isStudentEnrolledInCourse(userId, courseId)) {
+            response.sendRedirect(request.getContextPath() + "/home");
+            return;
+        }
+
+        //check xem da hoan thanh het chua de cap nhat enroll status
+        progressService.updateCompleteStatusIfAllDone(userId, courseId);
 
         try {
             //side bar
@@ -329,8 +340,8 @@ public class CoursePageControllerServlet extends HttpServlet {
         if (ss != null) {
             Object fe = ss.getAttribute("flashError");
             if (fe != null) {
-                request.setAttribute("errorMessage", fe); 
-                ss.removeAttribute("flashError");     
+                request.setAttribute("errorMessage", fe);
+                ss.removeAttribute("flashError");
             }
         }
         request.getRequestDispatcher("/course/main-layout.jsp").forward(request, response);

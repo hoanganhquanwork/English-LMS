@@ -4,6 +4,7 @@
  */
 package service;
 
+import dal.EnrollmentDAO;
 import dal.ProgressDAO;
 
 /**
@@ -13,6 +14,7 @@ import dal.ProgressDAO;
 public class ProgressService {
 
     private final ProgressDAO progressDAO = new ProgressDAO();
+    private final EnrollmentDAO enrollDAO = new EnrollmentDAO();
 
     public void createFirstProgressIfNeeded(int studentId, int moduleItemId) {
         progressDAO.createFirstProgress(studentId, moduleItemId);
@@ -40,6 +42,14 @@ public class ProgressService {
 
     public boolean isLessonCompleted(int studentId, int moduleItemId) {
         return progressDAO.isLessonCompleted(studentId, moduleItemId);
+    }
+
+    public boolean updateCompleteStatusIfAllDone(int studentId, int courseId) {
+        boolean ok = progressDAO.isAllModuleItemCompleted(courseId, studentId);
+        if (!ok) {
+            return false;
+        }
+        return enrollDAO.updateCompletedStatus(courseId, studentId);
     }
 
 }

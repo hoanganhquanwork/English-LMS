@@ -46,5 +46,13 @@ public class QuestionTextKey {
     public void setAnswerText(String answerText) {
         this.answerText = answerText;
     }
+
+    @Override
+    public String toString() {
+        return "QuestionTextKey{" + "keyId=" + keyId + ", questionId=" + questionId + ", answerText=" + answerText + '}';
+    }
+
+
+    
     
 }

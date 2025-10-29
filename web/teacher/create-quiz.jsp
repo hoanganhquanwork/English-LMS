@@ -119,7 +119,6 @@
                                        placeholder="Để trống = chỉ ôn tập" min="0" max="100" step="0.01">
                             </div>
 
-
                         <div class="form-group">
                             <label for="pick_count">Số câu hỏi</label>
                             <input id="pick_count" name="pick_count" type="number" 

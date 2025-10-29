@@ -1,6 +1,7 @@
 package model.entity;
 
 public class Flashcard {
+
     private int cardId;
     private int setId;
     private String frontText;
@@ -11,6 +12,12 @@ public class Flashcard {
 
     public Flashcard(int cardId, int setId, String frontText, String backText) {
         this.cardId = cardId;
+        this.setId = setId;
+        this.frontText = frontText;
+        this.backText = backText;
+    }
+
+    public Flashcard(int setId, String frontText, String backText) {
         this.setId = setId;
         this.frontText = frontText;
         this.backText = backText;
@@ -48,5 +55,4 @@ public class Flashcard {
         this.backText = backText;
     }
 
-    
 }

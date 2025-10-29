@@ -1963,14 +1963,21 @@
                                         html += '    </div>';
                                     }
                                     html += '  </div>';
-                                } else if (q.type === "text" && q.textKey) {
+                                } else if (q.type === "text") {
                                     html += '  <div class="answer-group">';
                                     html += '    <label>Đáp án đúng:</label>';
-                                    html += '    <textarea name="correctAnswer' + questionCount + '" class="answer-input" required>'
-                                            + q.textKey.answerText + '</textarea>';
+                                    let answer = "";
+                                    if (q.answerText && q.answerText.trim() !== "") {
+                                        answer = q.answerText.trim();
+                                    } else if (q.textKey && q.textKey.answerText && q.textKey.answerText.trim() !== "") {
+                                        answer = q.textKey.answerText.trim();
+                                    } else {
+                                        answer = "Chưa có đáp án (hãy chỉnh tay).";
+                                    }
+                                    html += '    <textarea name="correctAnswer' + questionCount + '" class="answer-input" required style="width:80%;">'
+                                            + answer + '</textarea>';
                                     html += '  </div>';
                                 }
-
                                 html += '  <div class="explanation-group">';
                                 html += '    <textarea name="explanation' + questionCount + '" class="explanation-input">'
                                         + (q.explanation ? q.explanation : '') + '</textarea>';
@@ -2103,7 +2110,7 @@
             }
 
             function removeOption(button) {
-                
+
                 var optionDiv = button.closest(".answer-option");
                 if (optionDiv) {
                     optionDiv.remove();
@@ -2175,7 +2182,7 @@
                 html += '        <div class="answer-group">';
                 html += '            <label class="answer-label">Đáp án đúng:</label>';
                 html += '            <textarea name="correctAnswer' + questionCount + '" ';
-                html += '                class="answer-input" placeholder="Nhập đáp án đúng cho câu hỏi này..." required></textarea>';
+                html += '                class="answer-input" placeholder="Nhập đáp án đúng cho câu hỏi này..." required style="width:80%;"></textarea>';
                 html += '        </div>';
                 html += '        <div class="explanation-group">';
                 html += '            <textarea name="explanation' + questionCount + '" ';
@@ -2451,7 +2458,7 @@
                 });
 
                 if (hasMissingTopic) {
-                    alert("❌ Không thể submit!\nCác câu hỏi sau chưa có chủ đề:\n" + noTopicIds.join(", "));
+                    alert(" Không thể submit!\nCác câu hỏi sau chưa có chủ đề:\n" + noTopicIds.join(", "));
                     return;
                 }
 
@@ -2640,7 +2647,7 @@
                 }
             });
 
-            // AI Modal Functions
+
             function openAIModal() {
                 document.getElementById('aiModal').style.display = 'block';
                 document.body.style.overflow = 'hidden'; // Prevent background scrolling

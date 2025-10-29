@@ -1,7 +1,18 @@
 package dal;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
+import model.dto.AssignmentDTO;
+import model.dto.DiscussionCommentDTO;
+import model.dto.DiscussionPostDTO;
+import model.dto.ModuleItemDetailDTO;
+import model.dto.QuestionDTO;
+import model.dto.QuestionOptionDTO;
+import model.dto.QuizDTO;
+import model.entity.Users;
+import model.entity.InstructorProfile;
+import model.entity.Module;
 
 public class CourseDetailDAO extends DBContext {
 
@@ -19,25 +30,22 @@ public class CourseDetailDAO extends DBContext {
         return false;
     }
 
-    public List<Map<String, Object>> getModules(int courseId) {
-        List<Map<String, Object>> list = new ArrayList<>();
-        String sql = 
-            "SELECT m.module_id, m.title, m.order_index, "
-          + "COUNT(mi.module_item_id) AS item_count "
-          + "FROM Module m "
-          + "LEFT JOIN ModuleItem mi ON m.module_id = mi.module_id "
-          + "WHERE m.course_id = ? "
-          + "GROUP BY m.module_id, m.title, m.order_index "
-          + "ORDER BY m.order_index";
+    public List<Module> getModules(int courseId) {
+        List<Module> list = new ArrayList<>();
+        String sql
+                = "SELECT m.module_id, m.title, m.description, m.order_index "
+                + "FROM Module m "
+                + "WHERE m.course_id = ? "
+                + "ORDER BY m.order_index";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Map<String, Object> m = new HashMap<>();
-                m.put("moduleId", rs.getInt("module_id"));
-                m.put("title", rs.getString("title"));
-                m.put("orderIndex", rs.getInt("order_index"));
-                m.put("itemCount", rs.getInt("item_count"));
+                Module m = new Module();
+                m.setModuleId(rs.getInt("module_id"));
+                m.setTitle(rs.getString("title"));
+                m.setDescription(rs.getString("description"));
+                m.setOrderIndex(rs.getInt("order_index"));
                 list.add(m);
             }
         } catch (SQLException e) {
@@ -46,37 +54,217 @@ public class CourseDetailDAO extends DBContext {
         return list;
     }
 
-    public List<Map<String, Object>> getModuleItems(int courseId) {
-        List<Map<String, Object>> list = new ArrayList<>();
-        String sql = 
-            "SELECT mi.module_item_id, mi.item_type, mi.order_index, "
-          + "m.module_id, m.title AS module_title, "
-          + "l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec "
-          + "FROM ModuleItem mi "
-          + "JOIN Module m ON mi.module_id = m.module_id "
-          + "LEFT JOIN Lesson l ON mi.module_item_id = l.lesson_id "
-          + "WHERE m.course_id = ? "
-          + "ORDER BY m.order_index, mi.order_index";
+    public List<ModuleItemDetailDTO> getModuleItems(int courseId) {
+        List<ModuleItemDetailDTO> list = new ArrayList<>();
+
+        String sql = "SELECT "
+                + " mi.module_item_id, mi.item_type, mi.order_index, "
+                + " m.module_id, m.title AS module_title, "
+                + " l.title AS lesson_title, l.content_type, l.video_url, l.text_content, l.duration_sec, "
+                + " q.title AS quiz_title, q.passing_score_pct AS quiz_pass_pct, "
+                + " q.pick_count, q.time_limit_min, "
+                + " a.assignment_id, a.title AS assignment_title, a.submission_type, "
+                + "a.passing_score_pct AS assign_pass_pct, "
+                + " d.title AS discussion_title, d.description AS discussion_desc "
+                + "FROM ModuleItem mi "
+                + "JOIN Module m ON mi.module_id = m.module_id "
+                + "LEFT JOIN Lesson l ON mi.module_item_id = l.lesson_id "
+                + "LEFT JOIN Quiz q ON mi.module_item_id = q.quiz_id "
+                + "LEFT JOIN Assignment a ON mi.module_item_id = a.assignment_id "
+                + "LEFT JOIN Discussion d ON mi.module_item_id = d.discussion_id "
+                + "WHERE m.course_id = ? "
+                + "ORDER BY m.order_index, mi.order_index";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, courseId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ModuleItemDetailDTO dto = new ModuleItemDetailDTO();
+
+                    dto.setModuleId(rs.getInt("module_id"));
+                    dto.setModuleTitle(rs.getString("module_title"));
+                    dto.setItemId(rs.getInt("module_item_id"));
+                    dto.setItemType(rs.getString("item_type"));
+                    dto.setOrderIndex(rs.getInt("order_index"));
+
+                    String type = rs.getString("item_type");
+
+                    if ("lesson".equalsIgnoreCase(type)) {
+                        dto.setLessonTitle(rs.getString("lesson_title"));
+                        dto.setContentType(rs.getString("content_type"));
+                        dto.setVideoUrl(rs.getString("video_url"));
+                        dto.setTextContent(rs.getString("text_content"));
+
+                        Object durObj = rs.getObject("duration_sec");
+                        if (durObj != null) {
+                            dto.setDurationSec(rs.getInt("duration_sec"));
+                        } else {
+                            dto.setDurationSec(0);
+                        }
+
+                        dto.setLessonQuestions(null);
+                    } else if ("quiz".equalsIgnoreCase(type)) {
+                        dto.setQuizTitle(rs.getString("quiz_title"));
+
+                        Object passPct = rs.getObject("quiz_pass_pct");
+                        if (passPct instanceof BigDecimal) {
+                            dto.setQuizPassingPct(((BigDecimal) passPct).doubleValue());
+                        }
+
+                        Object pickCount = rs.getObject("pick_count");
+                        if (pickCount != null) {
+                            dto.setPickCount(rs.getInt("pick_count"));
+                        }
+
+                        Object timeLimit = rs.getObject("time_limit_min");
+                        if (timeLimit != null) {
+                            dto.setTimeLimitMin(rs.getInt("time_limit_min"));
+                        }
+                    } else if ("assignment".equalsIgnoreCase(type)) {
+                        dto.setAssignmentTitle(rs.getString("assignment_title"));
+                        dto.setSubmissionType(rs.getString("submission_type"));
+
+                        Object assignPass = rs.getObject("assign_pass_pct");
+                        if (assignPass instanceof BigDecimal) {
+                            dto.setAssignmentPassingPct(((BigDecimal) assignPass));
+                        }
+
+                        dto.setAssignmentContent(null);
+                        dto.setAssignmentInstructions(null);
+                        dto.setAttachmentUrl(null);
+                        dto.setRubric(null);
+                        dto.setAssignmentWorks(null);
+                    } else if ("discussion".equalsIgnoreCase(type)) {
+                        dto.setDiscussionTitle(rs.getString("discussion_title"));
+                        dto.setDiscussionDescription(rs.getString("discussion_desc"));
+                    }
+
+                    list.add(dto);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public AssignmentDTO getAssignmentDetail(int assignmentId) {
+        AssignmentDTO dto = null;
+        String sql = "SELECT assignment_id, title, content, instructions, "
+                + "submission_type, attachment_url, passing_score_pct "
+                + "FROM Assignment WHERE assignment_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, assignmentId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                dto = new AssignmentDTO();
+                dto.setAssignmentId(rs.getInt("assignment_id"));
+                dto.setTitle(rs.getString("title"));
+                dto.setContent(rs.getString("content"));
+                dto.setInstructions(rs.getString("instructions"));
+                dto.setSubmissionType(rs.getString("submission_type"));
+                dto.setAttachmentUrl(rs.getString("attachment_url"));
+                Object passPct = rs.getObject("passing_score_pct");
+                dto.setPassingScorePct(
+                        passPct instanceof BigDecimal
+                                ? (BigDecimal) passPct
+                                : null
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dto;
+    }
+
+    public List<DiscussionPostDTO> getDiscussionPosts(int discussionId) {
+        List<DiscussionPostDTO> posts = new ArrayList<>();
+
+        String sql = "SELECT dp.post_id, dp.content, dp.created_at, dp.edited_at, "
+                + "u.full_name, u.role, u.profile_picture "
+                + "FROM DiscussionPosts dp "
+                + "JOIN Users u ON dp.author_user_id = u.user_id "
+                + "WHERE dp.discussion_id = ? "
+                + "ORDER BY dp.created_at ASC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, discussionId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DiscussionPostDTO post = new DiscussionPostDTO();
+                post.setPostId(rs.getLong("post_id"));
+                post.setContent(rs.getString("content"));
+                post.setCreatedAt(rs.getString("created_at"));
+                post.setEditedAt(rs.getString("edited_at"));
+                post.setFullName(rs.getString("full_name"));
+                post.setRole(rs.getString("role"));
+                post.setAvatar(rs.getString("profile_picture"));
+
+                post.setComments(getDiscussionComments(post.getPostId()));
+                posts.add(post);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return posts;
+    }
+
+    public List<DiscussionCommentDTO> getDiscussionComments(long postId) {
+        List<DiscussionCommentDTO> comments = new ArrayList<>();
+        String sql = "SELECT dc.comment_id, dc.content, dc.created_at, dc.edited_at, "
+                + "u.full_name, u.role, u.profile_picture "
+                + "FROM DiscussionComments dc "
+                + "JOIN Users u ON dc.author_user_id = u.user_id "
+                + "WHERE dc.post_id = ? "
+                + "ORDER BY dc.created_at ASC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, postId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DiscussionCommentDTO c = new DiscussionCommentDTO();
+                c.setCommentId(rs.getLong("comment_id"));
+                c.setContent(rs.getString("content"));
+                c.setCreatedAt(rs.getString("created_at"));
+                c.setEditedAt(rs.getString("edited_at"));
+                c.setFullName(rs.getString("full_name"));
+                c.setRole(rs.getString("role"));
+                c.setAvatar(rs.getString("profile_picture"));
+                comments.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return comments;
+    }
+
+    public List<QuestionDTO> getQuestionsByLesson(int courseId) {
+        List<QuestionDTO> list = new ArrayList<>();
+        String sql
+                = "SELECT q.question_id, q.lesson_id, q.content, q.media_url, q.type, q.explanation, "
+                + "t.topic_id, t.name AS topic_name "
+                + "FROM Question q "
+                + "JOIN Lesson l ON q.lesson_id = l.lesson_id "
+                + "JOIN ModuleItem mi ON l.lesson_id = mi.module_item_id "
+                + "JOIN Module m ON mi.module_id = m.module_id "
+                + "LEFT JOIN Topics t ON q.topic_id = t.topic_id "
+                + "WHERE m.course_id = ? "
+                + "ORDER BY m.order_index, l.lesson_id, q.question_id";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Map<String, Object> item = new HashMap<>();
-                item.put("moduleId", rs.getInt("module_id"));
-                item.put("moduleTitle", rs.getString("module_title"));
-                item.put("itemId", rs.getInt("module_item_id"));
-                item.put("itemType", rs.getString("item_type"));
-                item.put("orderIndex", rs.getInt("order_index"));
-
-                if ("lesson".equalsIgnoreCase(rs.getString("item_type"))) {
-                    item.put("lessonTitle", rs.getString("lesson_title"));
-                    item.put("contentType", rs.getString("content_type"));
-                    item.put("videoUrl", rs.getString("video_url"));
-                    item.put("textContent", rs.getString("text_content"));
-                    Object durationObj = rs.getObject("duration_sec");
-                    item.put("durationSec", durationObj != null ? rs.getInt("duration_sec") : 0);
-                }
-                list.add(item);
+                QuestionDTO q = new QuestionDTO();
+                q.setQuestionId(rs.getInt("question_id"));
+                q.setLessonId(rs.getInt("lesson_id"));
+                q.setContent(rs.getString("content"));
+                q.setMediaUrl(rs.getString("media_url"));
+                q.setType(rs.getString("type"));
+                q.setExplanation(rs.getString("explanation"));
+                list.add(q);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -86,23 +274,36 @@ public class CourseDetailDAO extends DBContext {
 
     public Map<String, Object> getStatistics(int courseId) {
         Map<String, Object> stats = new HashMap<>();
-        String sql =
-            "SELECT "
-          + "(SELECT COUNT(*) FROM Module WHERE course_id = ?) AS moduleCount, "
-          + "(SELECT COUNT(*) FROM Lesson l "
-          + " JOIN ModuleItem mi ON l.lesson_id = mi.module_item_id "
-          + " JOIN Module m ON mi.module_id = m.module_id "
-          + " WHERE m.course_id = ?) AS lessonCount";
+        String sql
+                = "SELECT "
+                + "(SELECT COUNT(*) FROM Module WHERE course_id = ?) AS moduleCount, "
+                + "(SELECT COUNT(*) FROM Lesson l "
+                + " JOIN ModuleItem mi ON l.lesson_id = mi.module_item_id "
+                + " JOIN Module m ON mi.module_id = m.module_id "
+                + " WHERE m.course_id = ?) AS lessonCount, "
+                + "(SELECT COUNT(*) FROM Quiz q "
+                + " JOIN ModuleItem mi ON q.quiz_id = mi.module_item_id "
+                + " JOIN Module m ON mi.module_id = m.module_id "
+                + " WHERE m.course_id = ?) AS quizCount, "
+                + "(SELECT COUNT(*) FROM Assignment a "
+                + " JOIN ModuleItem mi ON a.assignment_id = mi.module_item_id "
+                + " JOIN Module m ON mi.module_id = m.module_id "
+                + " WHERE m.course_id = ?) AS assignmentCount, "
+                + "(SELECT COUNT(*) FROM Discussion d "
+                + " JOIN ModuleItem mi ON d.discussion_id = mi.module_item_id "
+                + " JOIN Module m ON mi.module_id = m.module_id "
+                + " WHERE m.course_id = ?) AS discussionCount ";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, courseId);
-            ps.setInt(2, courseId);
+            for (int i = 1; i <= 5; i++) {
+                ps.setInt(i, courseId);
+            }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 stats.put("moduleCount", rs.getInt("moduleCount"));
                 stats.put("lessonCount", rs.getInt("lessonCount"));
-                stats.put("quizCount", 0);
-                stats.put("assignmentCount", 0);
-                stats.put("discussionCount", 0);
+                stats.put("quizCount", rs.getInt("quizCount"));
+                stats.put("assignmentCount", rs.getInt("assignmentCount"));
+                stats.put("discussionCount", rs.getInt("discussionCount"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,29 +311,120 @@ public class CourseDetailDAO extends DBContext {
         return stats;
     }
 
-    public Map<String, Object> getInstructorInfo(int courseId) {
-        Map<String, Object> instructor = new HashMap<>();
-        String sql =
-            "SELECT u.user_id, u.full_name, u.email, "
-          + "i.expertise, i.qualifications, i.bio "
-          + "FROM Course c "
-          + "JOIN InstructorProfile i ON c.created_by = i.user_id "
-          + "JOIN Users u ON i.user_id = u.user_id "
-          + "WHERE c.course_id = ?";
+    public InstructorProfile getInstructorInfo(int courseId) {
+        InstructorProfile instructor = null;
+        String sql
+                = "SELECT u.user_id, u.username, u.email, u.full_name, u.profile_picture, "
+                + "u.gender, u.phone, u.role, u.status, "
+                + "i.bio, i.expertise, i.qualifications "
+                + "FROM Course c "
+                + "JOIN InstructorProfile i ON c.created_by = i.user_id "
+                + "JOIN Users u ON i.user_id = u.user_id "
+                + "WHERE c.course_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, courseId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                instructor.put("userId", rs.getInt("user_id"));
-                instructor.put("fullName", rs.getString("full_name"));
-                instructor.put("email", rs.getString("email"));
-                instructor.put("expertise", rs.getString("expertise"));
-                instructor.put("qualifications", rs.getString("qualifications"));
-                instructor.put("bio", rs.getString("bio"));
+
+                Users u = new Users();
+                u.setUserId(rs.getInt("user_id"));
+                u.setUsername(rs.getString("username"));
+                u.setEmail(rs.getString("email"));
+                u.setFullName(rs.getString("full_name"));
+                u.setProfilePicture(rs.getString("profile_picture"));
+                u.setGender(rs.getString("gender"));
+                u.setPhone(rs.getString("phone"));
+                u.setRole(rs.getString("role"));
+                u.setStatus(rs.getString("status"));
+
+                instructor = new InstructorProfile();
+                instructor.setUser(u);
+                instructor.setBio(rs.getString("bio"));
+                instructor.setExpertise(rs.getString("expertise"));
+                instructor.setQualifications(rs.getString("qualifications"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return instructor;
     }
+
+    public List<QuizDTO> getQuizzesWithQuestions(int courseId) {
+        List<QuizDTO> quizzes = new ArrayList<>();
+
+        String sql = "SELECT qz.quiz_id, mi.module_item_id, qz.title, "
+                + "qz.passing_score_pct, qz.pick_count, qz.time_limit_min, "
+                + "qu.question_id, qu.content AS question_content, qu.media_url, qu.type, qu.explanation, "
+                + "qo.option_id, qo.content AS option_content, qo.is_correct "
+                + "FROM Quiz qz "
+                + "JOIN ModuleItem mi ON qz.quiz_id = mi.module_item_id "
+                + "JOIN Module m ON mi.module_id = m.module_id "
+                + "LEFT JOIN ModuleQuestions mq ON mq.module_id = m.module_id "
+                + "LEFT JOIN Question qu ON mq.question_id = qu.question_id "
+                + "LEFT JOIN QuestionOption qo ON qo.question_id = qu.question_id "
+                + "WHERE m.course_id = ? "
+                + "ORDER BY qz.quiz_id, qu.question_id, qo.option_id";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, courseId);
+            ResultSet rs = ps.executeQuery();
+
+            int lastQuizId = -1;
+            int lastQuestionId = -1;
+            QuizDTO currentQuiz = null;
+            QuestionDTO currentQuestion = null;
+
+            while (rs.next()) {
+                int quizId = rs.getInt("quiz_id");
+
+                if (quizId != lastQuizId) {
+                    currentQuiz = new QuizDTO();
+                    currentQuiz.setQuizId(quizId);
+                    currentQuiz.setModuleId(rs.getInt("module_item_id"));
+                    currentQuiz.setTitle(rs.getString("title"));
+
+                    BigDecimal passScore = rs.getBigDecimal("passing_score_pct");
+                    currentQuiz.setPassingScorePct(passScore != null ? passScore.doubleValue() : null);
+                    currentQuiz.setPickCount((Integer) rs.getObject("pick_count"));
+
+                    currentQuiz.setTimeLimitMin((Integer) rs.getObject("time_limit_min"));
+
+                    currentQuiz.setBank(new ArrayList<>());
+                    quizzes.add(currentQuiz);
+
+                    lastQuizId = quizId;
+                    lastQuestionId = -1;
+                }
+
+                int questionId = rs.getInt("question_id");
+                if (questionId > 0) {
+                    if (questionId != lastQuestionId) {
+                        currentQuestion = new QuestionDTO();
+                        currentQuestion.setQuestionId(questionId);
+                        currentQuestion.setContent(rs.getString("question_content"));
+                        currentQuestion.setMediaUrl(rs.getString("media_url"));
+                        currentQuestion.setType(rs.getString("type"));
+                        currentQuestion.setExplanation(rs.getString("explanation"));
+                        currentQuestion.setOptions(new ArrayList<>());
+                        currentQuiz.getBank().add(currentQuestion);
+                        lastQuestionId = questionId;
+                    }
+
+                    int optId = rs.getInt("option_id");
+                    if (optId > 0 && currentQuestion != null) {
+                        QuestionOptionDTO opt = new QuestionOptionDTO();
+                        opt.setOptionId(optId);
+                        opt.setContent(rs.getString("option_content"));
+                        opt.setIsCorrect(rs.getBoolean("is_correct"));
+                        currentQuestion.getOptions().add(opt);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return quizzes;
+    }
+
 }

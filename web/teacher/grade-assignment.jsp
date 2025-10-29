@@ -421,7 +421,7 @@
                     <c:if test="${not empty requestScope.assignment.submissionType}">
                         <div class="submission-content" >
                             <div class="criteria-header">
-<!--                                <div class="content-label">Tiêu chí chấm điểm</div>-->
+                                <!--                                <div class="content-label">Tiêu chí chấm điểm</div>-->
                                 <c:if test="${not empty rubrics}">
                                     <div class="submission-content" style="width: 280%;">
                                         <div class="content-label">Tiêu chí chấm điểm</div>
@@ -543,24 +543,24 @@
                             <c:if test="${fn:endsWith(work.fileUrl, '.doc') || fn:endsWith(work.fileUrl, '.docx')}">
 <!--                                <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=${pageContext.request.scheme}://${pageContext.request.serverName}:${pageContext.request.serverPort}/${work.fileUrl}"
                                         width="100%" height="600px" frameborder="0"></iframe>-->
-                                 <script src="https://unpkg.com/mammoth@1.5.1/mammoth.browser.min.js"></script>
-                                  <script>
-                                      // Đường dẫn đến file Word
-                                      const docxUrl = "${pageContext.request.contextPath}/${work.fileUrl}";
-                                          fetch(docxUrl)
-                                                  .then(response => response.arrayBuffer())
-                                                  .then(arrayBuffer => mammoth.convertToHtml({arrayBuffer}))
-                                                  .then(result => {
-                                                      document.getElementById("docx-preview").innerHTML = result.value;
-                                                  })
-                                                  .catch(err => {
-                                                      console.error("Lỗi đọc file Word:", err);
-                                                      document.getElementById("docx-preview").innerHTML =
-                                                              "<p style='color:red;'>Không thể hiển thị file Word này. Vui lòng tải xuống để xem.</p>" +
-                                                              `<a href='${docxUrl}' class='file-download' target='_blank'><i class='fas fa-download'></i> Tải xuống</a>`;
-                                                  });
-                                  </script>
-                                </c:if>
+                                <script src="https://unpkg.com/mammoth@1.5.1/mammoth.browser.min.js"></script>
+                                <script>
+                                        // Đường dẫn đến file Word
+                                        const docxUrl = "${pageContext.request.contextPath}/${work.fileUrl}";
+                                            fetch(docxUrl)
+                                                    .then(response => response.arrayBuffer())
+                                                    .then(arrayBuffer => mammoth.convertToHtml({arrayBuffer}))
+                                                    .then(result => {
+                                                        document.getElementById("docx-preview").innerHTML = result.value;
+                                                    })
+                                                    .catch(err => {
+                                                        console.error("Lỗi đọc file Word:", err);
+                                                        document.getElementById("docx-preview").innerHTML =
+                                                                "<p style='color:red;'>Không thể hiển thị file Word này. Vui lòng tải xuống để xem.</p>" +
+                                                                `<a href='${docxUrl}' class='file-download' target='_blank'><i class='fas fa-download'></i> Tải xuống</a>`;
+                                                    });
+                                </script>
+                            </c:if>
 
                             <!-- Link tải xuống -->
                             <div style="margin-top:10px;">
@@ -575,6 +575,7 @@
                     <form action="gradeAssignment" method="post" class="grading-form">
                         <input type="hidden" name="assignmentId" value="${work.assignment.assignmentId.moduleItemId}">
                         <input type="hidden" name="studentId" value="${work.student.userId}">
+                        <input type="hidden" name="courseId" value="${work.assignment.assignmentId.module.course.courseId}">
 
                         <div class="form-row">
                             <div class="form-group">

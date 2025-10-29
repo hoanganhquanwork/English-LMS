@@ -372,7 +372,7 @@ public class QuestionDAO extends DBContext {
 
     public List<QuestionDTO> getQuestionByLessonId(int lessonId) {
         List<QuestionDTO> listQuestion = new ArrayList<>();
-        String sql = "SELECT * FROM Question WHERE lesson_id = ?";
+        String sql = "SELECT * FROM Question WHERE lesson_id = ? AND status = 'approved'";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, lessonId);
@@ -425,7 +425,7 @@ public class QuestionDAO extends DBContext {
         String sql = "SELECT q.question_id, q.lesson_id, q.content, q.media_url, "
                 + "q.type, q.explanation FROM ModuleQuestions mq "
                 + "JOIN Question q ON q.question_id = mq.question_id  "
-                + "WHERE mq.module_id = ? ORDER BY q.question_id DESC";
+                + "WHERE mq.module_id = ? AND q.status = 'approved' ORDER BY q.question_id DESC";
 
         try {
             PreparedStatement st = connection.prepareStatement(sql);

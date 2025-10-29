@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.student.profile;
+package controller.manager.flashcard;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,18 +11,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.entity.Users;
-import service.AuthService;
+import java.util.List;
+import model.entity.FlashcardSet;
+import service.FlashcardManagerService;
 
 /**
  *
- * @author Admin
+ * @author LENOVO
  */
-@WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/changeStudentPassword"})
-public class ChangeStudentPasswordServlet extends HttpServlet {
+@WebServlet(name = "FlashcardManagerCotroller", urlPatterns = {"/manager-flashcard"})
+public class FlashcardManagerController extends HttpServlet {
 
-    AuthService authService = new AuthService();
+    private final FlashcardManagerService service = new FlashcardManagerService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +41,10 @@ public class ChangeStudentPasswordServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ChangePasswordServlet</title>");
+            out.println("<title>Servlet FlashcardManagerCotroller</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ChangePasswordServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet FlashcardManagerCotroller at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,8 +62,28 @@ public class ChangeStudentPasswordServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
 
+        try {
+            String keyword = request.getParameter("keyword");
+            String sortType = request.getParameter("sort");
+            if (keyword == null) {
+                keyword = "";
+            }
+            if (sortType == null) {
+                sortType = "newest";
+            }
+
+            List<FlashcardSet> sets = service.getAllSets(keyword, sortType);
+            request.setAttribute("sets", sets);
+            request.setAttribute("keyword", keyword);
+            request.setAttribute("sortType", sortType);
+
+            request.getRequestDispatcher("/views-manager/flashcard/manager-flashcard.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Không thể tải danh sách flashcard.");
+            request.getRequestDispatcher("/views-manager/flashcard/manager-flashcard.jsp").forward(request, response);
+        }
     }
 
     /**
@@ -77,41 +97,24 @@ public class ChangeStudentPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String currentPassword = request.getParameter("currentPassword");
-        String newPassword = request.getParameter("newPassword");
 
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect("home");
-            return;
-        }
-        Users user = (Users) session.getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("home");
-            return;
-        }
+        try {
+            String action = request.getParameter("action");
 
-        boolean isOAuthUser = authService.isOAuthUser(user.getUserId());
-        if (isOAuthUser) {
-            request.setAttribute("errorOAuth",
-                    "Tài khoản đăng nhập bằng OAuth (Google) không thể đổi mật khẩu trong hệ thống này.");
-            request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
-            return;
-        }
-        Users verify = authService.getUserByLogin(user.getUsername(), currentPassword);
-        if (verify == null) {
-            request.setAttribute("errorPassword", "Mật khẩu hiện tại sai");
-            request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
-            return;
-        }
-        int change = authService.updatePasswordByUserId(user.getUserId(), newPassword);
-        if (change > 0) {
-            session.invalidate();
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?resetSuccess=true");
-            return;
-        } else {
-            request.setAttribute("errorMessage", "Có lỗi xảy ra khi cập nhật mật khẩu. Vui lòng thử lại.");
-            request.getRequestDispatcher("/student/change-password.jsp").forward(request, response);
+            if ("hide".equalsIgnoreCase(action)) {
+                int setId = Integer.parseInt(request.getParameter("setId"));
+                service.hideSet(setId);
+            } else if ("activate".equalsIgnoreCase(action)) {
+                int setId = Integer.parseInt(request.getParameter("setId"));
+                service.activateSet(setId);
+            }
+
+            response.sendRedirect("manager-flashcard");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Không thể thực hiện thao tác.");
+            doGet(request, response);
         }
     }
 
@@ -123,6 +126,6 @@ public class ChangeStudentPasswordServlet extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }

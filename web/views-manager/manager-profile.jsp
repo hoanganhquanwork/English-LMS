@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <title>Hồ sơ Quản lý</title>
         <link rel="stylesheet" href="<c:url value='/css/manager-style.css?v=23' />">
-        <link rel="stylesheet" href="<c:url value='/css/manager-profile.css?v=23' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-profile.css?v=234' />">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     </head>

@@ -14,7 +14,7 @@
     </head>
     <body>
         <!-- Header -->
-        <%@ include file="parent_header.jsp" %>
+        <jsp:include page="../header.jsp"/>
 
         <!-- Main -->
         <main class="container">

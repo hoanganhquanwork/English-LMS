@@ -53,15 +53,15 @@ public class RevenueDAO extends DBContext {
     public List<RevenueReportDTO> getYearlyReport() {
         List<RevenueReportDTO> list = new ArrayList<>();
 
-        String sql =  "SELECT YEAR(o.paid_at) AS year, "
-               +"COUNT(oi.course_id) AS courses_sold, "
-               +"SUM(p.amount_vnd) AS total_revenue "
-        +"FROM Orders o "
-        +"LEFT JOIN OrderItems oi ON o.order_id = oi.order_id "
-        +"LEFT JOIN Payments p ON o.order_id = p.order_id "
-        +"WHERE o.status = 'paid' AND p.status = 'captured' "
-        +"GROUP BY YEAR(o.paid_at) "
-        +"ORDER BY YEAR(o.paid_at) ";
+        String sql = "SELECT YEAR(o.paid_at) AS year, "
+                + "COUNT(oi.course_id) AS courses_sold, "
+                + "SUM(p.amount_vnd) AS total_revenue "
+                + "FROM Orders o "
+                + "LEFT JOIN OrderItems oi ON o.order_id = oi.order_id "
+                + "LEFT JOIN Payments p ON o.order_id = p.order_id "
+                + "WHERE o.status = 'paid' AND p.status = 'captured' "
+                + "GROUP BY YEAR(o.paid_at) "
+                + "ORDER BY YEAR(o.paid_at) ";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
@@ -108,5 +108,32 @@ public class RevenueDAO extends DBContext {
         }
 
         return list;
+    }
+
+    public BigDecimal getTotalRevenueInDays(int days) {
+        BigDecimal total = BigDecimal.ZERO;
+
+        String sql = "SELECT SUM(p.amount_vnd) AS total "
+                + "FROM Payments p "
+                + "JOIN Orders o ON p.order_id = o.order_id "
+                + "JOIN OrderItems oi ON o.order_id = oi.order_id "
+                + "JOIN Course c ON oi.course_id = c.course_id "
+                + "WHERE p.status = 'captured' "
+                + "AND o.status = 'paid' "
+                + "AND c.status = 'publish' "
+                + "AND p.captured_at  >= DATEADD(DAY, -?, GETDATE())";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, days);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next() && rs.getBigDecimal("total") != null) {
+                    total = rs.getBigDecimal("total");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return total;
     }
 }

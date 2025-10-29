@@ -5,6 +5,8 @@
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -73,9 +75,32 @@
                         <div class="card question-card shadow-sm mb-3">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
-                                    <div class="fw-semibold">${st.count}. ${aq.question.content}</div>
+                                    <div class="fw-semibold mb-3">${st.count}. ${aq.question.content}</div>
                                 </div>
+                                <c:if test="${not empty aq.question.mediaUrl}">
+                                    <c:set var="url" value="${aq.question.mediaUrl}" />
+                                    <c:set var="lower" value="${fn:toLowerCase(url)}" />
 
+                                    <!--image-->
+                                    <c:if test="${fn:endsWith(lower,'.jpg') 
+                                                  || fn:endsWith(lower,'.jpeg') 
+                                                  || fn:endsWith(lower,'.png') 
+                                                  || fn:endsWith(lower,'.webp') 
+                                                  || fn:endsWith(lower,'.gif')}">
+                                          <img src="${pageContext.request.contextPath}/${url}"
+                                               alt="Minh họa câu hỏi ${st.count}"
+                                               class="img-fluid rounded mb-3"
+                                               style="max-height:260px; object-fit:cover;">
+                                    </c:if>
+
+                                    <!--audio-->
+                                    <c:if test="${fn:endsWith(lower,'.mp3')}">
+                                        <audio controls preload="none" class="w-100 mb-3">
+                                            <source src="${pageContext.request.contextPath}/${url}" type="audio/mpeg">
+                                        </audio>
+                                    </c:if>
+
+                                </c:if>
                                 <!-- MCQ single -->
                                 <c:if test="${aq.question.type == 'mcq_single'}">
                                     <!-- find option in draft -->
@@ -124,7 +149,7 @@
 
                     <div class="d-flex justify-content-start gap-2 border-top pt-3">
                         <button type="submit" name="action" value="submit" class="btn btn-primary">Nộp</button>
-                        <button type="submit" name="action" value="save"   class="btn btn-outline-primary">Lưu bài</button>
+                        <button type="submit" name="action" value="save"   class="btn btn-outline-primary" formnovalidate>Lưu bài</button>
                     </div>
                 </form>
             </c:if>
@@ -179,7 +204,7 @@
                                 </span>
                             </div>
                         </c:if>
-                        
+
                         <c:if test="${not empty aq.question.explanation}">
                             <div class="alert alert-secondary small mt-2 mb-0">
                                 <span class="fw-semibold">Giải thích:</span>
