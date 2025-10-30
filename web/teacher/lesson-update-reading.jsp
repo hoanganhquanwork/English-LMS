@@ -71,11 +71,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                  
                                         <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
                                             <i class="fas fa-plus"></i>
                                         </button>
-                                    </c:if>
+                                   
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
@@ -164,7 +164,7 @@
                                 <i class="fas fa-times"></i>
                                 Hủy bỏ
                             </a>
-                            <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                           
                                 <a href="deleteLesson?courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
                                    class="btn delete-lesson-btn"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa bài học này không?')">
@@ -175,7 +175,7 @@
                                     <i class="fas fa-save"></i>
                                     Cập nhật bài học
                                 </button>
-                            </c:if>
+                            
                         </div>
                     </form>
 

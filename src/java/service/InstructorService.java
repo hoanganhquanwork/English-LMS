@@ -4,7 +4,12 @@
  */
 package service;
 
+import dal.CourseDAO;
 import dal.InstructorDAO;
+import dal.InstructorProfileDAO;
+import java.util.List;
+import model.entity.Course;
+import model.entity.InstructorProfile;
 
 /**
  *
@@ -12,12 +17,21 @@ import dal.InstructorDAO;
  */
 public class InstructorService {
     private InstructorDAO instructorDAO = new InstructorDAO();
-
+     private InstructorProfileDAO dao = new InstructorProfileDAO();
+    private CourseDAO courseDAO = new CourseDAO();
     public int getCourseCount(int instructorId) {
         return instructorDAO.countCoursesByInstructor(instructorId);
     }
 
     public int getActiveStudentCount(int instructorId) {
         return instructorDAO.countStudentsByInstructor(instructorId);
+    }
+    
+      public InstructorProfile getInstructor(int userId) {
+        return dao.getByUserId(userId);
+    }
+
+    public List<Course> getInstructorCourses(int userId) {
+        return courseDAO.getCoursesByInstructor(userId);
     }
 }

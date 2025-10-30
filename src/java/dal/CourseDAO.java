@@ -348,15 +348,18 @@ public class CourseDAO extends DBContext {
     }
 
     public boolean addCourse(Course course) {
-        String sql = "INSERT INTO Course (title, description, language, level, created_by, category_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = """
+        INSERT INTO Course (title, description, language, level, thumbnail, created_by, category_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, course.getTitle());
             ps.setString(2, course.getDescription());
             ps.setString(3, course.getLanguage());
             ps.setString(4, course.getLevel());
-            ps.setInt(5, course.getCreatedBy().getUser().getUserId());
-            ps.setInt(6, course.getCategory().getCategoryId());
+            ps.setString(5, course.getThumbnail());
+            ps.setInt(6, course.getCreatedBy().getUser().getUserId());
+            ps.setInt(7, course.getCategory().getCategoryId());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -470,5 +473,35 @@ public class CourseDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public List<Course> getCoursesByInstructor(int userId) {
+        List<Course> list = new ArrayList<>();
+        String sql = """
+        SELECT course_id, title, description, thumbnail, language, level, price, status
+        FROM Course
+        WHERE created_by = ?
+          AND status = 'publish'
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Course c = new Course();
+                c.setCourseId(rs.getInt("course_id"));
+                c.setTitle(rs.getString("title"));
+                c.setDescription(rs.getString("description"));
+                c.setThumbnail(rs.getString("thumbnail"));
+                c.setLanguage(rs.getString("language"));
+                c.setLevel(rs.getString("level"));
+                c.setPrice(rs.getBigDecimal("price"));
+                c.setStatus(rs.getString("status"));
+                list.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

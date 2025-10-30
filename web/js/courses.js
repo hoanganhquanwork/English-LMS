@@ -2,7 +2,7 @@
 
 // Mở modal tạo khóa học mới
 function openCreateCourseModal() {
- const form = document.getElementById('courseForm');
+    const form = document.getElementById('courseForm');
     const modalTitle = document.getElementById('modalTitle');
     const submitBtn = document.getElementById('submitBtn');
 
@@ -33,7 +33,7 @@ function editCourse(btn) {
 
     // Gán hidden input
     document.getElementById('courseId').value = d.id || '';
-
+    document.getElementById('oldThumbnail').value = d.thumbnail || '';
     // Gán dữ liệu vào form
     document.getElementById('courseTitle').value = d.title || '';
     document.getElementById('courseLanguage').value = d.language || '';
@@ -43,6 +43,15 @@ function editCourse(btn) {
 
     modalTitle.textContent = 'Sửa khóa học';
     submitBtn.textContent = 'Lưu thay đổi';
+    const imgCell = row.querySelector('img');
+    const preview = document.getElementById('previewThumbnail');
+    if (imgCell && imgCell.getAttribute('src')) {
+        preview.src = imgCell.getAttribute('src');
+        preview.style.display = 'block';
+    } else {
+        preview.src = '';
+        preview.style.display = 'none';
+    }
 
     document.getElementById('courseModal').style.display = 'flex';
     document.body.style.overflow = 'hidden';

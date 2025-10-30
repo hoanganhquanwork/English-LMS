@@ -593,7 +593,7 @@ public class QuestionDAO extends DBContext {
 
     public int countSubmittedQuestions(int instructorId, String statusFilter, String topicFilter) {
         StringBuilder sql = new StringBuilder(
-                "SELECT COUNT(*) FROM Question WHERE created_by = ? AND status IN ('submitted','approved')"
+                "SELECT COUNT(*) FROM Question WHERE created_by = ? AND status IN ('submitted','approved') AND lesson_id IS NULL"
         );
 
         if (statusFilter != null && !statusFilter.isEmpty()) {
@@ -628,7 +628,7 @@ public class QuestionDAO extends DBContext {
         List<Question> list = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder(
-                "SELECT * FROM Question WHERE created_by = ? AND status IN ('submitted','approved')"
+                "SELECT * FROM Question WHERE created_by = ? AND status IN ('submitted','approved') AND lesson_id IS NULL"
         );
 
         if (statusFilter != null && !statusFilter.isEmpty()) {
@@ -673,7 +673,7 @@ public class QuestionDAO extends DBContext {
     }
 
     public int countApprovedQuestions(String topicFilter) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Question WHERE status = 'approved'");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Question WHERE status = 'approved' AND lesson_id IS NULL");
         if (topicFilter != null && !topicFilter.isEmpty()) {
             sql.append(" AND topic_id = ?");
         }
@@ -697,7 +697,7 @@ public class QuestionDAO extends DBContext {
     public List<Question> getApprovedQuestionsPaged(String topicFilter, int offset, int pageSize) {
         List<Question> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM Question WHERE status = 'approved'");
+        StringBuilder sql = new StringBuilder("SELECT * FROM Question WHERE status = 'approved' AND lesson_id IS NULL");
         if (topicFilter != null && !topicFilter.isEmpty()) {
             sql.append(" AND topic_id = ?");
         }

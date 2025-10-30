@@ -69,7 +69,7 @@
 
                             <div>
                                 <span class="small text-light">Giảng viên:</span>
-                                <a class="small text-decoration-underline link-purple" href="">
+                                <a class="small text-decoration-underline link-purple" href="instructorProfile?id=${course.instructor.userId}">
                                     ${course.instructor.fullName}
                                 </a>
                             </div>
