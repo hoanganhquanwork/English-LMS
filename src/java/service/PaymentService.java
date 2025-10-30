@@ -122,7 +122,7 @@ public class PaymentService {
                     <p style="margin-top:25px;">Cảm ơn bạn đã sử dụng <b>LinguaTrack</b> để đồng hành trong việc học ngoại ngữ của con bạn.</p>
 
                     <div style="text-align:center;margin-top:25px;">
-                      <a href="http://localhost:8080/EnglishLMS/parent/orders" 
+                      <a href="http://localhost:9999/EnglishLMS/parent/orders" 
                          style="display:inline-block;background-color:#4CAF50;color:#fff;text-decoration:none;
                                 padding:10px 25px;border-radius:6px;font-weight:500;">
                         Xem lại các đơn hàng đã thanh toán
