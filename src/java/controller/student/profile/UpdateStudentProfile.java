@@ -71,6 +71,11 @@ public class UpdateStudentProfile extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
+        String success = (String) session.getAttribute("updateSuccess");
+        if(success != null){
+            request.setAttribute("updateSuccess", success);
+            session.removeAttribute("updateSuccess");
+        }
         request.setAttribute("student", studentService.getStudentProfile(user.getUserId()));
         request.getRequestDispatcher("/student/student-profile.jsp").forward(request, response);
     }

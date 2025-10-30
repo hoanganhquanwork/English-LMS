@@ -40,11 +40,11 @@
             }
         </style>
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <header>
             <jsp:include page="../header.jsp"/>
         </header>
-        <main>
+        <main class="flex-grow-1">
             <div class="login-container">
 
                 <c:if test="${not empty requestScope.errorLogin}">

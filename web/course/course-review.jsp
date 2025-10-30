@@ -11,18 +11,18 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <header>
             <jsp:include page="../header.jsp"/>
         </header>
 
-        <div class="container my-4">
+        <div class="container my-4 flex-grow-1">
 
             <!-- Rating overview-->
             <div class="d-flex align-items-center gap-2 mb-3">
                 <h5 class="m-0">
-                    <fmt:formatNumber value="${summary.avgRating}" minFractionDigits="1" maxFractionDigits="1"/> điểm trung bình
-                    • <fmt:formatNumber value="${summary.totalRatings}"/> lượt đánh giá
+                    <span class="bi bi-star-fill text-warning"></span>    <fmt:formatNumber value="${summary.avgRating}" minFractionDigits="1" maxFractionDigits="1"/> Đánh giá trung bình
+                    • <fmt:formatNumber value="${summary.totalRatings}"/> Lượt đánh giá
                 </h5>
             </div>
 
@@ -179,9 +179,9 @@
 
                                 <!-- Nội dung -->
                                 <p class="mt-2 mb-0">${rv.comment}</p>
-                                
+
                                 <c:if test="${isMine}">
-                                    
+
                                     <div id="edit-${rv.reviewId}" class="collapse mt-2">
                                         <h5 class="mt-4">Chỉnh sửa: </h5>
                                         <form method="post" action="${pageContext.request.contextPath}/reviewAction">

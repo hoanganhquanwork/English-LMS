@@ -24,11 +24,11 @@
             }
         </style>
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <header>
             <jsp:include page="../header.jsp"/>
         </header>
-        <div class="container">
+        <div class="contain flex-grow-1">
             <div class="card p-4">
                 <h2 class="text-center mb-3">Quên mật khẩu</h2>
 

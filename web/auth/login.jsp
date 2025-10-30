@@ -19,7 +19,7 @@
                 flex-direction: column;
             }
             main {
-                flex: 1; 
+                flex: 1;
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -39,11 +39,11 @@
             }
         </style>
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <header>
             <jsp:include page="../header.jsp"/>
         </header>
-        <main>
+        <main class="flex-grow-1">
             <div class="login-container">
 
                 <c:if test="${not empty requestScope.errorLogin}">
@@ -114,8 +114,8 @@
                 </div>
             </div>
         </main>
-            <footer>
-                <jsp:include page="../footer.jsp"/>
-            </footer>
+        <footer>
+            <jsp:include page="../footer.jsp"/>
+        </footer>
     </body>
 </html>
