@@ -56,7 +56,8 @@ public class StudentDAO extends DBContext {
 
     public boolean resentLinkRequest(int studentId, int parentId) {
         String sql = "UPDATE ParentLinkRequests SET status = 'pending',"
-                + " created_at = GETDATE(), decided_at = NULL, note = NULL WHERE student_id = ? AND parent_id = ?";
+                + " created_at = GETDATE(), decided_at = NULL, note = NULL "
+                + " WHERE student_id = ? AND parent_id = ? AND status <> 'unlink'";
         try {
             PreparedStatement st = connection.prepareStatement(sql);
             st.setInt(1, studentId);

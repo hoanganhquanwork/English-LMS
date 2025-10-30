@@ -32,7 +32,7 @@ public class CourseRequestServlet extends HttpServlet {
     private final StudentRequestService linkService = new StudentRequestService();
     private final CourseRequestService courseRequestService = new CourseRequestService();
     private final StudentService studentService = new StudentService();
-
+    private final StudentRequestService studentRequestService = new StudentRequestService();
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -95,6 +95,10 @@ public class CourseRequestServlet extends HttpServlet {
         request.setAttribute("requestEmail", linkEmail);
         StudentProfile s = studentService.getStudentProfile(studentId);
         request.setAttribute("student", s);
+        String rejectNote = studentRequestService.getRejectNote(studentId, linkEmail);
+        if(rejectNote != null){
+            request.setAttribute("rejectNote", rejectNote);
+        }
         //for course request
         String status = request.getParameter("status");
         String sort = request.getParameter("sort");

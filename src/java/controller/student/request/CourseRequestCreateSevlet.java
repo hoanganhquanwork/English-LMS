@@ -90,7 +90,7 @@ public class CourseRequestCreateSevlet extends HttpServlet {
             int studentId = student.getUserId();
             int courseId = Integer.parseInt(request.getParameter("courseId"));
             String source = request.getParameter("source");
-            courseRequestService.insertNewSaveRequest(studentId, courseId, "Khóa học được thêm thêm bởi học sinh");
+            courseRequestService.insertNewSaveRequest(studentId, courseId, "Khóa học được thêm bởi học sinh");
             if ("courseInfo".equalsIgnoreCase(source)) {
                 response.sendRedirect(request.getContextPath() + "/courseInformation?courseId=" + courseId);
             }

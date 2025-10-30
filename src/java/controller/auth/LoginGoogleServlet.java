@@ -12,8 +12,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.entity.StudentProfile;
 import model.entity.Users;
 import service.AuthService;
+import service.StudentService;
 import service.TokenService;
 
 /**
@@ -25,6 +27,7 @@ public class LoginGoogleServlet extends HttpServlet {
 
     private final AuthService authService = new AuthService();
     private final TokenService tokenService = new TokenService();
+    private StudentService studentService = new StudentService();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -69,8 +72,14 @@ public class LoginGoogleServlet extends HttpServlet {
             Users user = authService.loginWithGoogle(code);
             HttpSession session = request.getSession(true);
             session.setAttribute("user", user);
+            String role = user.getRole();
+            session.setAttribute("role", role);
+            if (role.equalsIgnoreCase("Student")) {
+                StudentProfile s = studentService.getStudentProfile(user.getUserId());
+                session.setAttribute("student", s);
+            }
             authService.createRememberMe(user, response);
-            response.sendRedirect("home.jsp");
+            response.sendRedirect(request.getContextPath() + "/home");
         } catch (IllegalStateException e) {
             response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorEmail=true");
         } catch (Exception e) {
