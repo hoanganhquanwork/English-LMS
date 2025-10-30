@@ -25,10 +25,11 @@ import model.entity.InstructorProfile;
 import model.entity.Users;
 import service.CourseService;
 
-/**
- *
- * @author Lenovo
- */
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
+)
 @WebServlet("/addCourse")
 public class AddCourseServlet extends HttpServlet {
 
@@ -81,7 +82,7 @@ public class AddCourseServlet extends HttpServlet {
             }
             InstructorProfileDAO instructorDAO = new InstructorProfileDAO();
             InstructorProfile instructor = instructorDAO.getByUserId(user.getUserId());
-            if (instructor == null) { 
+            if (instructor == null) {
                 response.sendRedirect("manage");
             }
             String title = request.getParameter("title");
@@ -92,6 +93,21 @@ public class AddCourseServlet extends HttpServlet {
             int categoryId = Integer.parseInt(request.getParameter("category"));
             Category category = new CategoryDAO().getCategoryById(categoryId);
 
+            Part filePart = request.getPart("thumbnail");
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+            String uploadPath = getServletContext().getRealPath("/image/thumbnail/course");
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            String savedFileName = System.currentTimeMillis() + "_" + fileName;
+            String filePath = uploadPath + File.separator + savedFileName;
+            filePart.write(filePath);
+
+            String dbPath = "image/thumbnail/course/" + savedFileName;
+
             Course course = new Course();
             course.setTitle(title);
             course.setDescription(description);
@@ -99,6 +115,7 @@ public class AddCourseServlet extends HttpServlet {
             course.setLevel(level);
             course.setCategory(category);
             course.setCreatedBy(instructor);
+            course.setThumbnail(dbPath);
             boolean success = courseService.createCourse(course);
             if (success) {
                 response.sendRedirect("manage");

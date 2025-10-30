@@ -656,14 +656,11 @@
                                 <select id="submissionType" name="submissionType">
                                     <option value="file">File đính kèm</option>
                                     <option value="text">Văn bản trực tuyến</option>
-                                    <option value="both">Cả hai</option>
+                                    
                                 </select>
                             </div>
 
-                            <!--                            <div class="form-group">
-                                                            <label for="gradingCriteria" class="required">Tiêu chí chấm điểm</label>
-                                                            <textarea id="gradingCriteria" name="gradingCriteria" placeholder="Nhập các tiêu chí chấm điểm chi tiết..."></textarea>
-                                                        </div>-->
+                          
 
                             <div class="form-group">
                                 <label class="required">Tiêu chí chấm điểm (Rubric Criteria)</label>

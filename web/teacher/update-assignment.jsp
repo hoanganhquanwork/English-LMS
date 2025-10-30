@@ -557,11 +557,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                  
                                         <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
                                             <i class="fas fa-plus"></i>
                                         </button>
-                                    </c:if>
+                                    
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
@@ -754,7 +754,7 @@
                                     <select id="submissionType" name="submissionType">
                                         <option value="file" ${requestScope.assignment.submissionType == 'file' ? 'selected' : ''}>File đính kèm</option>
                                         <option value="text" ${requestScope.assignment.submissionType == 'text' ? 'selected' : ''}>Văn bản trực tuyến</option>
-                                        <option value="both" ${requestScope.assignment.submissionType == 'both' ? 'selected' : ''}>Cả hai</option>
+                                        
                                     </select>
                                 </div>
 
@@ -860,7 +860,7 @@
                                     <i class="fas fa-times"></i>
                                     Hủy bỏ
                                 </a>
-                                <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                              
                                     <a href="deleteAssignment?courseId=${param.courseId}&moduleId=${param.moduleId}&assignmentId=${param.assignmentId}"
                                        class="btn btn-danger"
                                        onclick="return confirm('Bạn có chắc chắn muốn xóa assignment này không? Hành động này không thể hoàn tác!');">
@@ -871,7 +871,7 @@
                                         <i class="fas fa-save"></i>
                                         Cập nhật Assignment
                                     </button>
-                                </c:if>
+                                
                             </div>
                         </form>
                     </c:if>

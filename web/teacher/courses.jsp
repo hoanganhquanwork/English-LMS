@@ -12,7 +12,8 @@
         <link rel="stylesheet" href="css/courses.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     </head>
-    <body>
+    <body  data-rejected-id="${rejectedCourseId}" 
+           data-reason="${fn:escapeXml(rejectionReason)}">
         <header class="header">
             <div class="container navbar">
                 <a class="brand" href="../index.html"><div class="logo"></div><span>LinguaTrack</span></a>
@@ -67,8 +68,24 @@
                                         data-category="${h.category.categoryId}"
                                         data-price="${h.price}"
                                         data-description="${h.description}"
-                                        data-status="${h.status}">
-                                        <td><div style="width:48px; height:64px; background:#eee; border-radius:6px;"></div></td>
+                                        data-status="${h.status}"
+                                        data-thumbnail="${h.thumbnail}">
+                                        <td style="text-align:center;">
+                                            <c:choose>
+                                                <c:when test="${not empty h.thumbnail}">
+                                                    <img src="${pageContext.request.contextPath}/${h.thumbnail}" 
+                                                         alt="${h.title}" 
+                                                         style="width:48px; height:64px; object-fit:cover; border-radius:6px;">
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div style="width:48px; height:64px; background:#eee;
+                                                         border-radius:6px; display:flex;
+                                                         align-items:center; justify-content:center; color:#888;">
+                                                        <i class="fa fa-image"></i>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
                                         <td><a href="manageModule?courseId=${h.courseId}" style="text-decoration: none; color: black;"><strong>${h.title}</strong></a>
                                             <div class="muted">Mã: ${h.courseId}
                                             </div>
@@ -132,15 +149,25 @@
         <!-- Modal khóa học (dùng chung cho tạo mới và sửa) -->
         <div id="courseModal" class="modal" style="display: none;">
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h3 id="modalTitle">Tạo khóa học mới</h3>
                     <span class="close" onclick="closeCourseModal()">&times;</span>
                 </div>
                 <div class="modal-body">
-                    <form id="courseForm" action="addCourse" method="post" >
+                    <form id="courseForm" action="addCourse" method="post" enctype="multipart/form-data">
                         <input type="hidden" id="courseId" name="courseId">
 
-
+                        <div class="form-group">
+                            <label for="courseThumbnail">Ảnh khóa học *</label>
+                            <div style="margin-bottom:8px;">
+                                <img id="previewThumbnail" src="" 
+                                     alt="Xem trước ảnh" 
+                                     style="width:120px; height:80px; object-fit:cover; border-radius:6px; display:none; border:1px solid #ccc;">
+                            </div>
+                            <input type="file" id="courseThumbnail" name="thumbnail" accept="image/*" class="input" required>
+                            <input type="hidden" id="oldThumbnail" name="oldThumbnail">
+                        </div>
                         <div class="form-group">
                             <label for="courseTitle">Tên khóa học *</label>
                             <input type="text" id="courseTitle" name="title" class="input" required 
@@ -223,12 +250,14 @@
         <c:if test="${not empty rejectionReason}">
             <script>
                 window.addEventListener("DOMContentLoaded", function () {
-                    // Tự động mở modal khi có dữ liệu rejectReason
-                    showRejectionModal(
-                            '${rejectedCourseId}',
-                            'Khóa học ${rejectedCourseId}',
-                            '${fn:escapeXml(rejectionReason)}'
-                            );
+                    const body = document.body;
+                    const courseId = body.dataset.rejectedId;
+                    const reason = body.dataset.reason;
+
+                    if (reason && reason.trim() !== "") {
+                        const title = "Khóa học " + courseId;
+                        showRejectionModal(courseId, title, reason);
+                    }
                 });
             </script>
         </c:if>
@@ -236,43 +265,43 @@
         <link rel="stylesheet" href="css/courses.css" />
         <script src="js/courses.js"></script>
         <script>
-        let currentRejectedCourseId = null;
+                let currentRejectedCourseId = null;
 
-        function showRejectionModal(courseId, courseTitle, reason) {
-            currentRejectedCourseId = courseId;
-            document.getElementById('rejectedCourseTitle').textContent = courseTitle;
-            document.getElementById('rejectedCourseId').textContent = courseId;
+                function showRejectionModal(courseId, courseTitle, reason) {
+                    currentRejectedCourseId = courseId;
+                    document.getElementById('rejectedCourseTitle').textContent = courseTitle;
+                    document.getElementById('rejectedCourseId').textContent = courseId;
 
-            const reasonBox = document.getElementById('rejectionReasonContent');
-            if (reason && reason.trim() !== "") {
-                reasonBox.innerHTML = "<p>" + reason + "</p>";
-            } else {
-                reasonBox.innerHTML = "<p class='text-muted'>Không có thông tin chi tiết về lý do từ chối.</p>";
-            }
+                    const reasonBox = document.getElementById('rejectionReasonContent');
+                    if (reason && reason.trim() !== "") {
+                        reasonBox.innerHTML = "<p>" + reason + "</p>";
+                    } else {
+                        reasonBox.innerHTML = "<p class='text-muted'>Không có thông tin chi tiết về lý do từ chối.</p>";
+                    }
 
-            document.getElementById('rejectionModal').style.display = 'flex';
-        }
-
-        function closeRejectionModal() {
-            document.getElementById('rejectionModal').style.display = 'none';
-            currentRejectedCourseId = null;
-        }
-
-        function resubmitCourse() {
-            if (currentRejectedCourseId) {
-                if (confirm('Bạn có chắc muốn submit lại khóa học này để phê duyệt không?')) {
-                    window.location.href = 'submitCourse?courseId=' + currentRejectedCourseId;
+                    document.getElementById('rejectionModal').style.display = 'flex';
                 }
-            }
-        }
 
-        // Close modal when clicking outside
-        window.onclick = function (event) {
-            const rejectionModal = document.getElementById('rejectionModal');
-            if (event.target === rejectionModal) {
-                closeRejectionModal();
-            }
-        };
+                function closeRejectionModal() {
+                    document.getElementById('rejectionModal').style.display = 'none';
+                    currentRejectedCourseId = null;
+                }
+
+                function resubmitCourse() {
+                    if (currentRejectedCourseId) {
+                        if (confirm('Bạn có chắc muốn submit lại khóa học này để phê duyệt không?')) {
+                            window.location.href = 'submitCourse?courseId=' + currentRejectedCourseId;
+                        }
+                    }
+                }
+
+                // Close modal when clicking outside
+                window.onclick = function (event) {
+                    const rejectionModal = document.getElementById('rejectionModal');
+                    if (event.target === rejectionModal) {
+                        closeRejectionModal();
+                    }
+                };
         </script>
     </body>
 </html>

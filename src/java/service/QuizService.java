@@ -243,7 +243,7 @@ public class QuizService {
         item.setModule(moduleDAO.getModuleById(moduleId));
         item.setItemType("quiz");
         item.setOrderIndex(moduleItemDAO.getNextOrderIndex(moduleId));
-        item.setRequired(true);
+         item.setRequired(passingScorePct != null);
 
         int moduleItemId = moduleItemDAO.insertModuleItem(item);
         if (moduleItemId == -1) {

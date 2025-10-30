@@ -72,7 +72,7 @@ public class AddQuestion extends HttpServlet {
 
         List<Topic> topics = topicService.getAllTopics();
 
-        int pageSize = 5;
+        int pageSize = 15;
         int currentPage = 1;
         if (request.getParameter("page") != null) {
             try {
