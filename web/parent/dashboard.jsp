@@ -198,7 +198,7 @@
                     </c:if>
                 </div>
                 <div style="text-align: right; margin: 30px;">
-                    <a href="${pageContext.request.contextPath}/parent/payment_items" class="btn secondary">Vào trang thanh toán</a>
+                    <a href="${pageContext.request.contextPath}/parent/paymentitems" class="btn secondary">Vào trang thanh toán</a>
                 </div>
             </div>
 
@@ -233,7 +233,7 @@
                                 📋 Còn ${fn:length(vm.linkRequests) - 4} yêu cầu liên kết khác đang chờ xử lý
                             </p>
                             <p style="margin: 8px 0 0 0; font-size: 14px;">
-                                Nhấn "Xem tất cả" để xem danh sách đầy đủ
+                                Nhấn "Vào trang quản lý con" để xem danh sách đầy đủ
                             </p>
                         </div>
                     </c:if>

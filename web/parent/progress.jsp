@@ -22,62 +22,68 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
 
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
+        <header>
             <jsp:include page="../header.jsp"/>
-
-        <main class="container">
-            <div class="page-title">
-                <h2>Tiến độ học tập của con</h2>
-                <p class="lead">Theo dõi chi tiết quá trình học tập và thành tích của con em.</p>
-            </div>
-
-            <div class="child-selector">
-                <label class="form-label">Chọn con để xem tiến độ:</label>
-                <select id="childSelect" class="form-select w-auto" onchange="location = this.value;">
-                    <c:forEach var="ch" items="${children}">
-                        <option value="${pageContext.request.contextPath}/parent/progress?studentId=${ch.userId}"
-                                <c:if test="${ch.userId == selectedStudentId}">selected</c:if>>
-                            ${ch.fullName}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-
-            <div class="progress-overview">
-                <div class="overview-card">
-                    <div class="card-icon">📚</div>
-                    <div class="card-content">
-                        <h3>${overview.activeCourses}</h3>
-                        <p>Khóa học đang học</p>
+        </header>
+        <main class="container contain flex-grow-1">
+            <c:choose>
+                <c:when test="${empty children}">
+                    <div class="empty-state">
+                        <div class="empty-icon">👨‍👩‍👧‍👦</div>
+                        <h3>Không có tài khoản liên kết</h3>
+                        <p>
+                            Vui lòng liên kết ít nhất 1 tài khoản học sinh
+                        </p>
                     </div>
-                </div>
-                <div class="overview-card">
-                    <div class="card-icon">🎯</div>
-                    <div class="card-content">
-                        <h3>${overview.avgProgress}%</h3>
-                        <p>Tiến độ trung bình</p>
+                </c:when>
+                <c:otherwise>
+                    <div class="page-title">
+                        <h2>Tiến độ học tập của con</h2>
+                        <p class="lead">Theo dõi chi tiết quá trình học tập và thành tích của con em.</p>
                     </div>
-                </div>
-                <div class="overview-card">
-                    <div class="card-icon">🏆</div>
-                    <div class="card-content">
-                        <h3>${overview.completedCourses}</h3>
-                        <p>Khóa học đã hoàn thành</p>
+
+                    <div class="child-selector">
+                        <label class="form-label">Chọn con để xem tiến độ:</label>
+                        <select id="childSelect" class="form-select w-auto" onchange="location = this.value;">
+                            <c:forEach var="ch" items="${children}">
+                                <option value="${pageContext.request.contextPath}/parent/progress?studentId=${ch.userId}"
+                                        <c:if test="${ch.userId == selectedStudentId}">selected</c:if>>
+                                    ${ch.fullName}
+                                </option>
+                            </c:forEach>
+                        </select>
                     </div>
-                </div>
 
-            </div>
+                    <div class="progress-overview">
+                        <div class="overview-card">
+                            <div class="card-icon">📚</div>
+                            <div class="card-content">
+                                <h3>${overview.activeCourses}</h3>
+                                <p>Khóa học đang học</p>
+                            </div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="card-icon">🎯</div>
+                            <div class="card-content">
+                                <h3>${overview.avgProgress}%</h3>
+                                <p>Tiến độ trung bình</p>
+                            </div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="card-icon">🏆</div>
+                            <div class="card-content">
+                                <h3>${overview.completedCourses}</h3>
+                                <p>Khóa học đã hoàn thành</p>
+                            </div>
+                        </div>
 
-            <!-- Danh sách tiến độ khóa học -->
-            <section class="progress-section mb-5">
-                <h3>Tiến độ từng khóa học</h3>
+                    </div>
 
-                <c:choose>
-                    <c:when test="${empty courses}">
-                        <div class="alert alert-info mt-3">Học sinh chưa tham gia khóa học nào.</div>
-                    </c:when>
+                    <!-- Danh sách tiến độ khóa học -->
+                    <section class="progress-section mb-5">
+                        <h3>Tiến độ từng khóa học</h3>
 
-                    <c:otherwise>
                         <div class="course-progress-list">
                             <c:forEach var="c" items="${courses}">
                                 <div class="course-progress-item mb-4">
@@ -93,7 +99,7 @@
                                     <div class="row align-items-center mt-3" style ="padding-left: 15px;">
                                         <!-- Thanh tiến độ -->
                                         <div class="col-md-6">
-                                            <div class="progress-bar" style="background: ghostwhite">
+                                            <div class="progress-bar ${c.progressPctRequired >= 100 ? 'completed' : ''}" style="background: ghostwhite">
                                                 <div class="progress-fill" data-width="${c.progressPctRequired}"></div>
                                             </div>
                                             <div class="progress-text mt-1">
@@ -142,11 +148,11 @@
                                            class="btn btn-sm btn-outline-primary" style="border-radius: 15px;">
                                             <i class="bi bi-eye"></i> Xem chi tiết
                                         </a>
-                                            <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}" class="btn primary" target="_blank">
+                                        <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}" class="btn primary" target="_blank">
                                             📖 Xem thông tin khóa học
                                         </a>
                                     </div>
-                                   
+
                                 </div>
                             </c:forEach>
                         </div>
