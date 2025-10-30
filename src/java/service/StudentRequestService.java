@@ -61,9 +61,8 @@ public class StudentRequestService {
     }
 
     public String getRejectNote(int studentId, String parentEmail) {
-        Integer currentPid = pdao.getParentIdByStudentId(studentId);
         Integer parentId = pdao.getParentIdByEmail(parentEmail);
-        if (currentPid != null && parentId != null) {
+        if (parentId != null) {
             return sdao.getRejectNote(studentId, parentId);
         }
         return null;

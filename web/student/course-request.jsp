@@ -77,10 +77,10 @@
                                         <div id="errEmail" class="text-danger small mt-1"></div>
                                         <div class="text-danger small mt-1">${requestScope.messageRequest}</div>
                                     </div>
-                                    <c:if test="${requestScope.noteReject != null}">
+                                    <c:if test="${requestScope.rejectNote != null}">
                                         <div class="text-danger d-flex align-items-center mb-3">
                                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                            <span>Ghi chú từ chối: ${requestScope.noteReject}</span>
+                                            <span>Ghi chú từ chối: ${requestScope.rejectNote}</span>
                                         </div>
                                     </c:if>
 

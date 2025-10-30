@@ -216,7 +216,15 @@ public class QuizService {
 
         QuizDTO quiz = quizDAO.getQuizById(a.getQuizId());
         Double passing = quiz.getPassingScorePct();
-        boolean passed = (passing != null) && (scorePct >= passing.doubleValue());
+        
+        boolean passed = false;
+        //neu dang practice thi chi can nop la danh dau complete
+        if(passing == null){
+            passed = true;
+        }else{
+            passed = scorePct >= passing.doubleValue();
+        }
+//        boolean passed = (passing != null) && (scorePct >= passing.doubleValue());
 
         progressDAO.updateBestQuizOrAssigmentScore(a.getStudentId(), a.getQuizId(), scorePct, passed);
 
