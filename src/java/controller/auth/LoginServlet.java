@@ -27,7 +27,7 @@ import service.TokenService;
  */
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
-    
+
     private final AuthService authService = new AuthService();
     private final TokenService tokenService = new TokenService();
     private final StudentService studentService = new StudentService();
@@ -85,7 +85,13 @@ public class LoginServlet extends HttpServlet {
                         if (user != null && "active".equalsIgnoreCase(user.getStatus())) {
                             HttpSession session = request.getSession(true);
                             session.setAttribute("user", user);
-                            response.sendRedirect("home");
+                            String role = user.getRole();
+                            session.setAttribute("role", role);
+                            if (role.equalsIgnoreCase("Student")) {
+                                StudentProfile student = studentService.getStudentProfile(user.getUserId());
+                                session.setAttribute("student", student);
+                            }
+                            response.sendRedirect(request.getContextPath() + "/home");
                             return;
                         } else {
                             //Wrong or expired token -> remove
@@ -116,7 +122,7 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("remember-me");
-        
+
         Users user = authService.getUserByLogin(username, password);
         if (user != null) {
             HttpSession session = request.getSession(true);
@@ -131,11 +137,11 @@ public class LoginServlet extends HttpServlet {
                 StudentProfile s = studentService.getStudentProfile(user.getUserId());
                 session.setAttribute("student", s);
             }
-            
+
             if (rememberMe != null) {
                 authService.createRememberMe(user, response);
             }
-            
+
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         }
