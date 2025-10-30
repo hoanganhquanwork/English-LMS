@@ -54,9 +54,14 @@
             <a href="changeManagerPassword">
                 <i class="fas fa-key"></i> Đổi mật khẩu
             </a>
+            <a href="reportList">
+                <i class="fas fa-user"></i> Báo lỗi hệ thống
+            </a>
             <a href="logout">
                 <i class="fas fa-sign-out-alt"></i> Đăng xuất
             </a>
         </div>
     </div>
+        
 </aside>
+
