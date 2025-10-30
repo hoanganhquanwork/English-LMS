@@ -111,7 +111,7 @@
 
             <!-- PENDING APPROVALS -->
             <div class="analytics-section">
-                <h2>Yêu cầu chờ phê duyệt</h2>
+                <h2>Yêu cầu khoá học chờ phê duyệt</h2>
 
 
                 <div class="approval-grid">
@@ -119,6 +119,10 @@
                         <div class="approval-card pending">
                             <div class="course-info">
                                 <h4 class="course-title">${r.course.title}</h4>
+                                <div class="course-meta">
+                                    <span class="meta-item">Học sinh: ${r.student.user.fullName}</span>
+                                    <span class="meta-item">Email: ${r.student.user.email}</span>
+                                </div>
                                 <div class="price-section">
                                     <span class="meta-item">Học phí:</span>
                                     <span class="detail-value">
@@ -198,7 +202,7 @@
                     </c:if>
                 </div>
                 <div style="text-align: right; margin: 30px;">
-                    <a href="${pageContext.request.contextPath}/parent/payment_items" class="btn secondary">Vào trang thanh toán</a>
+                    <a href="${pageContext.request.contextPath}/parent/paymentitems" class="btn secondary">Vào trang thanh toán</a>
                 </div>
             </div>
 
@@ -233,7 +237,7 @@
                                 📋 Còn ${fn:length(vm.linkRequests) - 4} yêu cầu liên kết khác đang chờ xử lý
                             </p>
                             <p style="margin: 8px 0 0 0; font-size: 14px;">
-                                Nhấn "Xem tất cả" để xem danh sách đầy đủ
+                                Nhấn "Vào trang quản lý con" để xem danh sách đầy đủ
                             </p>
                         </div>
                     </c:if>

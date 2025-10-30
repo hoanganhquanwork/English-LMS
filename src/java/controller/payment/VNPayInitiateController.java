@@ -32,7 +32,6 @@ public class VNPayInitiateController extends HttpServlet {
                     : request.getParameter("orderId"))
             );
 
-            // NEW: nhận danh sách requestIds (nếu có)
             String reqJoined = (String) request.getAttribute("requestIds");
             if (reqJoined == null) reqJoined = request.getParameter("requestIds");
 
@@ -40,7 +39,6 @@ public class VNPayInitiateController extends HttpServlet {
             String txnRef;
 
             if (reqJoined != null && !reqJoined.isBlank()) {
-                // NEW: tính tổng tiền từ CourseRequest 'unpaid'
                 amount = 0d;
                 for (String s : reqJoined.split("-")) {
                     if (s.isBlank()) continue;
@@ -51,12 +49,9 @@ public class VNPayInitiateController extends HttpServlet {
                     }
                 }
                 if (amount <= 0) throw new IllegalStateException("Tổng tiền không hợp lệ.");
-                // NEW: gói danh sách CR vào txnRef để return parse
                 txnRef = "ORD" + orderId + "_R" + reqJoined + "_" + System.currentTimeMillis();
             } else {
-                // luồng cũ: lấy tổng theo order nếu cần
-                amount = paymentService.getOrderTotal(orderId);
-                txnRef = "ORD" + orderId + "_" + System.currentTimeMillis();
+                return;
             }
 
             paymentService.createPayment(orderId, amount, "card", txnRef);

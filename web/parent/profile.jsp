@@ -12,12 +12,12 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent-profile-styles.css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/parent_link_approval.css" />
     </head>
-    <body>
-        <!-- Header -->
-        <jsp:include page="../header.jsp"/>
-
+    <body class="d-flex flex-column min-vh-100">
+        <header>
+            <jsp:include page="../header.jsp"/>
+        </header>
         <!-- Main -->
-        <main class="container">
+        <main class="container contain flex-grow-1">
             <div class="page-title">
                 <h2>Hồ sơ phụ huynh</h2>
                 <p class="lead">Thông tin tài khoản và liên hệ.</p>

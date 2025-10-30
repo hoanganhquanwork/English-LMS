@@ -50,12 +50,10 @@ public class AdminCreateUserServlet extends HttpServlet {
         switch (result) {
             case "success":
                 req.setAttribute("success", "Tạo tài khoản thành công cho vai trò: " + role);
-                // ở lại form → không redirect
                 break;
             case "Email đã được sử dụng!":
             case "Tên đăng nhập tồn tại":
                 req.setAttribute("error", result);
-                // giữ lại input để user không phải gõ lại
                 req.setAttribute("username", username);
                 req.setAttribute("email", email);
                 req.setAttribute("role", role);

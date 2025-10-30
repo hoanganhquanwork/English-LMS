@@ -9,17 +9,14 @@ public class ParentProgressService {
     
     private ParentProgressDAO dao = new ParentProgressDAO();
     
-    // Lấy danh sách con theo phụ huynh
     public List<Users> getChildrenByParent(int parentId) {
         return dao.getChildrenByParent(parentId);
     }
     
-    // Lấy danh sách tiến độ theo học sinh
     public List<CourseProgressDTO> getCourseProgressByStudent(int studentId) {
         return dao.getCourseProgress(studentId);
     }
 
-    // Tính tổng quan cho dashboard
     public Map<String, Object> getOverview(int studentId) {
         Map<String, Object> data = new HashMap<>();
         List<CourseProgressDTO> list = dao.getCourseProgress(studentId);

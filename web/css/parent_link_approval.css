@@ -304,6 +304,7 @@ body {
     text-align: center;
     padding: 60px 20px;
     color: var(--muted);
+    padding: 20%;
 }
 
 .empty-icon {
@@ -2197,7 +2198,7 @@ body {
     }
 
     .empty-state {
-        padding: 40px 16px;
+        padding: 20px;
     }
 
     .empty-icon {
@@ -2402,20 +2403,25 @@ body {
 }
 
 .progress-bar {
-    position: relative;
-    width: 100%;
-    height: 12px;
-    background: ghostwhite;
-    border-radius: 8px;
-    overflow: hidden;
+  width: 100%;
+  height: 20px;
+  background: ghostwhite;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4a90e2, #007bff);
-    border-radius: 8px 0 0 8px;
-    transition: width 0.4s ease;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #f39c12, #62c61f);
+  transition: width 0.6s ease, background 0.3s ease;
 }
+
+.progress-bar.completed .progress-fill {
+  background: linear-gradient(90deg, #00d200, #03ff81); 
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
 
 .progress-text {
     margin-top: 4px;
