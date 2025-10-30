@@ -211,7 +211,7 @@
                                                                 </c:if>
                                                                 <!--chinh session thanh request-->
                                                                 <c:if test="${requestScope.student.parentId == null}"> 
-                                                                    <button class="btn btn-sm btn-secondary" disabled="">Chưa liên kết</button>
+                                                                    <button class="btn btn-sm btn-secondary w-100" disabled="">Chưa liên kết</button>
                                                                 </c:if>
                                                                 <!--chinh session thanh request-->
 

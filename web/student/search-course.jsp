@@ -107,10 +107,10 @@
                                                style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">
                                                 <c:out value="${c.description}"/>
                                             </p>
-                                            <div class="mt-auto d-flex justify-content-between align-items-center">
+                                            <div class="d-flex justify-content-between align-items-center mt-3">
                                                 <div>
                                                     <span class="price-now">
-                                                        ₫<fmt:formatNumber value="${c.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>
+                                                        <fmt:formatNumber value="${c.price}" type="number" groupingUsed="true" maxFractionDigits="0"/>₫
                                                     </span>
                                                 </div>
                                                 <a href="${pageContext.request.contextPath}/courseInformation?courseId=${c.courseId}">
