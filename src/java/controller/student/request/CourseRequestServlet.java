@@ -33,6 +33,7 @@ public class CourseRequestServlet extends HttpServlet {
     private final CourseRequestService courseRequestService = new CourseRequestService();
     private final StudentService studentService = new StudentService();
     private final StudentRequestService studentRequestService = new StudentRequestService();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -96,7 +97,7 @@ public class CourseRequestServlet extends HttpServlet {
         StudentProfile s = studentService.getStudentProfile(studentId);
         request.setAttribute("student", s);
         String rejectNote = studentRequestService.getRejectNote(studentId, linkEmail);
-        if(rejectNote != null){
+        if (rejectNote != null) {
             request.setAttribute("rejectNote", rejectNote);
         }
         //for course request
@@ -159,7 +160,9 @@ public class CourseRequestServlet extends HttpServlet {
         try {
             Integer requestId = Integer.parseInt(requestIdRaw);
             if ("resend".equalsIgnoreCase(requestAction)) {
-                Integer parentId = student.getParentId();
+                StudentProfile freshStudent = studentService.getStudentProfile(studentId);
+                session.setAttribute("student", freshStudent);
+                Integer parentId = freshStudent.getParentId();
                 if (parentId == null) {
                     throw new IllegalStateException("Bạn chưa liên kết phụ huynh, không thể gửi lại.");
                 }
@@ -193,7 +196,7 @@ public class CourseRequestServlet extends HttpServlet {
         }
 
         Integer pageInt = ParseUtil.parseIntOrNull(page);
-        if(pageInt <= 0 || pageInt == null){
+        if (pageInt == null || pageInt <= 0) {
             pageInt = 1;
         }
         String send = String.format("?status=%s&sort=%s&keyword=%s&page=%s",
