@@ -21,11 +21,11 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/search-courses.css">
 
     </head>
-    <body>
+    <body class="d-flex flex-column min-vh-100">
         <header>
             <jsp:include page="../header.jsp"/>
         </header>
-        <div class="container py-4">
+        <div class="container py-4 flex-grow-1">
             <form id="filterForm" method="get" action="${pageContext.request.contextPath}/courseSearching">
                 <input type="hidden" name="keyWord" value="${requestScope.keyWord}">
 
