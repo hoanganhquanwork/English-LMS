@@ -138,56 +138,56 @@ public class CourseManagerService {
         dao.autoPublishIfDue();
     }
 
-private String handleApprove(String[] courseIds) {
-    if (courseIds == null || courseIds.length == 0) {
-        return " Vui lòng chọn ít nhất một khóa học!";
-    }
-
-    int approvedCount = 0;
-    StringBuilder invalidCourses = new StringBuilder();
-
-    for (String idStr : courseIds) {
-        try {
-            int courseId = Integer.parseInt(idStr.trim());
-            Course course = dao.getCourseById(courseId);
-
-            if (course == null) {
-                invalidCourses.append("[").append(courseId).append("] không tồn tại, ");
-                continue;
-            }
-
-            BigDecimal price = course.getPrice();
-
-            if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
-                invalidCourses.append(course.getTitle())
-                        .append(" (giá: ")
-                        .append(price == null ? "chưa đặt" : price)
-                        .append("), ");
-                continue;
-            }
-
-            boolean success = dao.updateCourseStatus(courseId, "approved");
-            if (success) {
-                approvedCount++;
-            }
-
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
+    private String handleApprove(String[] courseIds) {
+        if (courseIds == null || courseIds.length == 0) {
+            return " Vui lòng chọn ít nhất một khóa học!";
         }
-    }
 
-    if (approvedCount == 0) {
-        return "Không thể duyệt. Tất cả các khóa học được chọn đều chưa có giá hợp lệ.";
-    }
+        int approvedCount = 0;
+        StringBuilder invalidCourses = new StringBuilder();
 
-    if (invalidCourses.length() > 0) {
-        String invalidList = invalidCourses.substring(0, invalidCourses.length() - 2);
-        return "Đã duyệt " + approvedCount + " khóa học, "
-                + "nhưng bỏ qua các khóa chưa có giá hợp lệ: " + invalidList + ".";
-    }
+        for (String idStr : courseIds) {
+            try {
+                int courseId = Integer.parseInt(idStr.trim());
+                Course course = dao.getCourseById(courseId);
 
-    return "Đã duyệt thành công " + approvedCount + " khóa học.";
-}
+                if (course == null) {
+                    invalidCourses.append("[").append(courseId).append("] không tồn tại, ");
+                    continue;
+                }
+
+                BigDecimal price = course.getPrice();
+
+                if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+                    invalidCourses.append(course.getTitle())
+                            .append(" (giá: ")
+                            .append(price == null ? "chưa đặt" : price)
+                            .append("), ");
+                    continue;
+                }
+
+                boolean success = dao.updateCourseStatus(courseId, "approved");
+                if (success) {
+                    approvedCount++;
+                }
+
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (approvedCount == 0) {
+            return "Không thể duyệt. Tất cả các khóa học được chọn đều chưa có giá hợp lệ.";
+        }
+
+        if (invalidCourses.length() > 0) {
+            String invalidList = invalidCourses.substring(0, invalidCourses.length() - 2);
+            return "Đã duyệt " + approvedCount + " khóa học, "
+                    + "nhưng bỏ qua các khóa chưa có giá hợp lệ: " + invalidList + ".";
+        }
+
+        return "Đã duyệt thành công " + approvedCount + " khóa học.";
+    }
 
     private String handleReject(String[] courseIds, String reason, Users manager) {
         if (courseIds == null || courseIds.length == 0) {
@@ -382,9 +382,11 @@ private String handleApprove(String[] courseIds) {
         }
 
         if ("publish".equals(action) && publishDate != null) {
-            LocalDateTime now = LocalDateTime.now();
-            if (publishDate.isBefore(now) || publishDate.isAfter(now.plusYears(1))) {
-                return "Ngày đăng không hợp lệ (phải sau hôm nay và trong vòng 1 năm).";
+            LocalDate today = LocalDate.now();
+            LocalDate publishDay = publishDate.toLocalDate();
+
+            if (publishDay.isBefore(today) || publishDay.isAfter(today.plusYears(1))) {
+                return "Ngày đăng không hợp lệ (phải từ hôm nay và trong vòng 1 năm).";
             }
         }
 
