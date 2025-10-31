@@ -40,13 +40,13 @@
                                         or fn:endsWith(q.mediaUrl, '.gif')}">
                                 <img src="${q.mediaUrl}" alt="Hình minh họa" class="media-img">
                         </c:when>
-                        <c:when test="${fn:endsWith(q.mediaUrl, '.mp4') 
-                                        or fn:endsWith(q.mediaUrl, '.webm') 
-                                        or fn:endsWith(q.mediaUrl, '.mov')}">
-                                <video controls class="media-video">
-                                    <source src="${q.mediaUrl}" type="video/mp4">
-                                    Trình duyệt của bạn không hỗ trợ video.
-                                </video>
+                        <c:when test="${fn:endsWith(q.mediaUrl, '.mp3') 
+                                        or fn:endsWith(q.mediaUrl, '.wav') 
+                                        or fn:endsWith(q.mediaUrl, '.ogg')}">
+                                <audio controls class="media-audio">
+                                    <source src="${q.mediaUrl}" type="audio/mpeg">
+                                    Trình duyệt của bạn không hỗ trợ âm thanh.
+                                </audio>
                         </c:when>
 
                         <c:otherwise>

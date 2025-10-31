@@ -170,7 +170,7 @@ public class QuestionManagerDAO extends DBContext {
     }
 
     public boolean rejectQuestionWithReason(int questionId, String reason) {
-        String sql = "UPDATE Question SET status = 'rejected', review_comment = ? WHERE question_id = ?";
+        String sql = "UPDATE Question SET status = 'rejected', review_comment = ? WHERE question_id = ? AND status = 'submitted'";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, reason);
             ps.setInt(2, questionId);

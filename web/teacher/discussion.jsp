@@ -447,6 +447,174 @@
                 border-color: #c0392b;
                 color: white;
             }
+
+            /* ===== Discussion Wrapper ===== */
+            .discussion-container {
+                width: 90%;
+                max-width: 900px;
+                margin: 40px auto;
+                font-family: "Segoe UI", Roboto, sans-serif;
+                color: #222;
+            }
+
+            /* ===== Discussion Header ===== */
+            .discussion-header {
+                background: #f7f9fb;
+                border: 1px solid #e0e0e0;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 24px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            }
+            .discussion-header h2 {
+                margin: 0 0 8px 0;
+                font-size: 1.6rem;
+                color: #0d47a1;
+            }
+            .discussion-header p {
+                margin: 0;
+                color: #555;
+            }
+
+            /* ===== Post Card ===== */
+            .post-box {
+                background: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 16px 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
+            }
+            .post-box:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            }
+
+            /* ===== Post Header ===== */
+            .post-author {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .post-author img {
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            .post-author .name {
+                font-weight: 600;
+                color: #0d47a1;
+            }
+            .post-date {
+                color: #888;
+                font-size: 0.85rem;
+            }
+
+            /* ===== Post Content ===== */
+            .post-content {
+                font-size: 1rem;
+                line-height: 1.5;
+                color: #333;
+                white-space: pre-line;
+                margin-bottom: 12px;
+            }
+
+            /* ===== Comment Section ===== */
+            .comments {
+                border-top: 1px solid #e0e0e0;
+                padding-top: 10px;
+                margin-top: 10px;
+            }
+            .comment-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .comment-item img {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+            }
+            .comment-bubble {
+                background: #f1f5fb;
+                border-radius: 12px;
+                padding: 10px 14px;
+                flex-grow: 1;
+            }
+            .comment-bubble b {
+                color: #1565c0;
+            }
+            .comment-bubble span {
+                display: block;
+                color: #444;
+            }
+
+            /* ===== Add Comment Form ===== */
+            .add-comment-form {
+                margin-top: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .add-comment-form textarea {
+                resize: none;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                padding: 8px 10px;
+                font-size: 0.95rem;
+                transition: border-color 0.2s ease;
+            }
+            .add-comment-form textarea:focus {
+                outline: none;
+                border-color: #1976d2;
+            }
+            .add-comment-form button {
+                align-self: flex-end;
+                background: #1976d2;
+                color: white;
+                border: none;
+                padding: 6px 14px;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: background 0.2s ease;
+            }
+            .add-comment-form button:hover {
+                background: #0d47a1;
+            }
+
+            /* ===== Add Post Form ===== */
+            .add-post-form {
+                margin-bottom: 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .add-post-form textarea {
+                resize: none;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                padding: 10px;
+                font-size: 1rem;
+                min-height: 80px;
+            }
+            .add-post-form button {
+                align-self: flex-end;
+                background: #43a047;
+                color: white;
+                border: none;
+                padding: 8px 18px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background 0.2s ease;
+            }
+            .add-post-form button:hover {
+                background: #2e7d32;
+            }
+
         </style>
 
         <script src="https://cdn.tiny.cloud/1/808iwiomkwovmb2cvokzivnjb0nka12kkujkdkuf8tpcoxtw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
@@ -589,20 +757,72 @@
                                 <i class="fas fa-times"></i>
                                 Hủy bỏ
                             </a>
-                         
-                                <a href="deleteDiscussion?courseId=${param.courseId}&moduleId=${param.moduleId}&discussionId=${discussion.discussionId}" 
-                                   class="btn delete-discussion-btn"
-                                   onclick="return confirm('Bạn có chắc chắn muốn xóa thảo luận này không?')">
-                                    <i class="fas fa-trash"></i>
-                                    Xóa thảo luận
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i>
-                                    Cập nhật thảo luận
-                                </button>
-                           
+
+                            <a href="deleteDiscussion?courseId=${param.courseId}&moduleId=${param.moduleId}&discussionId=${discussion.discussionId}" 
+                               class="btn delete-discussion-btn"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa thảo luận này không?')">
+                                <i class="fas fa-trash"></i>
+                                Xóa thảo luận
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Cập nhật thảo luận
+                            </button>
+
                         </div>
                     </form>
+<!--                    <div class="discussion-container">
+                        <div class="discussion-header">
+                            <h2>${discussion.title}</h2>
+                            <p>${discussion.description}</p>
+                        </div>
+
+                         Form tạo post 
+                        <form action="addPost" method="post" class="add-post-form">
+                            <input type="hidden" name="discussionId" value="${discussion.discussionId}">
+                            <textarea name="content" placeholder="Viết bài thảo luận..." required></textarea>
+                            <button type="submit">Đăng bài</button>
+                        </form>
+
+                         Danh sách bài post 
+                        <c:forEach var="entry" items="${postCommentMap}">
+                            <c:set var="post" value="${entry.key}" />
+                            <c:set var="comments" value="${entry.value}" />
+
+                            <div class="post-box">
+                                <div class="post-author">
+                                    <img src="img/default-avatar.png" alt="Avatar">
+                                    <div>
+                                        <div class="name">User ${post.authorUserId}</div>
+                                        <div class="post-date">${post.createdAt}</div>
+                                    </div>
+                                </div>
+
+                                <div class="post-content">${post.content}</div>
+
+                                 Comment list 
+                                <div class="comments">
+                                    <c:forEach var="c" items="${comments}">
+                                        <div class="comment-item">
+                                            <img src="img/default-avatar.png" alt="Avatar">
+                                            <div class="comment-bubble">
+                                                <b>User ${c.authorUserId}</b>
+                                                <span>${c.content}</span>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+
+                                     Add comment form 
+                                    <form action="addComment" method="post" class="add-comment-form">
+                                        <input type="hidden" name="postId" value="${post.postId}">
+                                        <textarea name="content" placeholder="Viết bình luận..." required></textarea>
+                                        <button type="submit">Gửi</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>-->
+
 
                     <c:if test="${not empty error}">
                         <div class="alert alert-danger mt-3">${error}</div>

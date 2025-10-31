@@ -13,6 +13,8 @@ import model.dto.DiscussionDTO;
 import model.dto.DiscussionPostDTO;
 import java.util.*;
 import model.entity.Discussion;
+import model.entity.DiscussionComment;
+import model.entity.DiscussionPost;
 
 /**
  *
@@ -376,7 +378,7 @@ public class DiscussionDAO extends DBContext {
         return false;
     }
 
-    // Xóa thảo luận theo ID
+   
     public boolean deleteDiscussion(int discussionId) {
         String sql = "DELETE FROM Discussion WHERE discussion_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -387,6 +389,47 @@ public class DiscussionDAO extends DBContext {
         }
         return false;
     }
-    
+     public List<DiscussionPost> getPostsByDiscussionId(int discussionId) {
+        List<DiscussionPost> list = new ArrayList<>();
+        String sql = "SELECT * FROM DiscussionPosts WHERE discussion_id = ? ORDER BY created_at DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, discussionId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DiscussionPost p = new DiscussionPost();
+                p.setPostId(rs.getLong("post_id"));
+                p.setDiscussionId(rs.getInt("discussion_id"));
+                p.setAuthorUserId(rs.getInt("author_user_id"));
+                p.setContent(rs.getString("content"));
+                p.setCreatedAt(rs.getTimestamp("created_at"));
+                p.setEditedAt(rs.getTimestamp("edited_at"));
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+     public List<DiscussionComment> getCommentsByPostId(long postId) {
+    List<DiscussionComment> list = new ArrayList<>();
+    String sql = "SELECT * FROM DiscussionComments WHERE post_id = ? ORDER BY created_at ASC";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setLong(1, postId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            DiscussionComment c = new DiscussionComment();
+            c.setCommentId(rs.getLong("comment_id"));
+            c.setPostId(rs.getLong("post_id"));
+            c.setAuthorUserId(rs.getInt("author_user_id"));
+            c.setContent(rs.getString("content"));
+            c.setCreatedAt(rs.getTimestamp("created_at"));
+            c.setEditedAt(rs.getTimestamp("edited_at"));
+            list.add(c);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 
 }

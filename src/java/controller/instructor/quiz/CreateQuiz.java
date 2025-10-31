@@ -87,7 +87,7 @@ public class CreateQuiz extends HttpServlet {
             String title = request.getParameter("title");
 
          
-            String scoreStr = request.getParameter("passingScore");
+            String scoreStr = request.getParameter("passing_score_pct");
             String pickStr = request.getParameter("pickCount");
             String timeStr = request.getParameter("time_limit");
 

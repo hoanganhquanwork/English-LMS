@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  */
 public class Discussion {
 
-    private int discussionId;  // trùng với module_item_id
+    private int discussionId;  
     private String title;
     private String description;
     private LocalDateTime createdAt;
