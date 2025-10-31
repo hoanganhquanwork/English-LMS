@@ -165,3 +165,25 @@ body {
   color: #0d6efd;
   border-left-color: #0d6efd;
 }
+/* ====== Bố cục 2 cột ====== */
+.admin-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Sidebar chiếm chiều rộng nhỏ, cố định */
+.admin-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+/* Phần nội dung (report list) chiếm phần còn lại */
+.admin-layout .container {
+  flex-grow: 1;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}

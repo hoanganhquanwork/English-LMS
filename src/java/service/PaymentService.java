@@ -22,6 +22,7 @@ public class PaymentService {
     private final CourseRequestDAO crdao = new CourseRequestDAO();
 
     private static class ParsedRef {
+
         int orderId = -1;
         List<Integer> reqIds = new ArrayList<>();
     }
@@ -36,10 +37,13 @@ public class PaymentService {
                 if (a.length > 1) {
                     String reqPart = a[1].split("_")[0];
                     for (String s : reqPart.split("-")) {
-                        if (!s.isBlank()) p.reqIds.add(Integer.parseInt(s));
+                        if (!s.isBlank()) {
+                            p.reqIds.add(Integer.parseInt(s));
+                        }
                     }
                 }
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
         return p;
     }
@@ -60,11 +64,13 @@ public class PaymentService {
 
             for (Integer reqId : ref.reqIds) {
                 CourseRequest cr = crdao.getById(reqId);
-                if (cr == null || !"unpaid".equalsIgnoreCase(cr.getStatus())) continue;
+                if (cr == null || !"unpaid".equalsIgnoreCase(cr.getStatus())) {
+                    continue;
+                }
 
-                int courseId  = cr.getCourse().getCourseId();
+                int courseId = cr.getCourse().getCourseId();
                 int studentId = cr.getStudent().getUserId();
-                double price  = cr.getCourse().getPrice().doubleValue();
+                double price = cr.getCourse().getPrice().doubleValue();
 
                 try {
                     itemDAO.createForOrder(ref.orderId, reqId, courseId, studentId, price);
@@ -74,8 +80,8 @@ public class PaymentService {
                 eService.enrollAfterPayment(courseId, studentId);
                 crdao.updateStatus(reqId, "approved");
                 crdao.updateNoteForRequest(reqId, "Phụ huynh đã thanh toán thành công");
-                sendPaymentSuccessEmail(ref.orderId, txnRef);
             }
+            sendPaymentSuccessEmail(ref.orderId, txnRef);
             result = "success";
         } else {
             if (ref.orderId > 0) {
@@ -122,10 +128,10 @@ public class PaymentService {
                     <p style="margin-top:25px;">Cảm ơn bạn đã sử dụng <b>LinguaTrack</b> để đồng hành trong việc học ngoại ngữ của con bạn.</p>
 
                     <div style="text-align:center;margin-top:25px;">
-                      <a href="http://localhost:9999/EnglishLMS/parent/orders" 
+                      <a href="http://localhost:9999/EnglishLMS/parent/orderdetail?orderId=%d" 
                          style="display:inline-block;background-color:#4CAF50;color:#fff;text-decoration:none;
                                 padding:10px 25px;border-radius:6px;font-weight:500;">
-                        Xem lại các đơn hàng đã thanh toán
+                        Xem chi tiết đơn hàng đã thanh toán
                       </a>
                     </div>
 
@@ -143,7 +149,8 @@ public class PaymentService {
                     orderId,
                     payment.getAmount(),
                     payment.getTxnRef(),
-                    payment.getCapturedAt()
+                    payment.getCapturedAt(),
+                    payment.getOrderId()
             );
 
             EmailUtil.send(parent.getEmail(),
@@ -176,6 +183,5 @@ public class PaymentService {
     public void cancelPaymentByOrder(int orderId) {
         paymentDAO.deletePaymentByOrder(orderId);
     }
-
 
 }

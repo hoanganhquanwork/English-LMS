@@ -41,8 +41,7 @@ public class ParentLinkApprovalController extends HttpServlet {
                 requests = service.getRequestsByStatus(parentId, "approved");
                 break;
             case "closed": 
-                requests.addAll(service.getRequestsByStatus(parentId, "rejected"));
-                requests.addAll(service.getRequestsByStatus(parentId, "unlink"));
+                requests = service.getRequestsByStatus(parentId, "unlink");
                 break;
             default:
                 requests = service.getRequestsByStatus(parentId, "pending");
@@ -51,8 +50,7 @@ public class ParentLinkApprovalController extends HttpServlet {
 
         int pendingCount = service.getRequestsByStatus(parentId, "pending").size();
         int approvedCount = service.getRequestsByStatus(parentId, "approved").size();
-        int closedCount = service.getRequestsByStatus(parentId, "rejected").size()
-                + service.getRequestsByStatus(parentId, "unlink").size();
+        int closedCount =  service.getRequestsByStatus(parentId, "unlink").size();
 
         request.setAttribute("requests", requests);
         request.setAttribute("filter", filter);
@@ -79,6 +77,6 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         service.cancelRequest(requestId, note);
     }
 
-    response.sendRedirect(request.getContextPath() + "/parentlinkstudent");
+    response.sendRedirect(request.getContextPath() + "/parentlinkstudent?filter=pending");
 }
 }
