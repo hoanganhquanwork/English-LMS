@@ -791,11 +791,11 @@
                                     </table>
 
                                     <div style="margin-top:10px;">
-                                        <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                        
                                             <button type="button" class="btn btn-success" onclick="addCriterion()">
                                                 <i class="fas fa-plus"></i> Thêm tiêu chí
                                             </button>
-                                        </c:if>
+                                        
                                     </div>
 
                                     <div class="hint">
