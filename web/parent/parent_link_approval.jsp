@@ -196,10 +196,10 @@
 
         if (actionType === 'approve') {
             message = 'Bạn có chắc chắn muốn xác nhận liên kết này không?';
-        } else if (actionType === 'reject') {
-            message = 'Bạn có chắc chắn muốn xác nhận liên kết này không?';
         } else if (actionType === 'cancel') {
-            message = 'Vui lòng nhập lý do hủy liên kết:';
+            message = 'Bạn có chắc chắn muốn hủy liên kết này không?';
+        } else if (actionType === 'reject') {
+            message = 'Vui lòng nhập lý do từ chối:';
             needReason = true;
         }
 
