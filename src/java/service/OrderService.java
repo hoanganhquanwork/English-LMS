@@ -44,16 +44,18 @@ public class OrderService {
         for (Orders order : orders) {
             List<OrderItem> items = orderItemDAO.getOrderItemsByOrderId(order.getOrderId());
             order.setItems(items);
-
-            BigDecimal total = BigDecimal.ZERO;
-            for (OrderItem item : items) {
-                BigDecimal price = item.getPriceVnd() != null ? item.getPriceVnd() : BigDecimal.ZERO;
-                total = total.add(price);
-            }
-            order.setTotalAmount(total);
         }
 
         return orders;
+    }
+
+    public Orders getOrderDetail(String orderIdStr) {
+        int orderId = Integer.parseInt(orderIdStr);
+        Orders order = orderDAO.getOrderDetail(orderId);
+        if(order!=null && order.getStatus().equalsIgnoreCase("paid")){
+            return order;
+        }
+        return null;
     }
 
 }
