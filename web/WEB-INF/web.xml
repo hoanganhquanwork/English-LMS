@@ -172,7 +172,28 @@
         <url-pattern>/manageQuizServlet</url-pattern>
         <url-pattern>/updateQuiz</url-pattern>
         
-        <url-pattern>/teacher/*</url-pattern>
+        <url-pattern>/teacher/add-questions.jsp</url-pattern>
+        <url-pattern>/teacher/courses.jsp</url-pattern>
+        <url-pattern>/teacher/create-assignment.jsp</url-pattern>
+        <url-pattern>/teacher/create-discussion.jsp</url-pattern>
+        <url-pattern>/teacher/create-quiz.jsp</url-pattern>
+        <url-pattern>/teacher/dashboard.jsp</url-pattern>
+        <url-pattern>/teacher/discussion.jsp</url-pattern>
+        <url-pattern>/teacher/grade-assignment.jsp</url-pattern>
+        <url-pattern>/teacher/grade-assignments.jsp</url-pattern>
+        <url-pattern>/teacher/lesson-create-reading.jsp</url-pattern>
+        <url-pattern>/teacher/lesson-create-video.jsp</url-pattern>
+        <url-pattern>/teacher/lesson-update-reading.jsp</url-pattern>
+        <url-pattern>/teacher/lesson-video-content.jsp</url-pattern>
+        <url-pattern>/teacher/module.jsp</url-pattern>
+        <url-pattern>/teacher/questions-management.jsp</url-pattern>
+        <url-pattern>/teacher/questions.jsp</url-pattern>
+        <url-pattern>/teacher/student.jsp</url-pattern>
+        <url-pattern>/teacher/teacher-profile.jsp</url-pattern>
+        <url-pattern>/teacher/update-assignment.jsp</url-pattern>
+        <url-pattern>/teacher/update-quiz.jsp</url-pattern>
+        <url-pattern>/teacher/view-questions.jsp</url-pattern>
+
     </filter-mapping>
     
     
@@ -192,7 +213,19 @@
         <url-pattern>/manager-profile</url-pattern>
         <url-pattern>/uploadManagerAvatar</url-pattern>
         
-        <url-pattern>/views-manager/*</url-pattern>
+        <url-pattern>/views-manager/course-detail.jsp</url-pattern>
+        <url-pattern>/views-manager/course-manager.jsp</url-pattern>
+        <url-pattern>/views-manager/course-publish.jsp</url-pattern>
+        <url-pattern>/views-manager/dashboard-manager.jsp</url-pattern>
+        <url-pattern>/views-manager/manager-password.jsp</url-pattern>
+        <url-pattern>/views-manager/manager-profile.jsp</url-pattern>
+        <url-pattern>/views-manager/revenue-report.jsp</url-pattern>
+        <url-pattern>/views-manager/question/question-manager.jsp</url-pattern>
+        <url-pattern>/views-manager/question/question-detail.jsp</url-pattern>
+        <url-pattern>/views-manager/flashcard/flashcard-detail.jsp</url-pattern>
+        <url-pattern>/views-manager/flashcard/manager-flashcard.jsp</url-pattern>
+        <url-pattern>/views-manager/category/cate-topic-management.jsp</url-pattern>
+
 
     </filter-mapping>
     
@@ -214,7 +247,16 @@
         <url-pattern>/AdminReportTypeEdit</url-pattern>
         <url-pattern>/AdminReportTypeStatus</url-pattern>
         
-        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/admin/admin_profile.jsp</url-pattern>
+        <url-pattern>/parent/admin_profile.jsp</url-pattern>
+        <url-pattern>/admin/change_password.jsp</url-pattern>
+        <url-pattern>/admin/admin_create_user.jsp</url-pattern>
+        <url-pattern>/admin/report_detail.jsp</url-pattern>
+        <url-pattern>/admin/report_list.jsp</url-pattern>
+        <url-pattern>/admin/report_type_list.jsp</url-pattern>
+        <url-pattern>/admin/edit_user.jsp</url-pattern>
+        <url-pattern>/admin/admin_dashboard.jsp</url-pattern>
+
 
     </filter-mapping>
     
