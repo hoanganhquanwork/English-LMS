@@ -170,7 +170,7 @@ public class QuestionManagerDAO extends DBContext {
     }
 
     public boolean rejectQuestionWithReason(int questionId, String reason) {
-        String sql = "UPDATE Question SET status = 'rejected', review_comment = ? WHERE question_id = ?";
+        String sql = "UPDATE Question SET status = 'rejected', review_comment = ? WHERE question_id = ? AND status IN ('submitted')";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, reason);
             ps.setInt(2, questionId);
@@ -194,5 +194,19 @@ public class QuestionManagerDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public String getQuestionStatusById(int questionId) {
+        String sql = "SELECT status FROM Question WHERE question_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, questionId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("status");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
