@@ -7,7 +7,7 @@
         <meta charset="UTF-8" />
         <title>Ngân hàng câu hỏi — EnglishLMS Manager</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-        <link rel="stylesheet" href="<c:url value='/css/manager-question.css?v=54' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-question.css?v=514' />">
     </head>
     <body>
         <jsp:include page="../includes-manager/sidebar-manager.jsp" />
@@ -62,7 +62,7 @@
                     <button type="button" class="btn btn-success" onclick="return setBulkAction('approved')">
                         <i class="fa fa-check"></i> Duyệt hàng loạt
                     </button>
-                    <button type="button" class="btn btn-danger" onclick="return setBulkAction('reject')">
+                    <button type="button" class="btn btn-danger" onclick="return setBulkAction('rejected')">
                         <i class="fa fa-times"></i> Từ chối hàng loạt
                     </button>
                 </div>
@@ -94,7 +94,16 @@
                             <tr>
                                 <td><input type="checkbox" name="questionIds" value="${q.questionId}" form="bulkForm"></td>
                                 <td>${q.questionId}</td>
-                                <td>${q.content}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${fn:length(q.content) > 150}">
+                                            ${fn:substring(q.content, 0, 150)}...
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${q.content}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
                                 <td>
                                     <c:choose>
                                         <c:when test="${q.type eq 'mcq_single'}">Trắc nghiệm</c:when>
@@ -223,12 +232,12 @@
                     return false;
                 }
 
-                const ids = Array.from(checked).map(cb => cb.value).join(',');
+                const form = document.getElementById('bulkForm');
+                form.querySelectorAll('input[type="hidden"][name="questionIds"]').forEach(e => e.remove());
+                checked.forEach(cb => addHidden(form, 'questionIds', cb.value));
 
                 if (action === 'approved') {
                     if (confirm(`Xác nhận duyệt ${checked.length} câu hỏi đã chọn?`)) {
-                        const form = document.getElementById('bulkForm');
-                        addHidden(form, 'questionIds', ids);
                         addHidden(form, 'action', 'bulkApprove');
                         form.submit();
                     }
@@ -236,7 +245,7 @@
                 }
 
                 if (action === 'rejected') {
-                    rejectId = ids;
+                    rejectId = Array.from(checked).map(cb => cb.value);
                     document.getElementById('rejectModal').style.display = 'flex';
                     return false;
                 }
