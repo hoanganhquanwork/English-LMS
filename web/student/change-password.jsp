@@ -24,7 +24,7 @@
                         <div class="card-body">
                             <h5 class="card-title mb-4">Thay đổi mật khẩu</h5>
                             <div class="text-danger small mt-1">${requestScope.errorOAuth}</div>
-                            <form action="${pageContext.request.contextPath}/changeStudentPassword" method="post" onsubmit="return validatePassword()">
+                            <form action="${pageContext.request.contextPath}/changeUserPassword" method="post" onsubmit="return validatePassword()">
                                 <div class="mb-3">
                                     <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
                                     <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Mật khẩu hiện tại" required>
