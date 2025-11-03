@@ -489,9 +489,7 @@
                                                             <c:choose>
                                                                 <c:when test="${autoPassed}">
                                                                     <c:set var="displayValue" value="" />
-                                                                    <c:forEach var="key" items="${q.answers}">
-                                                                        <c:set var="displayValue" value="${displayValue}" />
-                                                                    </c:forEach>
+                                                                        <c:set var="displayValue" value="${q.answers[0].answerText}" />
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <c:set var="displayValue" value="${userTextAnswers[q.questionId]}" />
@@ -501,10 +499,8 @@
                                                             <input type="text"
                                                                    name="answersText[${q.questionId}]"
                                                                    value="${displayValue}"
-                                                                   class="form-control
-                                                                   <c:if test='${showResult && isCorrect}'>is-valid</c:if>
-                                                                   <c:if test='${showResult && !isCorrect}'>is-invalid</c:if>"
-                                                                       placeholder="Nhập câu trả lời của bạn..."
+                                                                   class="form-control"
+                                                                   placeholder="Nhập câu trả lời của bạn..."
                                                                    <c:if test='${autoPassed}'>readonly</c:if>
                                                                        required/>
                                                         </c:if>
@@ -521,7 +517,7 @@
                                                                 <c:choose>
                                                                     <c:when test='${autoPassed}'>Đã hoàn thành </c:when>
                                                                     <c:otherwise>
-                                                                        ${quizResult[q.questionId] ? 'Đúng rồi!' : 'Chưa đúng.'}
+                                                                        ${quizResult[q.questionId] == true ? 'Chính xác' : 'Chưa đúng.'}
                                                                     </c:otherwise>
                                                                 </c:choose>
                                                                 <c:if test="${not empty q.explanation}">

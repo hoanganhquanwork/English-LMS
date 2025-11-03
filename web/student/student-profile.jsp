@@ -38,7 +38,7 @@
                             <input type="file" id="avatar-upload" name="avatar"
                                    accept="image/png, image/jpeg" onchange="this.form.submit()">
                         </div>
-                        <div class="profile-upload-desc">JPG hoặc PNG, tối đa 5MB</div>
+                        <div class="profile-upload-desc">Tối đa 5MB</div>
                     </div>
                 </form>
             </div>
