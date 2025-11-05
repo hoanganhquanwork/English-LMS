@@ -28,7 +28,13 @@ public class CourseManagerController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        HttpSession session = request.getSession();
+        Users manager = (Users) session.getAttribute("user");
+        if (manager == null) {
+            session.setAttribute("errorMessage", "Vui lòng đăng nhập để tiếp tục.");
+            response.sendRedirect("loginInternal");
+            return;
+        }
         String status = request.getParameter("status");
         String keyword = request.getParameter("keyword");
         String sort = request.getParameter("sort");
