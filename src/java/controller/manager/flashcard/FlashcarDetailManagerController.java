@@ -22,7 +22,7 @@ import service.FlashcardManagerService;
  * @author LENOVO
  */
 @WebServlet(name="FlashcarDetailManagerControlelr", urlPatterns={"/flashcard-detail"})
-public class FlashcarDetailManagerControlelr extends HttpServlet {
+public class FlashcarDetailManagerController extends HttpServlet {
     private final FlashcardManagerService service = new FlashcardManagerService();
 
     /** 
