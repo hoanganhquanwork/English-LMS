@@ -147,6 +147,18 @@
                                 </c:choose>
                             </div>
                         </c:if>
+
+                        <c:if test="${empty sessionScope.user}">
+                            <form method="post" action="${pageContext.request.contextPath}/createCourseRequest">
+                                <input type="hidden" name="courseId" value="${course.courseId}">
+                                <input type="hidden" name="source" value="courseInfo">
+                                <button type="submit" class="btn btn-primary w-100 fw-semibold"
+                                        style="background-color:#6f42c1; border-color:#6f42c1; color:#fff;">
+                                    <i class="bi bi-plus-circle me-1"></i> Thêm vào danh sách tạm lưu
+                                </button>
+                            </form>
+                        </c:if>
+
                     </div>
                 </div>
             </div>

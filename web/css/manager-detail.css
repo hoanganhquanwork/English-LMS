@@ -1069,7 +1069,7 @@ body.dashboard {
 }
 
 .item-header:hover {
-    background: var(--brand-light);
+    background: var(--accent-light);
     color: #fff;
 }
 

@@ -7,7 +7,7 @@
         <meta charset="UTF-8" />
         <title>Topic & Category Manager - LinguaTrack</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-        <link rel="stylesheet" href="<c:url value='/css/manager-cate-topic.css' />" />
+        <link rel="stylesheet" href="<c:url value='/css/manager-cate-topic.css?v=34' />" />
     </head>
 
     <body>
@@ -46,7 +46,16 @@
                             <tr>
                                 <td>${c.categoryId}</td>
                                 <td>${c.name}</td>
-                                <td>${c.description}</td>
+                                  <td>
+                                    <c:choose>
+                                        <c:when test="${fn:length(c.description) > 150}">
+                                            ${fn:substring(c.description, 0, 150)}...
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${c.description}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
                                 <td>
                                     <c:if test="${not empty c.picture}">
                                         <img src="${c.picture}" width="60" height="60" style="object-fit:cover;border-radius:6px;">

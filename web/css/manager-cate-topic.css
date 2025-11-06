@@ -257,7 +257,7 @@ td img {
     background: white;
     border-radius: var(--radius);
     padding: 1.5rem;
-    width: 420px;
+    width: 700px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     animation: scaleUp 0.25s ease;
 }
@@ -551,7 +551,7 @@ td img {
     background: var(--panel);
     border-radius: var(--radius);
     padding: 1.5rem;
-    width: 400px;
+    width: 700px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     animation: scaleUp 0.25s ease;
 }

@@ -757,3 +757,42 @@ td:last-child .btn {
     border-radius: 8px;
     font-size: 14px;
 }
+
+/* ===== Alert Styles ===== */
+.alert {
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin: 15px 0;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.4s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Success alert */
+.alert.success {
+    background-color: #e6f9ed;
+    border-left: 6px solid #2ecc71;
+    color: #256d3f;
+}
+
+/* Error alert */
+.alert.error {
+    background-color: #fdecea;
+    border-left: 6px solid #e74c3c;
+    color: #8b1d13;
+}
+
+/* Icon (optional, if you add <i> inside div.alert) */
+.alert i {
+    font-size: 18px;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

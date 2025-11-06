@@ -93,14 +93,6 @@
 
                         <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
                     </form>
-
-                    <div class="text-center text-muted my-3">— hoặc —</div>
-
-
-                    <p class="text-center mt-3 mb-0">
-                        Chưa có tài khoản?
-                        <a href="${pageContext.request.contextPath}/registerInternal" class="text-decoration-none">Đăng ký ngay</a>
-                    </p>
                 </div>
             </div>
         </main>
