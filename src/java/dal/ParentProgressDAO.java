@@ -146,7 +146,7 @@ public class ParentProgressDAO extends DBContext {
             FROM Progress p
             JOIN ModuleItem mi ON p.module_item_id = mi.module_item_id
             JOIN Module m ON mi.module_id = m.module_id
-            WHERE p.student_id = ? AND m.course_id = ?
+            WHERE p.student_id = ? AND m.course_id = ? AND mi.is_required = 1
               AND p.status = 'completed' AND p.score_pct IS NOT NULL
         """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
