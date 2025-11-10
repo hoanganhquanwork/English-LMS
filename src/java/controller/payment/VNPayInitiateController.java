@@ -54,7 +54,7 @@ public class VNPayInitiateController extends HttpServlet {
                 return;
             }
 
-            paymentService.createPayment(orderId, amount, "card", txnRef);
+            paymentService.createPayment(orderId, amount, "VNPAY", txnRef);
 
             Map<String, String> vnp_Params = new LinkedHashMap<>();
             vnp_Params.put("vnp_Version", "2.1.0");

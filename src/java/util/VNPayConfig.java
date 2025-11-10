@@ -10,8 +10,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class VNPayConfig {
     // ==== Thông tin cấu hình sandbox demo ====
-    public static final String vnp_TmnCode = "58X4B4HP";
-    public static final String vnp_HashSecret = "VRLDWNVWDNPCOEPBZUTWSEDQAGXJCNGZ";
+    public static final String vnp_TmnCode =   "N958PNJF";           //"58X4B4HP" backup code;
+    public static final String vnp_HashSecret = "W8A7UHKZTOMPH9O8P7VPQRBWWCKTWVOU" ;                    //"VRLDWNVWDNPCOEPBZUTWSEDQAGXJCNGZ";
     public static final String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static final String vnp_ReturnUrl = "http://localhost:9999/EnglishLMS/parent/vnpay-return";
 
