@@ -348,8 +348,8 @@ public class CourseManagerDAO extends DBContext {
                 + "SET reject_reason = ? "
                 + "WHERE course_id = ? AND user_id = ?";
 
-        String sqlInsertManager = "INSERT INTO CourseManagers (course_id, user_id, is_primary, can_approve, can_view_reports, reject_reason) "
-                + "SELECT ?, ?, 1, 1, 1, ? "
+        String sqlInsertManager = "INSERT INTO CourseManagers (course_id, user_id, reject_reason) "
+                + "SELECT ?, ?, ? "
                 + "WHERE NOT EXISTS (SELECT 1 FROM CourseManagers WHERE course_id = ? AND user_id = ?)";
 
         PreparedStatement ps1 = null;
