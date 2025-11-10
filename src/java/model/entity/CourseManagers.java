@@ -1,29 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model.entity;
 
-/**
- *
- * @author LENOVO
- */
 public class CourseManagers {
-    private int courseId;
-    private int userId;
-    private boolean isPrimary;
-    private boolean canApproved;
-    private boolean canViewReports;
+    private int courseId;          
+    private int userId;           
+    private String rejectReason;   
 
     public CourseManagers() {
     }
 
-    public CourseManagers(int courseId, int userId, boolean isPrimary, boolean canApproved, boolean canViewReports) {
+    public CourseManagers(int courseId, int userId, String rejectReason) {
         this.courseId = courseId;
         this.userId = userId;
-        this.isPrimary = isPrimary;
-        this.canApproved = canApproved;
-        this.canViewReports = canViewReports;
+        this.rejectReason = rejectReason;
     }
 
     public int getCourseId() {
@@ -42,27 +30,11 @@ public class CourseManagers {
         this.userId = userId;
     }
 
-    public boolean isIsPrimary() {
-        return isPrimary;
+    public String getRejectReason() {
+        return rejectReason;
     }
 
-    public void setIsPrimary(boolean isPrimary) {
-        this.isPrimary = isPrimary;
-    }
-
-    public boolean isCanApproved() {
-        return canApproved;
-    }
-
-    public void setCanApproved(boolean canApproved) {
-        this.canApproved = canApproved;
-    }
-
-    public boolean isCanViewReports() {
-        return canViewReports;
-    }
-
-    public void setCanViewReports(boolean canViewReports) {
-        this.canViewReports = canViewReports;
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
     }
 }
