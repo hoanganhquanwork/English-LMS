@@ -2,7 +2,7 @@ package dal;
 
 import java.sql.*;
 import java.util.*;
-import model.dto.CourseProgressDTO;
+import model.entity.Course;
 import model.entity.Users;
 
 public class ParentProgressDAO extends DBContext {
@@ -11,7 +11,7 @@ public class ParentProgressDAO extends DBContext {
     public List<Users> getChildrenByParent(int parentId) {
         List<Users> list = new ArrayList<>();
         String sql = "SELECT u.user_id, u.full_name, u.email FROM StudentProfile s "
-                   + "JOIN Users u ON s.user_id = u.user_id WHERE s.parent_id = ?";
+                + "JOIN Users u ON s.user_id = u.user_id WHERE s.parent_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, parentId);
             ResultSet rs = ps.executeQuery();
@@ -29,8 +29,8 @@ public class ParentProgressDAO extends DBContext {
     }
 
     // Lấy danh sách khóa học mà con đang học hoặc đã hoàn thành
-    public List<CourseProgressDTO> getCourseProgress(int studentId) {
-        List<CourseProgressDTO> list = new ArrayList<>();
+    public List<Course> getCourseProgress(int studentId) {
+        List<Course> list = new ArrayList<>();
         String sqlCourses = """
             SELECT e.course_id, c.title
             FROM Enrollments e
@@ -44,32 +44,10 @@ public class ParentProgressDAO extends DBContext {
             while (rs.next()) {
                 int courseId = rs.getInt("course_id");
                 String title = rs.getString("title");
-
-                CourseProgressDTO cp = new CourseProgressDTO();
-                cp.setCourseId(courseId);
-                cp.setCourseTitle(title);
-
-                // --- Gọi các hàm con để tính tiến độ ---
-                int total = countModuleItems(courseId);
-                int completed = countCompletedItems(studentId, courseId);
-                int required = countRequiredItems(courseId);
-                int requiredCompleted = countRequiredCompleted(studentId, courseId);
-
-                cp.setTotalItems(total);
-                cp.setCompletedItems(completed);
-                cp.setRequiredItems(required);
-                cp.setRequiredCompleted(requiredCompleted);
-
-                // Tính phần trăm tiến độ
-                double percent = 0;
-                if (required > 0) percent = (requiredCompleted * 100.0) / required;
-                cp.setProgressPctRequired(percent);
-
-                // Tính điểm trung bình
-                Double avgScore = calculateAverageScore(studentId, courseId);
-                cp.setAvgScorePct(avgScore);
-
-                list.add(cp);
+                Course c = new Course();
+                c.setCourseId(courseId);
+                c.setTitle(title);
+                list.add(c);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,8 +55,7 @@ public class ParentProgressDAO extends DBContext {
         return list;
     }
 
-
-    private int countModuleItems(int courseId) throws SQLException {
+    public int countModuleItems(int courseId) throws SQLException {
         String sql = """
             SELECT COUNT(*) FROM ModuleItem mi
             JOIN Module m ON mi.module_id = m.module_id
@@ -92,7 +69,7 @@ public class ParentProgressDAO extends DBContext {
         }
     }
 
-    private int countRequiredItems(int courseId) throws SQLException {
+    public int countRequiredItems(int courseId) throws SQLException {
         String sql = """
             SELECT COUNT(*) FROM ModuleItem mi
             JOIN Module m ON mi.module_id = m.module_id
@@ -106,7 +83,7 @@ public class ParentProgressDAO extends DBContext {
         }
     }
 
-    private int countCompletedItems(int studentId, int courseId) throws SQLException {
+    public int countCompletedItems(int studentId, int courseId) throws SQLException {
         String sql = """
             SELECT COUNT(*) FROM Progress p
             JOIN ModuleItem mi ON p.module_item_id = mi.module_item_id
@@ -122,7 +99,7 @@ public class ParentProgressDAO extends DBContext {
         }
     }
 
-    private int countRequiredCompleted(int studentId, int courseId) throws SQLException {
+    public int countRequiredCompleted(int studentId, int courseId) throws SQLException {
         String sql = """
             SELECT COUNT(*) FROM Progress p
             JOIN ModuleItem mi ON p.module_item_id = mi.module_item_id
@@ -139,8 +116,7 @@ public class ParentProgressDAO extends DBContext {
         }
     }
 
-    // Tính điểm trung bình của học sinh trong khóa học
-    private Double calculateAverageScore(int studentId, int courseId) throws SQLException {
+    public Double calculateAverageScore(int studentId, int courseId) throws SQLException {
         String sql = """
             SELECT AVG(p.score_pct) as avg_score
             FROM Progress p
@@ -161,6 +137,4 @@ public class ParentProgressDAO extends DBContext {
         return null;
     }
 
-    
-   
 }

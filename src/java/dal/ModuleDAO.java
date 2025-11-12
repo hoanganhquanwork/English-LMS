@@ -191,9 +191,9 @@ public class ModuleDAO extends DBContext {
         List<ModuleWithItemsDTO> modules = new ArrayList<>();
 
         String sql = """
-            SELECT m.module_id, m.course_id, m.title AS module_title, m.description, m.order_index,
-                   mi.module_item_id, mi.item_type, mi.order_index AS item_order, mi.is_required,
-                   l.title AS lesson_title, q.title AS quiz_title, a.title AS assign_title, d.title AS discuss_title,
+            SELECT m.module_id, m.title AS module_title, m.order_index,
+                   mi.item_type, mi.is_required, l.title AS lesson_title, 
+                   q.title AS quiz_title, a.title AS assign_title, d.title AS discuss_title,
                    p.status, p.score_pct
             FROM Module m
             JOIN ModuleItem mi ON m.module_id = mi.module_id
@@ -220,21 +220,16 @@ public class ModuleDAO extends DBContext {
                 if (module == null) {
                     module = new ModuleWithItemsDTO();
                     module.setModuleId(moduleId);
-                    module.setCourseId(rs.getInt("course_id"));
                     module.setTitle(rs.getString("module_title"));
-                    module.setDescription(rs.getString("description"));
                     module.setOrderIndex(rs.getInt("order_index"));
                     module.setItems(new ArrayList<>());
                     moduleMap.put(moduleId, module);
                 }
 
                 ModuleItemViewDTO item = new ModuleItemViewDTO();
-                item.setModuleItemId(rs.getInt("module_item_id"));
                 item.setItemType(rs.getString("item_type"));
-                item.setOrderIndex(rs.getInt("item_order"));
                 item.setRequired(rs.getBoolean("is_required"));
 
-                // Tên hoạt động tùy loại
                 String title = rs.getString("lesson_title");
                 if (title == null) title = rs.getString("quiz_title");
                 if (title == null) title = rs.getString("assign_title");

@@ -2,10 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page import="java.text.DecimalFormat" %>
-<%
-    DecimalFormat df1 = new DecimalFormat("0");
-    request.setAttribute("df1", df1);
-%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%
     request.setAttribute("currentPage", "progress");
@@ -103,7 +100,7 @@
                                                 <div class="progress-fill" data-width="${c.progressPctRequired}"></div>
                                             </div>
                                             <div class="progress-text mt-1">
-                                                <span>${df1.format(c.progressPctRequired)}% hoàn thành</span>
+                                                <span>${fn:substringBefore(c.progressPctRequired, ".")}% hoàn thành</span>
                                             </div>
                                         </div>
 
@@ -125,13 +122,13 @@
                                                     <c:when test="${c.avgScorePct != null}">
                                                         <c:choose>
                                                             <c:when test="${c.avgScorePct >= 80}">
-                                                                <span style="color: #28a745;">${df1.format(c.avgScorePct)}%</span>
+                                                                <span style="color: #28a745;">${fn:substringBefore(c.avgScorePct, ".")}/100</span>
                                                             </c:when>
                                                             <c:when test="${c.avgScorePct >= 60}">
-                                                                <span style="color: #ffc107;">${df1.format(c.avgScorePct)}%</span>
+                                                                <span style="color: #ffc107;">${fn:substringBefore(c.avgScorePct, ".")}/100</span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span style="color: #dc3545;">${df1.format(c.avgScorePct)}%</span>
+                                                                <span style="color: #dc3545;">${fn:substringBefore(c.avgScorePct, ".")}/100</span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </c:when>
