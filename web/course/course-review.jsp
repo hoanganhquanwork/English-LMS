@@ -68,8 +68,8 @@
                                 <!-- Search box -->
                                 <div class="d-flex mb-3">
                                     <input class="form-control form-control-sm me-2" type="text" name="keyword"
-                                           value="${requestScope.keyword}" placeholder="Tìm kiếm đánh giá">
-                                    <button class="btn btn-outline-secondary btn-sm" type="submit">Search</button>
+                                           value="${requestScope.keyword}" placeholder="Nhập từ khóa cần tra cứu">
+                                    <button class="btn btn-outline-secondary btn-sm" style="width: 20%" type="submit">Tra cứu</button>
                                 </div>
                             </form>
 
