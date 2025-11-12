@@ -68,17 +68,24 @@ public class AdminUserEditServlet extends HttpServlet {
             ex.printStackTrace();
         }
 
-        userService.updateUser(
+        String result = userService.updateUser(
                 id,
                 request.getParameter("username"),
                 request.getParameter("email"),
-                request.getParameter("role"),
                 request.getParameter("status"),
                 request.getParameter("phone"),
                 dob,
                 request.getParameter("gender")
         );
 
+        if (!"success".equals(result)) {
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().write("<script>alert('" + result + "');history.back();</script>");
+            return;
+        }
         response.sendRedirect(request.getContextPath() + "/AdminUserList");
+
     }
 }

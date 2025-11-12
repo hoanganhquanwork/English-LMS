@@ -411,23 +411,7 @@
     <servlet-mapping>
         <servlet-name>FlashcardSetController</servlet-name>
         <url-pattern>/set</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>ParentProfileController</servlet-name>
-        <servlet-class>controller.parent.profile.ParentProfileController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/profile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/settings</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/delete</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> 
     <servlet-mapping>
         <servlet-name>CreateLessonServlet</servlet-name>
         <url-pattern>/createLesson</url-pattern>

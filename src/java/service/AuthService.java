@@ -32,12 +32,30 @@ public class AuthService {
         if (udao.getUserByEmail(email) != null) {
             return "Email đã được sử dụng!";
         }
+        if (email.length() < 3) {
+            return "Email phải có ít nhất 3 ký tự.";
+        }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            return "Định dạng email không hợp lệ.";
+        }
+
         String username = user.getUsername();
         if (udao.getUserByUserName(username) != null) {
-            return "Tên đăng nhập tồn tại";
+            return "Tên đăng nhập đã tồn tại";
         }
-        String plainPassword = user.getPassword();
-        String hashedPassword = util.BCryptUtil.hashPassword(plainPassword);
+        if (username == null || username.isEmpty()) {
+            return "Tên đăng nhập không được để trống.";
+        }
+
+        String pwd = user.getPassword();
+        if (pwd == null || pwd.isEmpty()) {
+            return "Mật khẩu không được để trống.";
+        }
+        if (pwd.length() < 8) {
+            return "Mật khẩu phải có ít nhất 8 ký tự.";
+        }
+        if(user.getGender()==null) return "Giới tính không được để trống";
+        String hashedPassword = util.BCryptUtil.hashPassword(pwd);
         user.setPassword(hashedPassword);
         int row = udao.register(user);
         if (row > 0) {

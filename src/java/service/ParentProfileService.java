@@ -39,7 +39,11 @@ public class ParentProfileService {
         if (u.getEmail() == null || !u.getEmail().contains("@")) {
             throw new IllegalArgumentException("Email không hợp lệ.");
         }
-
+        
+        if (dao.isEmailExists(u.getEmail(), u.getUserId())) {
+            throw new IllegalArgumentException("Email đã được sử dụng bởi tài khoản khác.");
+        }
+        
         if (u.getPhone() != null && !u.getPhone().isBlank()) {
             if (!u.getPhone().matches("^(0[3|5|7|8|9])[0-9]{8}$")) {
                 throw new IllegalArgumentException("Số điện thoại không hợp lệ. "
@@ -49,8 +53,7 @@ public class ParentProfileService {
             if (dao.isPhoneExists(u.getPhone(), u.getUserId())) {
                 throw new IllegalArgumentException("Số điện thoại đã được sử dụng bởi tài khoản khác.");
             }
-        } 
-        else {
+        } else {
             throw new IllegalArgumentException("Số điện thoại không được để trống.");
         }
 

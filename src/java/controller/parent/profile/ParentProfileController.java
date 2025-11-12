@@ -1,13 +1,14 @@
 package controller.parent.profile;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-
 import model.entity.Users;
 import model.entity.ParentProfile;
-import service.AuthService;
 import service.ParentProfileService;
+
+@WebServlet("/parent/profile")
 
 public class ParentProfileController extends HttpServlet {
     private final ParentProfileService service = new ParentProfileService();    

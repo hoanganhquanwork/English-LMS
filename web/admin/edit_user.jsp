@@ -9,7 +9,7 @@
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Chỉnh sửa người dùng</title>
-        
+
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
         <link rel="stylesheet" href="<%=ctx%>/css/admin-dashboard.css">
@@ -36,6 +36,12 @@
 
                 <div class="card card-panel">
                     <div class="card-body">
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ${error}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </c:if>
                         <form method="post" action="<%=ctx%>/AdminUserEdit">
                             <input type="hidden" name="id" value="${user.userId}"/>
                             <div class="row g-3">
@@ -66,13 +72,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Vai trò</label>
-                                    <select class="form-select" name="role">
-                                        <option value="Student" ${user.role == 'Student' ? 'selected' : ''}>Student</option>
-                                        <option value="Instructor" ${user.role == 'Instructor' ? 'selected' : ''}>Instructor</option>
-                                        <option value="Manager" ${user.role == 'Manager' ? 'selected' : ''}>Manager</option>
-                                        <option value="Parent" ${user.role == 'Parent' ? 'selected' : ''}>Parent</option>
-                                        <option value="Admin" ${user.role == 'Admin' ? 'selected' : ''}>Admin</option>
-                                    </select>
+                                    <input type="text" class="form-control" id="editRoleDisplay" value="${user.role}" disabled>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Trạng thái</label>

@@ -9,7 +9,7 @@ public class AdminUserDAO extends DBContext {
 
     public Users getById(int id) {
         String sql = "SELECT user_id, username, email, role, status, phone, date_of_birth, gender, created_at "
-                   + "FROM users WHERE user_id = ?";
+                + "FROM users WHERE user_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -88,8 +88,8 @@ public class AdminUserDAO extends DBContext {
 
     public List<Users> searchPaged(String keyword, String role, String status, int page, int size) {
         StringBuilder sb = new StringBuilder(
-            "SELECT user_id, username, email, role, status, phone, gender, date_of_birth, created_at "
-          + "FROM users WHERE 1=1 ");
+                "SELECT user_id, username, email, role, status, phone, gender, date_of_birth, created_at "
+                + "FROM users WHERE 1=1 ");
 
         ArrayList<Object> params = new ArrayList<>();
 
@@ -150,9 +150,10 @@ public class AdminUserDAO extends DBContext {
 
     public int countAllUsers() {
         String sql = "SELECT COUNT(*) FROM users";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -161,43 +162,72 @@ public class AdminUserDAO extends DBContext {
 
     public int countInstructors() {
         String sql = "SELECT COUNT(*) FROM users WHERE role = 'Instructor'";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
 
-    public int updateBasic(int id, String username, String email, String role, String status,
-                       String phone, Date dob, String gender) {
-        String sql = "UPDATE users SET username=?, email=?, role=?, status=?, phone=?, date_of_birth=?, gender=? WHERE user_id=?";
+    public boolean isUsernameTaken(String username, int excludeId) {
+        String sql = "SELECT COUNT(*) FROM users WHERE username = ? AND user_id <> ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setInt(2, excludeId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean isEmailTaken(String email, int excludeId) {
+        String sql = "SELECT COUNT(*) FROM users WHERE email = ? AND user_id <> ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setInt(2, excludeId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int updateBasic(int id, String username, String email, String status,
+            String phone, Date dob, String gender) {
+        String sql = "UPDATE users SET username=?, email=?, status=?, phone=?, date_of_birth=?, gender=? WHERE user_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, email);
-            ps.setString(3, role);
-            ps.setString(4, status);
-            ps.setString(5, phone);
+            ps.setString(3, status);
+            ps.setString(4, phone);
 
             if (dob != null) {
-                ps.setDate(6, dob);
+                ps.setDate(5, dob);
             } else {
-                ps.setNull(6, java.sql.Types.DATE);
+                ps.setNull(5, java.sql.Types.DATE);
             }
 
-            ps.setString(7, gender);
-            ps.setInt(8, id);
+            ps.setString(6, gender);
+            ps.setInt(7, id);
 
             int rows = ps.executeUpdate();
-            System.out.println("✅ DAO.updateBasic -> rows affected = " + rows);
             return rows;
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
     }
-    
+
     public int updateStatus(int id, String status) {
         String sql = "UPDATE users SET status=? WHERE user_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -209,7 +239,7 @@ public class AdminUserDAO extends DBContext {
             return 0;
         }
     }
-    
+
     public int countByStatus(String status) {
         String sql = "SELECT COUNT(*) FROM users WHERE status = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -224,12 +254,11 @@ public class AdminUserDAO extends DBContext {
         }
         return 0;
     }
-    
+
     public List<String> getDistinctRoles() {
         String sql = "SELECT DISTINCT role FROM users WHERE role IS NOT NULL ORDER BY role";
         List<String> roles = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 roles.add(rs.getString("role"));
             }
@@ -238,12 +267,11 @@ public class AdminUserDAO extends DBContext {
         }
         return roles;
     }
-    
+
     public List<String> getDistinctStatuses() {
         String sql = "SELECT DISTINCT status FROM users WHERE status IS NOT NULL ORDER BY status";
         List<String> statuses = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 statuses.add(rs.getString("status"));
             }
@@ -254,4 +282,3 @@ public class AdminUserDAO extends DBContext {
     }
 
 }
-

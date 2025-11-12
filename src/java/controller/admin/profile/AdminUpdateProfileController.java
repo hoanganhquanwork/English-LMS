@@ -26,24 +26,24 @@ public class AdminUpdateProfileController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-
+        String email = request.getParameter("email");
         String fullName = request.getParameter("full_name");
         String phone = request.getParameter("phone");
         String gender = request.getParameter("gender");
         String dob = request.getParameter("date_of_birth");
 
-        // Cập nhật vào đối tượng
+        admin.setEmail(email);
         admin.setFullName(fullName);
         admin.setPhone(phone);
         admin.setGender(gender);
         admin.setDateOfBirth((dob == null || dob.isBlank()) ? null : LocalDate.parse(dob));
         
-        boolean success = profileService.updateProfile(admin);
-        if (success) {
+        String result = profileService.updateProfile(admin);
+        if (result.equals("success")) {
             session.setAttribute("user", admin);
             request.setAttribute("success", "Cập nhật thông tin thành công!");
         } else {
-            request.setAttribute("error", "Không thể cập nhật. Vui lòng thử lại!");
+            request.setAttribute("error", result);
         }
 
         request.setAttribute("adminProfile", admin);

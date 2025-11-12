@@ -47,20 +47,18 @@ public class AdminCreateUserServlet extends HttpServlet {
         newUser.setRole(role);
 
         String result = authService.register(newUser);
-        switch (result) {
-            case "success":
+       
+            if(result.equals("success")){
                 req.setAttribute("success", "Tạo tài khoản thành công cho vai trò: " + role);
-                break;
-            case "Email đã được sử dụng!":
-            case "Tên đăng nhập tồn tại":
+            }
+            else{
                 req.setAttribute("error", result);
                 req.setAttribute("username", username);
                 req.setAttribute("email", email);
                 req.setAttribute("role", role);
-                break;
-            default:
-                req.setAttribute("error", "Không thể tạo tài khoản. Vui lòng thử lại.");
-        }
+                req.setAttribute("gender", gender);
+            }   
+        
 
         req.getRequestDispatcher("/admin/admin_create_user.jsp").forward(req, resp);
     }

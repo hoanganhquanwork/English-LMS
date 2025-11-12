@@ -33,7 +33,7 @@ public class AdminProfileDAO extends DBContext {
     }
 
     public boolean updateProfile(Users u) {
-        String sql = "UPDATE Users SET full_name=?, phone=?, gender=?, date_of_birth=? WHERE user_id=?";
+        String sql = "UPDATE Users SET full_name=?, phone=?, gender=?, date_of_birth=?, email=? WHERE user_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, u.getFullName());
             ps.setString(2, u.getPhone());
@@ -43,7 +43,8 @@ public class AdminProfileDAO extends DBContext {
             } else {
                 ps.setNull(4, Types.DATE);
             }
-            ps.setInt(5, u.getUserId());
+            ps.setString(5, u.getEmail());
+            ps.setInt(6, u.getUserId());
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
