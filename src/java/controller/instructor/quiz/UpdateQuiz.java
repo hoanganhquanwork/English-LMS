@@ -75,13 +75,13 @@ public class UpdateQuiz extends HttpServlet {
             }
 
             // Lấy thông tin course content
-            List<Module> list = service.getModulesByCourse(courseId);
+           
             Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
 
             request.setAttribute("courseId", courseId);
             request.setAttribute("moduleId", moduleId);
             request.setAttribute("quizId", quizId);
-            request.setAttribute("moduleList", list);
+            
             request.setAttribute("content", courseContent);
             request.setAttribute("quiz", quiz);
             request.getRequestDispatcher("teacher/update-quiz.jsp").forward(request, response);

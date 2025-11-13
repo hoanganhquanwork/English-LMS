@@ -77,7 +77,7 @@ public class AddCourseServlet extends HttpServlet {
             Users user = (Users) session.getAttribute("user");
 
             if (user == null || !"Instructor".equalsIgnoreCase(user.getRole())) {
-                response.sendRedirect("auth/login.jsp");
+                response.sendRedirect("loginInternal");
                 return;
             }
             InstructorProfileDAO instructorDAO = new InstructorProfileDAO();

@@ -68,7 +68,7 @@ public class UpdateAssignment extends HttpServlet {
         int courseId = Integer.parseInt(request.getParameter("courseId"));
         int assignmentId = Integer.parseInt(request.getParameter("assignmentId"));
         try {
-            List<model.entity.Module> list = service.getModulesByCourse(courseId);
+
             Map<model.entity.Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
 
             Assignment a = aservice.getAssignmentById(assignmentId);
@@ -78,7 +78,7 @@ public class UpdateAssignment extends HttpServlet {
             request.setAttribute("rubricList", rubricList);
             request.setAttribute("moduleId", moduleId);
             request.setAttribute("courseId", courseId);
-            request.setAttribute("moduleList", list);
+
             request.setAttribute("content", courseContent);
             request.getRequestDispatcher("teacher/update-assignment.jsp").forward(request, response);
 
@@ -148,7 +148,7 @@ public class UpdateAssignment extends HttpServlet {
                         + "&moduleId=" + moduleId + "&assignmentId=" + assignmentId);
             } else {
                 request.setAttribute("error", "Không thể cập nhật Assignment.");
-                request.getRequestDispatcher("teacher/update-assignment.jsp").forward(request, response);
+                doGet(request, response);
             }
 
         } catch (Exception e) {

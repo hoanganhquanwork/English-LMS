@@ -145,7 +145,7 @@ public class PaymentService {
               </body>
             </html>
 """.formatted(
-                    parent.getFullName()==null ? parent.getUserId() : parent.getFullName(),
+                    parent.getFullName()==null ? parent.getUsername(): parent.getFullName(),
                     orderId,
                     payment.getAmount(),
                     payment.getTxnRef(),

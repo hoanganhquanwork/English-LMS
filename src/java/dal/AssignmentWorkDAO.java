@@ -27,16 +27,11 @@ public class AssignmentWorkDAO extends DBContext {
         List<AssignmentWork> list = new ArrayList<>();
 
         String sql = """
-        SELECT aw.assignment_id, aw.student_id, aw.submitted_at, aw.text_answer,
-               aw.file_url, aw.status, aw.score, aw.grader_id,
-               aw.graded_at, aw.feedback_text
-        FROM AssignmentWork aw
-        INNER JOIN Assignment a ON aw.assignment_id = a.assignment_id
-        INNER JOIN ModuleItem mi ON a.assignment_id = mi.module_item_id
-        INNER JOIN Module m ON mi.module_id = m.module_id
-        INNER JOIN Course c ON m.course_id = c.course_id
-        WHERE aw.grader_id = ? AND aw.status IN ('submitted')
-        ORDER BY aw.submitted_at DESC;
+       SELECT * 
+        FROM AssignmentWork
+        WHERE grader_id = ?
+          AND status IN ('submitted', 'passed')
+        ORDER BY submitted_at DESC;
     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -100,11 +95,9 @@ public class AssignmentWorkDAO extends DBContext {
 
     public AssignmentWork getAssignmentWorkDetail(int assignmentId, int studentId) {
         String sql = """
-        SELECT aw.assignment_id, aw.student_id, aw.submitted_at, aw.text_answer,
-               aw.file_url, aw.status, aw.score, aw.grader_id,
-               aw.graded_at, aw.feedback_text
-        FROM AssignmentWork aw
-        WHERE aw.assignment_id = ? AND aw.student_id = ?
+        SELECT * 
+        FROM AssignmentWork
+        WHERE assignment_id = ? AND student_id = ?
     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

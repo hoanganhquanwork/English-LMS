@@ -535,6 +535,7 @@
         </script>
     </head>
     <body>
+           <c:set var="canEdit" value="${sessionScope.currentCourse.status == 'draft' || sessionScope.currentCourse.status == 'rejected'}" />
         <div id="page" data-courseid="${param.courseId}"></div>
         <div class="container" style="max-width: 1600px; margin: 0 auto; padding: 0 20px;">
             <a class="back-link" href="manageModule?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
@@ -557,10 +558,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                  
+                                   <c:if test="${canEdit}">
                                         <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
                                             <i class="fas fa-plus"></i>
                                         </button>
+                                   </c:if>
                                     
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
@@ -770,9 +772,9 @@
                                                 <th style="padding:8px; border:1px solid #ddd;">#</th>
                                                 <th style="padding:8px; border:1px solid #ddd;">Trọng số</th>
                                                 <th style="padding:8px; border:1px solid #ddd;">Hướng dẫn chấm điểm</th>
-                                                    <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                                    <c:if test="${canEdit}">
                                                     <th style="padding:8px; border:1px solid #ddd;">Hành động</th>
-                                                    </c:if>
+                                                </c:if>
                                             </tr>
                                         </thead>
                                         <tbody id="rubricBody">
@@ -781,7 +783,7 @@
                                                     <td><input type="number" name="criterion_no" value="${r.criterionNo}" class="criterion-no" min="1" required style="width:60px;"></td>
                                                     <td><input type="number" name="weight" value="${r.weight}" class="criterion-weight" step="0.01" min="0" max="1" required style="width:80px;"></td>
                                                     <td><input type="text" name="guidance" value="${r.guidance}" class="criterion-guidance" required style="width:100%;"></td>
-                                                        <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                                         <c:if test="${canEdit}">
                                                         <td><button type="button" class="btn btn-danger" onclick="removeCriterion(this)">Xóa</button></td>
                                                     </c:if>
 
@@ -791,11 +793,11 @@
                                     </table>
 
                                     <div style="margin-top:10px;">
-                                        <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                         <c:if test="${canEdit}">
                                             <button type="button" class="btn btn-success" onclick="addCriterion()">
                                                 <i class="fas fa-plus"></i> Thêm tiêu chí
                                             </button>
-                                        </c:if>
+                                         </c:if>
                                     </div>
 
                                     <div class="hint">
@@ -860,7 +862,7 @@
                                     <i class="fas fa-times"></i>
                                     Hủy bỏ
                                 </a>
-                              
+                               <c:if test="${canEdit}">
                                     <a href="deleteAssignment?courseId=${param.courseId}&moduleId=${param.moduleId}&assignmentId=${param.assignmentId}"
                                        class="btn btn-danger"
                                        onclick="return confirm('Bạn có chắc chắn muốn xóa assignment này không? Hành động này không thể hoàn tác!');">
@@ -871,7 +873,7 @@
                                         <i class="fas fa-save"></i>
                                         Cập nhật Assignment
                                     </button>
-                                
+                               </c:if>
                             </div>
                         </form>
                     </c:if>

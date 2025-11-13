@@ -447,6 +447,174 @@
                 border-color: #c0392b;
                 color: white;
             }
+
+            /* ===== Discussion Wrapper ===== */
+            .discussion-container {
+                width: 90%;
+                max-width: 900px;
+                margin: 40px auto;
+                font-family: "Segoe UI", Roboto, sans-serif;
+                color: #222;
+            }
+
+            /* ===== Discussion Header ===== */
+            .discussion-header {
+                background: #f7f9fb;
+                border: 1px solid #e0e0e0;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 24px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            }
+            .discussion-header h2 {
+                margin: 0 0 8px 0;
+                font-size: 1.6rem;
+                color: #0d47a1;
+            }
+            .discussion-header p {
+                margin: 0;
+                color: #555;
+            }
+
+            /* ===== Post Card ===== */
+            .post-box {
+                background: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 16px 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
+            }
+            .post-box:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            }
+
+            /* ===== Post Header ===== */
+            .post-author {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .post-author img {
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            .post-author .name {
+                font-weight: 600;
+                color: #0d47a1;
+            }
+            .post-date {
+                color: #888;
+                font-size: 0.85rem;
+            }
+
+            /* ===== Post Content ===== */
+            .post-content {
+                font-size: 1rem;
+                line-height: 1.5;
+                color: #333;
+                white-space: pre-line;
+                margin-bottom: 12px;
+            }
+
+            /* ===== Comment Section ===== */
+            .comments {
+                border-top: 1px solid #e0e0e0;
+                padding-top: 10px;
+                margin-top: 10px;
+            }
+            .comment-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .comment-item img {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+            }
+            .comment-bubble {
+                background: #f1f5fb;
+                border-radius: 12px;
+                padding: 10px 14px;
+                flex-grow: 1;
+            }
+            .comment-bubble b {
+                color: #1565c0;
+            }
+            .comment-bubble span {
+                display: block;
+                color: #444;
+            }
+
+            /* ===== Add Comment Form ===== */
+            .add-comment-form {
+                margin-top: 12px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .add-comment-form textarea {
+                resize: none;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                padding: 8px 10px;
+                font-size: 0.95rem;
+                transition: border-color 0.2s ease;
+            }
+            .add-comment-form textarea:focus {
+                outline: none;
+                border-color: #1976d2;
+            }
+            .add-comment-form button {
+                align-self: flex-end;
+                background: #1976d2;
+                color: white;
+                border: none;
+                padding: 6px 14px;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: background 0.2s ease;
+            }
+            .add-comment-form button:hover {
+                background: #0d47a1;
+            }
+
+            /* ===== Add Post Form ===== */
+            .add-post-form {
+                margin-bottom: 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .add-post-form textarea {
+                resize: none;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                padding: 10px;
+                font-size: 1rem;
+                min-height: 80px;
+            }
+            .add-post-form button {
+                align-self: flex-end;
+                background: #43a047;
+                color: white;
+                border: none;
+                padding: 8px 18px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background 0.2s ease;
+            }
+            .add-post-form button:hover {
+                background: #2e7d32;
+            }
+
         </style>
 
         <script src="https://cdn.tiny.cloud/1/808iwiomkwovmb2cvokzivnjb0nka12kkujkdkuf8tpcoxtw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
@@ -484,6 +652,7 @@
         </script>
     </head>
     <body>
+        <c:set var="canEdit" value="${sessionScope.currentCourse.status == 'draft' || sessionScope.currentCourse.status == 'rejected'}" />
         <div id="page" data-courseid="${param.courseId}"></div>
         <div class="container" style="max-width: 1600px; margin: 0 auto; padding: 0 20px;">
             <a class="back-link" href="manageModule?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
@@ -505,11 +674,14 @@
                                     <i class="fas fa-folder" style="color: #f39c12;"></i>
                                     ${h.key.title}
                                 </div>
-                                <div class="module-actions">
-                                    <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
+                                <c:if test="${canEdit}">
+                                    <div class="module-actions">
+                                        <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </c:if>
+
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
                                         <i class="fas fa-video" style="color: #e74c3c;"></i>
@@ -551,6 +723,13 @@
                                                 Quiz #${item.moduleItemId}
                                             </a>
                                         </c:when>
+                                        <c:when test="${item.itemType == 'assignment'}">
+                                            <a href="updateAssignment?courseId=${param.courseId}&moduleId=${h.key.moduleId}&assignmentId=${item.moduleItemId}"
+                                               style="text-decoration: none; color: inherit;">
+                                                <i class="fas fa-tasks" style="color: #27ae60;"></i>
+                                                Assignment #${item.moduleItemId}
+                                            </a>
+                                        </c:when>
                                     </c:choose>
                                 </div>
                             </c:forEach>
@@ -564,32 +743,33 @@
                         </div>
                     </div>
                 </aside>
+                <c:if test="${canEdit}">
+                    <!-- Main Content -->
+                    <main class="main-content" style="height: 700px;">
 
-                <!-- Main Content -->
-                <main class="main-content" style="height: 700px;">
-                    <form action="updateDiscussion" method="post">
-                        <input type="hidden" name="courseId" value="${param.courseId}">
-                        <input type="hidden" name="moduleId" value="${param.moduleId}">
-                        <input type="hidden" name="discussionId" value="${discussion.discussionId}">
+                        <form action="updateDiscussion" method="post">
+                            <input type="hidden" name="courseId" value="${param.courseId}">
+                            <input type="hidden" name="moduleId" value="${param.moduleId}">
+                            <input type="hidden" name="discussionId" value="${discussion.discussionId}">
 
-                        <div class="form-group">
-                            <label for="title">Tiêu đề <span style="color:#e74c3c">*</span></label>
-                            <input id="title" name="title" type="text" placeholder="Nhập tiêu đề thảo luận" 
-                                   value="${discussion.title}" required>
-                        </div>
+                            <div class="form-group">
+                                <label for="title">Tiêu đề <span style="color:#e74c3c">*</span></label>
+                                <input id="title" name="title" type="text" placeholder="Nhập tiêu đề thảo luận" 
+                                       value="${discussion.title}" required>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="description">Nội dung mô tả <span style="color:#e74c3c">*</span></label>
-                            <textarea id="description" name="description" class="content-editor" 
-                                      placeholder="Nhập nội dung hướng dẫn cho discussion..." required>${discussion.description}</textarea>
-                        </div>
+                            <div class="form-group">
+                                <label for="description">Nội dung mô tả <span style="color:#e74c3c">*</span></label>
+                                <textarea id="description" name="description" class="content-editor" 
+                                          placeholder="Nhập nội dung hướng dẫn cho discussion..." required>${discussion.description}</textarea>
+                            </div>
 
-                        <div class="actions">
-                            <a class="btn btn-secondary" href="manageModule?courseId=${param.courseId}">
-                                <i class="fas fa-times"></i>
-                                Hủy bỏ
-                            </a>
-                         
+                            <div class="actions">
+                                <a class="btn btn-secondary" href="manageModule?courseId=${param.courseId}">
+                                    <i class="fas fa-times"></i>
+                                    Hủy bỏ
+                                </a>
+
                                 <a href="deleteDiscussion?courseId=${param.courseId}&moduleId=${param.moduleId}&discussionId=${discussion.discussionId}" 
                                    class="btn delete-discussion-btn"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa thảo luận này không?')">
@@ -600,14 +780,74 @@
                                     <i class="fas fa-save"></i>
                                     Cập nhật thảo luận
                                 </button>
-                           
-                        </div>
-                    </form>
 
-                    <c:if test="${not empty error}">
-                        <div class="alert alert-danger mt-3">${error}</div>
-                    </c:if>
-                </main>
+                            </div>
+                        </form>
+
+
+
+
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger mt-3">${error}</div>
+                        </c:if>
+                    </main>
+                </c:if>
+                <c:if test="${!canEdit}">
+                    <div class="discussion-container">
+                        <div class="discussion-header">
+                            <h2>${discussion.title}</h2>
+                            <p>${discussion.description}</p>
+                        </div>
+
+                        Form tạo post 
+                        <form action="addPost" method="post" class="add-post-form">
+                            <input type="hidden" name="discussionId" value="${discussion.discussionId}">
+                            <input type="hidden" name="courseId" value="${param.courseId}">
+                            <textarea name="content" placeholder="Viết bài thảo luận..." required></textarea>
+                            <button type="submit">Đăng bài</button>
+                        </form>
+
+                        Danh sách bài post 
+                        <c:forEach var="entry" items="${postCommentMap}">
+                            <c:set var="post" value="${entry.key}" />
+                            <c:set var="comments" value="${entry.value}" />
+
+                            <div class="post-box">
+                                <div class="post-author">
+                                    <img src="${post.authorUserId.profilePicture == null ? 'image/avatar/avatar_0.png' : post.authorUserId.profilePicture}" alt="Avatar">
+                                    <div>
+                                        <div class="name"> ${post.authorUserId.username}</div>
+                                        <div class="post-date">${post.createdAt}</div>
+                                    </div>
+                                </div>
+
+                                <div class="post-content">${post.content}</div>
+
+                                Comment list 
+                                <div class="comments">
+                                    <c:forEach var="c" items="${comments}">
+                                        <div class="comment-item">
+                                            <img src="${c.authorUserId.profilePicture== null ? 'image/avatar/avatar_0.png' : c.authorUserId.profilePicture}" alt="Avatar">
+                                            <div class="comment-bubble">
+                                                <b>${c.authorUserId.username}</b>
+                                                <span>${c.content}</span>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+
+                                    Add comment form 
+                                    <form action="addComment" method="post" class="add-comment-form">
+                                        <input type="hidden" name="discussionId" value="${discussion.discussionId}">
+                                        <input type="hidden" name="courseId" value="${param.courseId}">
+                                        <input type="hidden" name="postId" value="${post.postId}">
+                                        <textarea name="content" placeholder="Viết bình luận..." required></textarea>
+                                        <button type="submit">Gửi</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:if>
             </div>
         </div>
 

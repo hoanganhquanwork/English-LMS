@@ -134,8 +134,21 @@
             <!-- Course Info Card -->
             <div class="course-info-card">
                 <div class="course-header">
-                    <div class="course-thumbnail">
-                        <i>${course.thumbnail}</i>
+                    <div class="course-thumbnail" style="width:200px; height:130px;">
+                        <c:choose>
+                            <c:when test="${not empty course.thumbnail}">
+                                <img src="${pageContext.request.contextPath}/${course.thumbnail}" 
+                                     alt="${course.title}"
+                                     style="width:100%; height:100%; object-fit:cover; border-radius:8px; border:1px solid #ccc;">
+                            </c:when>
+                            <c:otherwise>
+                                <div style="width:100%; height:100%; background:#eee;
+                                     border-radius:8px; display:flex;
+                                     align-items:center; justify-content:center; color:#888;">
+                                    <i class="fa fa-image" style="font-size:48px;"></i>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="course-details">
                         <h3>${course.title}</h3>
@@ -224,14 +237,7 @@
                                                             <i class="fas fa-eye"></i>
                                                             Xem
                                                         </a>
-                                                            <c:if test="${course.status == 'draft' || course.status == 'rejected'}">
-                                                        <a href="deleteModule?courseId=${param.courseId}&moduleId=${module.moduleId}" 
-                                                           class="btn btn-delete"
-                                                           onclick="return confirm('Bạn có chắc chắn muốn xóa module này không?')">
-                                                            <i class="fas fa-trash"></i>
-                                                            Xóa
-                                                        </a>
-                                                           </c:if>
+                                                        
                                                     </div>
                                                 </td>
                                             </tr>

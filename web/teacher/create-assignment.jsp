@@ -610,12 +610,12 @@
 
                             <div class="form-group">
                                 <label for="description">Hướng dẫn làm bài</label>
-                                <textarea id="description" name="description" placeholder="Hướng dẫn chi tiết về cách làm bài, yêu cầu và lưu ý cho học viên..."></textarea>
+                                <textarea id="description" name="description" placeholder="Hướng dẫn chi tiết về cách làm bài, yêu cầu và lưu ý cho học viên..." required></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="promptSummary">Tóm tắt ngắn gọn</label>
                                 <input id="promptSummary" name="promptSummary" type="text" maxlength="300"
-                                       placeholder="Ví dụ: Viết đoạn văn 150 từ giới thiệu bản thân bằng tiếng Anh.">
+                                       placeholder="Ví dụ: Viết đoạn văn 150 từ giới thiệu bản thân bằng tiếng Anh." required>
                                 <div class="hint">
                                     Tối đa 300 ký tự — mô tả ngắn về nội dung hoặc yêu cầu của bài tập.
                                 </div>
@@ -625,7 +625,7 @@
                               
                                 <div class="form-group">
                                     <label for="weight">Phần trăm đạt yêu cầu (%)</label>
-                                    <input id="passingScorePct" name="passingScorePct" type="number" placeholder="10" min="0" max="100" step="0.1">
+                                    <input id="passingScorePct" name="passingScorePct" type="number" placeholder="10" min="0" max="100" step="0.1" required>
                                 </div>
                             </div>
 
@@ -640,7 +640,7 @@
 
                             <div class="form-group">
                                 <label for="content" class="required">Nội dung bài tập</label>
-                                <textarea id="content" name="content" placeholder="Nhập nội dung chi tiết của bài tập..."></textarea>
+                                <textarea id="content" name="content" placeholder="Nhập nội dung chi tiết của bài tập..." required></textarea>
                             </div>
                         </div>
 

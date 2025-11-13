@@ -49,6 +49,7 @@
 
     </head>
     <body>
+         <c:set var="canEdit" value="${sessionScope.currentCourse.status == 'draft' || sessionScope.currentCourse.status == 'rejected'}" />
         <div id="page" data-courseid="${param.courseId}"></div>
         <div class="container" style="max-width: 1600px; margin: 0 auto; padding: 0 20px;">
             <a class="back-link" href="manageModule?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
@@ -71,10 +72,12 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                  
-                                        <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
+                                    <c:if test="${canEdit}">
+                                         <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
                                             <i class="fas fa-plus"></i>
                                         </button>
+                                    </c:if>
+                                       
                                    
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
@@ -164,7 +167,7 @@
                                 <i class="fas fa-times"></i>
                                 Hủy bỏ
                             </a>
-                           
+                            <c:if test="${canEdit}">
                                 <a href="deleteLesson?courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
                                    class="btn delete-lesson-btn"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa bài học này không?')">
@@ -175,7 +178,7 @@
                                     <i class="fas fa-save"></i>
                                     Cập nhật bài học
                                 </button>
-                            
+                            </c:if>
                         </div>
                     </form>
 

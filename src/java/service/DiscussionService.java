@@ -6,10 +6,14 @@ package service;
 
 import dal.DiscussionDAO;
 import dal.ModuleItemDAO;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import model.dto.DiscussionDTO;
 import model.dto.DiscussionPostDTO;
 import model.entity.Discussion;
+import model.entity.DiscussionComment;
+import model.entity.DiscussionPost;
 
 public class DiscussionService {
 
@@ -110,5 +114,19 @@ public class DiscussionService {
             return false;
         }
     }
+    public Map<DiscussionPost, List<DiscussionComment>> getPostCommentMap(int discussionId) {
+    Map<DiscussionPost, List<DiscussionComment>> result = new LinkedHashMap<>();
+
+    
+    List<DiscussionPost> posts = discussionDAO.getPostsByDiscussionId(discussionId);
+
+    for (DiscussionPost post : posts) {
+        
+        List<DiscussionComment> comments = discussionDAO.getCommentsByPostId(post.getPostId());
+        result.put(post, comments);
+    }
+
+    return result;
+}
 
 }

@@ -20,8 +20,8 @@ public class LessonDAO extends DBContext {
 
     public void insertLesson(Lesson lesson) throws SQLException {
         String sql = """
-        INSERT INTO Lesson (lesson_id, title, content_type, video_url, duration_sec, video_script, text_content)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO Lesson (lesson_id, title, content_type, video_url, duration_sec, text_content)
+        VALUES (?, ?, ?, ?, ?, ?)
     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -39,17 +39,10 @@ public class LessonDAO extends DBContext {
             }
 
            
-            if (lesson.getVideoScript() != null && !lesson.getVideoScript().isEmpty()) {
-                ps.setString(6, lesson.getVideoScript());
+            if (lesson.getTextContent() != null && !lesson.getTextContent().isEmpty()) {
+                ps.setString(6, lesson.getTextContent());
             } else {
                 ps.setNull(6, java.sql.Types.NVARCHAR);
-            }
-
-           
-            if (lesson.getTextContent() != null && !lesson.getTextContent().isEmpty()) {
-                ps.setString(7, lesson.getTextContent());
-            } else {
-                ps.setNull(7, java.sql.Types.NVARCHAR);
             }
 
             ps.executeUpdate();

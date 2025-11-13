@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import model.entity.Discussion;
+import model.entity.DiscussionComment;
+import model.entity.DiscussionPost;
 import model.entity.ModuleItem;
 import service.DiscussionService;
 import service.ModuleItemService;
@@ -42,24 +44,23 @@ public class UpdateDiscussion extends HttpServlet {
     }
     private ModuleService service = new ModuleService();
     private ModuleItemService contentService = new ModuleItemService();
-      private DiscussionService dservice = new DiscussionService();
+    private DiscussionService dservice = new DiscussionService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+      
         int courseId = Integer.parseInt(request.getParameter("courseId"));
-         int discussionId = Integer.parseInt(request.getParameter("discussionId"));
+        int discussionId = Integer.parseInt(request.getParameter("discussionId"));
         try {
-            List<model.entity.Module> list = service.getModulesByCourse(courseId);
+         
             Map<model.entity.Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
-            
-             Discussion discussion = dservice.getDiscussion(discussionId);
+            Map<DiscussionPost, List<DiscussionComment>> postCommentMap = dservice.getPostCommentMap(discussionId);
+            Discussion discussion = dservice.getDiscussion(discussionId);
             request.setAttribute("courseId", courseId);
-            request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
-             request.setAttribute("discussion", discussion);
+            request.setAttribute("discussion", discussion);
             request.setAttribute("content", courseContent);
+            request.setAttribute("postCommentMap", postCommentMap);
             request.getRequestDispatcher("teacher/discussion.jsp").forward(request, response);
 
         } catch (Exception e) {
@@ -87,7 +88,7 @@ public class UpdateDiscussion extends HttpServlet {
 
             if (updated) {
                 response.sendRedirect("updateDiscussion?courseId=" + courseId + "&moduleId=" + moduleId + "&discussionId=" + discussionId + "&success=1");
-            } 
+            }
         } catch (Exception e) {
             throw new ServletException("Lỗi khi cập nhật thảo luận", e);
         }

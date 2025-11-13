@@ -48,7 +48,7 @@ public class DeleteDiscussion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+       try {
             int courseId = Integer.parseInt(request.getParameter("courseId"));
             int moduleId = Integer.parseInt(request.getParameter("moduleId"));
             int discussionId = Integer.parseInt(request.getParameter("discussionId"));
@@ -63,6 +63,7 @@ public class DeleteDiscussion extends HttpServlet {
             e.printStackTrace();
             throw new ServletException("Lỗi khi xóa thảo luận", e);
         }
+
     }
 
     /**

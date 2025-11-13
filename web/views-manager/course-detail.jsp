@@ -299,16 +299,28 @@
                                                                 <p><strong>Hình thức nộp:</strong> ${i.submissionType}</p>
                                                                 <p><strong>Điểm tối đa:</strong> 100</p>
                                                                 <p><strong>Tỉ lệ qua:</strong> ${i.assignmentPassingPct}%</p>
+
                                                                 <c:if test="${not empty i.assignmentInstructions}">
-                                                                    <c:if test="${not empty i.attachmentUrl}">
-                                                                        <p>Tệp đính kèm:
-                                                                            <a href="${i.attachmentUrl}" target="_blank" class="btn btn-outline">Xem / Tải tệp Word</a>
-                                                                        </p>
-                                                                    </c:if>
-                                                                    <div class="text-content"><h5>Hướng dẫn:</h5>${i.assignmentInstructions}</div>
+                                                                    <div class="text-content">
+                                                                        <h5>Hướng dẫn:</h5>
+                                                                        ${i.assignmentInstructions}
+                                                                    </div>
                                                                 </c:if>
+
+                                                                <c:if test="${not empty i.attachmentUrl}">
+                                                                    <p>
+                                                                        <strong>Tệp đính kèm:</strong>
+                                                                        <a href="${i.attachmentUrl}" target="_blank" class="btn btn-outline">
+                                                                            Xem / Tải tệp
+                                                                        </a>
+                                                                    </p>
+                                                                </c:if>
+
                                                                 <c:if test="${not empty i.assignmentContent}">
-                                                                    <div class="text-content"><h5>Nội dung bài tập:</h5>${i.assignmentContent}</div>
+                                                                    <div class="text-content">
+                                                                        <h5>Nội dung bài tập:</h5>
+                                                                        ${i.assignmentContent}
+                                                                    </div>
                                                                 </c:if>
                                                             </div>
                                                         </c:if>

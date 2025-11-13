@@ -216,12 +216,12 @@ public class QuizService {
 
         QuizDTO quiz = quizDAO.getQuizById(a.getQuizId());
         Double passing = quiz.getPassingScorePct();
-        
+
         boolean passed = false;
         //neu dang practice thi chi can nop la danh dau complete
-        if(passing == null){
+        if (passing == null) {
             passed = true;
-        }else{
+        } else {
             passed = scorePct >= passing.doubleValue();
         }
 //        boolean passed = (passing != null) && (scorePct >= passing.doubleValue());
@@ -237,45 +237,45 @@ public class QuizService {
         return quizDAO.findLatestSubmittedAttempt(quizId, studentId);
     }
 
-      public int createQuiz(int moduleId, String title, Double passingScorePct, Integer pickCount, Integer timeLimit) {
-    try {
-        ModuleItem item = new ModuleItem();
-        item.setModule(moduleDAO.getModuleById(moduleId));
-        item.setItemType("quiz");
-        item.setOrderIndex(moduleItemDAO.getNextOrderIndex(moduleId));
-         item.setRequired(passingScorePct != null);
+    public int createQuiz(int moduleId, String title, Double passingScorePct, Integer pickCount, Integer timeLimit) {
+        try {
+            ModuleItem item = new ModuleItem();
+            item.setModule(moduleDAO.getModuleById(moduleId));
+            item.setItemType("quiz");
+            item.setOrderIndex(moduleItemDAO.getNextOrderIndex(moduleId));
+            item.setRequired(passingScorePct != null);
 
-        int moduleItemId = moduleItemDAO.insertModuleItem(item);
-        if (moduleItemId == -1) {
-            System.err.println("Không thể tạo ModuleItem cho quiz");
+            int moduleItemId = moduleItemDAO.insertModuleItem(item);
+            if (moduleItemId == -1) {
+                System.err.println("Không thể tạo ModuleItem cho quiz");
+                return -1;
+            }
+
+            Quiz quiz = new Quiz(moduleItemId, title, passingScorePct, pickCount, timeLimit);
+            boolean success = quizDAO.insertQuiz(quiz);
+
+            return success ? moduleItemId : -1;
+        } catch (Exception e) {
+            e.printStackTrace();
             return -1;
         }
-
-        Quiz quiz = new Quiz(moduleItemId, title, passingScorePct, pickCount, timeLimit);
-        boolean success = quizDAO.insertQuiz(quiz);
-
-        return success ? moduleItemId : -1;
-    } catch (Exception e) {
-        e.printStackTrace();
-        return -1;
     }
-}
 
-   public boolean updateQuiz(int quizId, String title, Double passingScorePct, Integer pickCount, Integer timeLimitMin) {
-    try {
-        Quiz q = new Quiz();
-        q.setQuizId(quizId);
-        q.setTitle(title);    
-        q.setPassingScorePct(passingScorePct);
-        q.setPickCount(pickCount);
-        q.setTimeLimitMin(timeLimitMin);
+    public boolean updateQuiz(int quizId, String title, Double passingScorePct, Integer pickCount, Integer timeLimitMin) {
+        try {
+            Quiz q = new Quiz();
+            q.setQuizId(quizId);
+            q.setTitle(title);
+            q.setPassingScorePct(passingScorePct);
+            q.setPickCount(pickCount);
+            q.setTimeLimitMin(timeLimitMin);
 
-        return quizDAO.updateQuiz(q);
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
+            return quizDAO.updateQuiz(q);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
 
     public boolean deleteQuiz(int quizId) {
         try {
@@ -287,6 +287,7 @@ public class QuizService {
             return false;
         }
     }
+
     public Quiz getQuiz(int quizId) {
         return quizDAO.getQuiz(quizId);
     }

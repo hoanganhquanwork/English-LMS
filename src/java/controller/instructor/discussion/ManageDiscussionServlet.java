@@ -44,22 +44,22 @@ public class ManageDiscussionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+       
+       int moduleId = Integer.parseInt(request.getParameter("moduleId"));
         int courseId = Integer.parseInt(request.getParameter("courseId"));
 
         try {
-            List<model.entity.Module> list = service.getModulesByCourse(courseId);
+           
             Map<model.entity.Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
-
             request.setAttribute("courseId", courseId);
-            request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
+            request.setAttribute("moduleId", moduleId);           
             request.setAttribute("content", courseContent);
             request.getRequestDispatcher("teacher/create-discussion.jsp").forward(request, response);
 
         } catch (Exception e) {
             throw new ServletException(e);
         }
+
     }
 
     @Override

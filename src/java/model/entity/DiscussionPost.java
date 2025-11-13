@@ -13,7 +13,7 @@ import java.util.Date;
 public class DiscussionPost {
     private long postId;
     private int discussionId;
-    private int authorUserId;
+    private Users authorUserId;
     private String content;
     private Date createdAt;
     private Date editedAt;
@@ -34,13 +34,15 @@ public class DiscussionPost {
         this.discussionId = discussionId;
     }
 
-    public int getAuthorUserId() {
+    public Users getAuthorUserId() {
         return authorUserId;
     }
 
-    public void setAuthorUserId(int authorUserId) {
+    public void setAuthorUserId(Users authorUserId) {
         this.authorUserId = authorUserId;
     }
+
+ 
 
     public String getContent() {
         return content;

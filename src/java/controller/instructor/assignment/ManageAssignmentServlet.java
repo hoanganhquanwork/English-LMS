@@ -61,14 +61,10 @@ public class ManageAssignmentServlet extends HttpServlet {
         int courseId = Integer.parseInt(request.getParameter("courseId"));
         int moduleId = Integer.parseInt(request.getParameter("moduleId"));
 
-        System.out.println("📘 ManageAssignmentServlet running for courseId=" + courseId + ", moduleId=" + moduleId);
-
-        List<Module> modules = service.getModulesByCourse(courseId);
+    
         Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
-
         request.setAttribute("courseId", courseId);
         request.setAttribute("moduleId", moduleId);
-        request.setAttribute("moduleList", modules);
         request.setAttribute("content", courseContent);
 
         request.getRequestDispatcher("teacher/create-assignment.jsp").forward(request, response);

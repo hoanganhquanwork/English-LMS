@@ -624,13 +624,13 @@
                                                        onclick="openViewQuestion(this)">
                                                         <i class="fas fa-eye"></i> Xem
                                                     </a>
-                                                    <c:if test="${course.status == 'draft' || course.status == 'rejected'}">
+                                                    
                                                         <a href="deleteQuestionFromModule?courseId=${param.courseId}&moduleId=${param.moduleId}&questionId=${entry.key.questionId}"
                                                            style="padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; background: #e74c3c; color: white;"
                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');">
                                                             <i class="fas fa-trash"></i> Xóa
                                                         </a>
-                                                    </c:if>
+                                                    
                                                 </div>
                                             </td>
                                         </tr>

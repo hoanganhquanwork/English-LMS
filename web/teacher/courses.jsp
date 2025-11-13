@@ -120,7 +120,7 @@
                                                         <i class="fas fa-eye"></i>
                                                     </a>
                                                 </c:if>
-                                                <c:if test="${h.status == 'draft' || h.status == 'rejected' || h.status == 'unpublish'}">
+                                                <c:if test="${h.status == 'draft' || h.status == 'rejected' }">
                                                     <a class="btn-icon edit-btn" title="Sửa" onclick="editCourse(this)">
                                                         <i class="fas fa-edit"></i>
                                                     </a>

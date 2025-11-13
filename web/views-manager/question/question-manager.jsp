@@ -130,7 +130,7 @@
                                         </c:when>
                                         <c:when test="${q.status eq 'approved'}">
                                             <button type="submit" class="btn btn-archive" name="action" value="archived"
-                                                    onclick="return confirmAction(${q.questionId}, 'archived')">
+                                                   onclick="addHidden(this.form, 'questionIds', ${q.questionId}); return confirmAction(${q.questionId}, 'archived')">
                                                 <i class="fa fa-box-archive"></i>
                                             </button>
                                         </c:when>
@@ -138,7 +138,7 @@
                                         </c:when>
                                         <c:when test="${q.status eq 'rejected' || q.status eq 'archived'}">
                                             <button type="submit" class="btn btn-approve" name="action" value="restore"
-                                                    onclick="return confirmAction(${q.questionId}, 'restore')">
+                                                      onclick="addHidden(this.form, 'questionIds', ${q.questionId}); return confirmAction(${q.questionId}, 'restore')">
                                                 <i class="fa fa-check"></i>
                                             </button>
                                         </c:when>
