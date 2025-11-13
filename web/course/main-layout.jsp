@@ -489,9 +489,7 @@
                                                             <c:choose>
                                                                 <c:when test="${autoPassed}">
                                                                     <c:set var="displayValue" value="" />
-                                                                    <c:forEach var="key" items="${q.answers}">
-                                                                        <c:set var="displayValue" value="${displayValue}" />
-                                                                    </c:forEach>
+                                                                    <c:set var="displayValue" value="${q.answers[0].answerText}" />
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <c:set var="displayValue" value="${userTextAnswers[q.questionId]}" />
@@ -501,10 +499,8 @@
                                                             <input type="text"
                                                                    name="answersText[${q.questionId}]"
                                                                    value="${displayValue}"
-                                                                   class="form-control
-                                                                   <c:if test='${showResult && isCorrect}'>is-valid</c:if>
-                                                                   <c:if test='${showResult && !isCorrect}'>is-invalid</c:if>"
-                                                                       placeholder="Nhập câu trả lời của bạn..."
+                                                                   class="form-control"
+                                                                   placeholder="Nhập câu trả lời của bạn..."
                                                                    <c:if test='${autoPassed}'>readonly</c:if>
                                                                        required/>
                                                         </c:if>
@@ -521,7 +517,7 @@
                                                                 <c:choose>
                                                                     <c:when test='${autoPassed}'>Đã hoàn thành </c:when>
                                                                     <c:otherwise>
-                                                                        ${quizResult[q.questionId] ? 'Đúng rồi!' : 'Chưa đúng.'}
+                                                                        ${quizResult[q.questionId] == true ? 'Chính xác' : 'Chưa đúng.'}
                                                                     </c:otherwise>
                                                                 </c:choose>
                                                                 <c:if test="${not empty q.explanation}">
@@ -572,7 +568,7 @@
                                 <input type="hidden" name="status" value="${requestScope.status}">
                                 <div class="mb-4 rely-frame" >
                                     <label for="userReply" class="form-label fw-bold">Phản hồi của bạn</label>
-                                    <textarea id="userReply" name="userReply" class="form-control" rows="6" placeholder="Nhập ý kiến của bạn tại đây..."></textarea>
+                                    <textarea id="userReply" required name="userReply" class="form-control" rows="6" placeholder="Nhập ý kiến của bạn tại đây..."></textarea>
                                     <div class="text-end">
                                         <button type="submit" class="btn btn-outline-primary mt-4">
                                             Phản hồi
@@ -609,7 +605,7 @@
                                                     <span>Ngày đăng: ${post.editedAt != null ? post.editedAt : post.createdAt}</span>
                                                     <c:if test="${post.editedAt != null}">
                                                         &bull;
-                                                        <span>Edited</span>
+                                                        <span>Đã chinh sửa</span>
                                                     </c:if>
                                                 </p>
                                             </div>
@@ -626,8 +622,8 @@
                                             </div>
                                             <div>             
                                                 <div class="d-flex align-items-center">
-                                                    <button type="button" class="btn btn-link edit-btn" onclick="editPostContent('${post.postId}')">Edit</button>
-                                                    <a href="#" class="btn btn-link reply-btn" onclick="replyForm('replyForm${post.postId}', event)">Reply</a>
+                                                    <button type="button" class="btn btn-link edit-btn" onclick="editPostContent('${post.postId}')">Chỉnh sửa</button>
+                                                    <a href="#" class="btn btn-link reply-btn" onclick="replyForm('replyForm${post.postId}', event)">Phản hồi</a>
                                                 </div>
                                                 <!--form edit-->
                                                 <div>
@@ -639,7 +635,7 @@
                                                             <input type="hidden" name="pageNumber" value="${requestScope.page}">
 
                                                             <label for="userReply${post.postId}" class="fw-bold mb-3">Chỉnh sửa nội dung</label>
-                                                            <textarea id="userReply${post.postId}" name="userReply" class="form-control" rows="6"></textarea>
+                                                            <textarea id="userReply${post.postId}" required name="userReply" class="form-control" rows="6"></textarea>
                                                             <div class="text-end">
                                                                 <button type="submit" class="btn btn-outline-primary mt-4">Cập nhật</button>
                                                             </div>
@@ -671,7 +667,7 @@
                                         </c:if>
                                         <c:if test="${post.authorName != sessionScope.user.username}">
                                             <p>${post.content}</p>
-                                            <a href="#" class="btn btn-link reply-btn" onclick="replyForm('replyForm${post.postId}', event)">Reply</a>
+                                            <a href="#" class="btn btn-link reply-btn" onclick="replyForm('replyForm${post.postId}', event)">Phản hồi</a>
                                             <div id="replyForm${post.postId}" class="mt-3" style="display:none;">
                                                 <form method="get" action="${pageContext.request.contextPath}/discussionComment">
                                                     <input type="hidden" name="courseId" value="${cp.course.courseId}">
@@ -680,7 +676,7 @@
                                                     <input type="hidden" name="pageNumber" value="${requestScope.page}">
                                                     <div class="form-group">
                                                         <label for="userReply${post.postId}" class="fw-bold mb-3">Phản hồi của bạn</label>
-                                                        <textarea id="userReply${post.postId}" name="userReply" class="form-control" 
+                                                        <textarea id="userReply${post.postId}" required name="userReply" class="form-control" 
                                                                   rows="6" placeholder="Nhập phản hồi của bạn tại đây...">
                                                         </textarea>
                                                     </div>
@@ -704,7 +700,7 @@
                                                             <span>Ngày đăng: ${com.editedAt != null ? com.editedAt : com.createdAt}</span>
                                                             <c:if test="${com.editedAt != null}">
                                                                 &bull;
-                                                                <span>Edited</span>
+                                                                <span>Đã chỉnh sửa</span>
                                                             </c:if>
                                                         </p>
                                                     </div>
@@ -716,7 +712,7 @@
                                                     <div id="commentContent${com.commentId}">
                                                         <p>${com.content}</p>
                                                     </div>
-                                                    <button type="button" class="btn btn-link edit-btn" onclick="editCommentContent('${com.commentId}')">Edit</button>
+                                                    <button type="button" class="btn btn-link edit-btn" onclick="editCommentContent('${com.commentId}')">Chỉnh sửa</button>
 
                                                     <form action="${pageContext.request.contextPath}/discussionComment" method="post">
                                                         <div id="editCommentForm${com.commentId}" style="display:none;">
@@ -726,7 +722,7 @@
                                                             <input type="hidden" name="pageNumber" value="${requestScope.page}">
 
                                                             <label for="commentReply${com.commentId}" class="fw-bold mb-3">Chỉnh sửa nội dung</label>
-                                                            <textarea id="commentReply${com.commentId}" name="userReply" class="form-control" rows="6"></textarea>
+                                                            <textarea id="commentReply${com.commentId}" required name="userReply" class="form-control" rows="6"></textarea>
                                                             <div class="text-end">
                                                                 <button type="submit" class="btn btn-outline-primary mt-4">Cập nhật</button>
                                                             </div>
@@ -1313,146 +1309,54 @@
 
     </body>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- TinyMCE CDN -->
-    <script src="https://cdn.tiny.cloud/1/esuprsg124x1emavjxk5j55wk30o7g9i1obl1k8j5gt99d0y/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <!--Youtube API-->
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script src="${pageContext.request.contextPath}/js/dictionary.js"></script>
 
     <script>
-//                                                                            tinymce.init({
-//                                                                                selector: '#textAnswer',
-//                                                                                plugins: 'advlist autolink lists link image charmap print preview anchor',
-//                                                                                toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-//                                                                                menubar: false,
-//                                                                                statusbar: false,
-//                                                                                branding: false,
-//                                                                                width: '100%'
-//                                                                            });
+
+                                                        function replyForm(formId, event) {
+                                                            if (event)
+                                                                event.preventDefault();
+                                                            const form = document.getElementById(formId);
+                                                            form.style.display = (!form.style.display || form.style.display === "none") ? "block" : "none";
+                                                        }
+
+                                                        // Edit bài post
+                                                        function editPostContent(postId) {
+                                                            const contentEl = document.getElementById('postContent' + postId);
+                                                            const content = contentEl ? contentEl.innerText : '';
+                                                            const form = document.getElementById('editForm' + postId);
+                                                            const ta = document.getElementById('userReply' + postId);
+                                                            if (!form)
+                                                                return;
+
+                                                            const toShow = (!form.style.display || form.style.display === "none");
+                                                            form.style.display = toShow ? "block" : "none";
+                                                            if (toShow && ta)
+                                                                ta.value = content;
+                                                        }
 
 
-                                                        tinymce.init({
-                                                            selector: '#userReply',
-                                                            plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                            toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                            menubar: false,
-                                                            statusbar: false,
-                                                            branding: false,
-                                                            width: '100%'
+                                                        document.querySelectorAll('textarea').forEach(t => {
+                                                            if (t.value && !t.value.trim())
+                                                                t.value = ''; 
                                                         });
 
-
-
-                                                        function replyForm(formId) {
-                                                            event.preventDefault(); // Ngừng hành động mặc định của form (reload trang)
-                                                            var form = document.getElementById(formId);
-                                                            if (form.style.display === "none" || form.style.display === "") {
-
-                                                                form.style.display = "block";
-
-                                                                var editorId = formId.replace('replyForm', 'userReply');
-                                                                tinymce.remove('#' + editorId);
-
-                                                                tinymce.init({
-                                                                    selector: '#' + editorId,
-                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                    menubar: false,
-                                                                    statusbar: false,
-                                                                    branding: false,
-                                                                    width: '100%'
-                                                                })
-                                                            } else {
-                                                                form.style.display = "none";
-                                                            }
-                                                        }
-
-                                                        function editPostContent(postId) {
-                                                            var contentElement = document.getElementById('postContent' + postId); // Lấy nội dung bài đăng
-                                                            var content = contentElement.innerText;
-
-                                                            var form = document.getElementById('editForm' + postId);
-                                                            if (form.style.display === "none" || form.style.display === "") {
-                                                                form.style.display = "block";
-
-                                                                var editorId = 'userReply' + postId;
-                                                                tinymce.remove('#' + editorId);
-                                                                tinymce.init({
-                                                                    selector: '#' + editorId,
-                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                    menubar: false,
-                                                                    statusbar: false,
-                                                                    branding: false,
-                                                                    width: '100%',
-                                                                    setup: function (editor) {
-                                                                        editor.on('init', function () {
-                                                                            editor.setContent(content);
-                                                                        });
-                                                                    }
-                                                                })
-                                                            } else {
-                                                                form.style.display = "none";
-                                                            }
-                                                        }
-
+                                                        // Edit comment
                                                         function editCommentContent(commentId) {
-                                                            var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
-                                                            var content = contentElement.innerText;
+                                                            const contentEl = document.getElementById('commentContent' + commentId);
+                                                            const content = contentEl ? contentEl.innerText : '';
+                                                            const form = document.getElementById('editCommentForm' + commentId);
+                                                            const ta = document.getElementById('commentReply' + commentId);
+                                                            if (!form)
+                                                                return;
 
-                                                            var form = document.getElementById('editCommentForm' + commentId);
-                                                            if (form.style.display === "none" || form.style.display === "") {
-                                                                form.style.display = "block";
-
-                                                                var editorId = 'commentReply' + commentId;
-                                                                tinymce.remove('#' + editorId);
-                                                                tinymce.init({
-                                                                    selector: '#' + editorId,
-                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                    menubar: false,
-                                                                    statusbar: false,
-                                                                    branding: false,
-                                                                    width: '100%',
-                                                                    setup: function (editor) {
-                                                                        editor.on('init', function () {
-                                                                            editor.setContent(content);
-                                                                        });
-                                                                    }
-                                                                })
-                                                            } else {
-                                                                form.style.display = "none";
-                                                            }
-                                                        }
-
-                                                        function editCommentContent(commentId) {
-                                                            var contentElement = document.getElementById('commentContent' + commentId); // Lấy nội dung comment
-                                                            var content = contentElement.innerText;
-
-                                                            var form = document.getElementById('editCommentForm' + commentId);
-                                                            if (form.style.display === "none" || form.style.display === "") {
-                                                                form.style.display = "block";
-
-                                                                var editorId = 'commentReply' + commentId;
-                                                                tinymce.remove('#' + editorId);
-                                                                tinymce.init({
-                                                                    selector: '#' + editorId,
-                                                                    plugins: 'advlist autolink lists link image charmap print preview anchor',
-                                                                    toolbar: 'undo redo | bold italic underline | link image | numlist bullist | alignleft aligncenter alignright',
-                                                                    menubar: false,
-                                                                    statusbar: false,
-                                                                    branding: false,
-                                                                    width: '100%',
-                                                                    setup: function (editor) {
-                                                                        editor.on('init', function () {
-                                                                            editor.setContent(content);
-                                                                        });
-                                                                    }
-                                                                })
-                                                            } else {
-                                                                form.style.display = "none";
-                                                            }
+                                                            const toShow = (!form.style.display || form.style.display === "none");
+                                                            form.style.display = toShow ? "block" : "none";
+                                                            if (toShow && ta)
+                                                                ta.value = content;
                                                         }
 
                                                         //for video youtube api

@@ -22,10 +22,10 @@
                     <h2 class="mb-4">Tạo tài khoản người dùng</h2>
 
                     <c:if test="${not empty success}">
-                        <div class="alert alert-success">${success}</div>
+                        <div style="color: green">${success}</div>
                     </c:if>
                     <c:if test="${not empty error}">
-                        <div class="alert alert-danger">${error}</div>
+                        <div style="color: red"> ${error}</div>
                     </c:if>
 
                     <form action="adminCreateUsers" method="post" class="border rounded-4 p-4 bg-white shadow-sm" style="max-width: 640px;">
@@ -61,8 +61,6 @@
                                 <option value="Admin"      ${role == 'Admin' ? 'selected' : ''}>Admin</option>
                                 <option value="Manager"    ${role == 'Manager' ? 'selected' : ''}>Manager</option>
                                 <option value="Instructor" ${role == 'Instructor' ? 'selected' : ''}>Instructor</option>
-                                <option value="Student"    ${role == 'Student' ? 'selected' : ''}>Student</option>
-                                <option value="Parent"     ${role == 'Parent' ? 'selected' : ''}>Parent</option>
                             </select>
                         </div>
 

@@ -44,7 +44,7 @@ public class CourseDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         cService.autoPublishIfDue();
+        cService.autoPublishIfDue();
         HttpSession session = request.getSession();
         Users manager = (Users) session.getAttribute("user");
 
@@ -128,7 +128,7 @@ public class CourseDetailController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+        cService.autoPublishIfDue();
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
             response.sendRedirect("loginInternal");
@@ -159,7 +159,7 @@ public class CourseDetailController extends HttpServlet {
             String priceStr = request.getParameter("price");
 
             BigDecimal price = (priceStr != null && !priceStr.isEmpty()) ? new BigDecimal(priceStr) : null;
-            
+
             LocalDateTime publishDate = (publishDateStr != null && !publishDateStr.isEmpty())
                     ? LocalDate.parse(publishDateStr).atStartOfDay() : null;
 

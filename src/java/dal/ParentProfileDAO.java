@@ -89,29 +89,45 @@ public class ParentProfileDAO extends DBContext {
             stm.setString(2, p.getOccupation());
             stm.setInt(3, p.getUserId());
             stm.executeUpdate();
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public boolean isPhoneExists(String phone, int excludeUserId) {
-    String sql = "SELECT COUNT(*) FROM Users WHERE phone = ? AND user_id <> ?";
-    try {
-        PreparedStatement stm = connection.prepareStatement(sql);
-        stm.setString(1, phone);
-        stm.setInt(2, excludeUserId);
-        ResultSet rs = stm.executeQuery();
-        if (rs.next()) {
-            return rs.getInt(1) > 0; 
+        String sql = "SELECT COUNT(*) FROM Users WHERE phone = ? AND user_id <> ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, phone);
+            stm.setInt(2, excludeUserId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return false;
-}
+        return false;
 
-  
+    }
+
+    public boolean isEmailExists(String email, int excludeUserId) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE email = ? AND user_id <> ?";
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setString(1, email);
+            stm.setInt(2, excludeUserId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     //For parent link     
     public Integer getParentIdByEmail(String email) {
         String sql = "SELECT * from Users WHERE email = ? and role = 'Parent' AND status = 'active' ";

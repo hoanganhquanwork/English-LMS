@@ -163,11 +163,17 @@ public class QuestionManagerController extends HttpServlet {
                 + "&instructor=" + (instructor != null ? URLEncoder.encode(instructor, StandardCharsets.UTF_8) : "")
                 + "&type=" + (type != null ? URLEncoder.encode(type, StandardCharsets.UTF_8) : "");
 
-        String[] questionIds = request.getParameterValues("questionIds");
-        if (questionIds == null) {
-            String idStr = request.getParameter("questionId");
-            if (idStr != null && !idStr.isBlank()) {
-                questionIds = new String[]{idStr};
+        String[] questionIds;
+        String joinedIds = request.getParameter("questionIds");
+        if (joinedIds != null && joinedIds.contains(",")) {
+            questionIds = joinedIds.split(",");
+        } else {
+            questionIds = request.getParameterValues("questionIds");
+            if (questionIds == null) {
+                String idStr = request.getParameter("questionId");
+                if (idStr != null && !idStr.isBlank()) {
+                    questionIds = new String[]{idStr};
+                }
             }
         }
 
@@ -175,9 +181,10 @@ public class QuestionManagerController extends HttpServlet {
 
         try {
             qService.handleManagerAction(action, questionIds, reason, manager);
-        } catch (Exception ignored) {
+            session.setAttribute("message", "Đã xử lý thành công!");
+        } catch (Exception e) {
+            session.setAttribute("errorMessage", e.getMessage());
         }
-
         response.sendRedirect(redirectUrl);
     }
 

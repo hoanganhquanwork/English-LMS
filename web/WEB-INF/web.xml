@@ -4,10 +4,262 @@
         <filter-name>AutoLoginFilter</filter-name>
         <filter-class>filter.AutoLoginFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>GuestOnly</filter-name>
+        <filter-class>filter.GuestOnly</filter-class>
+    </filter>
+    <filter>
+        <filter-name>StudentArea</filter-name>
+        <filter-class>filter.StudentArea</filter-class>
+    </filter>
+    <filter>
+        <filter-name>ParentArea</filter-name>
+        <filter-class>filter.ParentArea</filter-class>
+    </filter>
+    <filter>
+        <filter-name>InstructorArea</filter-name>
+        <filter-class>filter.InstructorArea</filter-class>
+    </filter>
+    <filter>
+        <filter-name>ManagerArea</filter-name>
+        <filter-class>filter.ManagerArea</filter-class>
+    </filter>
+    <filter>
+        <filter-name>AdminArea</filter-name>
+        <filter-class>filter.AdminArea</filter-class>
+    </filter>
+    
+    
     <filter-mapping>
         <filter-name>AutoLoginFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+    
+    <filter-mapping>
+        <filter-name>GuestOnly</filter-name>
+        <url-pattern>/forgot-password</url-pattern>
+        <url-pattern>/loginGoogle</url-pattern>
+        <url-pattern>/loginInternal</url-pattern>
+        <url-pattern>/login</url-pattern>
+        <url-pattern>/register</url-pattern>
+        <url-pattern>/auth/reset-password</url-pattern>
+        <url-pattern>/auth/forgot-password.jsp</url-pattern>
+        <url-pattern>/auth/login-internal.jsp</url-pattern>
+        <url-pattern>/auth/login.jsp</url-pattern>
+        <url-pattern>/auth/register.jsp</url-pattern>
+        <url-pattern>/auth/reset-password.jsp</url-pattern>
+    </filter-mapping>   
+    
+    <filter-mapping>
+        <filter-name>StudentArea</filter-name>
+        <url-pattern>/reviewAction</url-pattern>
+        <url-pattern>/myLearning</url-pattern>
+        <url-pattern>/updatePictureProfile</url-pattern>
+        <url-pattern>/updateStudentProfile</url-pattern>
+        <url-pattern>/createCourseRequest</url-pattern>
+        <url-pattern>/courseRequest</url-pattern>
+        <url-pattern>/parentLinkRequest</url-pattern>
+        <url-pattern>/assignmentDo</url-pattern>
+        <url-pattern>/coursePage</url-pattern>
+        <url-pattern>/discussionComment</url-pattern>
+        <url-pattern>/myResponseDiscussion</url-pattern>
+        <url-pattern>/discussionPost</url-pattern>
+        <url-pattern>/moduleItemProgress</url-pattern>
+        <url-pattern>/checkVideoQuiz</url-pattern>
+        <url-pattern>/doQuiz</url-pattern>
+        <url-pattern>/startQuiz</url-pattern>
+        <url-pattern>/studentVocab</url-pattern>
+        <url-pattern>/flashcard</url-pattern>
+        <url-pattern>/flashcard-ai</url-pattern>
+        <url-pattern>/dashboard</url-pattern>
+        <url-pattern>/set</url-pattern>
+        <url-pattern>/flashcard-study</url-pattern>
+
+        <url-pattern>/course/course-review.jsp</url-pattern>
+        <url-pattern>/course/main-layout.jsp</url-pattern>
+        <url-pattern>/course/quiz-grade.jsp</url-pattern>
+        <url-pattern>/course/quiz-practice.jsp</url-pattern>
+        <url-pattern>/flashcard/createSet.jsp</url-pattern>
+        <url-pattern>/flashcard/editSet.jsp</url-pattern>
+        <url-pattern>/flashcard/flashcard-ai.jsp</url-pattern>
+        <url-pattern>/flashcard/flashcard-study.jsp</url-pattern>
+        <url-pattern>/flashcard/viewSet.jsp</url-pattern>
+        <url-pattern>/flashcard-dashboard/library.jsp</url-pattern>
+        <url-pattern>/flashcard-dashboard/mySets.jsp</url-pattern>
+        <url-pattern>/flashcard-dashboard/recents.jsp</url-pattern>
+        <url-pattern>/student/course-request.jsp</url-pattern>
+        <url-pattern>/student/my-learning.jsp</url-pattern>
+        <url-pattern>/student/my-vocabulary.jsp</url-pattern>
+        <url-pattern>/student/student-profile.jsp</url-pattern>
+
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>ParentArea</filter-name>
+        <url-pattern>/parent/dashboard</url-pattern>
+        <url-pattern>/parent/profile</url-pattern>
+        <url-pattern>/parentUpdateProfile</url-pattern>
+        <url-pattern>/parentUpdatePicture</url-pattern>
+        <url-pattern>/parent/progress_detail</url-pattern>
+        <url-pattern>/parent/progress</url-pattern>
+        <url-pattern>/parentlinkstudent</url-pattern>
+        <url-pattern>/parent/approvals</url-pattern>
+        <url-pattern>/parent/orderdetail</url-pattern>
+        <url-pattern>/parent/orders</url-pattern>
+        <url-pattern>/parent/paymentitems</url-pattern>
+        <url-pattern>/parent/vnpay-return</url-pattern>
+        <url-pattern>/parent/cancelorder</url-pattern>
+        
+        <url-pattern>/parent/dashboard.jsp</url-pattern>
+        <url-pattern>/parent/profile.jsp</url-pattern>
+        <url-pattern>/parent/updateProfile.jsp</url-pattern>
+        <url-pattern>/parent/progress_detail.jsp</url-pattern>
+        <url-pattern>/parent/progress.jsp</url-pattern>
+        <url-pattern>/parent/parent_link_approval.jsp</url-pattern>
+        <url-pattern>/parent/approvals.jsp</url-pattern>
+        <url-pattern>/parent/order_detail.jsp</url-pattern>
+        <url-pattern>/parent/order_list.jsp</url-pattern>
+        <url-pattern>/parent/payment_items.jsp</url-pattern>
+        <url-pattern>/parent/vnpay_result.jsp</url-pattern>
+
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>InstructorArea</filter-name>
+        <url-pattern>/instructorDashboard</url-pattern>
+        <url-pattern>/addCourse</url-pattern>
+        <url-pattern>/updateCourse</url-pattern>
+        <url-pattern>/deleteCourse</url-pattern>
+        <url-pattern>/courseStudents</url-pattern>
+        <url-pattern>/getRejectionReason</url-pattern>
+        <url-pattern>/submitCourse</url-pattern>
+        <url-pattern>/createAssignment</url-pattern>
+        <url-pattern>/deleteAssignment</url-pattern>
+        <url-pattern>/gradeListServlet</url-pattern>
+        <url-pattern>/gradeAssignment</url-pattern>
+        <url-pattern>/manageAssignment</url-pattern>
+        <url-pattern>/updateAssignment</url-pattern>
+        <url-pattern>/createDiscussion</url-pattern>
+        <url-pattern>/deleteDiscussion</url-pattern>
+        <url-pattern>/manageDiscussion</url-pattern>
+        <url-pattern>/updateDiscussion</url-pattern>
+        <url-pattern>/createReadingLesson</url-pattern>
+        <url-pattern>/createLesson</url-pattern>
+        <url-pattern>/deleteLesson</url-pattern>
+        <url-pattern>/ManageLessonServlet</url-pattern>
+        <url-pattern>/updateLessonReading</url-pattern>
+        <url-pattern>/updateLesson</url-pattern>
+        <url-pattern>/addModule</url-pattern>
+        <url-pattern>/deleteModule</url-pattern>
+        <url-pattern>/manageModule</url-pattern>
+        <url-pattern>/UpdateModule</url-pattern>
+        <url-pattern>/teacher-profile</url-pattern>
+        <url-pattern>/updateTeacherPictureProfile</url-pattern>
+        <url-pattern>/updateTeacherProfile</url-pattern>
+        <url-pattern>/addQuestion</url-pattern>
+        <url-pattern>/addQuestionsToModule</url-pattern>
+        <url-pattern>/assignTopic</url-pattern>
+        <url-pattern>/deleteQuestionFromModule</url-pattern>
+        <url-pattern>/deleteQuestion</url-pattern>
+        <url-pattern>/generateQuestionAI</url-pattern>
+        <url-pattern>/ManageQuestionServlet</url-pattern>
+        <url-pattern>/questions</url-pattern>
+        <url-pattern>/submitQuestions</url-pattern>
+        <url-pattern>/updateQuestion</url-pattern>
+        <url-pattern>/createQuiz</url-pattern>
+        <url-pattern>/manageQuizServlet</url-pattern>
+        <url-pattern>/updateQuiz</url-pattern>
+        
+        <url-pattern>/teacher/add-questions.jsp</url-pattern>
+        <url-pattern>/teacher/courses.jsp</url-pattern>
+        <url-pattern>/teacher/create-assignment.jsp</url-pattern>
+        <url-pattern>/teacher/create-discussion.jsp</url-pattern>
+        <url-pattern>/teacher/create-quiz.jsp</url-pattern>
+        <url-pattern>/teacher/dashboard.jsp</url-pattern>
+        <url-pattern>/teacher/discussion.jsp</url-pattern>
+        <url-pattern>/teacher/grade-assignment.jsp</url-pattern>
+        <url-pattern>/teacher/grade-assignments.jsp</url-pattern>
+        <url-pattern>/teacher/lesson-create-reading.jsp</url-pattern>
+        <url-pattern>/teacher/lesson-create-video.jsp</url-pattern>
+        <url-pattern>/teacher/lesson-update-reading.jsp</url-pattern>
+        <url-pattern>/teacher/lesson-video-content.jsp</url-pattern>
+        <url-pattern>/teacher/module.jsp</url-pattern>
+        <url-pattern>/teacher/questions-management.jsp</url-pattern>
+        <url-pattern>/teacher/questions.jsp</url-pattern>
+        <url-pattern>/teacher/student.jsp</url-pattern>
+        <url-pattern>/teacher/teacher-profile.jsp</url-pattern>
+        <url-pattern>/teacher/update-assignment.jsp</url-pattern>
+        <url-pattern>/teacher/update-quiz.jsp</url-pattern>
+        <url-pattern>/teacher/view-questions.jsp</url-pattern>
+
+    </filter-mapping>
+    
+    
+    <filter-mapping>
+        <filter-name>ManagerArea</filter-name>
+        <url-pattern>/cate-topic</url-pattern>
+        <url-pattern>/coursedetail</url-pattern>
+        <url-pattern>/coursemanager</url-pattern>
+        <url-pattern>/coursepublish</url-pattern>
+        <url-pattern>/dashboard-manager</url-pattern>
+        <url-pattern>/question-manager</url-pattern>
+        <url-pattern>/flashcard-detail</url-pattern>
+        <url-pattern>/manager-flashcard</url-pattern>
+        <url-pattern>/revenue-export</url-pattern>
+        <url-pattern>/revenue-report</url-pattern>
+        <url-pattern>/changeManagerPassword</url-pattern>
+        <url-pattern>/manager-profile</url-pattern>
+        <url-pattern>/uploadManagerAvatar</url-pattern>
+        
+        <url-pattern>/views-manager/course-detail.jsp</url-pattern>
+        <url-pattern>/views-manager/course-manager.jsp</url-pattern>
+        <url-pattern>/views-manager/course-publish.jsp</url-pattern>
+        <url-pattern>/views-manager/dashboard-manager.jsp</url-pattern>
+        <url-pattern>/views-manager/manager-password.jsp</url-pattern>
+        <url-pattern>/views-manager/manager-profile.jsp</url-pattern>
+        <url-pattern>/views-manager/revenue-report.jsp</url-pattern>
+        <url-pattern>/views-manager/question/question-manager.jsp</url-pattern>
+        <url-pattern>/views-manager/question/question-detail.jsp</url-pattern>
+        <url-pattern>/views-manager/flashcard/flashcard-detail.jsp</url-pattern>
+        <url-pattern>/views-manager/flashcard/manager-flashcard.jsp</url-pattern>
+        <url-pattern>/views-manager/category/cate-topic-management.jsp</url-pattern>
+
+
+    </filter-mapping>
+    
+    
+    <filter-mapping>
+        <filter-name>AdminArea</filter-name>
+        <url-pattern>/admin/profile</url-pattern>
+        <url-pattern>/admin/updateprofile</url-pattern>
+        <url-pattern>/admin/avatar</url-pattern>
+        <url-pattern>/admin/changePassword</url-pattern>
+        <url-pattern>/adminCreateUsers</url-pattern>
+        <url-pattern>/admin/report-detail</url-pattern>
+        <url-pattern>/admin/report-list</url-pattern>
+        <url-pattern>/AdminReportTypeList</url-pattern>
+        <url-pattern>/admin/report-update</url-pattern>
+        <url-pattern>/AdminUserEdit</url-pattern>
+        <url-pattern>/AdminUserList</url-pattern>
+        <url-pattern>/AdminUserStatus</url-pattern>
+        <url-pattern>/AdminReportTypeEdit</url-pattern>
+        <url-pattern>/AdminReportTypeStatus</url-pattern>
+        
+        <url-pattern>/admin/admin_profile.jsp</url-pattern>
+        <url-pattern>/parent/admin_profile.jsp</url-pattern>
+        <url-pattern>/admin/change_password.jsp</url-pattern>
+        <url-pattern>/admin/admin_create_user.jsp</url-pattern>
+        <url-pattern>/admin/report_detail.jsp</url-pattern>
+        <url-pattern>/admin/report_list.jsp</url-pattern>
+        <url-pattern>/admin/report_type_list.jsp</url-pattern>
+        <url-pattern>/admin/edit_user.jsp</url-pattern>
+        <url-pattern>/admin/admin_dashboard.jsp</url-pattern>
+
+
+    </filter-mapping>
+    
+    
     <servlet>
         <servlet-name>AddCourseServlet</servlet-name>
         <servlet-class>controller.instructor.course.AddCourseServlet</servlet-class>
@@ -159,23 +411,7 @@
     <servlet-mapping>
         <servlet-name>FlashcardSetController</servlet-name>
         <url-pattern>/set</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>ParentProfileController</servlet-name>
-        <servlet-class>controller.parent.profile.ParentProfileController</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/profile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/settings</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParentProfileController</servlet-name>
-        <url-pattern>/parent/delete</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> 
     <servlet-mapping>
         <servlet-name>CreateLessonServlet</servlet-name>
         <url-pattern>/createLesson</url-pattern>

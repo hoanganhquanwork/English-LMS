@@ -108,7 +108,7 @@ public class CourseDetailService {
                     }
                 }
 
-                if ("assignment".equalsIgnoreCase(type) ) {
+                if ("assignment".equalsIgnoreCase(type)) {
                     AssignmentDTO a = dao.getAssignmentDetail(item.getItemId());
                     if (a != null) {
                         item.setAssignmentTitle(a.getTitle());

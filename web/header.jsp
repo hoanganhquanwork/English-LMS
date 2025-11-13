@@ -126,8 +126,6 @@
                     </div>
                 </header>
             </c:if>
-
-
         </header>
     </body>
 

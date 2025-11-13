@@ -146,7 +146,7 @@
                                     <input type="text" name="keyword" value="${requestScope.keyword}" class="form-control" placeholder="VD: Ielts">
                                 </div>
                                 <div class="col-md-2">
-                                    <button type="submit" class="btn btn-outline-primary">Áp dụng</button>
+                                    <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
                                 </div>
                                 <div class="text-danger small mt-1">${requestScope.errorMessage}</div>
                             </form>

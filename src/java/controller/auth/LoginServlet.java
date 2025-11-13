@@ -136,6 +136,9 @@ public class LoginServlet extends HttpServlet {
             if (role.equalsIgnoreCase("Student")) {
                 StudentProfile s = studentService.getStudentProfile(user.getUserId());
                 session.setAttribute("student", s);
+            } else if (role.equalsIgnoreCase("parent")) {
+                response.sendRedirect(request.getContextPath() + "/parent/dashboard");
+                return;
             }
 
             if (rememberMe != null) {

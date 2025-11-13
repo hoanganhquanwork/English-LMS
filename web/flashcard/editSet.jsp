@@ -32,7 +32,11 @@
                 <form action="set" method="post" onsubmit="return confirm('Bạn có chắc muốn lưu thay đổi?')">
                     <input type="hidden" name="action" value="updateSet" />
                     <input type="hidden" name="setId" value="${set.setId}" />
-
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                    </div>
                     <div class="form-section">
                         <h3 class="section-title">
                             <i class="fas fa-info-circle"></i>
@@ -96,11 +100,7 @@
                         </div>
                     </div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn-primary">
-                            <i class="fas fa-save"></i> Lưu thay đổi
-                        </button>
-                    </div>
+
                 </form>
             </div>
         </div>

@@ -10,14 +10,16 @@
     String wrapperStart = "";
     String wrapperEnd = "";
 
-    
     if ("Manager".equals(role)) {
         headerPath = "../views-manager/includes-manager/sidebar-manager.jsp";
-        cssPath = ctx + "/css/manager-style.css?v=63";
-        
+        cssPath = ctx + "/css/manager-style.css?v=31";
+        bodyClass = "dashboard";
+        wrapperStart = "<main class='main-content'><div class='container'>";
+        wrapperEnd = "</div></main>";
     } else if ("Instructor".equals(role)) {
         headerPath = "../teacher/sidebar.jsp";
         cssPath = ctx + "/css/sidebar.css";
+        bodyClass = "container admin-layout";
     } else {
         headerPath = "../header.jsp";
     }
@@ -87,5 +89,7 @@
         </div>
 
         <%= wrapperEnd %>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     </body>
 </html>

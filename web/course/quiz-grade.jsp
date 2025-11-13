@@ -113,7 +113,7 @@
                     </strong>
                 </span>
                 <span>
-                    Giới hạn:
+                    Thời gian làm:
                     <strong>
                         <c:choose>
                             <c:when test="${not empty quiz.timeLimitMin}">${quiz.timeLimitMin} phút</c:when>
@@ -141,7 +141,8 @@
                         <div class="sec-title">Câu hỏi</div>
                         <div class="palette" id="palette">
                             <c:forEach var="qaq" items="${attempt.questions}" varStatus="s">
-                                <button type="button" class="square-btn" id="pal-${s.index}" disabled>
+                                <button type="button" class="square-btn" id="pal-${s.index}" 
+                                        onclick="showQuestion(${s.index})">
                                     ${s.index + 1}
                                 </button>
                             </c:forEach>

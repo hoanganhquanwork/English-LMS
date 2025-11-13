@@ -281,14 +281,14 @@
                                                             </c:if>
                                                         </c:if>
 
-                                                        <c:if test="${i.itemType eq 'quiz'}">
-                                                            <p><strong>Giới hạn thời gian:</strong>
-                                                                <c:choose>
-                                                                    <c:when test="${i.timeLimitMin != null}">
-                                                                        ${i.timeLimitMin} phút
-                                                                    </c:when>
-                                                                    <c:otherwise>Không giới hạn</c:otherwise>
-                                                                </c:choose>
+                                                                <c:if test="${i.itemType eq 'quiz'}">
+                                                                    <p><strong>Giới hạn thời gian:</strong>
+                                                                        <c:choose>
+                                                                            <c:when test="${i.timeLimitMin != null}">
+                                                                                ${i.timeLimitMin} phút
+                                                                            </c:when>
+                                                                            <c:otherwise>Không giới hạn</c:otherwise>
+                                                                        </c:choose>
                                                             </p>
                                                             <p>Tỉ lệ qua: ${i.quizPassingPct}%</p>
                                                             <p>Số câu chọn ngẫu nhiên: ${i.pickCount}</p>

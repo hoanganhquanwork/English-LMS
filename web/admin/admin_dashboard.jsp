@@ -281,11 +281,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Vai trò</label>
-                                        <select class="form-select" id="editRole" name="role">
-                                            <c:forEach var="role" items="${availableRoles}">
-                                                <option value="${role}">${role}</option>
-                                            </c:forEach>
-                                        </select>
+                                        <input type="text" class="form-control" id="editRoleDisplay" disabled>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Trạng thái</label>
@@ -317,94 +313,94 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                                   document.addEventListener('DOMContentLoaded', function () {
-                                                                       var ctx = '<%=ctx%>';
-                                                                       var editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                                                           document.addEventListener('DOMContentLoaded', function () {
+                                                               var ctx = '<%=ctx%>';
+                                                               var editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
 
-                                                                       // Handle edit button clicks
-                                                                       document.querySelectorAll('.editBtn').forEach(function (btn) {
-                                                                           btn.addEventListener('click', function () {
-                                                                               var userId = btn.getAttribute('data-id');
+                                                               // Handle edit button clicks
+                                                               document.querySelectorAll('.editBtn').forEach(function (btn) {
+                                                                   btn.addEventListener('click', function () {
+                                                                       var userId = btn.getAttribute('data-id');
 
-                                                                               // Show loading state
-                                                                               btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
-                                                                               btn.disabled = true;
+                                                                       // Show loading state
+                                                                       btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+                                                                       btn.disabled = true;
 
-                                                                               // Create a form to load user data
-                                                                               var form = document.createElement('form');
-                                                                               form.method = 'GET';
-                                                                               form.action = ctx + '/AdminUserEdit';
-                                                                               form.target = 'hiddenFrame';
-                                                                               form.style.display = 'none';
+                                                                       // Create a form to load user data
+                                                                       var form = document.createElement('form');
+                                                                       form.method = 'GET';
+                                                                       form.action = ctx + '/AdminUserEdit';
+                                                                       form.target = 'hiddenFrame';
+                                                                       form.style.display = 'none';
 
-                                                                               var idInput = document.createElement('input');
-                                                                               idInput.type = 'hidden';
-                                                                               idInput.name = 'id';
-                                                                               idInput.value = userId;
-                                                                               form.appendChild(idInput);
+                                                                       var idInput = document.createElement('input');
+                                                                       idInput.type = 'hidden';
+                                                                       idInput.name = 'id';
+                                                                       idInput.value = userId;
+                                                                       form.appendChild(idInput);
 
-                                                                               document.body.appendChild(form);
-                                                                               form.submit();
+                                                                       document.body.appendChild(form);
+                                                                       form.submit();
 
-                                                                               // Reset button state
-                                                                               btn.innerHTML = '<i class="bi bi-pencil-square"></i>';
-                                                                               btn.disabled = false;
-                                                                           });
-                                                                       });
-
-                                                                       // Listen for iframe load to populate form
-                                                                       document.getElementById('hiddenFrame').addEventListener('load', function () {
-                                                                           try {
-                                                                               var iframeDoc = this.contentDocument || this.contentWindow.document;
-                                                                               var userData = extractUserDataFromPage(iframeDoc);
-
-                                                                               if (userData) {
-                                                                                   // Populate form fields
-                                                                                   document.getElementById('editUserId').value = userData.userId || '';
-                                                                                   document.getElementById('editUsername').value = userData.username || '';
-                                                                                   document.getElementById('editEmail').value = userData.email || '';
-                                                                                   document.getElementById('editPhone').value = userData.phone || '';
-                                                                                   document.getElementById('editDob').value = userData.dateOfBirth || '';
-                                                                                   document.getElementById('editGender').value = userData.gender || '';
-                                                                                   document.getElementById('editRole').value = userData.role || 'Student';
-                                                                                   document.getElementById('editStatus').value = userData.status || 'active';
-
-                                                                                   // Show modal
-                                                                                   editModal.show();
-                                                                               }
-                                                                           } catch (error) {
-                                                                               console.error('Error loading user data:', error);
-                                                                               alert('Không thể tải dữ liệu người dùng');
-                                                                           }
-                                                                       });
-
-                                                                       // Function to extract user data from the loaded page
-                                                                       function extractUserDataFromPage(doc) {
-                                                                           try {
-                                                                               var userId = doc.querySelector('input[name="id"]')?.value || '';
-                                                                               var username = doc.querySelector('input[name="username"]')?.value || '';
-                                                                               var email = doc.querySelector('input[name="email"]')?.value || '';
-                                                                               var phone = doc.querySelector('input[name="phone"]')?.value || '';
-                                                                               var dob = doc.querySelector('input[name="date_of_birth"]')?.value || '';
-                                                                               var gender = doc.querySelector('select[name="gender"]')?.value || '';
-                                                                               var role = doc.querySelector('select[name="role"]')?.value || '';
-                                                                               var status = doc.querySelector('select[name="status"]')?.value || '';
-
-                                                                               return {
-                                                                                   userId: userId,
-                                                                                   username: username,
-                                                                                   email: email,
-                                                                                   phone: phone,
-                                                                                   dateOfBirth: dob,
-                                                                                   gender: gender,
-                                                                                   role: role,
-                                                                                   status: status
-                                                                               };
-                                                                           } catch (error) {
-                                                                               return null;
-                                                                           }
-                                                                       }
+                                                                       // Reset button state
+                                                                       btn.innerHTML = '<i class="bi bi-pencil-square"></i>';
+                                                                       btn.disabled = false;
                                                                    });
+                                                               });
+
+                                                               // Listen for iframe load to populate form
+                                                               document.getElementById('hiddenFrame').addEventListener('load', function () {
+                                                                   try {
+                                                                       var iframeDoc = this.contentDocument || this.contentWindow.document;
+                                                                       var userData = extractUserDataFromPage(iframeDoc);
+
+                                                                       if (userData) {
+                                                                           // Populate form fields
+                                                                           document.getElementById('editUserId').value = userData.userId || '';
+                                                                           document.getElementById('editUsername').value = userData.username || '';
+                                                                           document.getElementById('editEmail').value = userData.email || '';
+                                                                           document.getElementById('editPhone').value = userData.phone || '';
+                                                                           document.getElementById('editDob').value = userData.dateOfBirth || '';
+                                                                           document.getElementById('editGender').value = userData.gender || '';
+                                                                           document.getElementById('editRoleDisplay').value = userData.role || '';
+                                                                           document.getElementById('editStatus').value = userData.status || 'active';
+
+                                                                           // Show modal
+                                                                           editModal.show();
+                                                                       }
+                                                                   } catch (error) {
+                                                                       console.error('Error loading user data:', error);
+                                                                       alert('Không thể tải dữ liệu người dùng');
+                                                                   }
+                                                               });
+
+                                                               // Function to extract user data from the loaded page
+                                                               function extractUserDataFromPage(doc) {
+                                                                   try {
+                                                                       var userId = doc.querySelector('input[name="id"]')?.value || '';
+                                                                       var username = doc.querySelector('input[name="username"]')?.value || '';
+                                                                       var email = doc.querySelector('input[name="email"]')?.value || '';
+                                                                       var phone = doc.querySelector('input[name="phone"]')?.value || '';
+                                                                       var dob = doc.querySelector('input[name="date_of_birth"]')?.value || '';
+                                                                       var gender = doc.querySelector('select[name="gender"]')?.value || '';
+                                                                       var role = doc.querySelector('#editRoleDisplay')?.value || '';
+                                                                       var status = doc.querySelector('select[name="status"]')?.value || '';
+
+                                                                       return {
+                                                                           userId: userId,
+                                                                           username: username,
+                                                                           email: email,
+                                                                           phone: phone,
+                                                                           dateOfBirth: dob,
+                                                                           gender: gender,
+                                                                           role: role,
+                                                                           status: status
+                                                                       };
+                                                                   } catch (error) {
+                                                                       return null;
+                                                                   }
+                                                               }
+                                                           });
         </script>   
     </body>
 </html>
