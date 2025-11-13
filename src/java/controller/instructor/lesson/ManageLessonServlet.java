@@ -63,14 +63,17 @@ public class ManageLessonServlet extends HttpServlet {
             throws ServletException, IOException {
         int moduleId = Integer.parseInt(request.getParameter("moduleId"));
         int courseId = Integer.parseInt(request.getParameter("courseId"));
-     
+
         try {
-            List<Module> list = service.getModulesByCourse(courseId);
+
             Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
-            
+            String error = request.getParameter("error");
+            if (error != null) {
+                request.setAttribute("error", error);
+            }
             request.setAttribute("courseId", courseId);
             request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
+
             request.setAttribute("content", courseContent);
             request.getRequestDispatcher("teacher/lesson-create-video.jsp").forward(request, response);
 
@@ -79,7 +82,6 @@ public class ManageLessonServlet extends HttpServlet {
         }
     }
 
- 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

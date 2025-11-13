@@ -108,8 +108,9 @@ public class CreateAssignment extends HttpServlet {
             if (newId != -1) {
                 response.sendRedirect("updateAssignment?courseId=" + courseId + "&moduleId=" + moduleId + "&assignmentId=" + newId);
             } else {
-                request.setAttribute("error", "Không thể tạo Assignment mới. Vui lòng thử lại.");
-                request.getRequestDispatcher("teacher/create-assignment.jsp").forward(request, response);
+                   response.sendRedirect("manageAssignment?courseId=" + courseId
+                    + "&moduleId=" + moduleId
+                    + "&error=CreateFailed");
             }
 
         } catch (Exception e) {

@@ -159,7 +159,7 @@ public class AddQuestion extends HttpServlet {
                 if ("mcq_single".equals(type)) {
                     List<QuestionOption> options = new ArrayList<>();
 
-                    for (int j = 1; j <= 10; j++) {
+                    for (int j = 1; j <= 4; j++) {
                         String optContent = request.getParameter("optionContent" + i + "_" + j);
                         if (optContent == null || optContent.isEmpty()) {
                             continue;

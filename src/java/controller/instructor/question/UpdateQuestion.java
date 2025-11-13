@@ -157,7 +157,7 @@ public class UpdateQuestion extends HttpServlet {
                 success = questionService.updateQuestionWithTextAnswer(q, correctAnswer);
             }
 
-            // Điều hướng theo loại câu hỏi (module hoặc lesson)
+           
             if (lessonId != null) {
                 Integer module = (moduleId != null && !moduleId.isEmpty())
                         ? Integer.parseInt(moduleId) : null;

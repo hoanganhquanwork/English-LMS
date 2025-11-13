@@ -12,6 +12,7 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     </head>
     <body>
+         <c:set var="canEdit" value="${sessionScope.currentCourse.status == 'draft' || sessionScope.currentCourse.status == 'rejected'}" />
         <div id="page" data-courseid="${param.courseId}"></div>
         <div class="container" style="max-width: 1600px; margin: 0 auto; padding: 0 20px;">
             <a class="back-link" href="manageModule?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
@@ -34,10 +35,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                   
+                                    <c:if test="${canEdit}">
                                         <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
                                             <i class="fas fa-plus"></i>
                                         </button>
+                                    </c:if>
                                    
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
@@ -75,21 +77,15 @@
                                             </a>
                                         </c:when>
                                         <c:when test="${item.itemType == 'quiz'}">
-                                            <c:choose>
-                                                <c:when test="${item.moduleItemId == param.quizId}">
-                                                    <div style="background-color: #e8f4fd; padding: 8px; border-radius: 4px; border-left: 3px solid #3498db;">
-                                                        <i class="fas fa-question-circle" style="color: #9b59b6;"></i>
-                                                        Quiz #${item.moduleItemId} (Đang chỉnh sửa)
-                                                    </div>
-                                                </c:when>
-                                                <c:otherwise>
+                                           
+                                               
                                                     <a href="updateQuiz?courseId=${param.courseId}&moduleId=${h.key.moduleId}&quizId=${item.moduleItemId}"
                                                        style="text-decoration: none; color: inherit;">
                                                         <i class="fas fa-question-circle" style="color: #9b59b6;"></i>
                                                         Quiz #${item.moduleItemId}
                                                     </a>
-                                                </c:otherwise>
-                                            </c:choose>
+                                                
+                                           
                                         </c:when>
                                         <c:when test="${item.itemType == 'assignment'}">
                                             <a href="updateAssignment?courseId=${param.courseId}&moduleId=${h.key.moduleId}&assignmentId=${item.moduleItemId}"
@@ -155,7 +151,9 @@
                                     <i class="fas fa-times"></i>
                                     Hủy bỏ
                                 </a>
-                             
+                                <c:if test="${canEdit}">
+                                    
+                              
                                     <a href="deleteQuiz?courseId=${param.courseId}&moduleId=${param.moduleId}&quizId=${param.quizId}"
                                        class="btn btn-danger"
                                        onclick="return confirm('Bạn có chắc chắn muốn xóa quiz này không?');"
@@ -167,7 +165,7 @@
                                         <i class="fas fa-save"></i>
                                         Cập nhật Quiz
                                     </button>
-                               
+                                 </c:if>
                             </div>
                         </form>
 

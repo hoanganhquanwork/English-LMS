@@ -7,16 +7,20 @@ package controller.instructor.discussion;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.entity.Users;
 import service.DiscussionService;
 
 /**
  *
  * @author Lenovo
  */
-public class DeleteDiscussion extends HttpServlet {
+@WebServlet(name = "AddDiscussionCommentServlet", urlPatterns = {"/addComment"})
+public class AddDiscussionCommentServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,35 +39,21 @@ public class DeleteDiscussion extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet DeleteDiscussion</title>");
+            out.println("<title>Servlet AddDiscussionCommentServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet DeleteDiscussion at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AddDiscussionCommentServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
+
     private DiscussionService service = new DiscussionService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       try {
-            int courseId = Integer.parseInt(request.getParameter("courseId"));
-            int moduleId = Integer.parseInt(request.getParameter("moduleId"));
-            int discussionId = Integer.parseInt(request.getParameter("discussionId"));
-
-            boolean deleted = service.deleteDiscussion(discussionId);
-
-            if (deleted) {
-                response.sendRedirect("manageDiscussion?courseId=" + courseId + "&moduleId=" + moduleId);
-            } 
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServletException("Lỗi khi xóa thảo luận", e);
-        }
-
+        processRequest(request, response);
     }
 
     /**
@@ -77,7 +67,35 @@ public class DeleteDiscussion extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            int courseId = Integer.parseInt(request.getParameter("courseId"));
+            int discussionId = Integer.parseInt(request.getParameter("discussionId"));
+            long postId = Long.parseLong(request.getParameter("postId"));
+            String content = request.getParameter("content");
+
+            HttpSession session = request.getSession(false);
+            Users user = (Users) session.getAttribute("user");
+            if (user == null) {
+                response.sendRedirect("loginInternal");
+                return;
+            }
+
+            // Gọi service để thêm comment
+            boolean success = service.addDiscussionComment(postId, content, user.getUserId());
+
+            if (success) {
+
+                response.sendRedirect("updateDiscussion?discussionId=" + discussionId + "&courseId=" + courseId);
+            } else {
+                request.setAttribute("error", "Không thể thêm bình luận, vui lòng thử lại!");
+                request.getRequestDispatcher("teacher/discussion.jsp").forward(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
+            request.getRequestDispatcher("teacher/discussion.jsp").forward(request, response);
+        }
     }
 
     /**

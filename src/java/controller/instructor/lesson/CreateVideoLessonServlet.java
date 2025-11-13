@@ -49,21 +49,31 @@ public class CreateVideoLessonServlet extends HttpServlet {
 
             // Extract videoId và lấy duration
             String videoId = YouTubeApiClient.extractVideoId(youtubeUrl);
+            if (videoId == null) {
+                String error = "InvalidYouTubeURL";
+
+                response.sendRedirect(
+                        "ManageLessonServlet?courseId=" + courseId
+                        + "&moduleId=" + moduleId
+                        + "&error=" + error
+                );
+                return;
+            }
 
             // 2. Gọi YouTube API để lấy duration
             String isoDuration = ytClient.fetchIsoDuration(videoId);
             int durationSec = YouTubeApiClient.isoDurationToSeconds(isoDuration);
-            String transcript = ytClient.fetchSubtitle(youtubeUrl, "en"); 
 
             Lesson lesson = new Lesson();
             lesson.setTitle(title);
             lesson.setContentType("video");
             lesson.setVideoUrl(videoId);
             lesson.setDurationSec(durationSec);
-            lesson.setVideoScript(transcript);
+
             lesson.setTextContent(null);
 
             boolean success = lessonService.addLesson(lesson, moduleId);
+
             response.sendRedirect("ManageLessonServlet?courseId=" + courseId + "&moduleId=" + moduleId);
         } catch (Exception e) {
             throw new ServletException(e);

@@ -652,6 +652,7 @@
         </script>
     </head>
     <body>
+        <c:set var="canEdit" value="${sessionScope.currentCourse.status == 'draft' || sessionScope.currentCourse.status == 'rejected'}" />
         <div id="page" data-courseid="${param.courseId}"></div>
         <div class="container" style="max-width: 1600px; margin: 0 auto; padding: 0 20px;">
             <a class="back-link" href="manageModule?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
@@ -673,11 +674,14 @@
                                     <i class="fas fa-folder" style="color: #f39c12;"></i>
                                     ${h.key.title}
                                 </div>
-                                <div class="module-actions">
-                                    <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
+                                <c:if test="${canEdit}">
+                                    <div class="module-actions">
+                                        <button class="add-lesson-btn" onclick="toggleDropdown('dropdown-${h.key.moduleId}')">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </c:if>
+
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
                                         <i class="fas fa-video" style="color: #e74c3c;"></i>
@@ -719,6 +723,13 @@
                                                 Quiz #${item.moduleItemId}
                                             </a>
                                         </c:when>
+                                        <c:when test="${item.itemType == 'assignment'}">
+                                            <a href="updateAssignment?courseId=${param.courseId}&moduleId=${h.key.moduleId}&assignmentId=${item.moduleItemId}"
+                                               style="text-decoration: none; color: inherit;">
+                                                <i class="fas fa-tasks" style="color: #27ae60;"></i>
+                                                Assignment #${item.moduleItemId}
+                                            </a>
+                                        </c:when>
                                     </c:choose>
                                 </div>
                             </c:forEach>
@@ -732,88 +743,102 @@
                         </div>
                     </div>
                 </aside>
+                <c:if test="${canEdit}">
+                    <!-- Main Content -->
+                    <main class="main-content" style="height: 700px;">
 
-                <!-- Main Content -->
-                <main class="main-content" style="height: 700px;">
-                    <form action="updateDiscussion" method="post">
-                        <input type="hidden" name="courseId" value="${param.courseId}">
-                        <input type="hidden" name="moduleId" value="${param.moduleId}">
-                        <input type="hidden" name="discussionId" value="${discussion.discussionId}">
+                        <form action="updateDiscussion" method="post">
+                            <input type="hidden" name="courseId" value="${param.courseId}">
+                            <input type="hidden" name="moduleId" value="${param.moduleId}">
+                            <input type="hidden" name="discussionId" value="${discussion.discussionId}">
 
-                        <div class="form-group">
-                            <label for="title">Tiêu đề <span style="color:#e74c3c">*</span></label>
-                            <input id="title" name="title" type="text" placeholder="Nhập tiêu đề thảo luận" 
-                                   value="${discussion.title}" required>
-                        </div>
+                            <div class="form-group">
+                                <label for="title">Tiêu đề <span style="color:#e74c3c">*</span></label>
+                                <input id="title" name="title" type="text" placeholder="Nhập tiêu đề thảo luận" 
+                                       value="${discussion.title}" required>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="description">Nội dung mô tả <span style="color:#e74c3c">*</span></label>
-                            <textarea id="description" name="description" class="content-editor" 
-                                      placeholder="Nhập nội dung hướng dẫn cho discussion..." required>${discussion.description}</textarea>
-                        </div>
+                            <div class="form-group">
+                                <label for="description">Nội dung mô tả <span style="color:#e74c3c">*</span></label>
+                                <textarea id="description" name="description" class="content-editor" 
+                                          placeholder="Nhập nội dung hướng dẫn cho discussion..." required>${discussion.description}</textarea>
+                            </div>
 
-                        <div class="actions">
-                            <a class="btn btn-secondary" href="manageModule?courseId=${param.courseId}">
-                                <i class="fas fa-times"></i>
-                                Hủy bỏ
-                            </a>
+                            <div class="actions">
+                                <a class="btn btn-secondary" href="manageModule?courseId=${param.courseId}">
+                                    <i class="fas fa-times"></i>
+                                    Hủy bỏ
+                                </a>
 
-                            <a href="deleteDiscussion?courseId=${param.courseId}&moduleId=${param.moduleId}&discussionId=${discussion.discussionId}" 
-                               class="btn delete-discussion-btn"
-                               onclick="return confirm('Bạn có chắc chắn muốn xóa thảo luận này không?')">
-                                <i class="fas fa-trash"></i>
-                                Xóa thảo luận
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Cập nhật thảo luận
-                            </button>
+                                <a href="deleteDiscussion?courseId=${param.courseId}&moduleId=${param.moduleId}&discussionId=${discussion.discussionId}" 
+                                   class="btn delete-discussion-btn"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa thảo luận này không?')">
+                                    <i class="fas fa-trash"></i>
+                                    Xóa thảo luận
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Cập nhật thảo luận
+                                </button>
 
-                        </div>
-                    </form>
-<!--                    <div class="discussion-container">
+                            </div>
+                        </form>
+
+
+
+
+                        <c:if test="${not empty error}">
+                            <div class="alert alert-danger mt-3">${error}</div>
+                        </c:if>
+                    </main>
+                </c:if>
+                <c:if test="${!canEdit}">
+                    <div class="discussion-container">
                         <div class="discussion-header">
                             <h2>${discussion.title}</h2>
                             <p>${discussion.description}</p>
                         </div>
 
-                         Form tạo post 
+                        Form tạo post 
                         <form action="addPost" method="post" class="add-post-form">
                             <input type="hidden" name="discussionId" value="${discussion.discussionId}">
+                            <input type="hidden" name="courseId" value="${param.courseId}">
                             <textarea name="content" placeholder="Viết bài thảo luận..." required></textarea>
                             <button type="submit">Đăng bài</button>
                         </form>
 
-                         Danh sách bài post 
+                        Danh sách bài post 
                         <c:forEach var="entry" items="${postCommentMap}">
                             <c:set var="post" value="${entry.key}" />
                             <c:set var="comments" value="${entry.value}" />
 
                             <div class="post-box">
                                 <div class="post-author">
-                                    <img src="img/default-avatar.png" alt="Avatar">
+                                    <img src="${post.authorUserId.profilePicture == null ? 'image/avatar/avatar_0.png' : post.authorUserId.profilePicture}" alt="Avatar">
                                     <div>
-                                        <div class="name">User ${post.authorUserId}</div>
+                                        <div class="name"> ${post.authorUserId.username}</div>
                                         <div class="post-date">${post.createdAt}</div>
                                     </div>
                                 </div>
 
                                 <div class="post-content">${post.content}</div>
 
-                                 Comment list 
+                                Comment list 
                                 <div class="comments">
                                     <c:forEach var="c" items="${comments}">
                                         <div class="comment-item">
-                                            <img src="img/default-avatar.png" alt="Avatar">
+                                            <img src="${c.authorUserId.profilePicture== null ? 'image/avatar/avatar_0.png' : c.authorUserId.profilePicture}" alt="Avatar">
                                             <div class="comment-bubble">
-                                                <b>User ${c.authorUserId}</b>
+                                                <b>${c.authorUserId.username}</b>
                                                 <span>${c.content}</span>
                                             </div>
                                         </div>
                                     </c:forEach>
 
-                                     Add comment form 
+                                    Add comment form 
                                     <form action="addComment" method="post" class="add-comment-form">
+                                        <input type="hidden" name="discussionId" value="${discussion.discussionId}">
+                                        <input type="hidden" name="courseId" value="${param.courseId}">
                                         <input type="hidden" name="postId" value="${post.postId}">
                                         <textarea name="content" placeholder="Viết bình luận..." required></textarea>
                                         <button type="submit">Gửi</button>
@@ -821,13 +846,8 @@
                                 </div>
                             </div>
                         </c:forEach>
-                    </div>-->
-
-
-                    <c:if test="${not empty error}">
-                        <div class="alert alert-danger mt-3">${error}</div>
-                    </c:if>
-                </main>
+                    </div>
+                </c:if>
             </div>
         </div>
 

@@ -16,20 +16,21 @@ public class Lesson {
     private String videoUrl;
     private int durationSec;
     private String textContent;
-     private String videoScript;
+  
 
     public Lesson() {
     }
 
-    public Lesson(int moduleItemId, String title, String contentType, String videoUrl, int durationSec, String textContent, String videoScript) {
+    public Lesson(int moduleItemId, String title, String contentType, String videoUrl, int durationSec, String textContent) {
         this.moduleItemId = moduleItemId;
         this.title = title;
         this.contentType = contentType;
         this.videoUrl = videoUrl;
         this.durationSec = durationSec;
         this.textContent = textContent;
-        this.videoScript = videoScript;
     }
+
+
 
   
 
@@ -81,13 +82,7 @@ public class Lesson {
         this.textContent = textContent;
     }
 
-    public String getVideoScript() {
-        return videoScript;
-    }
 
-    public void setVideoScript(String videoScript) {
-        this.videoScript = videoScript;
-    }
     
     
     

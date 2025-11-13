@@ -57,12 +57,12 @@ public class ManageQuizServlet extends HttpServlet {
         int courseId = Integer.parseInt(request.getParameter("courseId"));
 
         try {
-            List<model.entity.Module> list = service.getModulesByCourse(courseId);
+            
             Map<model.entity.Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
 
             request.setAttribute("courseId", courseId);
             request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
+           
             request.setAttribute("content", courseContent);
               request.getRequestDispatcher("teacher/create-quiz.jsp").forward(request, response);
 

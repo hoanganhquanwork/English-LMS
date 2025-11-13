@@ -1930,6 +1930,7 @@
         </style>
     </head>
     <body>
+        <c:set var="canEdit" value="${sessionScope.currentCourse.status == 'draft' || sessionScope.currentCourse.status == 'rejected'}" />
         <div id="page" data-courseid="${courseId}"></div>
         <div class="container" style="max-width: 1500px;">
             <a class="back-link" href="manageModule?courseId=${param.courseId}"><i class="fas fa-arrow-left"></i> Quay lại</a>
@@ -1951,11 +1952,11 @@
                                     ${h.key.title}
                                 </div>
                                 <div class="module-actions">
-                                 
+                                  <c:if test="${canEdit}">
                                         <button class="add-lesson-btn" onclick="toggleModuleDropdown('dropdown-${h.key.moduleId}')">
                                             <i class="fas fa-plus"></i>
                                         </button>
-                                    
+                                  </c:if>
                                 </div>
                                 <div class="dropdown-menu" id="dropdown-${h.key.moduleId}">
                                     <div class="dropdown-item" onclick="createLesson('video', '${h.key.moduleId}')">
@@ -2023,19 +2024,19 @@
                 <main class="main-content" style="height: 800px">
                     <div class="lesson-header">
                         <div class="lesson-title">
-                            <a href="module.jsp?courseId=${param.courseId}" class="back-arrow">
-                                <i class="fas fa-arrow-left"></i>
-                            </a>
+                          
                             <h1>Cập nhật bài học dạng video</h1>
                         </div>
                         <div class="lesson-actions">
-                          
-                                <a href="deleteLesson?courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
+                            <c:if test="${canEdit}">
+                                  <a href="deleteLesson?courseId=${param.courseId}&moduleId=${param.moduleId}&lessonId=${lesson.moduleItemId}" 
                                    class="action-btn delete-lesson-btn"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa bài học này không?')">
                                     <i class="fas fa-trash"></i>
                                     Xóa bài học
                                 </a>
+                            </c:if>
+                              
                             
                         </div>
                     </div>
@@ -2061,11 +2062,11 @@
                                                 allowfullscreen
                                                 class="video-iframe">
                                             </iframe>
-                                            <c:if test="${course.status == 'draft' || course.status == 'submitted'}">
+                                          
                                                 <button type="button" class="delete-video-btn" onclick="deleteVideo()" title="Xóa hoặc thay video">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                            </c:if>
+                                           
                                         </div>
                                     </c:when>
                                     <c:otherwise>
@@ -2079,16 +2080,18 @@
 
                             <!-- Action Buttons -->
 
-
+                            
                             <div class="page-actions">
                                 <a href="manageModule?courseId=${param.courseId}" class="btn btn-secondary">
                                     Hủy bỏ
                                 </a>
-                               
-                                    <button type="submit" class="btn btn-primary">
+                                <c:if test="${canEdit}">
+                                       <button type="submit" class="btn btn-primary">
                                         Lưu
                                     </button>
                                 
+                                </c:if>
+                                 
                             </div>
                         </div>
                     </form>
@@ -2148,6 +2151,7 @@
                                                         </c:choose>
                                                     </span>
                                                 </td>
+                                                 <c:if test="${canEdit}">
                                                 <td>
                                                     <a href="#"
                                                        class="btn btn-edit"
@@ -2184,6 +2188,7 @@
                                                     
                                                     </div>
                                                 </td>
+                                        </c:if>
                                             </tr>
                                         </c:forEach>
                                     </c:when>
@@ -2199,7 +2204,7 @@
                             </tbody>
                         </table>
                     </div>
-                  
+                   <c:if test="${canEdit}">
                         <!-- Add Questions Form -->
                         <div class="add-questions-form" style="margin-top: 100px;">
                             <h3>Thêm câu hỏi mới</h3>
@@ -2235,6 +2240,7 @@
                                 </div>
                             </form>
                         </div>
+                   </c:if>
                     
                 </main>
             </div>
@@ -2284,9 +2290,7 @@
                             <div id="editAnswerOptions">
                                 <!-- Options will be dynamically added here -->
                             </div>
-                            <button type="button" class="add-option-btn" onclick="addEditOption()">
-                                <i class="fas fa-plus"></i> Thêm phương án
-                            </button>
+                          
                         </div>
 
                         <!-- Text Answer (shown when type is text) -->
@@ -2453,9 +2457,7 @@
                 // Gọi hàm sinh option (vì createOptionHTML trả về HTML)
                 html += '        <div class="answer-options">' + createOptionHTML(questionCount) + '</div>';
 
-                html += '        <button type="button" class="add-option-btn" onclick="addOption(' + questionCount + ')">';
-                html += '            <i class="fas fa-plus"></i> Thêm phương án';
-                html += '        </button>';
+           
 
                 html += '        <div class="file-upload-group">';
                 html += '            <label class="file-upload-label" for="file' + questionCount + '">Đính kèm file (tùy chọn)</label>';
@@ -2543,28 +2545,7 @@
                     optionDiv.remove();
             }
 
-            function addOption(questionNumber) {
-                const optionsDiv = document.querySelector("#question-" + questionNumber + " .answer-options");
-                const currentCount = optionsDiv.querySelectorAll(".answer-option").length;
-                const newIndex = currentCount + 1;
-
-                let html = '';
-                html += '<div class="answer-option">';
-                html += '    <input type="radio" name="correct' + questionNumber + '" value="' + newIndex + '" ';
-                html += '        id="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-checkbox">';
-                html += '    <label for="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-label">';
-                html += '        <i class="fas fa-check"></i>';
-                html += '    </label>';
-                html += '    <input type="text" name="optionContent' + questionNumber + '_' + newIndex + '" ';
-                html += '        class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">';
-                html += '    <button type="button" class="remove-option-btn" onclick="removeOption(this)">';
-                html += '        <i class="fas fa-trash"></i>';
-                html += '    </button>';
-                html += '</div>';
-
-                optionsDiv.insertAdjacentHTML("beforeend", html);
-            }
-
+          
 
             function openEditModal(button) {
                 var id = button.getAttribute("data-id");
@@ -2678,27 +2659,7 @@
             }
 
 
-            function addEditOption() {
-                const optionsContainer = document.getElementById('editAnswerOptions');
-                const optionCount = optionsContainer.children.length + 1;
-
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'answer-option';
-                optionDiv.innerHTML = `
-                    <input type="checkbox" name="editCorrect${optionCount}" value="${optionCount}" 
-                           id="editCorrect-${optionCount}" class="correct-answer-checkbox">
-                    <label for="editCorrect-${optionCount}" class="correct-answer-label">
-                        <i class="fas fa-check"></i>
-                    </label>
-                    <input type="text" name="editOptionContent${optionCount}" 
-                           class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">
-                    <button type="button" class="remove-option-btn" onclick="removeEditOption(this)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-
-                optionsContainer.appendChild(optionDiv);
-            }
+       
 
             function removeEditOption(button) {
                 const optionDiv = button.closest('.answer-option');

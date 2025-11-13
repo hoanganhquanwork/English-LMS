@@ -49,17 +49,15 @@ public class UpdateDiscussion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int moduleId = Integer.parseInt(request.getParameter("moduleId"));
+      
         int courseId = Integer.parseInt(request.getParameter("courseId"));
         int discussionId = Integer.parseInt(request.getParameter("discussionId"));
         try {
-            List<model.entity.Module> list = service.getModulesByCourse(courseId);
+         
             Map<model.entity.Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
             Map<DiscussionPost, List<DiscussionComment>> postCommentMap = dservice.getPostCommentMap(discussionId);
             Discussion discussion = dservice.getDiscussion(discussionId);
             request.setAttribute("courseId", courseId);
-            request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
             request.setAttribute("discussion", discussion);
             request.setAttribute("content", courseContent);
             request.setAttribute("postCommentMap", postCommentMap);

@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.entity.Course;
 import service.ModuleService;
@@ -47,9 +48,24 @@ public class ManageModuleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int courseId = Integer.parseInt(request.getParameter("courseId"));
-        Course course = cservice.getCourseById(courseId);
-        List<Module> list = service.getModulesByCourse(courseId);
+       
+            HttpSession session = request.getSession();
+
+            
+            String courseIdStr = request.getParameter("courseId");
+
+            Course course = null;
+
+            if (courseIdStr != null && !courseIdStr.isEmpty()) {
+                 int courseId = Integer.parseInt(courseIdStr);
+                  course = cservice.getCourseById(courseId);
+                if (course != null) {
+                    session.setAttribute("currentCourse", course);
+                }
+            } 
+        
+           List<Module> list = service.getModulesByCourse(course.getCourseId());
+
         request.setAttribute("course", course);
         request.setAttribute("moduleList", list);
         request.getRequestDispatcher("teacher/module.jsp").forward(request, response);

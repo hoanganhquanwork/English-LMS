@@ -64,12 +64,12 @@ public class CreateQuiz extends HttpServlet {
         int courseId = Integer.parseInt(request.getParameter("courseId"));
 
         try {
-            List<Module> list = service.getModulesByCourse(courseId);
+            
             Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
 
             request.setAttribute("courseId", courseId);
             request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
+           
             request.setAttribute("content", courseContent);
             request.getRequestDispatcher("teacher/create-quiz.jsp").forward(request, response);
         } catch (Exception e) {

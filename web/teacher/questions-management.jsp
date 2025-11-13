@@ -1204,7 +1204,7 @@
                         Ngân hàng câu hỏi
                     </button>
                     <button class="tab-button" onclick="showTab('questions')">
-                        Câu hỏi
+                        Câu hỏi của tôi
                     </button>
                     <button class="tab-button" onclick="showTab('submitted-questions')">
                         Câu hỏi đã tạo
@@ -1781,9 +1781,7 @@
                             <div id="editAnswerOptions">
                                 <!-- Options will be dynamically added here -->
                             </div>
-                            <button type="button" class="add-option-btn" onclick="addEditOption()">
-                                <i class="fas fa-plus"></i> Thêm phương án
-                            </button>
+                            
                         </div>
 
                         <!-- Text Answer (shown when type is text) -->
@@ -2075,17 +2073,15 @@
                 // Gọi hàm sinh option (vì createOptionHTML trả về HTML)
                 html += '        <div class="answer-options">' + createOptionHTML(questionCount) + '</div>';
 
-                html += '        <button type="button" class="add-option-btn" onclick="addOption(' + questionCount + ')">';
-                html += '            <i class="fas fa-plus"></i> Thêm phương án';
-                html += '        </button>';
+               
 
                 html += '        <div class="file-upload-group">';
                 html += '            <label class="file-upload-label" for="file' + questionCount + '">Đính kèm file (tùy chọn)</label>';
                 html += '            <input type="file" id="file' + questionCount + '" name="file' + questionCount + '" ';
-//                html += '                class="file-upload-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mov,.wmv,.mp3,.wav,.m4a,.aac">';
+
                 html += '                class="file-upload-input" accept="image/*,audio/*">';
                 html += '            <div class="file-info">';
-//                html += '                Hỗ trợ: PDF, Word, Text, hình ảnh (JPG, PNG, GIF), video (MP4, AVI, MOV, WMV), âm thanh (MP3, WAV, M4A, AAC)';
+
                 html += '                Hỗ trợ: Hình ảnh (JPG, PNG, GIF...) và Âm thanh (MP3, WAV, M4A, AAC)';
                 html += '            </div>';
                 html += '        </div>';
@@ -2117,27 +2113,7 @@
                 }
             }
 
-            function addOption(questionNumber) {
-                var optionsDiv = document.querySelector("#question-" + questionNumber + " .answer-options");
-                var currentCount = optionsDiv.querySelectorAll(".answer-option").length;
-                var newIndex = currentCount + 1;
-
-                var html = '';
-                html += '<div class="answer-option">';
-                html += '    <input type="checkbox" name="correct' + questionNumber + '" value="' + newIndex + '" ';
-                html += '        id="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-checkbox">';
-                html += '    <label for="correct-' + questionNumber + '-' + newIndex + '" class="correct-answer-label">';
-                html += '        <i class="fas fa-check"></i>';
-                html += '    </label>';
-                html += '    <input type="text" name="optionContent' + questionNumber + '_' + newIndex + '" ';
-                html += '        class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">';
-                html += '    <button type="button" class="remove-option-btn" onclick="removeOption(this)">';
-                html += '        <i class="fas fa-trash"></i>';
-                html += '    </button>';
-                html += '</div>';
-
-                optionsDiv.insertAdjacentHTML("beforeend", html);
-            }
+      
 
             function addTextQuestion() {
                 questionCount++;
@@ -2306,27 +2282,7 @@
             }
 
 
-            function addEditOption() {
-                const optionsContainer = document.getElementById('editAnswerOptions');
-                const optionCount = optionsContainer.children.length + 1;
-
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'answer-option';
-                optionDiv.innerHTML = `
-                    <input type="checkbox" name="editCorrect${optionCount}" value="${optionCount}" 
-                           id="editCorrect-${optionCount}" class="correct-answer-checkbox">
-                    <label for="editCorrect-${optionCount}" class="correct-answer-label">
-                        <i class="fas fa-check"></i>
-                    </label>
-                    <input type="text" name="editOptionContent${optionCount}" 
-                           class="answer-input" placeholder="Nhập phương án. Ví dụ: Việt Nam">
-                    <button type="button" class="remove-option-btn" onclick="removeEditOption(this)">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-
-                optionsContainer.appendChild(optionDiv);
-            }
+        
 
             function removeEditOption(button) {
                 const optionDiv = button.closest('.answer-option');
@@ -2587,7 +2543,7 @@
                     textAnswer.style.display = "none";
                 }
 
-                // Hiển thị file nếu có
+              
                 const previewWrapper = document.getElementById("editFilePreview");
                 const previewContainer = document.getElementById("filePreviewContainer");
 

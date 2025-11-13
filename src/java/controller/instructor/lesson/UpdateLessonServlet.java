@@ -58,7 +58,7 @@ public class UpdateLessonServlet extends HttpServlet {
         String lessonIdStr = request.getParameter("lessonId");
         String targetJsp = "teacher/lesson-video-content.jsp";
         try {
-            List<Module> list = service.getModulesByCourse(courseId);
+           
             Map<Module, List<ModuleItem>> courseContent = contentService.getCourseContent(courseId);
             Map<Question, Object> questionMap = null;
 
@@ -80,7 +80,7 @@ public class UpdateLessonServlet extends HttpServlet {
 
             request.setAttribute("courseId", courseId);
             request.setAttribute("moduleId", moduleId);
-            request.setAttribute("moduleList", list);
+          
             request.setAttribute("content", courseContent);
             request.setAttribute("lesson", currentLesson);
             request.setAttribute("questionMap", questionMap);
@@ -119,7 +119,7 @@ public class UpdateLessonServlet extends HttpServlet {
                 String isoDuration = ytClient.fetchIsoDuration(videoId);
                 int durationSec = YouTubeApiClient.isoDurationToSeconds(isoDuration);
 
-                lesson.setVideoUrl(YouTubeApiClient.toEmbedUrl(videoId));
+                lesson.setVideoUrl(videoId);
                 lesson.setDurationSec(durationSec);
             }
 

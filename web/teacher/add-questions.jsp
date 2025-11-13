@@ -13,79 +13,7 @@
         <link rel="stylesheet" href="css/course-content.css">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
-            /* Dropdown Styles */
-            .dropdown {
-                position: relative;
-                display: inline-block;
-            }
-
-            .dropdown-toggle {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                position: relative;
-            }
-
-            .dropdown-toggle i {
-                transition: transform 0.3s;
-            }
-
-            .dropdown-toggle.active i {
-                transform: rotate(180deg);
-            }
-
-            .dropdown-menu {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                background: white;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 1000;
-                min-width: 250px;
-                display: none;
-                margin-top: 5px;
-            }
-
-            .dropdown-menu.show {
-                display: block;
-            }
-
-            .dropdown-item {
-                padding: 12px 16px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-size: 14px;
-                color: #2c3e50;
-                transition: background 0.2s;
-                border-bottom: 1px solid #f0f0f0;
-            }
-
-            .dropdown-item:last-child {
-                border-bottom: none;
-            }
-
-            .dropdown-item:hover {
-                background: #f8f9fa;
-            }
-
-            .dropdown-item i {
-                width: 20px;
-                text-align: center;
-                font-size: 16px;
-            }
-
-            .dropdown-item:first-child i {
-                color: #3498db;
-            }
-
-            .dropdown-item:last-child i {
-                color: #27ae60;
-            }
-
+            
             .btn {
                 padding: 10px 20px;
                 border: none;
@@ -114,137 +42,6 @@
                 background: #5a6268;
             }
 
-            /* Text Question Styles */
-            .text-question-form {
-                background: white;
-                border: 1px solid #e9ecef;
-                border-radius: 12px;
-                margin-bottom: 20px;
-                overflow: hidden;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
-
-            .text-question-header {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                padding: 16px 20px;
-                background: #f8f9fa;
-                border-bottom: 1px solid #e9ecef;
-            }
-
-            .text-question-number {
-                background: #27ae60;
-                color: white;
-                padding: 6px 12px;
-                border-radius: 6px;
-                font-weight: 600;
-                font-size: 14px;
-            }
-
-            .text-question-type {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #2c3e50;
-                font-size: 14px;
-                font-weight: 500;
-            }
-
-            .text-question-type i {
-                color: #27ae60;
-                font-size: 16px;
-            }
-
-            .text-question-content {
-                padding: 20px;
-            }
-
-            .file-upload-group {
-                margin-bottom: 16px;
-            }
-
-            .file-upload-label {
-                display: block;
-                margin-bottom: 8px;
-                font-weight: 500;
-                color: #2c3e50;
-            }
-
-            .file-upload-input {
-                width: 100%;
-                padding: 12px 16px;
-                border: 2px dashed #ddd;
-                border-radius: 8px;
-                background: #f8f9fa;
-                cursor: pointer;
-                transition: all 0.3s;
-            }
-
-            .file-upload-input:hover {
-                border-color: #3498db;
-                background: #e3f2fd;
-            }
-
-            .file-upload-input:focus {
-                outline: none;
-                border-color: #3498db;
-                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-            }
-
-            .file-info {
-                margin-top: 8px;
-                font-size: 12px;
-                color: #6c757d;
-            }
-
-            .answer-group {
-                margin-bottom: 16px;
-            }
-
-            .answer-label {
-                display: block;
-                margin-bottom: 8px;
-                font-weight: 500;
-                color: #2c3e50;
-            }
-
-            .answer-input {
-                width: 100%;
-                padding: 12px 16px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                font-size: 14px;
-                background: white;
-                resize: vertical;
-                min-height: 60px;
-            }
-
-            .answer-input:focus {
-                outline: none;
-                border-color: #27ae60;
-                box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
-            }
-
-            .delete-question-btn {
-                background: #e74c3c;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 8px 12px;
-                cursor: pointer;
-                margin-left: auto;
-                transition: background-color 0.3s;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 14px;
-            }
-
-            .delete-question-btn:hover {
-                background: #c0392b;
-            }
-            
             .pagination-container {
                 display: flex;
                 justify-content: center;
@@ -392,7 +189,7 @@
                             <input type="hidden" name="courseId" value="${course.courseId}">
                             <div class="form-section">
                                 <div class="form-group">
-                                    <label for="questionBank">Ngân hàng câu hỏi *</label>
+                                    <label for="questionBank">Module cần thêm</label>
                                     <select id="questionBank" name="moduleId" class="form-select" required>
                                         <option value="">-- Chọn module --</option>
                                         <c:forEach var="m" items="${moduleList}">
@@ -623,32 +420,7 @@
         </form>
 
         <script>
-            let questionCount = 0;
-
-            // Dropdown functions
-            function toggleDropdown() {
-                const dropdown = document.getElementById('questionTypeDropdown');
-                const toggle = document.querySelector('.dropdown-toggle');
-
-                if (dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
-                    toggle.classList.remove('active');
-                } else {
-                    dropdown.classList.add('show');
-                    toggle.classList.add('active');
-                }
-            }
-
-            // Close dropdown when clicking outside
-            window.onclick = function (event) {
-                const dropdown = document.getElementById('questionTypeDropdown');
-                const toggle = document.querySelector('.dropdown-toggle');
-
-                if (!event.target.closest('.dropdown')) {
-                    dropdown.classList.remove('show');
-                    toggle.classList.remove('active');
-                }
-            };
+       
 
             // View Question Modal Functions
             function openViewQuestion(button) {
