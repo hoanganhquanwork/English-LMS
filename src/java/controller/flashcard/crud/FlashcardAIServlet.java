@@ -96,7 +96,7 @@ public class FlashcardAIServlet extends HttpServlet {
 
         String title = req.getParameter("set_title");
         String prompt = req.getParameter("prompt");
-        String status = req.getParameter("status"); // 👈 lấy public/private
+        String status = req.getParameter("status"); 
 
         List<Flashcard> cards = service.generateAndSave(prompt, null, studentId, title, status);
 
