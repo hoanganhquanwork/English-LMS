@@ -197,18 +197,38 @@ public class CourseManagerService {
             return "Vui lòng nhập lý do từ chối.";
         }
 
-        boolean allSuccess = true;
-        for (String id : courseIds) {
-            if (!rejectCourseWithReason(Integer.parseInt(id), manager.getUserId(), reason)) {
-                allSuccess = false;
+        int success = 0;
+        int fail = 0;
+
+        for (String idStr : courseIds) {
+            try {
+                int id = Integer.parseInt(idStr.trim());
+                Course c = dao.getCourseById(id);
+                if (c == null
+                        || !(c.getStatus().equalsIgnoreCase("submitted")
+                        || c.getStatus().equalsIgnoreCase("approved"))) {
+                    fail++;
+                    continue;
+                }
+
+                if (dao.rejectCourseWithReason(id, manager.getUserId(), reason)) {
+                    success++;
+                } else {
+                    fail++;
+                }
+
+            } catch (Exception e) {
+                fail++;
             }
         }
 
-        if (allSuccess) {
-            return "Đã từ chối " + courseIds.length + " khóa học.";
-        } else {
-            return "Một số khóa học bị lỗi khi cập nhật lý do.";
+        if (success > 0 && fail == 0) {
+            return "Đã từ chối " + success + " khóa học.";
         }
+        if (success > 0) {
+            return "Đã từ chối " + success + " khóa học nhưng " + fail + " khóa không hợp lệ.";
+        }
+        return "Một số khóa học bị lỗi khi cập nhật lý do.";
     }
 
     private String handleSetPrice(String[] courseIds, BigDecimal price) {
