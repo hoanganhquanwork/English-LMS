@@ -69,10 +69,7 @@ public class ChangeManagerPassword extends HttpServlet {
         }
 
         Users user = (Users) session.getAttribute("user");
-        if (!"Manager".equalsIgnoreCase(user.getRole())) {
-            response.sendRedirect(request.getContextPath() + "/home");
-            return;
-        }
+      
         request.getRequestDispatcher("/views-manager/manager-password.jsp").forward(request, response);
     }
 
@@ -98,10 +95,10 @@ public class ChangeManagerPassword extends HttpServlet {
         }
 
         Users user = (Users) session.getAttribute("user");
-        if (user == null || !"Manager".equalsIgnoreCase(user.getRole())) {
-            response.sendRedirect("home");
-            return;
-        }
+//        if (user == null || !"Manager".equalsIgnoreCase(user.getRole())) {
+//            response.sendRedirect("home");
+//            return;
+//        }
 
         boolean isOAuthUser = authService.isOAuthUser(user.getUserId());
         if (isOAuthUser) {

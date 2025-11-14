@@ -269,8 +269,17 @@ public class QuizService {
             q.setPassingScorePct(passingScorePct);
             q.setPickCount(pickCount);
             q.setTimeLimitMin(timeLimitMin);
+            boolean ok = quizDAO.updateQuiz(q);
+            if (!ok) {
+                return false;
+            }
 
-            return quizDAO.updateQuiz(q);
+           
+            boolean required = (passingScorePct != null);
+           
+            moduleItemDAO.updateRequiredById(quizId, required);
+
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

@@ -247,6 +247,11 @@
                 </div>
             </div>
         </div>
+        <c:if test="${not empty param.error}">
+            <script>
+    alert("Lỗi: ${param.error}");
+            </script>
+        </c:if>
         <c:if test="${not empty rejectionReason}">
             <script>
                 window.addEventListener("DOMContentLoaded", function () {

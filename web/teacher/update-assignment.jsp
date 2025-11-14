@@ -578,10 +578,7 @@
                                         <i class="fas fa-comments" style="color: #f39c12;"></i>
                                         Tạo Thảo Luận
                                     </div>
-                                    <div class="dropdown-item" onclick="createLesson('quiz', '${h.key.moduleId}')">
-                                        <i class="fas fa-question-circle" style="color: #9b59b6;"></i>
-                                        Tạo Quiz
-                                    </div>
+                                    
                                     <div class="dropdown-item" onclick="createLesson('assignment', '${h.key.moduleId}')">
                                         <i class="fas fa-tasks" style="color: #27ae60;"></i>
                                         Tạo Assignment
@@ -911,8 +908,6 @@
                     url = "createReadingLesson?courseId=" + courseId + "&moduleId=" + moduleId;
                 } else if (type === 'discussion') {
                     url = "createDiscussion?courseId=" + courseId + "&moduleId=" + moduleId;
-                } else if (type === 'quiz') {
-                    url = "createQuiz?courseId=" + courseId + "&moduleId=" + moduleId;
                 } else if (type === 'assignment') {
                     url = "createAssignment?courseId=" + courseId + "&moduleId=" + moduleId;
                 }
