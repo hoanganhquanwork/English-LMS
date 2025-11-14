@@ -116,7 +116,7 @@ public class PaymentDAO extends DBContext {
         UPDATE Payments
         SET status = 'failed'
         WHERE status = 'initiated'
-          AND created_at < DATEADD(MINUTE, -10, GETDATE());
+          AND created_at < DATEADD(MINUTE, -30, GETDATE());
     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

@@ -18,14 +18,10 @@ public class PaymentTimeoutScheduler {
         scheduler = Executors.newSingleThreadScheduledExecutor();
 
         scheduler.scheduleAtFixedRate(() -> {
-            try {
                 System.out.println("[Scheduler] Cleanup job running...");
                 paymentDAO.cleanupExpiredPayments();
                 orderDAO.cleanupExpiredOrders();
-                System.out.println("[Scheduler] Cleanup job done.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                System.out.println("[Scheduler] Cleanup job done.");       
         }, 0, 20, TimeUnit.MINUTES);
     }
 
