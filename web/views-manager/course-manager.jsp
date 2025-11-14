@@ -220,6 +220,7 @@
                     <input type="hidden" name="status" value="${status}">
                     <input type="hidden" name="keyword" value="${keyword}">
                     <input type="hidden" name="sort" value="${sort}">
+                    <div id="rejectCourseIdsContainer"></div>
                     <textarea name="rejectReason" placeholder="Nhập lý do..." required></textarea>
                     <div class="modal-buttons">
                         <button type="submit" class="btn btn-danger">Gửi lý do</button>
@@ -233,6 +234,7 @@
             function toggleSelectAll(source) {
                 document.querySelectorAll('input[name="courseIds"][form="bulkForm"]').forEach(cb => cb.checked = source.checked);
             }
+
             function setBulkAction(action) {
                 const checked = document.querySelectorAll('input[name="courseIds"][form="bulkForm"]:checked');
                 if (!checked.length) {
@@ -245,25 +247,39 @@
                     return false;
                 }
                 if (action === 'reject') {
-                    const ids = Array.from(checked).map(cb => cb.value).join(',');
+                    const ids = Array.from(checked).map(cb => cb.value);
                     openRejectModal('bulkReject', ids);
                     return false;
                 }
             }
+
             function openRejectModal(action, ids) {
                 document.getElementById('rejectAction').value = action;
-                document.getElementById('rejectCourseIds').value = ids;
-                const count = ids.split(',').filter(Boolean).length;
+
+                const container = document.getElementById('rejectCourseIdsContainer');
+                container.innerHTML = "";
+                ids.forEach(id => {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = "courseIds";
+                    input.value = id;
+                    container.appendChild(input);
+                });
+
                 document.getElementById('rejectCount').textContent =
-                        count > 1 ? `Bạn đang từ chối ${count} khóa học.` : `Bạn đang từ chối 1 khóa học.`;
+                        ids.length > 1 ? `Bạn đang từ chối ${ids.length} khóa học.` : `Bạn đang từ chối 1 khóa học.`;
+
                 document.getElementById('rejectModal').style.display = 'flex';
             }
+
             function openSingleReject(id) {
-                openRejectModal('reject', id);
+                openRejectModal('reject', [id]);
             }
+
             function closeRejectModal() {
                 document.getElementById('rejectModal').style.display = 'none';
             }
+
             function disableSubmit(form) {
                 const btn = form.querySelector('button[type="submit"]');
                 if (btn) {
