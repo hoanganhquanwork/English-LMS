@@ -191,5 +191,21 @@ public class OrderDAO extends DBContext {
         return null;
     }
 
+    public void cleanupExpiredOrders() {
+    String sql = """
+        UPDATE Orders
+        SET status = 'cancelled'
+        WHERE status = 'pending'
+          AND order_id NOT IN (SELECT order_id FROM OrderItems)
+          AND created_at < DATEADD(MINUTE, -10, GETDATE());
+    """;
+
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 
 }

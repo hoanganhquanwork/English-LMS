@@ -1,7 +1,6 @@
 package dal;
 
 import java.sql.*;
-import java.util.*;
 import model.entity.Payment;
 
 public class PaymentDAO extends DBContext {
@@ -80,7 +79,9 @@ public class PaymentDAO extends DBContext {
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, orderId);
             ResultSet rs = stm.executeQuery();
-            if (rs.next()) return rs.getDouble(1);
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -108,5 +109,21 @@ public class PaymentDAO extends DBContext {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void cleanupExpiredPayments() {
+        String sql = """
+        UPDATE Payments
+        SET status = 'failed'
+        WHERE status = 'initiated'
+          AND created_at < DATEADD(MINUTE, -10, GETDATE());
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
+
 }

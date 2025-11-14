@@ -197,7 +197,7 @@
         if (actionType === 'approve') {
             message = 'Bạn có chắc chắn muốn xác nhận liên kết này không?';
         } else if (actionType === 'cancel') {
-            message = 'Bạn có chắc chắn muốn hủy liên kết này không?';
+            message = 'Bạn có muốn hủy liên kết này không?\nLưu ý: Các yêu cầu khóa học của học sinh này đang chờ duyệt hoặc chưa thanh toán sẽ được hủy tự động';
         } else if (actionType === 'reject') {
             message = 'Vui lòng nhập lý do từ chối:';
             needReason = true;

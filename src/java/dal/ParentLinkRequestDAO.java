@@ -120,4 +120,25 @@ public class ParentLinkRequestDAO extends DBContext {
         }
         return null;
     }
+
+    public void cancelPendingCourseRequest(int studentId, int parentId) {
+        String sql = """
+        UPDATE CourseRequests
+        SET status = 'canceled',
+            decided_at = GETDATE(),
+            note = N'Yêu cầu tự động được hủy vì liên kết tài khoản phụ huynh đã bị gỡ bỏ'
+        WHERE student_id = ?
+          AND parent_id = ?
+          AND status IN ('pending', 'unpaid');
+    """;
+        try {
+            PreparedStatement stm = connection.prepareStatement(sql);
+            stm.setInt(1, studentId);
+            stm.setInt(2, parentId);
+            stm.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

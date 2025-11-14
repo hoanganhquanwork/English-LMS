@@ -28,6 +28,7 @@ public class ParentLinkApprovalService {
         if (req != null && "approved".equalsIgnoreCase(req.getStatus())) {
             requestDAO.updateRequestStatus(requestId, "unlink", note);
             requestDAO.unlinkStudentFromParent(req.getStudentId());
+            requestDAO.cancelPendingCourseRequest(req.getStudentId(),req.getParentId());
         }
     }
 
