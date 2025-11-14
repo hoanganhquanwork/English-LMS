@@ -47,7 +47,8 @@
 
                     <c:if test="${sessionScope.user != null}">
                         <c:if test="${sessionScope.user.role == 'Student'}">
-                            <a href="${pageContext.request.contextPath}/courseRequest" class="text-dark fs-5 me-3">
+                            <a href="${pageContext.request.contextPath}/courseRequest" class="text-dark fs-5 me-3" 
+                               title="Liên kết tài khoản phụ huynh và yêu cầu khóa học">
                                 <i class="bi bi-heart"></i>
                             </a>
                         </c:if>

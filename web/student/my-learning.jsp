@@ -39,11 +39,11 @@
             <ul class="nav nav-pills mb-3 pill-tabs">
                 <li class="nav-item me-2">
                     <a class="nav-link rounded-pill px-3 ${activeTab=='inprogress' ? 'active' : ''}"
-                       href="${pageContext.request.contextPath}/myLearning?tab=inprogress">In Progress</a>
+                       href="${pageContext.request.contextPath}/myLearning?tab=inprogress">Đang học</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link rounded-pill px-3 ${activeTab=='completed' ? 'active' : ''}"
-                       href="${pageContext.request.contextPath}/myLearning?tab=completed">Completed</a>
+                       href="${pageContext.request.contextPath}/myLearning?tab=completed">Đã hoàn thành</a>
                 </li>
             </ul>
 
