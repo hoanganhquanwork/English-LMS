@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -78,17 +79,23 @@
                 <h2>Khóa học của giảng viên</h2>
                 <div class="course-grid">
                     <c:forEach var="c" items="${courses}">
+                        <a href="courseInformation?courseId=${c.courseId}" style="text-decoration:none; color:inherit;">
                         <div class="course-card">
                             <img src="${pageContext.request.contextPath}/${c.thumbnail}" alt="${c.title}">
                             <h3>${c.title}</h3>
                             <p>${c.language} • ${c.level}</p>
                             <p>
                                 <c:choose>
-                                    <c:when test="${not empty c.price}">$${c.price}</c:when>
-                                    <c:otherwise>Miễn phí</c:otherwise>
+                                    <c:when test="${c.price != null && c.price > 0}">
+                                        <fmt:formatNumber value="${c.price}" type="currency" currencySymbol=""/>đ
+                                    </c:when>
+                                    <c:otherwise>
+                                        Miễn phí
+                                    </c:otherwise>
                                 </c:choose>
                             </p>
                         </div>
+                            </a>
                     </c:forEach>
                 </div>
             </div>

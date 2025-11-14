@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 import model.entity.Course;
 import service.ModuleService;
 import model.entity.Module;
@@ -63,11 +64,11 @@ public class ManageModuleServlet extends HttpServlet {
                     session.setAttribute("currentCourse", course);
                 }
             } 
-        
-           List<Module> list = service.getModulesByCourse(course.getCourseId());
+           Map<Module, Integer> moduleQuestionMap = service.getModulesWithQuestionCount(course.getCourseId());
+          
 
         request.setAttribute("course", course);
-        request.setAttribute("moduleList", list);
+        request.setAttribute("moduleList", moduleQuestionMap);
         request.getRequestDispatcher("teacher/module.jsp").forward(request, response);
     }
 

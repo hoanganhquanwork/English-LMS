@@ -116,4 +116,16 @@ public class ModuleItemDAO extends DBContext {
         }
         return false;
     }
+    public boolean updateRequiredById(int moduleItemId, boolean required) {
+    String sql = "UPDATE ModuleItem SET required = ? WHERE module_item_id = ?";
+    try (
+         PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setBoolean(1, required);
+        ps.setInt(2, moduleItemId);
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 }

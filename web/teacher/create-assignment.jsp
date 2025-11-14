@@ -536,10 +536,7 @@
                                         <i class="fas fa-comments" style="color: #f39c12;"></i>
                                         Tạo Thảo Luận
                                     </div>
-                                    <div class="dropdown-item" onclick="createLesson('quiz', '${h.key.moduleId}')">
-                                        <i class="fas fa-question-circle" style="color: #9b59b6;"></i>
-                                        Tạo Quiz
-                                    </div>
+                                    
                                     <div class="dropdown-item" onclick="createLesson('assignment', '${h.key.moduleId}')">
                                         <i class="fas fa-tasks" style="color: #27ae60;"></i>
                                         Tạo Assignment
@@ -622,7 +619,7 @@
                             </div>
 
                             <div class="form-row">
-                              
+
                                 <div class="form-group">
                                     <label for="weight">Phần trăm đạt yêu cầu (%)</label>
                                     <input id="passingScorePct" name="passingScorePct" type="number" placeholder="10" min="0" max="100" step="0.1" required>
@@ -656,11 +653,11 @@
                                 <select id="submissionType" name="submissionType">
                                     <option value="file">File đính kèm</option>
                                     <option value="text">Văn bản trực tuyến</option>
-                                    
+
                                 </select>
                             </div>
 
-                          
+
 
                             <div class="form-group">
                                 <label class="required">Tiêu chí chấm điểm (Rubric Criteria)</label>
@@ -786,9 +783,7 @@
                     url = "createReadingLesson?courseId=" + courseId + "&moduleId=" + moduleId;
                 } else if (type === 'discussion') {
                     url = "createDiscussion?courseId=" + courseId + "&moduleId=" + moduleId;
-                } else if (type === 'quiz') {
-                    url = "createQuiz?courseId=" + courseId + "&moduleId=" + moduleId;
-                } else if (type === 'assignment') {
+                }  else if (type === 'assignment') {
                     url = "createAssignment?courseId=" + courseId + "&moduleId=" + moduleId;
                 }
 
@@ -954,15 +949,27 @@
                 document.getElementById('assignmentForm').submit();
             }
 
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function (event) {
-                if (!event.target.closest('.module-header')) {
-                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                        menu.classList.remove('show');
-                    });
-                }
-            });
+            document.getElementById('assignmentForm').addEventListener('submit', function (e) {             
+                const weights = document.querySelectorAll('input[name="weight"]');
+                let total = 0;
 
+                weights.forEach(w => {
+                    const val = parseFloat(w.value);
+                    if (!isNaN(val))
+                        total += val;
+                });
+
+                total = Math.round(total * 100) / 100; // tránh lỗi số thực
+
+                if (total !== 1) {
+                    e.preventDefault();
+                    alert("Tổng trọng số của các tiêu chí phải bằng 1.0. Hiện tại: " + total);
+                    return false;
+                }
+
+              
+                tinymce.triggerSave();
+            });
         </script>
     </body>
 </html>
