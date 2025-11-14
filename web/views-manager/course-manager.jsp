@@ -216,7 +216,6 @@
                 <p id="rejectCount" class="muted"></p>
                 <form id="rejectForm" method="post" action="coursemanager" onsubmit="return disableSubmit(this)">
                     <input type="hidden" name="action" id="rejectAction">
-                    <input type="hidden" name="courseIds" id="rejectCourseIds">
                     <input type="hidden" name="status" value="${status}">
                     <input type="hidden" name="keyword" value="${keyword}">
                     <input type="hidden" name="sort" value="${sort}">
