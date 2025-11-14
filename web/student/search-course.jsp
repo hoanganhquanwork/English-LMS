@@ -12,7 +12,7 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Search Courses</title>
+        <title>Tìm kiếm khóa học</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Bootstrap & Icons -->
@@ -35,7 +35,7 @@
                         <div class="filter-box">
                             <h5 class="mb-3">Bộ lọc</h5>
 
-                            <h6>Category</h6>
+                            <h6>Thể loại</h6>
                             <c:forEach var="cat" items="${listCategories}">
                                 <div class="form-check">
                                     <input class="form-check-input"
@@ -49,7 +49,7 @@
                             </c:forEach>
 
 
-                            <h6>Language</h6>
+                            <h6>Ngôn ngữ</h6>
                             <c:forEach var="lang" items="${languages}">
                                 <div class="form-check">
                                     <input class="form-check-input"
@@ -62,7 +62,7 @@
                                 </div>
                             </c:forEach>
 
-                            <h6>Level</h6>
+                            <h6>Trình độ</h6>
                             <c:forEach var="lvl" items="${levels}">
                                 <div class="form-check">
                                     <input class="form-check-input"

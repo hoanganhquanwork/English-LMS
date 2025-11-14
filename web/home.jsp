@@ -166,7 +166,7 @@
         <!--        Categories-->
         <section class="py-5 bg-light">
             <div class="container">
-                <h2 class="section-title h1 mb-4">Khám phá theo chủ đề</h2>
+                <h2 class="section-title h1 mb-4">Khám phá theo thể loại</h2>
                 <div class="row g-3">
                     <c:forEach items="${requestScope.listCategory}" var="cat">
                         <div class="col-12 col-md-6 col-lg-4">
