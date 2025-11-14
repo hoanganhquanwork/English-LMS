@@ -12,7 +12,7 @@
   <aside class="card admin-card admin-sidebar">
       <h4>Instructor</h4>
       <nav class="admin-menu">
-        <a class="admin-link" href="instructorDashboard">Dashboard</a>
+        
         <a class="admin-link" href="manage">Courses</a>
         <a class="admin-link" href="questions">Questions</a>
         <a class="admin-link" href="gradeListServlet">Chấm Assignment</a>
@@ -29,7 +29,7 @@
             <a href="teacher-profile">
                 <i class="fas fa-user"></i> Hồ sơ cá nhân
             </a>
-            <a href="changePassword">
+            <a href="changeManagerPassword">
                 <i class="fas fa-key"></i> Đổi mật khẩu
             </a>
             <a href="reportList">

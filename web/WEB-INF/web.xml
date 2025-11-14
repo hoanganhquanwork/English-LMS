@@ -208,7 +208,7 @@
         <url-pattern>/manager-flashcard</url-pattern>
         <url-pattern>/revenue-export</url-pattern>
         <url-pattern>/revenue-report</url-pattern>
-        <url-pattern>/changeManagerPassword</url-pattern>
+        
         <url-pattern>/manager-profile</url-pattern>
         <url-pattern>/uploadManagerAvatar</url-pattern>
         

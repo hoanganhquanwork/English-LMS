@@ -101,7 +101,7 @@ public class LoginInternalServlet extends HttpServlet {
 
             switch (role) {
                 case "Instructor":
-                    response.sendRedirect(request.getContextPath() + "/instructorDashboard");
+                    response.sendRedirect(request.getContextPath() + "/manage");
                     break;
                 case "Manager":
                     response.sendRedirect(request.getContextPath() + "/dashboard-manager");

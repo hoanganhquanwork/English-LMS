@@ -134,7 +134,9 @@
                         </div>
 
                         <div id="modulesContainer">
-                            <c:forEach var="h" items="${requestScope.moduleList}">
+                            <c:forEach var="entry" items="${requestScope.moduleList}">
+                                <c:set var="h" value="${entry.key}" />
+                                <c:set var="qCount" value="${entry.value}" />
                                 <div class="module-item">
                                     <div class="module-info">
                                         <div class="module-name"><a href="ManageLessonServlet?courseId=${course.courseId}&moduleId=${h.moduleId}" >Module ${h.orderIndex}: ${h.title}</a></div>
@@ -170,9 +172,20 @@
                                                     <a href="createDiscussion?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
                                                         <i class="fas fa-comments"></i> Bài thảo luận
                                                     </a>
-                                                    <a href="createQuiz?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
-                                                        <i class="fas fa-question-circle"></i> Bài quiz
-                                                    </a>
+                                                    <c:choose>
+                                                        <c:when test="${qCount > 0}">
+                                                            <a href="createQuiz?courseId=${h.course.courseId}&moduleId=${h.moduleId}" 
+                                                               class="lesson-dropdown-item">
+                                                                <i class="fas fa-question-circle"></i> Bài quiz
+                                                            </a>
+                                                        </c:when>
+
+                                                        <c:otherwise>
+                                                            <div class="lesson-dropdown-item" style="opacity:0.5; cursor:not-allowed;">
+                                                                <i class="fas fa-lock"></i> Bài quiz (chưa có câu hỏi)
+                                                            </div>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                     <a href="manageAssignment?courseId=${h.course.courseId}&moduleId=${h.moduleId}" class="lesson-dropdown-item">
                                                         <i class="fas fa-tasks"></i> Bài assign
                                                     </a>

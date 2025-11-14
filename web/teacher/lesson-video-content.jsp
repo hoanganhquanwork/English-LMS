@@ -1971,10 +1971,7 @@
                                         <i class="fas fa-comments" style="color: #f39c12;"></i>
                                         Tạo Thảo Luận
                                     </div>
-                                    <div class="dropdown-item" onclick="createLesson('quiz', '${h.key.moduleId}')">
-                                        <i class="fas fa-question-circle" style="color: #9b59b6;"></i>
-                                        Tạo Quiz
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <c:forEach var="item" items="${h.value}">
@@ -2062,11 +2059,11 @@
                                                 allowfullscreen
                                                 class="video-iframe">
                                             </iframe>
-                                          
+                                           <c:if test="${canEdit}">
                                                 <button type="button" class="delete-video-btn" onclick="deleteVideo()" title="Xóa hoặc thay video">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
-                                           
+                                           </c:if>
                                         </div>
                                     </c:when>
                                     <c:otherwise>
@@ -2380,8 +2377,6 @@
                     url = "createReadingLesson?courseId=" + courseId + "&moduleId=" + moduleId;
                 } else if (type === 'discussion') {
                     url = "createDiscussion?courseId=" + courseId + "&moduleId=" + moduleId;
-                } else if (type === 'quiz') {
-                    url = "createQuiz?courseId=" + courseId + "&moduleId=" + moduleId;
                 }
 
                 if (url) {
