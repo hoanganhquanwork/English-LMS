@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Quản lý khóa học</title>
-        <link rel="stylesheet" href="<c:url value='/css/manager-style.css?v=20' />">
+        <link rel="stylesheet" href="<c:url value='/css/manager-style.css?v=201' />">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     </head>
     <body class="dashboard">
