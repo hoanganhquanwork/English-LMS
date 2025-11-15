@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Flashcard Sets</title>
+    <title>Flashcard Của Tôi</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/flashcard-home-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
@@ -34,10 +34,10 @@
             <!-- Navigation -->
             <div class="nav-tabs">
                 <a href="dashboard?action=viewAllLibrary" class="nav-tab">
-                    <i class="fas fa-book-open" style="margin-right: 8px;"></i>Library
+                    <i class="fas fa-book-open" style="margin-right: 8px;"></i>Thư viện
                 </a>
                 <a href="dashboard?action=listSets" class="nav-tab">
-                    <i class="fas fa-home" style="margin-right: 8px;"></i>Dashboard
+                    <i class="fas fa-home" style="margin-right: 8px;"></i>Trang điều hướng
                 </a>
             </div>
             
@@ -96,7 +96,7 @@
             <c:if test="${empty mySets}">
                 <div class="empty-state">
                     <i class="fas fa-layer-group empty-icon"></i>
-                    <p class="empty-text">Chưa có flashcard set nào</p>
+                    <p class="empty-text">Chưa có bộ flashcard nào</p>
                     <p class="empty-subtext">Bạn chưa tạo bộ flashcard nào. Hãy tạo bộ đầu tiên!</p>
                 </div>
             </c:if>
