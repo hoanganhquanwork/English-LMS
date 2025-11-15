@@ -32,7 +32,8 @@
             </c:when>
 
             <c:otherwise>
-                 <!-- KHU VỰC HIỂN THỊ TỔNG THEO LỰA CHỌN -->
+                <form method="post" action="paymentitems" onsubmit="return confirmSelection()">
+                    <!-- KHU VỰC HIỂN THỊ TỔNG THEO LỰA CHỌN -->
                     <div class="payment-summary" style="display:flex;justify-content:space-between;align-items:center;margin:16px 0;padding:12px 16px;border:1px solid #e5e7eb;border-radius:10px;background:#f9fafb;">
                         <div>
                             <strong>Đã chọn: </strong> <span id="selCount">0</span> mục
@@ -48,7 +49,6 @@
                             <span class="btn-text">Thanh toán các mục đã chọn</span>
                         </button>
                     </div>
-                <form method="post" action="paymentitems" onsubmit="return confirmSelection()">
                     <div class="children-list">
                         <c:forEach var="item" items="${items}">
                             <div class="payment-item">    
@@ -103,7 +103,7 @@
                                 </div>
                             </div>
                         </c:forEach>
-                    </div>              
+                    </div>
                 </form>
             </c:otherwise>
         </c:choose>

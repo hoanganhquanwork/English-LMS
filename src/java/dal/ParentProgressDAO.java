@@ -32,10 +32,24 @@ public class ParentProgressDAO extends DBContext {
     public List<Course> getCourseProgress(int studentId) {
         List<Course> list = new ArrayList<>();
         String sqlCourses = """
-            SELECT e.course_id, c.title
+            SELECT 
+                e.course_id,
+                c.title,
+                MAX(p.updated_at) AS last_progress_update
             FROM Enrollments e
-            JOIN Course c ON c.course_id = e.course_id
+            JOIN Course c 
+                ON c.course_id = e.course_id
+            LEFT JOIN Progress p 
+                ON p.student_id = e.student_id
+               AND p.module_item_id IN (
+                    SELECT mi.module_item_id 
+                    FROM Module m
+                    JOIN ModuleItem mi ON mi.module_id = m.module_id
+                    WHERE m.course_id = e.course_id
+                )
             WHERE e.student_id = ?
+            GROUP BY e.course_id, c.title
+            ORDER BY last_progress_update DESC;
         """;
 
         try (PreparedStatement ps = connection.prepareStatement(sqlCourses)) {
@@ -123,7 +137,7 @@ public class ParentProgressDAO extends DBContext {
             JOIN ModuleItem mi ON p.module_item_id = mi.module_item_id
             JOIN Module m ON mi.module_id = m.module_id
             WHERE p.student_id = ? AND m.course_id = ? AND mi.is_required = 1
-              AND p.status = 'completed' AND p.score_pct IS NOT NULL
+            AND p.status = 'completed' AND p.score_pct IS NOT NULL
         """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, studentId);
