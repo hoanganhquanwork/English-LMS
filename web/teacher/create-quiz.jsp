@@ -118,7 +118,7 @@
 
                         <div class="form-group">
                             <label for="pick_count">Số câu hỏi</label>
-                            <input id="pick_count" name="pick_count" type="number" 
+                            <input id="pick_count" name="pickCount" type="number" 
                                    placeholder="Để trống = lấy hết pool" min="1">
                         </div>
                         <div class="form-group">
