@@ -909,7 +909,7 @@
                 } else if (type === 'discussion') {
                     url = "createDiscussion?courseId=" + courseId + "&moduleId=" + moduleId;
                 } else if (type === 'assignment') {
-                    url = "createAssignment?courseId=" + courseId + "&moduleId=" + moduleId;
+                    url = "manageAssignment?courseId=" + courseId + "&moduleId=" + moduleId;
                 }
 
                 if (url) {
