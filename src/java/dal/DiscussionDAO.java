@@ -311,7 +311,7 @@ public class DiscussionDAO extends DBContext {
             connection.setAutoCommit(false);
 
             int orderIndex = getNextOrderIndex(moduleId);
-            String sql1 = "INSERT INTO ModuleItem (module_id, item_type, order_index) VALUES (?, 'discussion', ?)";
+            String sql1 = "INSERT INTO ModuleItem (module_id, item_type, order_index,  is_required) VALUES (?, 'discussion', ?, 0)";
             PreparedStatement st1 = connection.prepareStatement(sql1, Statement.RETURN_GENERATED_KEYS);
             st1.setInt(1, moduleId);
             st1.setInt(2, orderIndex);
